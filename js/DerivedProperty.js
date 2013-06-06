@@ -10,7 +10,7 @@
 define( function( require ) {
   "use strict";
 
-  var Property = require( 'PHETCOMMON/model/property/Property' );
+  var Property = require( 'AXON/Property' );
 
   /**
    * @param {Array<Property>} dependencies

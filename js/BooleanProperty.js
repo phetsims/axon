@@ -6,7 +6,7 @@
  * @author Sam Reid
  */
 define(
-  ['PHETCOMMON/model/property/Property', 'PHETCOMMON/util/Inheritance'],
+  ['AXON/Property', 'PHETCOMMON/util/Inheritance'],
   function( Property, Inheritance ) {
     "use strict";
 

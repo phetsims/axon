@@ -46,8 +46,8 @@
 define( function( require ) {
   "use strict";
 
-  var Property = require( 'PHETCOMMON/model/property/Property' );
-  var DerivedProperty = require( 'PHETCOMMON/model/property/DerivedProperty' );
+  var Property = require( 'AXON/Property' );
+  var DerivedProperty = require( 'AXON/DerivedProperty' );
 
   /**
    * @class PropertySet

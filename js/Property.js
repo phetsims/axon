@@ -14,7 +14,7 @@
 define( function( require ) {
   "use strict";
 
-  var log = require( 'PHETCOMMON/model/property/log' );
+  var log = require( 'AXON/log' );
 
   /**
    * @param {*} value
