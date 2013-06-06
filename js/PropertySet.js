@@ -48,13 +48,14 @@ define( function( require ) {
 
   var Property = require( 'AXON/Property' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
+  var axon = require( 'AXON/axon' );
 
   /**
    * @class PropertySet
    * @constructor
    * @param values an object hash with the initial values for the properties
    */
-  function PropertySet( values ) {
+  axon.PropertySet = function PropertySet( values ) {
     var propertySet = this;
 
     //Keep track of the keys so we know which to reset
@@ -63,9 +64,9 @@ define( function( require ) {
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[value] );
     } );
-  }
+  };
 
-  PropertySet.prototype = {
+  axon.PropertySet.prototype = {
 
     /**
      * Adds a new property to this PropertySet
@@ -218,5 +219,5 @@ define( function( require ) {
     }
   };
 
-  return PropertySet;
+  return axon.PropertySet;
 } );

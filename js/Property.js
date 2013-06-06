@@ -15,12 +15,13 @@ define( function( require ) {
   "use strict";
 
   var log = require( 'AXON/log' );
+  var axon = require ('AXON/axon');
 
   /**
    * @param {*} value
    * @constructor
    */
-  function Property( value ) {
+  axon.Property = function Property( value ) {
 
     // Variables declared in the constructor are private.
     var _value = value;
@@ -105,7 +106,7 @@ define( function( require ) {
   }
 
   //Adapters to conform to the Fort.property interface
-  Property.prototype = {
+  axon.Property.prototype = {
 
     get value() { return this.get(); },
 
@@ -130,5 +131,5 @@ define( function( require ) {
     valueOf: function() {return this.toString();}
   };
 
-  return Property;
+  return axon.Property;
 } );

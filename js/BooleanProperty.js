@@ -5,20 +5,20 @@
  *
  * @author Sam Reid
  */
-define(
-  ['AXON/Property', 'PHETCOMMON/util/Inheritance'],
-  function( Property, Inheritance ) {
-    "use strict";
+define( function( require ) {
+  "use strict";
 
-    function BooleanProperty( value ) {
-      Property.call( this, value );
-    }
+  var Property = require( 'AXON/Property' );
+  var inherit = require( 'PHET_CORE/inherit' );
+  var axon = require( 'AXON/axon' );
 
-    Inheritance.inheritPrototype( BooleanProperty, Property );
+  axon.BooleanProperty = function BooleanProperty( value ) {
+    Property.call( this, value );
+  };
 
-    BooleanProperty.prototype.toggle = function() {
-      this.set( !this.get() );
-    };
-
-    return BooleanProperty;
+  inherit( axon.BooleanProperty, Property, {
+    toggle: function() {this.set( !this.get() );}
   } );
+
+  return axon.BooleanProperty;
+} );

@@ -24,7 +24,7 @@
 define( function( require ) {
   "use strict";
 
-  var Vector2 = require( 'DOT/Vector2' );
+//  var Vector2 = require( 'DOT/Vector2' );
 
   //Enable it if 'log' query parameter specified.  TODO: Switch to has.js?
   var enabled = window && window.phetcommon && window.phetcommon.getQueryParameter && window.phetcommon.getQueryParameter( 'log' );
@@ -61,7 +61,8 @@ define( function( require ) {
         return log.properties[value.cid];
       }
       if ( value && value.jsonClass && value.jsonClass === 'Vector2' ) {
-        return new Vector2( value.x, value.y );
+//        return new Vector2( value.x, value.y );
+        return {x:value.x, y:value.y };//TODO: pass in a factory that creates Vector2's ?  Log probably shouldn't depend on all of the code that needs reviving
       }
       return value;
     };

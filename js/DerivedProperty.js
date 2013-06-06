@@ -11,13 +11,14 @@ define( function( require ) {
   "use strict";
 
   var Property = require( 'AXON/Property' );
+  var axon = require( 'AXON/axon' );
 
   /**
    * @param {Array<Property>} dependencies
    * @param {Function} derivation function that expects args in the same order as dependencies
    * @constructor
    */
-  function DerivedProperty( dependencies, derivation ) {
+  axon.DerivedProperty = function DerivedProperty( dependencies, derivation ) {
 
     this.observers = [];
     this.dependencies = dependencies;
@@ -51,10 +52,10 @@ define( function( require ) {
 
     //Call the derivation function with the initial value(s)
     update();
-  }
+  }       ;
 
   //TODO: _value could be made private if we moved these functions to the constructor, but I don't think it is necessary
-  DerivedProperty.prototype = {
+  axon.DerivedProperty.prototype = {
 
     /**
      * Get the current value of this DerivedProperty.
@@ -103,5 +104,5 @@ define( function( require ) {
     }
   };
 
-  return DerivedProperty;
+  return axon.DerivedProperty;
 } );
