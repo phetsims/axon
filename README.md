@@ -1,7 +1,7 @@
 axon
 ====
 
-Axon provides powerful and concise models based on observable Properties and related patterns.
+Axon provides powerful and concise models based on observable Properties and related patterns.  Developed by PhET Interactive Simulations at the University of Colorado Boulder.
 
 History
 ====
