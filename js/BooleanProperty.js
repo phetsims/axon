@@ -16,7 +16,7 @@ define( function( require ) {
     Property.call( this, value );
   };
 
-  inherit( axon.BooleanProperty, Property, {
+  inherit( Property, axon.BooleanProperty, {
     toggle: function() {this.set( !this.get() );}
   } );
 
