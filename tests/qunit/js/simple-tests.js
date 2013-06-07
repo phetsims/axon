@@ -1,6 +1,6 @@
 (function() {
   module( 'Axon' );
-
+  var Property = axon.Property;
   test( 'Simple tests', function() {
 
     var person = new axon.PropertySet( {name: 'larry', age: '100'} );
@@ -26,5 +26,20 @@
     person.name = '123';
     person.age = 456;
     equal( myValue, '123/456', 'multilink should get both values' );
+  } );
+
+  test( 'Test once', function() {
+    var count = 0;
+    var p = new Property( 1 );
+    p.once( function( newVal, oldVal ) {
+      debugger;
+      console.log( 'callback: ' + newVal );
+      count++;
+    } );
+
+    p.value = 2;
+    p.value = 3;
+    p.value = 4;
+    equal( count, 1, 'Listener added with once is only called back one time' );
   } );
 })();

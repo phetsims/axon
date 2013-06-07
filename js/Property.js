@@ -15,7 +15,7 @@ define( function( require ) {
   "use strict";
 
   var log = require( 'AXON/log' );
-  var axon = require ('AXON/axon');
+  var axon = require( 'AXON/axon' );
 
   /**
    * @param {*} value
@@ -128,7 +128,28 @@ define( function( require ) {
 
     //Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
     toString: function() {return 'Property{' + this.get() + '}'; },
-    valueOf: function() {return this.toString();}
+    valueOf: function() {return this.toString();},
+
+    /**
+     * Add a listener so that it will only fire once (and not on registration)
+     *
+     * I can see two ways to implement this:
+     * (a) add a field to the observer so after notifications it can be checked and possibly removed. Disadvantage: will make everything slower even if not using 'once'
+     * (b) wrap the observer in a new function which will call the observer and then remove itself.  Disadvantage: cannot remove an observer added using 'once'
+     * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' listener must be removed before it is called once
+     *
+     * @param observer the listener which should be called back only for one property change (and not on registration)
+     * @returns {Function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
+     */
+    once: function( observer ) {
+      var property = this;
+      var wrapper = function( newValue, oldValue ) {
+        observer( newValue, oldValue );
+        property.unlink( wrapper );
+      };
+      this.lazyLink( wrapper );
+      return wrapper;
+    }
   };
 
   return axon.Property;
