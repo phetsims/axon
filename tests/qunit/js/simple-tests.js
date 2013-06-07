@@ -32,8 +32,6 @@
     var count = 0;
     var p = new Property( 1 );
     p.once( function( newVal, oldVal ) {
-      debugger;
-      console.log( 'callback: ' + newVal );
       count++;
     } );
 
