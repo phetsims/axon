@@ -43,12 +43,22 @@ define( function( require ) {
         this.trigger( [], [item] );
       }
     },
+    pop: function() {
+      var item = this.array.pop();
+      //TODO: fine grained event resolution
+      this.trigger( [], [item] );//TODO: are we allocating too many arrays for notifications?
+      return item;
+    },
+    contains: function( item ) { return this.indexOf( item ) !== -1; },
+    at: function( index ) { return this.array[index]; },
     indexOf: function( item ) {return this.array.indexOf( item );},
     clear: function() {
       var copy = this.array.slice();
       this.array = [];
       this.trigger( [], copy );
-    }
+    },
+    get length() { return this.array.length; },
+    forEach: function( callback ) { this.array.forEach( callback ); }
   };
 
   return axon.ObservableArray;
