@@ -3,6 +3,7 @@ define( [
   'AXON/BooleanProperty',
   'AXON/Property',
   'AXON/DerivedProperty',
+  'AXON/ObservableArray',
   'AXON/PropertySet',
   'AXON/log'
 ], function( axon ) {

@@ -1,6 +1,7 @@
 (function() {
   module( 'Axon' );
   var Property = axon.Property;
+  var ObservableArray = axon.ObservableArray;
   test( 'Simple tests', function() {
 
     var person = new axon.PropertySet( {name: 'larry', age: '100'} );
@@ -40,4 +41,13 @@
     p.value = 4;
     equal( count, 1, 'Listener added with once is only called back one time' );
   } );
+
+  test( 'Test observable array', function() {
+    var array = new ObservableArray( ['a', 'b', 'c'] );
+    array.addListener( function( added, removed ) {
+      deepEqual( added, ['d'], 'A single item was added to the ObservableArray' );
+      deepEqual( removed, [], 'Nothing removed' );
+    } );
+    array.add( 'd' );
+  } )
 })();
