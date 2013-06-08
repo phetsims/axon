@@ -149,6 +149,19 @@ define( function( require ) {
       };
       this.lazyLink( wrapper );
       return wrapper;
+    },
+
+    /**
+     * Links an object's named attribute to this property.  Returns a handle so it can be removed.
+     * Example: modelVisibleProperty.linkAttribute(view,'visible');
+     *
+     * @param object
+     * @param attributeName
+     */
+    linkAttribute: function( object, attributeName ) {
+      var handle = function( value ) {object[attributeName] = value;};
+      this.link( handle );
+      return handle;
     }
   };
 
