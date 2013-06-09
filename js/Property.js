@@ -22,72 +22,56 @@ define( function( require ) {
    * @constructor
    */
   axon.Property = function Property( value ) {
+    var property = this;
 
-    // Variables declared in the constructor are private.
-    var _value = value;
-    var _initialValue = value;
+    //Store the internal value and the initial value
+    this._value = value;
+    this._initialValue = value;
     this._observers = [];
 
-    /**
-     * Gets the value.
-     * @return {*}
-     */
-    this.get = function() {
-      return _value;
-    };
+    //Set up for recording
+    log.registerProperty( this );
+  };
+
+  //Adapters to conform to the Fort.property interface
+  axon.Property.prototype = {
+
 
     /**
-     * Sets the value and notifies registered observers.
+     * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
+     * @return {*}
+     */
+    get: function() {
+      return this._value;
+    },
+
+    /**
+     * Sets the value and notifies registered observers.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
      * If the value hasn't changed, this is a no-op.
      *
      * @param {*} value
      */
-    this.set = function( value ) {
-      if ( value !== _value ) {
-        var oldValue = _value;
-        _value = value;
+    set: function( value ) {
+      if ( value === undefined || value === null ) {
+        console.log( "undefined value" );
+        debugger;
+      }
+      if ( value !== this._value ) { //TODO: some Properties probably need deep comparisons here
+        var oldValue = this._value;
+        this._value = value;
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
         for ( var i = 0; i < observersCopy.length; i++ ) {
           observersCopy[i]( value, oldValue );
         }
       }
-    };
+    },
 
     /**
      * Resets the value to the initial value.
      */
-    this.reset = function() {
-      this.set( _initialValue );
-    };
-
-    /**
-     * Adds an observer and notifies it immediately.
-     * If observer is already registered, this is a no-op.
-     * The initial notification provides the current value for newValue and null for oldValue.
-     *
-     * @param {Function} observer a function of the form observer(newValue,oldValue)
-     * @deprecated will be removed when everyone is using link //TODO: Delete when all usages are gone
-     */
-    this.addObserver = function( observer ) {
-      if ( this._observers.indexOf( observer ) === -1 ) {
-        this._observers.push( observer );
-        observer( _value, null ); // null should be used when an object is expected but unavailable
-      }
-    };
-
-    /**
-     * Removes an observer.
-     * If observer is not registered, this is a no-op.
-     *
-     * @param {Function} observer
-     * @deprecated will be removed when everyone is using link //TODO: Delete when all usages are gone
-     */
-    this.removeObserver = function( observer ) {
-      var index = this._observers.indexOf( observer );
-      if ( index !== -1 ) {
-        this._observers.splice( index, index + 1 );
-      }
-    };
+    reset: function() {
+      this.set( this._initialValue );
+    },
 
     /**
      * This function returns a bound function that sets the specified value.  For use in creating closures e.g. with gui classes.
@@ -98,23 +82,40 @@ define( function( require ) {
      * @param value the value to use when the setter is called.
      * @return a function that can be used to set the specified value.
      */
-    this._set = function( value ) {
+    _set: function( value ) {
       return this.set.bind( this, value );
-    };
-
-    log.registerProperty( this );
-  }
-
-  //Adapters to conform to the Fort.property interface
-  axon.Property.prototype = {
+    },
 
     get value() { return this.get(); },
 
     set value( newValue ) { this.set( newValue ); },
 
-    link: function( observer ) { this.addObserver( observer ); },
+    /**
+     * Adds an observer and notifies it immediately.
+     * If observer is already registered, this is a no-op.
+     * The initial notification provides the current value for newValue and null for oldValue.
+     *
+     * @param {Function} observer a function of the form observer(newValue,oldValue)
+     */
+    link: function( observer ) {
+      if ( this._observers.indexOf( observer ) === -1 ) {
+        this._observers.push( observer );
+        observer( this._value, null ); // null should be used when an object is expected but unavailable
+      }
+    },
 
-    unlink: function( observer ) { this.removeObserver( observer ); },
+    /**
+     * Removes an observer.
+     * If observer is not registered, this is a no-op.
+     *
+     * @param {Function} observer
+     */
+    unlink: function( observer ) {
+      var index = this._observers.indexOf( observer );
+      if ( index !== -1 ) {
+        this._observers.splice( index, index + 1 );
+      }
+    },
 
     /**
      * Add an observer to the Property, without calling it back right away.  This is mostly used for internal code.
