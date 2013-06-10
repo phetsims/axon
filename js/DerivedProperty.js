@@ -52,7 +52,7 @@ define( function( require ) {
 
     //Call the derivation function with the initial value(s)
     update();
-  }       ;
+  };
 
   //TODO: _value could be made private if we moved these functions to the constructor, but I don't think it is necessary
   axon.DerivedProperty.prototype = {
@@ -76,6 +76,18 @@ define( function( require ) {
     link: function( observer ) {
       this.observers.push( observer );
       observer( this._value );
+    },
+
+    /**
+     * Link to a target object's attribute, see Property.linkAttribute
+     * @param object
+     * @param attributeName
+     * @returns {Function}
+     */
+    linkAttribute: function( object, attributeName ) {
+      var handle = function( value ) {object[attributeName] = value;};
+      this.link( handle );
+      return handle;
     },
 
     unlink: function( observer ) {
