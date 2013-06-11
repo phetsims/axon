@@ -19,6 +19,17 @@ define( function( require ) {
   };
   axon.ObservableArray.prototype = {
 
+    /**
+     * Returns a Property representing the length of the array.
+     * @returns {Property<Number>}
+     */
+    get lengthProperty() {
+      if ( !this._lengthProperty ) {
+        this._lengthProperty = new Property( this.array.length );
+      }
+      return this._lengthProperty;
+    },
+
     addListener: function( listener ) {
       this.listeners.push( listener );
     },
@@ -32,7 +43,12 @@ define( function( require ) {
       this.listeners.forEach( function( listener ) {
         listener( added, removed, observableArray );
       } );
+      if ( this._lengthProperty ) {
+        this._lengthProperty.set( this.array.length );
+      }
     },
+
+    //TODO: Should this be named 'push'?  Or should we add an auxiliary push method?
     add: function( item ) {
       this.array.push( item );
       this.trigger( [item], [] );
@@ -51,12 +67,16 @@ define( function( require ) {
       return item;
     },
     contains: function( item ) { return this.indexOf( item ) !== -1; },
+
+    //TODO: I'd like to rename this 'get'
     at: function( index ) { return this.array[index]; },
     indexOf: function( item ) {return this.array.indexOf( item );},
     clear: function() {
-      var copy = this.array.slice();
-      this.array = [];
-      this.trigger( [], copy );
+      if ( this.array.length > 0 ) {
+        var copy = this.array.slice();
+        this.array = [];
+        this.trigger( [], copy );
+      }
     },
     get length() { return this.array.length; },
     forEach: function( callback ) { this.array.forEach( callback ); },
