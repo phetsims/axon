@@ -54,7 +54,6 @@ define( function( require ) {
     set: function( value ) {
       if ( value === undefined || value === null ) {
         console.log( "undefined value" );
-        debugger;
       }
       if ( value !== this._value ) { //TODO: some Properties probably need deep comparisons here
         var oldValue = this._value;
