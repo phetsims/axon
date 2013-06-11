@@ -12,6 +12,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var axon = require( 'AXON/axon' );
 
+  //TODO: Store initial array for reset()?
   axon.ObservableArray = function ObservableArray( initialArray ) {
     this.array = initialArray || [];
     this.listeners = [];
@@ -58,7 +59,20 @@ define( function( require ) {
       this.trigger( [], copy );
     },
     get length() { return this.array.length; },
-    forEach: function( callback ) { this.array.forEach( callback ); }
+    forEach: function( callback ) { this.array.forEach( callback ); },
+    splice: function( start, deleteCount, items ) {
+      var removed = [];
+      for ( var i = 0; i < deleteCount; i++ ) {
+        removed.push( this.array[i + start] );
+      }
+      if ( items ) {
+        this.array.splice( start, deleteCount, items );
+      }
+      else {
+        this.array.splice( start, deleteCount );
+      }
+      this.trigger( [], removed );
+    }
   };
 
   return axon.ObservableArray;
