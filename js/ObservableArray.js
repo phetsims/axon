@@ -92,6 +92,26 @@ define( function( require ) {
         this.array.splice( start, deleteCount );
       }
       this.trigger( [], removed );
+    },
+
+    /**
+     * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining
+     * @param mapFunction
+     * @returns {axon.ObservableArray}
+     */
+    map: function( mapFunction ) { return new axon.ObservableArray( this.array.map( mapFunction ) ); },
+
+    /**
+     * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
+     * @param value
+     * @param combiner
+     * @returns {*}
+     */
+    foldLeft: function( value, combiner ) {
+      for ( var i = 0; i < this.array.length; i++ ) {
+        value = combiner( value, this.array[i] );
+      }
+      return value;
     }
   };
 
