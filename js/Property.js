@@ -162,6 +162,15 @@ define( function( require ) {
       var handle = function( value ) {object[attributeName] = value;};
       this.link( handle );
       return handle;
+    },
+
+    /**
+     * Returns a new DerivedProperty which is true/false based on whether the value matches (based on ===) the passed in argument.
+     * @param value
+     * @returns {DerivedProperty}
+     */
+    valueEquals: function( value ) {
+      return new axon.DerivedProperty( [this], function( parent ) { return parent.value === value; } );
     }
   };
 
