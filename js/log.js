@@ -62,7 +62,7 @@ define( function( require ) {
       }
       if ( value && value.jsonClass && value.jsonClass === 'Vector2' ) {
 //        return new Vector2( value.x, value.y );
-        return {x:value.x, y:value.y };//TODO: pass in a factory that creates Vector2's ?  Log probably shouldn't depend on all of the code that needs reviving
+        return {x: value.x, y: value.y };//TODO: pass in a factory that creates Vector2's ?  Log probably shouldn't depend on all of the code that needs reviving
       }
       return value;
     };
@@ -89,14 +89,14 @@ define( function( require ) {
         log.log.push( entry );
       } );
     },
-    stepUntil: function( entries, playbackTime, logIndex ) {
+    stepUntil: function( logArray, playbackTime, logIndex ) {
       var log = this;
-      while ( logIndex < entries ) {
+      while ( logIndex < logArray.length ) {
         //find any events that passed in this time frame
         //Note, may handle multiple events before calling scene.updateScene()
-        var time = entries[logIndex].time;
+        var time = logArray[logIndex].time;
         if ( time <= playbackTime ) {
-          var entry = entries[logIndex];
+          var entry = logArray[logIndex];
           var cid = entry.cid;
 
           //if it is a change, then set the value
