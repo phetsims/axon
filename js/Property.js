@@ -170,7 +170,29 @@ define( function( require ) {
      * @returns {DerivedProperty}
      */
     valueEquals: function( value ) {
-      return new axon.DerivedProperty( [this], function( parent ) { return parent.get() === value; } );
+      return new axon.DerivedProperty( [this], function( propertyValue ) { return propertyValue === value; } );
+    },
+
+    /**
+     * Two way communication for not, so you can set the value and have it come back to the parent
+     * Note that noting about the following code is specific to booleans, although this should probably be used mostly for booleans.
+     * To unlink both listeners attached unlink a property created with not(), use detach()
+     */
+    not: function() {
+      var parentProperty = this;
+      var childProperty = new axon.Property( !this.value );
+
+      var setParentToChild = function( value ) {childProperty.set( !value );};
+      parentProperty.link( setParentToChild );
+
+      var setChildToParent = function( value ) {parentProperty.set( !value );};
+      childProperty.link( setChildToParent );
+
+      childProperty.detach = function() {
+        parentProperty.unlink( setParentToChild );
+        childProperty.unlink( setChildToParent );
+      };
+      return childProperty;
     }
   };
 
