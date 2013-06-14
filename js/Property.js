@@ -170,7 +170,7 @@ define( function( require ) {
      * @returns {DerivedProperty}
      */
     valueEquals: function( value ) {
-      return new axon.DerivedProperty( [this], function( parent ) { return parent.value === value; } );
+      return new axon.DerivedProperty( [this], function( parent ) { return parent.get() === value; } );
     }
   };
 
