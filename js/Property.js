@@ -52,9 +52,6 @@ define( function( require ) {
      * @param {*} value
      */
     set: function( value ) {
-      if ( value === undefined || value === null ) {
-        console.log( "undefined value" );
-      }
       if ( value !== this._value ) { //TODO: some Properties probably need deep comparisons here
         var oldValue = this._value;
         this._value = value;
