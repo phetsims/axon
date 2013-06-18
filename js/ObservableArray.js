@@ -68,8 +68,15 @@ define( function( require ) {
     },
     contains: function( item ) { return this.indexOf( item ) !== -1; },
 
-    //TODO: I'd like to rename this 'get'
-    at: function( index ) { return this.array[index]; },
+    /**
+     *
+     * @param index
+     * @returns {*}
+     * @deprecated please use get() instead
+     * TODO: Remove 'at' and replace usages with get
+     */
+    at: function( index ) {return this.array[index];},
+    get: function( index ) {return this.array[index];},
     indexOf: function( item ) {return this.array.indexOf( item );},
     clear: function() {
       if ( this.array.length > 0 ) {
