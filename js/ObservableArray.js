@@ -56,7 +56,7 @@ define( function( require ) {
     remove: function( item ) {
       var index = this.indexOf( item );
       if ( index !== -1 ) {
-        this.array.splice( index, index + 1 );
+        this.array.splice( index, 1 );
         this.trigger( [], [item] );
       }
     },
