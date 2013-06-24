@@ -22,7 +22,6 @@ define( function( require ) {
    * @constructor
    */
   axon.Property = function Property( value ) {
-    var property = this;
 
     //Store the internal value and the initial value
     this._value = value;
@@ -164,7 +163,7 @@ define( function( require ) {
     /**
      * Returns a new DerivedProperty which is true/false based on whether the value matches (based on ===) the passed in argument.
      * @param value
-     * @returns {DerivedProperty}
+     * @returns {axon.DerivedProperty}
      */
     valueEquals: function( value ) {
       return new axon.DerivedProperty( [this], function( propertyValue ) { return propertyValue === value; } );
