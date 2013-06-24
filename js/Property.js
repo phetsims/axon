@@ -190,6 +190,17 @@ define( function( require ) {
         childProperty.unlink( setChildToParent );
       };
       return childProperty;
+    },
+
+    /**
+     * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
+     * @param name debug name to be printed on the console
+     * @returns {Function} the handle to the linked listener in case it needs to be removed later
+     */
+    debug: function( name ) {
+      var listener = function( value ) { console.log( name, value ); };
+      this.link( listener );
+      return listener;
     }
   };
 
