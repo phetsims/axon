@@ -32,9 +32,7 @@ define( function( require ) {
     log.registerProperty( this );
   };
 
-  //Adapters to conform to the Fort.property interface
   axon.Property.prototype = {
-
 
     /**
      * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
