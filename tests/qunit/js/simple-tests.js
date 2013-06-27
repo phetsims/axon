@@ -2,6 +2,9 @@
   module( 'Axon' );
   var Property = axon.Property;
   var ObservableArray = axon.ObservableArray;
+  var log = axon.log;
+  var PropertySet = axon.PropertySet;
+
   test( 'Simple tests', function() {
 
     var person = new axon.PropertySet( {name: 'larry', age: '100'} );
@@ -55,7 +58,6 @@
     var person = new axon.PropertySet( {name: 'larry', age: '100'} );
     var count = 0;
     var listener = function( person ) {
-      console.log( "resetted all" );
       count = count + 1;
     };
     person.on( 'reset-all', listener );
@@ -108,4 +110,28 @@
     person.trigger( 'say-hello' );
     equal( x, 0, 'Function added with once should be removable' );
   } );
+
+  test( 'Test Logging', function() {
+    var log = axon.log;
+    log.enabled = true;
+    log.clear();
+    equal( 0, log.properties.length, 'log should be clear before starting the tests' );
+
+    var person = new PropertySet( {name: 'Larry', age: 123, happy: true} );
+    equal( log.properties.length, 3, 'should have created 3 properties' );
+
+    equal( log.entries.length, 0, 'shouldnt have recorded any changes yet' );
+
+    person.name = 'Larry';
+    equal( log.entries.length, 0, 'Changing the name to the same value shouldnt create a log entry' );
+
+    person.name = 'Jerry';
+    equal( log.entries.length, 1, 'Changing the name should create a log entry' );
+
+    person.set( {name: 'Sheri', age: 50} );
+    equal( log.entries.length, 3, 'Setting two more properties should add 2 log entries' );
+
+    person.reset();
+    equal( log.entries.length, 5, 'Resetting should appear in the log' );
+  } )
 })();

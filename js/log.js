@@ -26,22 +26,26 @@
 define( function( require ) {
   "use strict";
 
+  var axon = require( 'AXON/axon' );
 //  var Vector2 = require( 'DOT/Vector2' );
-
-  //Enable it if 'log' query parameter specified.  TODO: Switch to has.js?
-  var enabled = window && window.phetcommon && window.phetcommon.getQueryParameter && window.phetcommon.getQueryParameter( 'log' );
 
   var cid = 0;
 
   function Log() {
     var log = this;
 
+    //Enable it if 'log' query parameter specified.  TODO: Switch to has.js?
+    //Leave it public so it can be toggled on/off in code
+    this.enabled = window && window.phetcommon && window.phetcommon.getQueryParameter && window.phetcommon.getQueryParameter( 'log' );
+
     //Keep track of all the models, hashed by cid
-    this.properties = {};
-    this.collections = {};
+    //TODO: these could be arrays, we don't need cid on the objects, right?
+    this.properties = [];
+    this.collections = [];
+    this.propertySets = [];
 
     //Keep track of the changes to all the models
-    this.log = [];
+    this.entries = [];
 
     //Replacer and reviver for the JSON.  Could be moved to the models themselves to decouple/simplify.
     this.replacer = function( key, value ) {
@@ -78,18 +82,24 @@ define( function( require ) {
      * @param property
      */
     registerProperty: function( property ) {
-      if ( !enabled ) {
+      if ( !this.enabled ) {
         return;
       }
       property.cid = cid++;
       var log = this;
       this.properties[property.cid] = property;
 
-      property.link( function( value ) {
+      //Don't record initial values for the properties, just the changes.
+      property.lazyLink( function( value ) {
         var entry = {time: Date.now(), cid: property.cid, action: 'change', value: JSON.stringify( value, log.replacer )};
 //        console.log( entry );
-        log.log.push( entry );
+        log.entries.push( entry );
       } );
+    },
+    clear: function() {
+      this.properties = [];
+      this.collection = [];
+      this.propertySets = [];
     },
     stepUntil: function( logArray, playbackTime, logIndex ) {
       var log = this;
@@ -136,10 +146,7 @@ define( function( require ) {
     }
   };
 
-  //It is a singleton, so just return the one and only instance.
-  //For unknown reasons, running the unit tests was creating 2 wiretap instances.  So use global space to prevent it (for now?)
-  window.phet = window.phet || {};
-  window.phet.log = window.phet.log || new Log();
+  axon.log = axon.log || new Log();
 
-  return window.phet.log;
+  return axon.log;
 } );
