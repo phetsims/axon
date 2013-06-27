@@ -1,3 +1,5 @@
+// Copyright 2002-2013, University of Colorado Boulder
+
 if ( window.has ) {
   window.has.add( 'assert.axon', function( global, document, anElement ) {
     'use strict';

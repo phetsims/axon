@@ -1,4 +1,5 @@
-// Copyright 2002-2013, University of Colorado
+// Copyright 2002-2013, University of Colorado Boulder
+
 /**
  * PropertySet facilitates creation and use of multiple named Property instances.  There are still several API design issues in question, but this
  * class is ready for use.

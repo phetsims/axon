@@ -1,3 +1,5 @@
+// Copyright 2002-2013, University of Colorado Boulder
+
 /*
  * PhET Simulations can be recorded and played back.  This serves a few purposes:
  * 1. During research interviews (with student consent) the session can be recorded for future playback.
