@@ -85,13 +85,13 @@ define( function( require ) {
       if ( !this.enabled ) {
         return;
       }
-      property.cid = cid++;
+      var index = this.properties.length;
       var log = this;
-      this.properties[property.cid] = property;
+      this.properties.push( property );
 
       //Don't record initial values for the properties, just the changes.
       property.lazyLink( function( value ) {
-        var entry = {time: Date.now(), cid: property.cid, action: 'change', value: JSON.stringify( value, log.replacer )};
+        var entry = {time: Date.now(), type: 'property', index: index, action: 'change', value: JSON.stringify( value, log.replacer )};
 //        console.log( entry );
         log.entries.push( entry );
       } );

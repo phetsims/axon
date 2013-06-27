@@ -133,5 +133,7 @@
 
     person.reset();
     equal( log.entries.length, 5, 'Resetting should appear in the log' );
+
+    console.log( log.entries );
   } )
 })();
