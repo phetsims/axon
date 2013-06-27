@@ -46,7 +46,7 @@ define( function( require ) {
     //Replacer and reviver for the JSON.  Could be moved to the models themselves to decouple/simplify.
     this.replacer = function( key, value ) {
 
-      //Properties must be stored separately, in case of nested properties (such as Forces and Motion: Basics
+      //Properties must be stored separately, in case of nested properties (such as Forces and Motion: Basics)
       //TODO: A better way of detecting a property?  Perhaps checking the constructor?
       if ( value && value.cid ) {
         return {jsonClass: 'Property', cid: value.cid};
