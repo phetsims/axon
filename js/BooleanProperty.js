@@ -6,7 +6,7 @@
  * @author Sam Reid
  */
 define( function( require ) {
-  "use strict";
+  'use strict';
 
   var Property = require( 'AXON/Property' );
   var inherit = require( 'PHET_CORE/inherit' );

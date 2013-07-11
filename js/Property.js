@@ -3,7 +3,7 @@
 /**
  * An observable property, notifies registered observers when the value changes.
  *
- * Uses the "Constructor" pattern for object creation, which has the downside that
+ * Uses the 'Constructor' pattern for object creation, which has the downside that
  * all properties are created once for each instance. It would be nice if our functions
  * were shared. But since the only way to create private fields is in the constructor,
  * and the functions need access to those private fields, there doesn't seem to be
@@ -12,7 +12,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
-  "use strict";
+  'use strict';
 
   var log = require( 'AXON/log' );
   var axon = require( 'AXON/axon' );

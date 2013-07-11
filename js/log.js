@@ -24,7 +24,7 @@
  * TODO: Remove extra cruft leftover from wiretap.js
  */
 define( function( require ) {
-  "use strict";
+  'use strict';
 
   var axon = require( 'AXON/axon' );
 //  var Vector2 = require( 'DOT/Vector2' );
@@ -117,7 +117,7 @@ define( function( require ) {
               log.properties[cid].value = JSON.parse( entry.value, log.reviver );
             }
             else {
-              console.log( "missing value for index: ", logIndex, entry );
+              console.log( 'missing value for index: ', logIndex, entry );
             }
           }
           else if ( entry.action === 'trigger' ) {

@@ -8,7 +8,7 @@
  */
 
 define( function( require ) {
-  "use strict";
+  'use strict';
 
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
