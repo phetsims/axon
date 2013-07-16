@@ -110,6 +110,7 @@ define( function( require ) {
 
     /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
+     * TODO: Unify this API or implementation with _.reduce?
      * @param value
      * @param combiner
      * @returns {*}
