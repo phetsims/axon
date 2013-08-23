@@ -17,6 +17,7 @@ define( function( require ) {
     this.array = initialArray || [];
     this.listeners = [];
   };
+
   axon.ObservableArray.prototype = {
 
     /**
@@ -53,6 +54,7 @@ define( function( require ) {
       this.array.push( item );
       this.trigger( [item], [] );
     },
+
     remove: function( item ) {
       var index = this.indexOf( item );
       if ( index !== -1 ) {
@@ -60,12 +62,14 @@ define( function( require ) {
         this.trigger( [], [item] );
       }
     },
+
     pop: function() {
       var item = this.array.pop();
       //TODO: fine grained event resolution
       this.trigger( [], [item] );//TODO: are we allocating too many arrays for notifications?
       return item;
     },
+
     contains: function( item ) { return this.indexOf( item ) !== -1; },
 
     /**
@@ -76,8 +80,11 @@ define( function( require ) {
      * TODO: Remove 'at' and replace usages with get
      */
     at: function( index ) {return this.array[index];},
+
     get: function( index ) {return this.array[index];},
+
     indexOf: function( item ) {return this.array.indexOf( item );},
+
     clear: function() {
       if ( this.array.length > 0 ) {
         var copy = this.array.slice();
@@ -85,8 +92,11 @@ define( function( require ) {
         this.trigger( [], copy );
       }
     },
+
     get length() { return this.array.length; },
+
     forEach: function( callback ) { this.array.forEach( callback ); },
+
     splice: function( start, deleteCount, items ) {
       var removed = [];
       for ( var i = 0; i < deleteCount; i++ ) {
