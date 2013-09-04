@@ -1,122 +1,222 @@
 // Copyright 2002-2013, University of Colorado Boulder
 
 /**
- * Subclass of Property that adds methods specific to boolean values
+ * An observable array of items.
+ * <p>
+ * Because the array is observable, we must be careful about the possibility of concurrent-modification errors.
+ * Any time we iterate over the array, we must iterate over a copy, because callback may be modifying the array.
  *
  * @author Sam Reid
+ * @author Chris Malley
  */
 define( function( require ) {
   'use strict';
 
+  // imports
+  var assert = require( 'ASSERT/assert' )( 'axon' );
   var Property = require( 'AXON/Property' );
   var inherit = require( 'PHET_CORE/inherit' );
   var axon = require( 'AXON/axon' );
 
   //TODO: Store initial array for reset()?
-  axon.ObservableArray = function ObservableArray( initialArray ) {
-    this.array = initialArray || [];
-    this.listeners = [];
+  axon.ObservableArray = function ObservableArray( initialArray, options ) {
+
+    this._options = _.extend( {
+      allowDuplicates: false // are duplicate items allowed in the array?
+    }, options );
+
+    this._array = initialArray || []; // internal, do not access directly
+    this._addedListeners = []; // listeners called when an item is added
+    this._removedListeners = []; // listeners called when an item is removed
+    
+    this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
   };
 
   axon.ObservableArray.prototype = {
 
+    get length() { return this._array.length; },
+
     /**
-     * Returns a Property representing the length of the array.
-     * @returns {Property<Number>}
+     * Adds a listener that will be notified when an item is added to the list.
+     * @param listener function( item, observableArray )
      */
-    get lengthProperty() {
-      if ( !this._lengthProperty ) {
-        this._lengthProperty = new Property( this.array.length );
-      }
-      return this._lengthProperty;
+    addItemAddedListener: function( listener ) {
+      assert && assert( this._array.indexOf( listener ) === -1 ); // listener is not already registered
+      this._addedListeners.push( listener );
     },
 
-    addListener: function( listener ) {
-      this.listeners.push( listener );
-    },
     /**
-     * Notify that items have been added or removed from the list.
-     * @param added
-     * @param removed
+     * Removes a listener that was added via addItemAddedListener.
+     * @param listener
      */
-    trigger: function( added, removed ) {
-      var observableArray = this;
-      this.listeners.forEach( function( listener ) {
-        listener( added, removed, observableArray );
-      } );
-      if ( this._lengthProperty ) {
-        this._lengthProperty.set( this.array.length );
+    removeItemAddedListener: function( listener ) {
+      var index = this._array.indexOf( listener );
+      assert && assert( index !== -1 ); // listener is registered
+      this._addedListeners.splice( index, 1 );
+    },
+
+    /**
+     * Adds a listener that will be notified when an item is removed from the list.
+     * @param listener function( item, observableArray )
+     */
+    addItemRemovedListener: function( listener ) {
+      assert && assert( this._array.indexOf( listener ) === -1 ); // listener is not already registered
+      this._removedListeners.push( listener );
+    },
+
+    /**
+     * Removes a listener that was added via addItemRemovedListener.
+     * @param listener
+     */
+    removeItemRemovedListener: function( listener ) {
+      var index = this._array.indexOf( listener );
+      assert && assert( index !== -1 ); // listener is registered
+      this._removedListeners.splice( index, 1 );
+    },
+
+    /**
+     * Convenience function for adding both types of listeners in one shot.
+     * @param itemAddedListener
+     * @param itemRemovedListener
+     */
+    addListeners: function( itemAddedListener, itemRemovedListener ) {
+      this.addItemAddedListener( itemAddedListener );
+      this.addItemRemovedListener( itemRemovedListener );
+    },
+
+    // Internal: called when an item is added.
+    _fireItemAdded: function( item ) {
+      var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
+      for ( var i = 0; i < copy.length; i++ ) {
+        copy[i]( item, this );
       }
     },
 
-    //TODO: Should this be named 'push'?  Or should we add an auxiliary push method?
+    // Internal: called when an item is removed.
+    _fireItemRemoved: function( item ) {
+      var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
+      for ( var i = 0; i < copy.length; i++ ) {
+        copy[i]( item, this );
+      }
+    },
+
+    /**
+     * Adds an item to the end of the array.
+     * This is a convenience function, and is the same as push.
+     * @param item
+     */
     add: function( item ) {
-      this.array.push( item );
-      this.trigger( [item], [] );
+      this.push( item );
     },
 
+    /**
+     * Removes the first occurrence of an item from the array.
+     * If duplicates are allowed (see options.allowDuplicates) you may need to call this multiple
+     * times to totally purge item from the array.
+     * @param item
+     */
     remove: function( item ) {
-      var index = this.indexOf( item );
+      var index = this._array.indexOf( item );
       if ( index !== -1 ) {
-        this.array.splice( index, 1 );
-        this.trigger( [], [item] );
+        this._array.splice( index, 1 );
+        this.lengthProperty.set( this._array.length );
+        this._fireItemRemoved( item );
       }
     },
 
+    /**
+     * Pushes an item onto the end of the array.
+     * @param item
+     * @throws Error if duplicates are not allowed (see options.allowDuplicates) and item is already in the array
+     */
+    push: function( item ) {
+      if ( !this._options.allowDuplicates && this.contains( item ) ) {
+        throw new Error( 'duplicates are not allowed' );
+      }
+      this._array.push( item );
+      this.lengthProperty.set( this._array.length );
+      this._fireItemAdded( item );
+    },
+
+    /**
+     * Removes an item from the end of the array and returns it.
+     * @returns {*}
+     */
     pop: function() {
-      var item = this.array.pop();
-      //TODO: fine grained event resolution
-      this.trigger( [], [item] );//TODO: are we allocating too many arrays for notifications?
+      var item = this._array.pop();
+      if ( item !== undefined ) {
+        this.lengthProperty.set( this._array.length );
+        this._fireItemRemoved( item );
+      }
       return item;
     },
 
-    contains: function( item ) { return this.indexOf( item ) !== -1; },
-
     /**
-     *
-     * @param index
+     * Removes an item from the beginning of the array and returns it.
      * @returns {*}
-     * @deprecated please use get() instead
-     * TODO: Remove 'at' and replace usages with get
      */
-    at: function( index ) {return this.array[index];},
-
-    get: function( index ) {return this.array[index];},
-
-    indexOf: function( item ) {return this.array.indexOf( item );},
-
-    clear: function() {
-      if ( this.array.length > 0 ) {
-        var copy = this.array.slice();
-        this.array = [];
-        this.trigger( [], copy );
+    shift: function() {
+      var item = this._array.shift();
+      if ( item !== undefined ) {
+        this.lengthProperty.set( this._array.length );
+        this._fireItemRemoved( item );
       }
-    },
-
-    get length() { return this.array.length; },
-
-    forEach: function( callback ) { this.array.forEach( callback ); },
-
-    splice: function( start, deleteCount, items ) {
-      var removed = [];
-      for ( var i = 0; i < deleteCount; i++ ) {
-        removed.push( this.array[i + start] );
-      }
-      if ( items ) {
-        this.array.splice( start, deleteCount, items );
-      }
-      else {
-        this.array.splice( start, deleteCount );
-      }
-      this.trigger( [], removed );
+      return item;
     },
 
     /**
-     * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining
+     * Does the array contain the specified item?
+     * @param item
+     * @returns {boolean}
+     */
+    contains: function( item ) {
+      return this.indexOf( item ) !== -1;
+    },
+
+    /**
+     * Gets an item at the specified index.
+     * @param index
+     * @returns {*} the item, or undefined if there is no item at the specified index
+     */
+    get: function( index ) {
+      return this._array[index];
+    },
+
+    /**
+     * Gets the index of a specified item.
+     * @param item
+     * @returns {*} -1 if item is not in the array
+     */
+    indexOf: function( item ) {
+      return this._array.indexOf( item );
+    },
+
+    /**
+     * Removes all items from the array.
+     */
+    clear: function() {
+      var copy = this._array.slice( 0 );
+      for ( var i = 0; i < copy.length; i++ ) {
+        this.remove( copy[i] );
+      }
+    },
+
+    /**
+     * Applies a callback function to each item in the array
+     * @param callback function(item)
+     */
+    forEach: function( callback ) {
+      this._array.slice().forEach( callback ); // do this on a copy of the array, in case callbacks involve array modification
+    },
+
+    /**
+     * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
      * @param mapFunction
      * @returns {axon.ObservableArray}
      */
-    map: function( mapFunction ) { return new axon.ObservableArray( this.array.map( mapFunction ) ); },
+    map: function( mapFunction ) {
+      return new axon.ObservableArray( this._array.map( mapFunction ) );
+    },
 
     /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
@@ -126,8 +226,8 @@ define( function( require ) {
      * @returns {*}
      */
     foldLeft: function( value, combiner ) {
-      for ( var i = 0; i < this.array.length; i++ ) {
-        value = combiner( value, this.array[i] );
+      for ( var i = 0; i < this._array.length; i++ ) {
+        value = combiner( value, this._array[i] );
       }
       return value;
     }
