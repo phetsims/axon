@@ -59,6 +59,17 @@ define( function( require ) {
       }
     },
 
+    //Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
+    //This is different from the normal axon strategy, but may be necessary to prevent memory allocations.
+    //This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
+    //Only provides the new reference as a callback (no oldvalue)
+    //See https://github.com/phetsims/axon/issues/6
+    notifyObserversUnsafe: function( value ) {
+      for ( var i = 0; i < this._observers.length; i++ ) {
+        this._observers[i]( value );
+      }
+    },
+
     /**
      * Resets the value to the initial value.
      */
