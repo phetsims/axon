@@ -18,7 +18,6 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var axon = require( 'AXON/axon' );
 
-  //TODO: Store initial array for reset()?
   axon.ObservableArray = function ObservableArray( initialArray, options ) {
 
     this._options = _.extend( {
@@ -28,11 +27,27 @@ define( function( require ) {
     this._array = initialArray || []; // internal, do not access directly
     this._addedListeners = []; // listeners called when an item is added
     this._removedListeners = []; // listeners called when an item is removed
-    
+
     this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
+
+    //Store the initial array, if any, for resetting, see #4
+    this.initialArray = initialArray ? initialArray.slice() : [];
   };
 
   axon.ObservableArray.prototype = {
+
+    //Restore the array back to its initial state
+    //Note: if an item is in the current array and original array, it is removed and added back
+    //This may or may not change in the future, see #4
+    reset: function() {
+      for ( var i = 0; i < this._array.length; i++ ) {
+        this._fireItemRemoved( this._array[i] );
+      }
+      this._array = this.initialArray.slice();
+      for ( i = 0; i < this._array.length; i++ ) {
+        this._fireItemAdded( this._array[i] );
+      }
+    },
 
     get length() { return this._array.length; },
 
@@ -41,7 +56,7 @@ define( function( require ) {
      * @param listener function( item, observableArray )
      */
     addItemAddedListener: function( listener ) {
-      assert && assert( this._array.indexOf( listener ) === -1 ); // listener is not already registered
+      assert && assert( this._addedListeners.indexOf( listener ) === -1 ); // listener is not already registered
       this._addedListeners.push( listener );
     },
 
@@ -50,7 +65,7 @@ define( function( require ) {
      * @param listener
      */
     removeItemAddedListener: function( listener ) {
-      var index = this._array.indexOf( listener );
+      var index = this._addedListeners.indexOf( listener );
       assert && assert( index !== -1 ); // listener is registered
       this._addedListeners.splice( index, 1 );
     },
@@ -60,7 +75,7 @@ define( function( require ) {
      * @param listener function( item, observableArray )
      */
     addItemRemovedListener: function( listener ) {
-      assert && assert( this._array.indexOf( listener ) === -1 ); // listener is not already registered
+      assert && assert( this._removedListeners.indexOf( listener ) === -1 ); // listener is not already registered
       this._removedListeners.push( listener );
     },
 
@@ -69,7 +84,7 @@ define( function( require ) {
      * @param listener
      */
     removeItemRemovedListener: function( listener ) {
-      var index = this._array.indexOf( listener );
+      var index = this._removedListeners.indexOf( listener );
       assert && assert( index !== -1 ); // listener is registered
       this._removedListeners.splice( index, 1 );
     },

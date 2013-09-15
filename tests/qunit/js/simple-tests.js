@@ -47,11 +47,18 @@
 
   test( 'Test observable array', function() {
     var array = new ObservableArray( ['a', 'b', 'c'] );
-    array.addListener( function( added, removed ) {
-      deepEqual( added, ['d'], 'A single item was added to the ObservableArray' );
-      deepEqual( removed, [], 'Nothing removed' );
-    } );
+    var dChecker = function( item ) {
+      equal( item, 'd' );
+    };
+    array.addItemAddedListener( dChecker );
     array.add( 'd' );
+
+    array.removeItemAddedListener( dChecker );
+    array.reset();
+    equal( array.get( 0 ), 'a' );
+    equal( array.get( 1 ), 'b' );
+    equal( array.get( 2 ), 'c' );
+    equal( array.length, 3 );
   } );
 
   test( 'Test events', function() {
