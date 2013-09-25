@@ -86,3 +86,9 @@ person.height = 6.3; //prints 'the bmi is 4.53'
 //Call methods on the model
 person.incrementYear();//prints 'the age is 51'
 ```
+
+Third Party Dependencies
+=============
+
+This simulation uses a number of third party libraries, which are enumerated in package.json.
+The dependencies and corresponding licenses are available in: https://github.com/phetsims/sherpa
