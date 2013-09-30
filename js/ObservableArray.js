@@ -125,6 +125,15 @@ define( function( require ) {
     },
 
     /**
+     * Add items to the end of the array.
+     * This is a convenience function, and is the same as push.
+     * @param {Array} items
+     */
+    addAll: function( items ) {
+      this._array.push.apply( this._array, items );
+    },
+
+    /**
      * Removes the first occurrence of an item from the array.
      * If duplicates are allowed (see options.allowDuplicates) you may need to call this multiple
      * times to totally purge item from the array.
@@ -245,6 +254,14 @@ define( function( require ) {
         value = combiner( value, this._array[i] );
       }
       return value;
+    },
+
+    /**
+     * Return the underlying array
+     * @returns {*|Array}
+     */
+    getArray: function() {
+      return this._array;
     }
   };
 
