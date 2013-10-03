@@ -13,7 +13,6 @@ define( function( require ) {
   'use strict';
 
   // imports
-  var assert = require( 'ASSERT/assert' )( 'axon' );
   var Property = require( 'AXON/Property' );
   var inherit = require( 'PHET_CORE/inherit' );
   var axon = require( 'AXON/axon' );
