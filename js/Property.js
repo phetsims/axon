@@ -122,7 +122,7 @@ define( function( require ) {
     },
 
     /**
-     * Add an observer to the Property, without calling it back right away.  This is mostly used for internal code.
+     * Add an observer to the Property, without calling it back right away.  This is used when you need to register a listener without an immediate callback.
      * @param {Function} observer  a function with a single argument, which is the value of the property at the time the function is called.
      */
     lazyLink: function( observer ) {
