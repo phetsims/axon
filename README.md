@@ -87,7 +87,7 @@ person.height = 6.3; //prints 'the bmi is 4.53'
 person.incrementYear();//prints 'the age is 51'
 ```
 
-Third Party Dependencies
+Third-Party Dependencies
 =============
 
 This repository uses third-party libraries.
