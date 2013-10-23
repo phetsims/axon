@@ -90,5 +90,5 @@ person.incrementYear();//prints 'the age is 51'
 Third Party Dependencies
 =============
 
-This simulation uses a number of third party libraries, which are enumerated in package.json.
-The dependencies and corresponding licenses are available in: https://github.com/phetsims/sherpa
+This repository uses third-party libraries.
+Those libraries and their licenses are available in: https://github.com/phetsims/sherpa.
