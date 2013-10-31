@@ -14,7 +14,6 @@
 define( function( require ) {
   'use strict';
 
-  var log = require( 'AXON/log' );
   var axon = require( 'AXON/axon' );
 
   /**
@@ -27,9 +26,6 @@ define( function( require ) {
     this._value = value;
     this._initialValue = value;
     this._observers = [];
-
-    //Set up for recording
-    log.registerProperty( this );
   };
 
   axon.Property.prototype = {

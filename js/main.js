@@ -6,8 +6,7 @@ define( [
   'AXON/Property',
   'AXON/DerivedProperty',
   'AXON/ObservableArray',
-  'AXON/PropertySet',
-  'AXON/log'
+  'AXON/PropertySet'
 ], function( axon ) {
   'use strict';
   return axon;
