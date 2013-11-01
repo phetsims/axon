@@ -13,7 +13,6 @@
  * -Wiring up to listen to multiple properties simultaneously
  * -Add properties after the PropertySet is created?  Don't forget to add to the key list as well.
  * -Remove properties that were added using addProperty or the constructor
- * -TODO: Make it easy to mix-in with model classes?  Subclassing PropertySet already works fairly well, so this may good enough already.
  *
  * Sample usage:
  * var p = new PropertySet( {name: 'larry', age: 100, kids: ['alice', 'bob']} );
