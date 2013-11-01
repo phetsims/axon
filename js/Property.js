@@ -45,7 +45,7 @@ define( function( require ) {
      * @param {*} value
      */
     set: function( value ) {
-      if ( value !== this._value ) { //TODO: some Properties probably need deep comparisons here
+      if ( value !== this._value ) {
         var oldValue = this._value;
         this._value = value;
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
