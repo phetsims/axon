@@ -113,7 +113,7 @@ define( function( require ) {
     unlink: function( observer ) {
       var index = this._observers.indexOf( observer );
       if ( index !== -1 ) {
-        this._observers.splice( index, index + 1 );
+        this._observers.splice( index, 1 );
       }
     },
 

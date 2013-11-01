@@ -88,7 +88,7 @@ define( function( require ) {
       //Remove from the keys (only for non-derived properties)
       var index = this.keys.indexOf( name );
       if ( index !== -1 ) {
-        this.keys.splice( index, index + 1 );
+        this.keys.splice( index, 1 );
       }
 
       //Unregister the Property instance from the PropertySet
@@ -262,7 +262,7 @@ define( function( require ) {
       if ( this.eventListeners[eventName] ) {
         var index = this.eventListeners[eventName].indexOf( callback );
         if ( index !== -1 ) {
-          this.eventListeners[eventName].splice( index, index + 1 );
+          this.eventListeners[eventName].splice( index, 1 );
         }
       }
     },
