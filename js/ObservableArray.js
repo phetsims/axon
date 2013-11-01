@@ -243,12 +243,12 @@ define( function( require ) {
 
     /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
-     * TODO: Unify this API or implementation with _.reduce?
+     * Same as foldLeft.  In underscore this is called _.reduce aka _.foldl or _.inject
      * @param value
      * @param combiner
      * @returns {*}
      */
-    foldLeft: function( value, combiner ) {
+    reduce: function( value, combiner ) {
       for ( var i = 0; i < this._array.length; i++ ) {
         value = combiner( value, this._array[i] );
       }
