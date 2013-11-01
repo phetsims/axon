@@ -117,4 +117,19 @@
     person.trigger( 'say-hello' );
     equal( x, 0, 'Function added with once should be removable' );
   } );
+
+  test( 'Test unlink', function() {
+    var p = new Property( 1 );
+    var a = function( a ) {};
+    var b = function( b ) {};
+    var c = function( c ) {};
+    p.link( a );
+    p.link( b );
+    p.link( c );
+    equal( p._observers.length, 3, 'should have 3 observers now' );
+    p.unlink( b );
+    equal( p._observers[0], a, 'should have removed b' );
+    equal( p._observers[1], c, 'should have removed b' );
+    equal( p._observers.length, 2, 'should have removed an item' );
+  } )
 })();
