@@ -1,9 +1,9 @@
 // Copyright 2002-2013, University of Colorado Boulder
 
 /**
- * A DerivedProperty is computed based on other properties.
+ * A DerivedProperty is computed based on other properties.  This implementation inherits from Property to (a) simplify implementation and (b) ensure it remains consistent.
+ * Note that the setters should not be called directly, so the setters (set, reset and es5 setter) throw an error if used directly.
  *
- * TODO: Inherit from ObservableProperty?
  * @author Sam Reid
  */
 
@@ -12,6 +12,7 @@ define( function( require ) {
 
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
+  var inherit = require( 'PHET_CORE/inherit' );
 
   /**
    * @param {Array<Property>} dependencies
@@ -19,102 +20,52 @@ define( function( require ) {
    * @constructor
    */
   axon.DerivedProperty = function DerivedProperty( dependencies, derivation ) {
-
-    this.observers = [];
     this.dependencies = dependencies;
+
+    //Keep track of each dependency and only update the changed value, for speed
+    this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
+
+    var initialValue = derivation.apply( null, this.dependencyValues );
+    Property.call( this, initialValue );
 
     var derivedProperty = this;
 
-    //When any of the dependencies change, see if the value has changed
-    //If the value has changed, send out notification.
-    //TODO: Move to prototype?
-    function update() {
+    //Keep track of listeners so they can be detached
+    this.dependencyListeners = [];
 
-      //TODO: Could just re-evaluate the changed property instead of recomputing all of them, right?
-      var args = dependencies.map( function( property ) { return property.get(); } );
-      var newValue = derivation.apply( null, args );
+    for ( var i = 0; i < dependencies.length; i++ ) {
+      var dependency = dependencies[i];
+      (function( dependency, i ) {
+        var listener = function( newValue ) {
+          derivedProperty.dependencyValues[i] = newValue;
+          Property.prototype.set.call( derivedProperty, derivation.apply( null, derivedProperty.dependencyValues ) );
+        };
+        derivedProperty.dependencyListeners.push( listener );
+        dependency.lazyLink( listener );
+      })( dependency, i );
 
-      //Send out notifications if the value has truly changed
-      if ( newValue !== derivedProperty._value ) {
-        var oldValue = derivedProperty._value;
-        derivedProperty._value = newValue; //Store the value so it can be compared against next time, and for the value getter
-        derivedProperty.observers.forEach( function( observer ) { observer( newValue, oldValue ); } );
-      }
     }
-
-    this.update = update;
-
-    dependencies.forEach( function( property ) {
-      property.lazyLink( update );
-    } );
-
-    //TODO: Should we add an option to defer callbacks (like lazyLink?)
-
-    //Call the derivation function with the initial value(s)
-    update();
   };
 
-  //TODO: _value could be made private if we moved these functions to the constructor, but I don't think it is necessary
-  axon.DerivedProperty.prototype = {
-
-    /**
-     * Get the current value of this DerivedProperty.
-     * @returns {*}
-     */
-    get value() {
-      return this._value;
-    },
-
-    get: function() {
-      return this._value;
-    },
-
-    /**
-     * Add an observer to this DerivedProperty
-     * @param observer
-     */
-    link: function( observer ) {
-      this.observers.push( observer );
-      observer( this._value );
-    },
-
-    /**
-     * Link to a target object's attribute, see Property.linkAttribute
-     * @param object
-     * @param attributeName
-     * @returns {Function}
-     */
-    linkAttribute: function( object, attributeName ) {
-      var handle = function( value ) {object[attributeName] = value;};
-      this.link( handle );
-      return handle;
-    },
-
-    unlink: function( observer ) {
-      var index = this.observers.indexOf( observer );
-      if ( index !== -1 ) {
-        this.observers.splice( index, index + 1 );
-      }
-    },
-
-    /**
-     * @see Property.lazyLink
-     * @param observer
-     */
-    lazyLink: function( observer ) {
-      this.observers.push( observer );
-    },
+  return inherit( Property, axon.DerivedProperty, {
 
     /**
      * Detaches this derived property from its dependencies.
      */
     detach: function() {
-      var derivedProperty = this;
-      this.dependencies.forEach( function( property ) {
-        property.unlink( derivedProperty.update );
-      } );
-    }
-  };
+      for ( var i = 0; i < dependencies.length; i++ ) {
+        var dependency = dependencies[i];
+        dependency.unlink( this.dependencyListeners[i] );
+      }
+    },
 
-  return axon.DerivedProperty;
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    set: function( value ) { throw new Error( "Cannot set values directly to a derived property" ); },
+
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    set value( newValue ) { throw new Error( "Cannot set values directly to a derived property" ); },
+
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    reset: function() { this.set( this._initialValue ); }
+  } );
 } );
