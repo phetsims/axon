@@ -47,4 +47,6 @@ define( [
 
 //Call methods on the model
   person.incrementYear();//prints 'the age is 51'
+
+  console.log( 'also, did I mention the BMI is', person.bmiProperty.value );
 } );

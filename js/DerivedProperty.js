@@ -53,8 +53,8 @@ define( function( require ) {
      * Detaches this derived property from its dependencies.
      */
     detach: function() {
-      for ( var i = 0; i < dependencies.length; i++ ) {
-        var dependency = dependencies[i];
+      for ( var i = 0; i < this.dependencies.length; i++ ) {
+        var dependency = this.dependencies[i];
         dependency.unlink( this.dependencyListeners[i] );
       }
     },
@@ -64,6 +64,9 @@ define( function( require ) {
 
     //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
     set value( newValue ) { throw new Error( "Cannot es5-set values directly to a derived property" ); },
+
+    //Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
+    get value() {return Property.prototype.get.call( this );},
 
     //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
     reset: function() { throw new Error( "Cannot reset a derived property directly" ); }
