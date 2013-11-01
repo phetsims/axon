@@ -14,7 +14,6 @@
  * -Add properties after the PropertySet is created?  Don't forget to add to the key list as well.
  * -Remove properties that were added using addProperty or the constructor
  * -TODO: Make it easy to mix-in with model classes?  Subclassing PropertySet already works fairly well, so this may good enough already.
- * -TODO: Type checking, so that a boolean input will be automatically generated as BooleanProperty, etc.
  *
  * Sample usage:
  * var p = new PropertySet( {name: 'larry', age: 100, kids: ['alice', 'bob']} );
@@ -38,6 +37,7 @@
  * p.age.set('102');
  * p.kids.set(['alice','bob','charlie']);
  *
+ * Note: If a subclass ever substitutes a property like this: person.ageProperty = new Property(person.age), then it would break the getter/setter
  * @author Sam Reid
  */
 
@@ -99,19 +99,17 @@ define( function( require ) {
       delete this[name];
     },
 
-    //Taken from https://gist.github.com/dandean/1292057, same as in github/Atlas
+    //Add a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
     addGetterAndSetter: function( name ) {
-      var propertyName = name + 'Property';
+      var property = this[name + 'Property'];
 
-      //TODO: Store the this[propertyName] in a closure for performance?  Memory/performance tradeoff, and problems if the property instance ever changes (unlikely)
-      //TODO: If a subclass ever substitutes a property like this: person.ageProperty = new Property(person.age), then it would break the getter/setter
       Object.defineProperty( this, name, {
 
         // Getter proxies to Model#get()...
-        get: function() { return this[propertyName].get();},
+        get: function() { return property.get();},
 
         // Setter proxies to Model#set(attributes)
-        set: function( value ) { this[propertyName].set( value );},
+        set: function( value ) { property.set( value );},
 
         // Make it configurable and enumerable so it's easy to override...
         configurable: true,
@@ -120,12 +118,11 @@ define( function( require ) {
     },
 
     addGetter: function( name ) {
+      var property = this[name + 'Property'];
 
-      //TODO: Store the this[propertyName] for performance?
-      var propertyName = name + 'Property';
       Object.defineProperty( this, name, {
 
-        get: function() { return this[propertyName].get();},
+        get: function() { return property.get();},
 
         // Make it configurable and enumerable so it's easy to override...
         configurable: true,
