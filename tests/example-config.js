@@ -12,10 +12,26 @@ require.config( {
   deps: [ 'example-main' ],
 
   paths: {
-    underscore: '../../contrib/lodash.min-1.0.0-rc.3',
-    AXON: '../js',
+
+    //Load dependencies from sibling directories
+    ASSERT: '../../assert/js',
+    AXON: '../../axon/js',
+    DOT: '../../dot/js',
+    SCENERY: '../../scenery/js',
+    SCENERY_PHET: '../../scenery-phet/js',
+    KITE: '../../kite/js',
     PHET_CORE: '../../phet-core/js',
-    ASSERT: '../../../assert/js'
+    PHETCOMMON: '../../phetcommon/js',
+    SUN: '../../sun/js',
+    JOIST: '../../joist/js',
+    ENERGY_SKATE_PARK_BASICS: '.',
+
+    //Load plugins
+    image: '../../chipper/requirejs-plugins/image',
+    audio: '../../chipper/requirejs-plugins/audio',
+    string: '../../chipper/requirejs-plugins/string',
+
+    text: '../../sherpa/text'
   },
 
   shim: {
