@@ -15,8 +15,6 @@
  * -Remove properties that were added using addProperty or the constructor
  * -TODO: Make it easy to mix-in with model classes?  Subclassing PropertySet already works fairly well, so this may good enough already.
  * -TODO: Type checking, so that a boolean input will be automatically generated as BooleanProperty, etc.
- * -TODO: Should this be called Model or perhaps something even better?
- * -TODO: addProperty(DerivedProperty/Property)???  Perhaps overload it?  Let's wait on that until we need it.
  *
  * Sample usage:
  * var p = new PropertySet( {name: 'larry', age: 100, kids: ['alice', 'bob']} );
@@ -27,7 +25,6 @@
  * p.reset();
  * console.log( p );
  * p.set({name:'clark',age:102,kids:['alice','bob','charlie']});
- * p.values = {name:'clark',age:102,kids:['alice','bob','charlie']}; //TODO: should we support this es5 way of doing it?  I kind of like it better than set
  *
  * How would this be done without PropertySet (for comparison)?
  * //Normally would be created in a class but that is omitted here for brevity.
@@ -190,8 +187,7 @@ define( function( require ) {
     /**
      * Add a listener to zero or more properties in this PropertySet, useful when you have an update function
      * that relies on several properties.  Similar to DerivedProperty.
-     * TODO: Should this be named link because it won't clash with any other methods on this class?
-     *  Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
+     * Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
      * @param dependencyNames {Array<String>} the list of dependencies to use
      * @param listener {Function} the listener to call back, with signature matching the dependency names
      */
