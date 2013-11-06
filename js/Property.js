@@ -23,8 +23,8 @@ define( function( require ) {
   axon.Property = function Property( value ) {
 
     //Store the internal value and the initial value
-    this._value = value;
-    this._initialValue = value;
+    this.storeValue( value );        // typically sets this._value
+    this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
   };
 
@@ -45,24 +45,51 @@ define( function( require ) {
      * @param {*} value
      */
     set: function( value ) {
-      if ( value !== this._value ) {
-        var oldValue = this._value;
-        this._value = value;
-        var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
-        for ( var i = 0; i < observersCopy.length; i++ ) {
-          observersCopy[i]( value, oldValue );
-        }
+      if ( !this.equalsValue( value ) ) {
+        this._setAndNotifyObservers( value );
+      }
+      return this;
+    },
+    
+    // whether this property will not "change" when the passed-in value is set
+    equalsValue: function( value ) {
+      return value === this._value;
+    },
+    
+    // store the current (new) value
+    storeValue: function( value ) {
+      this._value = value;
+    },
+    
+    // store the initial value
+    storeInitialValue: function( value ) {
+      this._initialValue = value;
+    },
+    
+    _setAndNotifyObservers: function( value ) {
+      var oldValue = this.get();
+      this.storeValue( value );
+      this._notifyObservers( oldValue );
+    },
+    
+    _notifyObservers: function( oldValue ) {
+      var value = this.get();
+      // TODO: JO: avoid slice() by storing observers array correctly
+      var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
+      for ( var i = 0; i < observersCopy.length; i++ ) {
+        observersCopy[i]( value, oldValue );
       }
     },
-
+    
     //Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
     //This is different from the normal axon strategy, but may be necessary to prevent memory allocations.
     //This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
     //Only provides the new reference as a callback (no oldvalue)
     //See https://github.com/phetsims/axon/issues/6
     notifyObserversUnsafe: function() {
+      var value = this.get();
       for ( var i = 0; i < this._observers.length; i++ ) {
-        this._observers[i]( this._value );
+        this._observers[i]( value );
       }
     },
 
@@ -100,7 +127,7 @@ define( function( require ) {
     link: function( observer ) {
       if ( this._observers.indexOf( observer ) === -1 ) {
         this._observers.push( observer );
-        observer( this._value, null ); // null should be used when an object is expected but unavailable
+        observer( this.get(), null ); // null should be used when an object is expected but unavailable
       }
     },
 
