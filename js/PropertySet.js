@@ -288,6 +288,23 @@ define( function( require ) {
           }
         }
       }
+    },
+
+    /**
+     * Link to a property by name, see https://github.com/phetsims/axon/issues/16
+     * @param {string} propertyName the name of the property to link to
+     * @param {function }observer the callback to link to the property
+     */
+    link: function( propertyName, observer ) {
+      this[propertyName + 'Property'].link( observer );
+    },
+
+    /**
+     * Get a property by name, see https://github.com/phetsims/axon/issues/16
+     * @param {string} propertyName the name of the property to get
+     */
+    property: function( propertyName ) {
+      return this[propertyName + 'Property'];
     }
   };
 
