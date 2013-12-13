@@ -305,6 +305,16 @@ define( function( require ) {
      */
     property: function( propertyName ) {
       return this[propertyName + 'Property'];
+    },
+
+    /**
+     * Link an attribute to a property by name
+     * @param {string} propertyName the property to link to
+     * @param {object} object the object for which the attribute will be set
+     * @param {string} attributeName the name of the attribute to set on the object
+     */
+    linkAttribute: function( propertyName, object, attributeName ) {
+      this.property( propertyName ).linkAttribute( object, attributeName );
     }
   };
 
