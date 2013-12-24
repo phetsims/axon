@@ -45,7 +45,9 @@ define( function( require ) {
 
   var Property = require( 'AXON/Property' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
+  var Events = require( 'AXON/Events' );
   var axon = require( 'AXON/axon' );
+  var inherit = require( 'PHET_CORE/inherit' );
 
   /**
    * @class PropertySet
@@ -54,6 +56,8 @@ define( function( require ) {
    */
   axon.PropertySet = function PropertySet( values ) {
     var propertySet = this;
+
+    Events.call( this );
 
     //Keep track of the keys so we know which to reset
     this.keys = [];
@@ -65,7 +69,7 @@ define( function( require ) {
     this.eventListeners = {};
   };
 
-  axon.PropertySet.prototype = {
+  return inherit( Events, axon.PropertySet, {
 
     /**
      * Adds a new property to this PropertySet
@@ -129,7 +133,7 @@ define( function( require ) {
       } );
     },
 
-    //Resets all of the properties associated with this PropertySet 
+    //Resets all of the properties associated with this PropertySet
     reset: function() {
       var propertySet = this;
       this.keys.forEach( function( key ) {
@@ -213,83 +217,6 @@ define( function( require ) {
       return text + '}';
     },
 
-    /////////////////////////////////////////////
-    // Below this point are the functions for event handling, basically orthogonal to property value change notifications
-
-    /**
-     * Register a listener when the specified eventName is triggered.
-     * @param eventName {String} the name for the event channel
-     * @param callback
-     */
-    on: function( eventName, callback ) {
-      this.eventListeners[eventName] = this.eventListeners[eventName] || [];
-      this.eventListeners[eventName].push( callback );
-    },
-
-    /**
-     * Adds a function which will only be called back once, after which it is removed as a listener.
-     * If you need to remove a function added with 'once' you will have to remove its handle, which is returned by the function.
-     * @param eventName {String} the name for the event channel
-     * @param callback function to be called back once (if at all)
-     */
-    once: function( eventName, callback ) {
-      var propertySet = this;
-      var wrappedCallback = function() {
-        propertySet.off( eventName, wrappedCallback );
-
-        //If no arguments being passed through, call back without processing arguments, for possible speed
-        if ( arguments.length === 0 ) {
-          callback();
-        }
-        else {
-
-          //General case of passing events through to the wrapped callback function
-          callback.apply( this, Array.prototype.slice.call( arguments, 0 ) );
-        }
-      };
-      this.on( eventName, wrappedCallback );
-
-      //Return the handle in case it needs to be removed.
-      return wrappedCallback;
-    },
-
-    /**
-     * Remove a listener from the specified event type.  Does nothing if the listener did not exist
-     * @param eventName {String} the name for the event channel
-     * @param callback
-     */
-    off: function( eventName, callback ) {
-      if ( this.eventListeners[eventName] ) {
-        var index = this.eventListeners[eventName].indexOf( callback );
-        if ( index !== -1 ) {
-          this.eventListeners[eventName].splice( index, 1 );
-        }
-      }
-    },
-
-    /**
-     * Trigger an event with the specified name and arguments.
-     * @param eventName {String} the name for the event channel
-     * @param args... optional arguments to pass to the listeners
-     */
-    trigger: function( eventName ) {
-      if ( this.eventListeners[eventName] ) {
-        var listenersCopy = this.eventListeners[eventName].slice(); // make a copy, in case callback removes listener
-        for ( var i = 0; i < listenersCopy.length; i++ ) {
-          var listener = listenersCopy[i];
-
-          //Simple case of no arguments, call it separately for improved performance in case it is faster (untested)
-          if ( arguments.length === 1 ) {
-            listener( arguments );
-          }
-          else {
-            var suffix = Array.prototype.slice.call( arguments, 1 );
-            listener.apply( this, suffix );
-          }
-        }
-      }
-    },
-
     /**
      * Link to a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to link to
@@ -316,7 +243,5 @@ define( function( require ) {
     linkAttribute: function( propertyName, object, attributeName ) {
       this.property( propertyName ).linkAttribute( object, attributeName );
     }
-  };
-
-  return axon.PropertySet;
+  } );
 } );

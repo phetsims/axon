@@ -2,10 +2,8 @@
 
 /**
  * Lightweight event & listener abstraction.
- * //TODO: factor out or somehow reconcile with PropertySet
  * @author Sam Reid
  */
-
 define( function( require ) {
   'use strict';
 
