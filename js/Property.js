@@ -207,7 +207,7 @@ define( function( require ) {
      * @returns {DerivedProperty<boolean>}
      */
     and: function( otherProperty ) {
-      return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue === otherValue; } );
+      return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue && otherValue; } );
     },
 
     /**
