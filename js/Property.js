@@ -211,6 +211,14 @@ define( function( require ) {
     },
 
     /**
+     * Not property, which does not propagate changes to dependents.
+     * @returns {DerivedProperty}
+     */
+    derivedNot: function() {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return !thisValue; } );
+    },
+
+    /**
      * Two way communication for not, so you can set the value and have it come back to the parent
      * Note that noting about the following code is specific to booleans, although this should probably be used mostly for booleans.
      * To unlink both listeners attached unlink a property created with not(), use detach()
