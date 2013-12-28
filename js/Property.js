@@ -50,28 +50,28 @@ define( function( require ) {
       }
       return this;
     },
-    
+
     // whether this property will not "change" when the passed-in value is set
     equalsValue: function( value ) {
       return value === this._value;
     },
-    
+
     // store the current (new) value
     storeValue: function( value ) {
       this._value = value;
     },
-    
+
     // store the initial value
     storeInitialValue: function( value ) {
       this._initialValue = value;
     },
-    
+
     _setAndNotifyObservers: function( value ) {
       var oldValue = this.get();
       this.storeValue( value );
       this._notifyObservers( oldValue );
     },
-    
+
     _notifyObservers: function( oldValue ) {
       var value = this.get();
       // TODO: JO: avoid slice() by storing observers array correctly
@@ -80,7 +80,7 @@ define( function( require ) {
         observersCopy[i]( value, oldValue );
       }
     },
-    
+
     //Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
     //This is different from the normal axon strategy, but may be necessary to prevent memory allocations.
     //This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
@@ -199,6 +199,15 @@ define( function( require ) {
      */
     valueEquals: function( value ) {
       return new axon.DerivedProperty( [this], function( propertyValue ) { return propertyValue === value; } );
+    },
+
+    /**
+     * Returns a new boolean DerivedProperty which is true/false based on whether this value matches the other property based on ===.
+     * @param otherProperty
+     * @returns {DerivedProperty<boolean>}
+     */
+    and: function( otherProperty ) {
+      return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue === otherValue; } );
     },
 
     /**
