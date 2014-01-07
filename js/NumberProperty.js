@@ -10,7 +10,6 @@ define( function( require ) {
   'use strict';
 
   var axon = require( 'AXON/axon' );
-  var Property = require( 'AXON/Property' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
   var inherit = require( 'PHET_CORE/inherit' );
 
