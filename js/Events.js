@@ -95,6 +95,18 @@ define( function( require ) {
           }
         }
       }
+    },
+
+    /**
+     * Returns a new Events API that only includes the specified events. This makes it possible
+     * to pass an event listener interface A* to a dependent class B without passing the entire class A, to limit
+     * the ability of B to 'mess with' inappropriate parts of A.  This also keeps the same event listener interface so that you can pass A or A* without changing B.
+     * @param {string | Array} eventNames a list of events (or a single event) that should be visible in the reduced Events.
+     */
+    reduced: function( eventNames ) {
+
+      //TODO: implement me
+      return this;
     }
 
   };
