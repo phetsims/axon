@@ -186,7 +186,7 @@ define( function( require ) {
 
     /**
      * Get a JS object literal with all the current values of the properties in this property set, say for serialization.  See `set`
-     * TODO: this works well for numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
+     * TODO: this works well to serialize numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
      * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
      */
     get: function() {
