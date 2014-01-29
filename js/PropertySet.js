@@ -185,6 +185,20 @@ define( function( require ) {
     },
 
     /**
+     * Get a JS object literal with all the current values of the properties in this property set, say for serialization.  See `set`
+     * TODO: this works well for numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
+     * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
+     */
+    get: function() {
+      var state = {};
+      for ( var i = 0; i < this.keys.length; i++ ) {
+        var key = this.keys[i];
+        state[key] = this.property( key ).value;
+      }
+      return state;
+    },
+
+    /**
      * Add a listener to zero or more properties in this PropertySet, useful when you have an update function
      * that relies on several properties.  Similar to DerivedProperty.
      * Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
