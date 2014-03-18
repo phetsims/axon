@@ -79,6 +79,6 @@ define( function( require ) {
       //This should be used only when using DerivedProperty to create side effects (and not to assign a property value)
       //TODO: It is awkward to return a derived property for the "side effects" case, perhaps we should have a more general multilink function?
       //TODO: What about just renaming this method 'multilink'?
-      create: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }}
+      multilink: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }}
   );
 } );
