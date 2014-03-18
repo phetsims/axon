@@ -1,6 +1,7 @@
 (function() {
   module( 'Axon' );
   var Property = axon.Property;
+  var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;
   var log = axon.log;
   var PropertySet = axon.PropertySet;
@@ -131,5 +132,14 @@
     equal( p._observers[0], a, 'should have removed b' );
     equal( p._observers[1], c, 'should have removed b' );
     equal( p._observers.length, 2, 'should have removed an item' );
-  } )
+  } );
+
+  test( 'Test stale values in DerivedProperty', function() {
+    var a = new Property( 1 );
+    var b = new Property( 2 );
+    var c = new DerivedProperty( [a, b], function( a, b ) {return a + b;} );
+    a.value = 7;
+    console.log( c.value );
+    equal( c.value, 9 );
+  } );
 })();
