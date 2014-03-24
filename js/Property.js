@@ -180,7 +180,7 @@ define( function( require ) {
     },
 
     /**
-     * Links an object's named attribute to this property.  Returns a handle so it can be removed.
+     * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
      * Example: modelVisibleProperty.linkAttribute(view,'visible');
      *
      * @param object
