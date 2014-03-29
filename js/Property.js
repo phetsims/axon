@@ -249,6 +249,12 @@ define( function( require ) {
       var listener = function( value ) { console.log( name, value ); };
       this.link( listener );
       return listener;
+    },
+
+    //Returns a new Property that maps its values using the specified lookup table.
+    //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
+    map: function( values ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue]} );
     }
   };
 
