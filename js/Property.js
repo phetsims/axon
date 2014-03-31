@@ -220,6 +220,16 @@ define( function( require ) {
     },
 
     /**
+     * Multiply this property's value by a constant scalar number, and return the derived property.
+     *
+     * @param scalar
+     * @returns {axon.DerivedProperty}
+     */
+    times: function( scalar ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue * scalar; } );
+    },
+
+    /**
      * Not property, which does not propagate changes to dependents.
      * @returns {DerivedProperty}
      */
