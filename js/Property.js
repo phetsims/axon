@@ -254,7 +254,7 @@ define( function( require ) {
     //Returns a new Property that maps its values using the specified lookup table.
     //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
     map: function( values ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue]} );
+      return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue];} );
     }
   };
 
