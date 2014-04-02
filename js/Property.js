@@ -274,6 +274,21 @@ define( function( require ) {
     //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
     map: function( values ) {
       return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue];} );
+    },
+
+    /**
+     * Returns a function that can be used to toggle the property (using !)
+     * @returns {f}
+     */
+    get toggleFunction() {
+      return this.toggle.bind( this );
+    },
+
+    /**
+     * Modifies the value of this Property with the ! operator.  Works for booleans and non-booleans.
+     */
+    toggle: function() {
+      this.value = !this.value;
     }
   };
 
