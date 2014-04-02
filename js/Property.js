@@ -66,6 +66,10 @@ define( function( require ) {
       this._initialValue = value;
     },
 
+    get initialValue() {
+      return this._initialValue;
+    },
+
     _setAndNotifyObservers: function( value ) {
       var oldValue = this.get();
       this.storeValue( value );
