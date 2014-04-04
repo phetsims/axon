@@ -293,6 +293,23 @@ define( function( require ) {
      */
     toggle: function() {
       this.value = !this.value;
+    },
+
+    /**
+     * Adds a listener that is fired when the property takes the specified value.  If the property has the value already, the listener is called back
+     * immediately.  A reference to the listener is returned so that it can be removed.
+     *
+     * @param value the value to match
+     * @param the listener that is called when this Property
+     */
+    onValue: function( value, listener ) {
+      var observer = function( v ) {
+        if ( v === value ) {
+          listener();
+        }
+      };
+      this.link( observer );
+      return observer;
     }
   };
 
