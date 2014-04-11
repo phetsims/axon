@@ -276,8 +276,14 @@ define( function( require ) {
 
     //Returns a new Property that maps its values using the specified lookup table.
     //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
-    map: function( values ) {
+    mapValues: function( values ) {
       return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue];} );
+    },
+
+    //Returns a new Property that maps its values using the specified function
+    //See https://github.com/phetsims/axon/issues/25
+    map: function( f ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) {return f( thisValue );} );
     },
 
     /**
