@@ -11,4 +11,6 @@ function runAxonTests( pathToTestBase ) {
   }
 
   loadTestFile( 'js/simple-tests.js' );
+  loadTestFile( 'js/events.js' );
+  loadTestFile( 'js/linting.js' );
 }

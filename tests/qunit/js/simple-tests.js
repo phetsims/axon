@@ -1,5 +1,5 @@
 (function() {
-  module( 'Axon' );
+  module( 'Axon: Simple Tests' );
   var Property = axon.Property;
   var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;

@@ -6,10 +6,25 @@
 
   <title>Unit tests for Axon</title>
   <link rel="stylesheet" href="../../../sherpa/qunit-1.12.0.css">
+  
+  <!-- load JSHint settings first, before window.module can't be overwritten -->
+  <script type="text/javascript" src="../../../phet-core/tests/qunit/beforeJSHintOptions.js"></script>
+  <script type="text/javascript" src="../../../chipper/grunt/jshint-options.js"></script>
+  <script type="text/javascript" src="../../../phet-core/tests/qunit/afterJSHintOptions.js"></script>
 
-  <script src="../../../sherpa/jquery-2.1.0.js"></script>
-  <script src="../../../sherpa/lodash-2.4.1.js"></script>
+  <!-- CDN reference for now, so we don't pull in unneeded deps -->
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <script src="../../../sherpa/lodash-2.4.1.min.js"></script>
   <script src="../../../sherpa/has.js"></script>
+  <script type="text/javascript">
+    has.add( 'assert.basic', function( global, document, anElement ) { return true; } );
+    has.add( 'assert.slow', function( global, document, anElement ) { return true; } );
+  </script>
+  <script type="text/javascript" src="../../../sherpa/jshint-2.5.0.js"></script>
+  <script type="text/javascript" src="../../../sherpa/qhint.js"></script>
+  
+  <!-- Dependency for the linting tests -->
+  <script type="text/javascript" src="../../../phet-core/tests/qunit/unitTestLintFilesMatching.js"></script>
 
   <!-- <script src="../../dist/standalone/dot.min.js"></script> -->
   <script data-main="../../js/config.js" src="../../../sherpa/require-2.1.10.js"></script>
@@ -26,9 +41,9 @@
 <div id="qunit-fixture"></div>
 <script src="../../../sherpa/qunit-1.12.0.js"></script>
 <script>
-  QUnit.moduleDone( function( details ) {
-    collapseTests();
-  } );
+  // QUnit.moduleDone( function( details ) {
+  //   collapseTests();
+  // } );
 </script>
 <script>
 
