@@ -34,6 +34,7 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
+      phetAllocation && phetAllocation( 'Array' );
       this.eventListeners[eventName] = this.eventListeners[eventName] || [];
       this.eventListeners[eventName].push( callback );
     },
@@ -51,6 +52,7 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
+      phetAllocation && phetAllocation( 'Array' );
       this.staticEventListeners[eventName] = this.staticEventListeners[eventName] || [];
       this.staticEventListeners[eventName].push( callback );
     },
@@ -139,6 +141,7 @@ define( function( require ) {
       var suffix;
       var hasNoArguments = arguments.length === 1;
       if ( !hasNoArguments && ( count > 0 || staticCount > 0 ) ) {
+        phetAllocation && phetAllocation( 'Array' );
         suffix = Array.prototype.slice.call( arguments, 1 );
       }
 
