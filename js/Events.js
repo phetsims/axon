@@ -213,6 +213,74 @@ define( function( require ) {
 
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
+    },
+    
+    /**
+     * Trigger an event with the specified name, with no arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
+     * @param eventName {String} the name for the event channel
+     */
+    trigger0: function( eventName ) {
+      assert && assert( typeof eventName === 'string', 'eventName should be a string' );
+      
+      var listeners = this._eventListeners[eventName];
+      var staticListeners = this._staticEventListeners[eventName];
+
+      // listener quantities for normal and static
+      var count = listeners ? listeners.length : 0;
+      var staticCount = staticListeners ? staticListeners.length : 0;
+
+      // make a copy of non-static listeners, in case callback removes listener
+      if ( count > 0 ) {
+        listeners = listeners.slice();
+      }
+
+      var i;
+
+      for ( i = 0; i < count; i++ ) {
+        listeners[i]();
+
+        assert && assert( !staticListeners || staticListeners.length === staticCount, 'Concurrent modifications of static listeners from within non-static listeners are forbidden' );
+      }
+
+      for ( i = 0; i < staticCount; i++ ) {
+        staticListeners[i]();
+
+        assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
+      }
+    },
+    
+    /**
+     * Trigger an event with the specified name, with a single arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
+     * @param eventName {String} the name for the event channel
+     */
+    trigger1: function( eventName, param1 ) {
+      assert && assert( typeof eventName === 'string', 'eventName should be a string' );
+      
+      var listeners = this._eventListeners[eventName];
+      var staticListeners = this._staticEventListeners[eventName];
+
+      // listener quantities for normal and static
+      var count = listeners ? listeners.length : 0;
+      var staticCount = staticListeners ? staticListeners.length : 0;
+
+      // make a copy of non-static listeners, in case callback removes listener
+      if ( count > 0 ) {
+        listeners = listeners.slice();
+      }
+
+      var i;
+
+      for ( i = 0; i < count; i++ ) {
+        listeners[i]( param1 );
+
+        assert && assert( !staticListeners || staticListeners.length === staticCount, 'Concurrent modifications of static listeners from within non-static listeners are forbidden' );
+      }
+
+      for ( i = 0; i < staticCount; i++ ) {
+        staticListeners[i]( param1 );
+
+        assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
+      }
     }
   };
 
