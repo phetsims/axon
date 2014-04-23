@@ -139,7 +139,6 @@
     var b = new Property( 2 );
     var c = new DerivedProperty( [a, b], function( a, b ) {return a + b;} );
     a.value = 7;
-    console.log( c.value );
     equal( c.value, 9 );
   } );
 })();
