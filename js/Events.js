@@ -91,7 +91,7 @@ define( function( require ) {
     /**
      * Remove a listener added with on() from the specified event type.  Does nothing if the listener did not exist.
      * @param eventName {String} the name for the event channel
-     * @param callback
+     * @param callback {Function}
      */
     off: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -108,7 +108,7 @@ define( function( require ) {
     /**
      * Remove a listener added with onStatic() from the specified event type.  Does nothing if the listener did not exist.
      * @param eventName {String} the name for the event channel
-     * @param callback
+     * @param callback {Function}
      */
     offStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -120,6 +120,34 @@ define( function( require ) {
           this._staticEventListeners[eventName].splice( index, 1 );
         }
       }
+    },
+    
+    /**
+     * Checks for the existence of a specific listener, attached to a specific event name. Doesn't check for static listeners
+     * @param eventName {String} the name for the event channel
+     * @param callback {Function}
+     * @returns {Boolean}
+     */
+    hasListener: function( eventName, callback ) {
+      assert && assert( typeof eventName === 'string', 'eventName should be a string' );
+      assert && assert( typeof callback === 'function', 'callback should be a function' );
+      
+      var array = this._eventListeners[eventName];
+      return !!array && array.indexOf( callback ) >= 0;
+    },
+    
+    /**
+     * Checks for the existence of a specific static listener, attached to a specific event name. Doesn't check for non-static listeners
+     * @param eventName {String} the name for the event channel
+     * @param callback {Function}
+     * @returns {Boolean}
+     */
+    hasStaticListener: function( eventName, callback ) {
+      assert && assert( typeof eventName === 'string', 'eventName should be a string' );
+      assert && assert( typeof callback === 'function', 'callback should be a function' );
+      
+      var array = this._staticEventListeners[eventName];
+      return !!array && array.indexOf( callback ) >= 0;
     },
     
     /**
