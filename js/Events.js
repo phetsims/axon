@@ -15,8 +15,8 @@ define( function( require ) {
    * @param values an object hash with the initial values for the properties
    */
   axon.Events = function Events() {
-    this.eventListeners = {};
-    this.staticEventListeners = {};
+    this._eventListeners = {}; // @private
+    this._staticEventListeners = {}; // @private
   };
 
   axon.Events.prototype = {
@@ -35,8 +35,8 @@ define( function( require ) {
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
       phetAllocation && phetAllocation( 'Array' );
-      this.eventListeners[eventName] = this.eventListeners[eventName] || [];
-      this.eventListeners[eventName].push( callback );
+      this._eventListeners[eventName] = this._eventListeners[eventName] || [];
+      this._eventListeners[eventName].push( callback );
     },
 
     /**
@@ -53,8 +53,8 @@ define( function( require ) {
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
       phetAllocation && phetAllocation( 'Array' );
-      this.staticEventListeners[eventName] = this.staticEventListeners[eventName] || [];
-      this.staticEventListeners[eventName].push( callback );
+      this._staticEventListeners[eventName] = this._staticEventListeners[eventName] || [];
+      this._staticEventListeners[eventName].push( callback );
     },
 
     /**
@@ -97,10 +97,10 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
-      if ( this.eventListeners[eventName] ) {
-        var index = this.eventListeners[eventName].indexOf( callback );
+      if ( this._eventListeners[eventName] ) {
+        var index = this._eventListeners[eventName].indexOf( callback );
         if ( index !== -1 ) {
-          this.eventListeners[eventName].splice( index, 1 );
+          this._eventListeners[eventName].splice( index, 1 );
         }
       }
     },
@@ -114,10 +114,10 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
-      if ( this.staticEventListeners[eventName] ) {
-        var index = this.staticEventListeners[eventName].indexOf( callback );
+      if ( this._staticEventListeners[eventName] ) {
+        var index = this._staticEventListeners[eventName].indexOf( callback );
         if ( index !== -1 ) {
-          this.staticEventListeners[eventName].splice( index, 1 );
+          this._staticEventListeners[eventName].splice( index, 1 );
         }
       }
     },
@@ -130,8 +130,8 @@ define( function( require ) {
     trigger: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       
-      var listeners = this.eventListeners[eventName];
-      var staticListeners = this.staticEventListeners[eventName];
+      var listeners = this._eventListeners[eventName];
+      var staticListeners = this._staticEventListeners[eventName];
 
       // listener quantities for normal and static
       var count = listeners ? listeners.length : 0;
