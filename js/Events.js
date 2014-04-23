@@ -97,12 +97,15 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
+      var index = -1;
       if ( this._eventListeners[eventName] ) {
-        var index = this._eventListeners[eventName].indexOf( callback );
+        index = this._eventListeners[eventName].indexOf( callback );
         if ( index !== -1 ) {
           this._eventListeners[eventName].splice( index, 1 );
         }
       }
+      
+      return index; // so we can tell if we actually removed a listener
     },
 
     /**
@@ -114,12 +117,15 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
+      var index = -1;
       if ( this._staticEventListeners[eventName] ) {
-        var index = this._staticEventListeners[eventName].indexOf( callback );
+        index = this._staticEventListeners[eventName].indexOf( callback );
         if ( index !== -1 ) {
           this._staticEventListeners[eventName].splice( index, 1 );
         }
       }
+      
+      return index; // so we can tell if we actually removed a listener
     },
     
     /**
