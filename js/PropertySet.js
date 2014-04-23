@@ -65,8 +65,6 @@ define( function( require ) {
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[value] );
     } );
-
-    this.eventListeners = {};
   };
 
   return inherit( Events, axon.PropertySet, {
