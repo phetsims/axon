@@ -60,7 +60,6 @@ define( function( require ) {
     /**
      * Adds a function which will only be called back once, after which it is removed as a listener.
      * If you need to remove a function added with 'once' you will have to remove its handle, which is returned by the function.
-     * NOTE: Listeners added with once() cannot be removed with off()!
      * @param eventName {String} the name for the event channel
      * @param callback function to be called back once (if at all)
      */
