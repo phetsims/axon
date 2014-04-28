@@ -34,7 +34,6 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
-      phetAllocation && phetAllocation( 'Array' );
       this._eventListeners[eventName] = this._eventListeners[eventName] || [];
       this._eventListeners[eventName].push( callback );
     },
@@ -52,7 +51,6 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
       
-      phetAllocation && phetAllocation( 'Array' );
       this._staticEventListeners[eventName] = this._staticEventListeners[eventName] || [];
       this._staticEventListeners[eventName].push( callback );
     },
