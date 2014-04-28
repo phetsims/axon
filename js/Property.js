@@ -9,6 +9,7 @@
  * and the functions need access to those private fields, there doesn't seem to be
  * any choice but to define the functions in the constructor.
  *
+ * @author Sam Reid
  * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
