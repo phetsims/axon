@@ -91,7 +91,7 @@ define( function( require ) {
     //This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
     //Only provides the new reference as a callback (no oldvalue)
     //See https://github.com/phetsims/axon/issues/6
-    notifyObserversUnsafe: function() {
+    notifyObserversStatic: function() {
       var value = this.get();
       for ( var i = 0; i < this._observers.length; i++ ) {
         this._observers[i]( value );
