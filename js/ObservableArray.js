@@ -16,20 +16,20 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
 
-  axon.ObservableArray = function ObservableArray( initialArray, options ) {
+  axon.ObservableArray = function ObservableArray( array, options ) {
 
     this._options = _.extend( {
       allowDuplicates: false // are duplicate items allowed in the array?
     }, options );
 
-    this._array = initialArray || []; // internal, do not access directly
+    this._array = array || []; // internal, do not access directly
     this._addedListeners = []; // listeners called when an item is added
     this._removedListeners = []; // listeners called when an item is removed
 
     this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
 
     //Store the initial array, if any, for resetting, see #4
-    this.initialArray = initialArray ? initialArray.slice() : [];
+    this.initialArray = array ? array.slice() : [];
   };
 
   axon.ObservableArray.prototype = {
