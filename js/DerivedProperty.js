@@ -77,8 +77,6 @@ define( function( require ) {
     {
       //Create a DerivedProperty using a static create method to avoid the linting error: W031: Do not use 'new' for side effects.
       //This should be used only when using DerivedProperty to create side effects (and not to assign a property value)
-      //TODO: It is awkward to return a derived property for the "side effects" case, perhaps we should have a more general multilink function?
-      //TODO: What about just renaming this method 'multilink'?
       multilink: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }}
   );
 } );
