@@ -320,5 +320,19 @@ define( function( require ) {
     }
   };
 
+  /**
+   * Registers an observer with multiple properties, then notifies the observer immediately.
+   * @param {Array<Property>} properties
+   * @param {function} observer no params, returns nothing
+   * @static
+   */
+  axon.Property.multilink = function( properties, observer ) {
+    var numProperties = properties.length;
+    for ( var i = 0; i < numProperties; i++ ) {
+      properties[i].lazyLink( observer );
+    }
+    observer();
+  };
+
   return axon.Property;
 } );
