@@ -327,11 +327,15 @@ define( function( require ) {
    * @static
    */
   axon.Property.multilink = function( properties, observer ) {
+    axon.Property.lazyMultilink( properties, observer );
+    observer();
+  };
+
+  axon.Property.lazyMultilink = function( properties, observer ) {
     var numProperties = properties.length;
     for ( var i = 0; i < numProperties; i++ ) {
       properties[i].lazyLink( observer );
     }
-    observer();
   };
 
   return axon.Property;
