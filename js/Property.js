@@ -177,8 +177,8 @@ define( function( require ) {
     once: function( observer ) {
       var property = this;
       var wrapper = function( newValue, oldValue ) {
-        observer( newValue, oldValue );
         property.unlink( wrapper );
+        observer( newValue, oldValue );
       };
       this.lazyLink( wrapper );
       return wrapper;
