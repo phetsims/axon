@@ -148,10 +148,10 @@
     var callbacks = 0;
     Property.multilink( [a, b], function( a, b ) {
       callbacks++;
-      equal( a, 1 );
-      equal( b, 2 );
+      equal( a, 1, 'first value should pass through' );
+      equal( b, 2, 'second value should pass through' );
     } );
-    equal( callbacks, 1 );
+    equal( callbacks, 1, 'should have called back to a multilink' );
   } );
 
   test( 'Test Property.lazyMultilink', function() {
@@ -163,6 +163,6 @@
       equal( a, 1 );
       equal( b, 2 );
     } );
-    equal( callbacks, 0 );
+    equal( callbacks, 0, 'shouldnt call back to a lazy multilink' );
   } );
 })();
