@@ -16,6 +16,7 @@ define( function( require ) {
   'use strict';
 
   var axon = require( 'AXON/axon' );
+  require( 'AXON/Multilink' );
 
   /**
    * @param {*} value
