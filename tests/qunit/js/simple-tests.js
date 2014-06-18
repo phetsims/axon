@@ -153,4 +153,16 @@
     } );
     equal( callbacks, 1 );
   } );
+
+  test( 'Test Property.lazyMultilink', function() {
+    var a = new Property( 1 );
+    var b = new Property( 2 );
+    var callbacks = 0;
+    Property.lazyMultilink( [a, b], function( a, b ) {
+      callbacks++;
+      equal( a, 1 );
+      equal( b, 2 );
+    } );
+    equal( callbacks, 0 );
+  } );
 })();
