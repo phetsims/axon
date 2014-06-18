@@ -141,4 +141,13 @@
     a.value = 7;
     equal( c.value, 9 );
   } );
+
+  test( 'Test Property.multilink', function() {
+    var a = new Property( 1 );
+    var b = new Property( 2 );
+    Property.multilink( [a, b], function( a, b ) {
+      equal( a, 1 );
+      equal( b, 2 );
+    } );
+  } );
 })();
