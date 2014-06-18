@@ -145,9 +145,12 @@
   test( 'Test Property.multilink', function() {
     var a = new Property( 1 );
     var b = new Property( 2 );
+    var callbacks = 0;
     Property.multilink( [a, b], function( a, b ) {
+      callbacks++;
       equal( a, 1 );
       equal( b, 2 );
     } );
+    equal( callbacks, 1 );
   } );
 })();
