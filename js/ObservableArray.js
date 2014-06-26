@@ -147,6 +147,18 @@ define( function( require ) {
     },
 
     /**
+     * Removes the first occurrence of each item in the specified array.
+     * @param list {Array} a list of items to remove
+     * @see ObservableArray.remove
+     */
+    removeAll: function( list ) {
+      for ( var i = 0; i < list.length; i++ ) {
+        var item = list[i];
+        this.remove( item );
+      }
+    },
+
+    /**
      * Pushes an item onto the end of the array.
      * @param item
      * @throws Error if duplicates are not allowed (see options.allowDuplicates) and item is already in the array
