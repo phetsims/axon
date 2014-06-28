@@ -12,7 +12,6 @@ define( function( require ) {
   /**
    * @class Events
    * @constructor
-   * @param values an object hash with the initial values for the properties
    */
   axon.Events = function Events() {
     this._eventListeners = {}; // @private
@@ -33,7 +32,7 @@ define( function( require ) {
     on: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       this._eventListeners[eventName] = this._eventListeners[eventName] || [];
       this._eventListeners[eventName].push( callback );
     },
@@ -50,7 +49,7 @@ define( function( require ) {
     onStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       this._staticEventListeners[eventName] = this._staticEventListeners[eventName] || [];
       this._staticEventListeners[eventName].push( callback );
     },
@@ -64,7 +63,7 @@ define( function( require ) {
     once: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       var events = this;
       var wrappedCallback = function() {
         events.off( eventName, wrappedCallback );
@@ -93,7 +92,7 @@ define( function( require ) {
     off: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       var index = -1;
       if ( this._eventListeners[eventName] ) {
         index = this._eventListeners[eventName].indexOf( callback );
@@ -101,7 +100,7 @@ define( function( require ) {
           this._eventListeners[eventName].splice( index, 1 );
         }
       }
-      
+
       return index; // so we can tell if we actually removed a listener
     },
 
@@ -113,7 +112,7 @@ define( function( require ) {
     offStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       var index = -1;
       if ( this._staticEventListeners[eventName] ) {
         index = this._staticEventListeners[eventName].indexOf( callback );
@@ -121,10 +120,10 @@ define( function( require ) {
           this._staticEventListeners[eventName].splice( index, 1 );
         }
       }
-      
+
       return index; // so we can tell if we actually removed a listener
     },
-    
+
     /**
      * Checks for the existence of a specific listener, attached to a specific event name. Doesn't check for static listeners
      * @param eventName {String} the name for the event channel
@@ -134,11 +133,11 @@ define( function( require ) {
     hasListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       var array = this._eventListeners[eventName];
       return !!array && array.indexOf( callback ) >= 0;
     },
-    
+
     /**
      * Checks for the existence of a specific static listener, attached to a specific event name. Doesn't check for non-static listeners
      * @param eventName {String} the name for the event channel
@@ -148,11 +147,11 @@ define( function( require ) {
     hasStaticListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
-      
+
       var array = this._staticEventListeners[eventName];
       return !!array && array.indexOf( callback ) >= 0;
     },
-    
+
     /**
      * Trigger an event with the specified name and arguments.
      * @param eventName {String} the name for the event channel
@@ -160,7 +159,7 @@ define( function( require ) {
      */
     trigger: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
-      
+
       var listeners = this._eventListeners[eventName];
       var staticListeners = this._staticEventListeners[eventName];
 
@@ -211,14 +210,14 @@ define( function( require ) {
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
     },
-    
+
     /**
      * Trigger an event with the specified name, with no arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
      * @param eventName {String} the name for the event channel
      */
     trigger0: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
-      
+
       var listeners = this._eventListeners[eventName];
       var staticListeners = this._staticEventListeners[eventName];
 
@@ -245,14 +244,14 @@ define( function( require ) {
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
     },
-    
+
     /**
      * Trigger an event with the specified name, with a single argument. Should get optimized in browsers better than trigger, so we have code duplication for now.
      * @param eventName {String} the name for the event channel
      */
     trigger1: function( eventName, param1 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
-      
+
       var listeners = this._eventListeners[eventName];
       var staticListeners = this._staticEventListeners[eventName];
 
@@ -279,14 +278,14 @@ define( function( require ) {
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
     },
-    
+
     /**
      * Trigger an event with the specified name, with a two arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
      * @param eventName {String} the name for the event channel
      */
     trigger2: function( eventName, param1, param2 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
-      
+
       var listeners = this._eventListeners[eventName];
       var staticListeners = this._staticEventListeners[eventName];
 
