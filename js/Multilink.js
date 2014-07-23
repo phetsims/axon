@@ -3,7 +3,7 @@
 /**
  * A Multilink is an instance that can be used to link to multiple properties.  It is very similar to a DerivedProperty, but has no value and does not conform to the Property API,
  * because it is intended for use with callbacks that do not compute a value.  Multilink should not be created through calling its constructor directly,
- * but through the Property.multilink and Proprety.lazyMultilink functions.
+ * but through the Property.multilink and Property.lazyMultilink functions.
  *
  * @author Sam Reid
  */
