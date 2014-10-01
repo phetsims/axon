@@ -128,7 +128,7 @@ define( function( require ) {
      * If observer is already registered, this is a no-op.
      * The initial notification provides the current value for newValue and null for oldValue.
      *
-     * @param {Function} observer a function of the form observer(newValue,oldValue)
+     * @param {function} observer a function of the form observer(newValue,oldValue)
      */
     link: function( observer ) {
       if ( this._observers.indexOf( observer ) === -1 ) {
@@ -141,7 +141,7 @@ define( function( require ) {
      * Removes an observer.
      * If observer is not registered, this is a no-op.
      *
-     * @param {Function} observer
+     * @param {function} observer
      */
     unlink: function( observer ) {
       var index = this._observers.indexOf( observer );
@@ -152,7 +152,7 @@ define( function( require ) {
 
     /**
      * Add an observer to the Property, without calling it back right away.  This is used when you need to register a listener without an immediate callback.
-     * @param {Function} observer  a function with a single argument, which is the value of the property at the time the function is called.
+     * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
      */
     lazyLink: function( observer ) {
       if ( this._observers.indexOf( observer ) === -1 ) {
@@ -173,7 +173,7 @@ define( function( require ) {
      * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' listener must be removed before it is called once
      *
      * @param observer the listener which should be called back only for one property change (and not on registration)
-     * @returns {Function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
+     * @returns {function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
      */
     once: function( observer ) {
       var property = this;
@@ -210,7 +210,7 @@ define( function( require ) {
     /**
      * Returns a new boolean DerivedProperty which is true/false based on && operator.
      * @param otherProperty
-     * @returns {DerivedProperty<boolean>}
+     * @returns {DerivedProperty.<boolean>}
      */
     and: function( otherProperty ) {
       return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue && otherValue; } );
@@ -219,7 +219,7 @@ define( function( require ) {
     /**
      * Returns a new boolean DerivedProperty which is true/false based on || operator.
      * @param otherProperty
-     * @returns {DerivedProperty<boolean>}
+     * @returns {DerivedProperty.<boolean>}
      */
     or: function( otherProperty ) {
       return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue || otherValue; } );
@@ -268,7 +268,7 @@ define( function( require ) {
     /**
      * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
      * @param name debug name to be printed on the console
-     * @returns {Function} the handle to the linked listener in case it needs to be removed later
+     * @returns {function} the handle to the linked listener in case it needs to be removed later
      */
     debug: function( name ) {
       var listener = function( value ) { console.log( name, value ); };
@@ -290,7 +290,7 @@ define( function( require ) {
 
     /**
      * Returns a function that can be used to toggle the property (using !)
-     * @returns {f}
+     * @returns {function}
      */
     get toggleFunction() {
       return this.toggle.bind( this );
@@ -323,7 +323,7 @@ define( function( require ) {
 
   /**
    * Registers an observer with multiple properties, then notifies the observer immediately.
-   * @param {Array<Property>} properties
+   * @param {Property[]} properties
    * @param {function} observer no params, returns nothing
    * @static
    */

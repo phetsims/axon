@@ -148,7 +148,7 @@ define( function( require ) {
 
     /**
      * Removes the first occurrence of each item in the specified array.
-     * @param list {Array} a list of items to remove
+     * @param {Array} list a list of items to remove
      * @see ObservableArray.remove
      */
     removeAll: function( list ) {

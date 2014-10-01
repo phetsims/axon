@@ -26,8 +26,8 @@ define( function( require ) {
     /**
      * Register a listener when the specified eventName is triggered. Use off() to remove.
      * Concurrent modification of listeners (on/off) from within the callback is acceptable.
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
      */
     on: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -43,8 +43,8 @@ define( function( require ) {
      *   2. "static" listeners should not be added while a non-static listener (on the same object) is being called.
      * These restrictions allow us to guarantee that all listeners attached when an event is triggered are called.
      * Since static listeners are stored separately, use offStatic() to remove listeners added with onStatic()
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
      */
     onStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -57,8 +57,8 @@ define( function( require ) {
     /**
      * Adds a function which will only be called back once, after which it is removed as a listener.
      * If you need to remove a function added with 'once' you will have to remove its handle, which is returned by the function.
-     * @param eventName {String} the name for the event channel
-     * @param callback function to be called back once (if at all)
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback function to be called back once (if at all)
      */
     once: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -86,8 +86,8 @@ define( function( require ) {
 
     /**
      * Remove a listener added with on() from the specified event type.  Does nothing if the listener did not exist.
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
      */
     off: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -106,8 +106,8 @@ define( function( require ) {
 
     /**
      * Remove a listener added with onStatic() from the specified event type.  Does nothing if the listener did not exist.
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
      */
     offStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -126,9 +126,9 @@ define( function( require ) {
 
     /**
      * Checks for the existence of a specific listener, attached to a specific event name. Doesn't check for static listeners
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
-     * @returns {Boolean}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
+     * @returns {boolean}
      */
     hasListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -140,9 +140,9 @@ define( function( require ) {
 
     /**
      * Checks for the existence of a specific static listener, attached to a specific event name. Doesn't check for non-static listeners
-     * @param eventName {String} the name for the event channel
-     * @param callback {Function}
-     * @returns {Boolean}
+     * @param {string} eventName the name for the event channel
+     * @param {function} callback
+     * @returns {boolean}
      */
     hasStaticListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -154,7 +154,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name and arguments.
-     * @param eventName {String} the name for the event channel
+     * @param {string} eventName the name for the event channel
      * @param args... optional arguments to pass to the listeners
      */
     trigger: function( eventName ) {
@@ -213,7 +213,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with no arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
-     * @param eventName {String} the name for the event channel
+     * @param {string} eventName the name for the event channel
      */
     trigger0: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -247,7 +247,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with a single argument. Should get optimized in browsers better than trigger, so we have code duplication for now.
-     * @param eventName {String} the name for the event channel
+     * @param {string} eventName the name for the event channel
      */
     trigger1: function( eventName, param1 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -281,7 +281,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with a two arguments. Should get optimized in browsers better than trigger, so we have code duplication for now.
-     * @param eventName {String} the name for the event channel
+     * @param {string} eventName the name for the event channel
      */
     trigger2: function( eventName, param1, param2 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );

@@ -72,7 +72,7 @@ define( function( require ) {
     /**
      * Adds a new property to this PropertySet
      *
-     * @param {String} name
+     * @param {string} name
      * @param value
      */
     addProperty: function( name, value ) {
@@ -141,8 +141,8 @@ define( function( require ) {
 
     /**
      * Creates a DerivedProperty from the given dependency names and derivation.
-     * @param dependencyNames {Array<String>}
-     * @param derivation {Function}
+     * @param {string[]} dependencyNames
+     * @param {function} derivation
      * @returns {DerivedProperty}
      */
     toDerivedProperty: function( dependencyNames, derivation ) {
@@ -200,8 +200,8 @@ define( function( require ) {
      * Add a listener to zero or more properties in this PropertySet, useful when you have an update function
      * that relies on several properties.  Similar to DerivedProperty.
      * Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
-     * @param dependencyNames {Array<String>} the list of dependencies to use
-     * @param listener {Function} the listener to call back, with signature matching the dependency names
+     * @param {string[]} dependencyNames the list of dependencies to use
+     * @param {function} listener the listener to call back, with signature matching the dependency names
      */
     multilink: function( dependencyNames, listener ) {
       return this.toDerivedProperty( dependencyNames, listener );

@@ -1,8 +1,8 @@
 //  Copyright 2002-2014, University of Colorado Boulder
 
 /**
- * The ToggleProperty represents a Property<Boolean> mapped from another Property<Object> that can take one of two values.  If another value is specified, an error will be thrown.
- * This property provides two way binding between the source Property<Object> and the Property<Boolean>,
+ * The ToggleProperty represents a Property.<boolean> mapped from another Property.<Object> that can take one of two values.  If another value is specified, an error will be thrown.
+ * This property provides two way binding between the source Property.<Object> and the Property.<boolean>,
  * setting the value on the ToggleProperty propagates the cange back to the source Property, and vice versa.
  * It is used in RectangularStickyToggleButton, for example.
  *
@@ -20,9 +20,9 @@ define( function( require ) {
   /**
    * Main constructor for ToggleButton
    *
-   * @param valueA {Object} the "off" or "false" value
-   * @param valueB {Object} the "on" on "true" value
-   * @param property the source Property that can take values valueA and valueB
+   * @param {*} valueA the "off" or "false" value
+   * @param {*} valueB the "on" on "true" value
+   * @param {Property} property the source Property that can take values valueA and valueB
    * @constructor
    */
   axon.ToggleProperty = function ToggleProperty( valueA, valueB, property ) {

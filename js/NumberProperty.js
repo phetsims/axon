@@ -1,7 +1,7 @@
 // Copyright 2002-2013, University of Colorado Boulder
 
 /**
- * NumberProperty extends Property<Number> and adds functions specific to numbers, such as <, >.
+ * NumberProperty extends Property.<number> and adds functions specific to numbers, such as <, >.
  * TODO: Let's discuss creating these automatically in PropertySets
  *
  * @author Sam Reid
@@ -28,9 +28,11 @@ define( function( require ) {
   };
 
   return inherit( axon.Property, axon.NumberProperty, {
+
     lessThanNumber: function( number ) {
       return new DerivedProperty( [this], function( thisValue ) { return thisValue < number; } );
     },
+
     greaterThanNumber: function( number ) {
       return new DerivedProperty( [this], function( thisValue ) { return thisValue > number; } );
     }
