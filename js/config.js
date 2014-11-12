@@ -1,13 +1,5 @@
 // Copyright 2002-2013, University of Colorado Boulder
 
-if ( window.has ) {
-  window.has.add( 'assert.axon', function( global, document, anElement ) {
-    'use strict';
-
-    return true;
-  } );
-}
-
 window.loadedAxonConfig = true;
 
 require.config( {
@@ -16,8 +8,7 @@ require.config( {
   paths: {
     underscore: '../contrib/lodash.min-1.0.0-rc.3',
     AXON: '.',
-    PHET_CORE: '../../phet-core/js',
-    ASSERT: '../../assert/js'
+    PHET_CORE: '../../phet-core/js'
   },
 
   shim: {

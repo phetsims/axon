@@ -1,11 +1,3 @@
-if ( window.has ) {
-  window.has.add( 'assert.axon', function( global, document, anElement ) {
-    'use strict';
-
-    return true;
-  } );
-}
-
 window.loadedAxonConfig = true;
 
 require.config( {
@@ -14,7 +6,6 @@ require.config( {
   paths: {
 
     //Load dependencies from sibling directories
-    ASSERT: '../../assert/js',
     AXON: '../../axon/js',
     BRAND: '../../brand/js',
     DOT: '../../dot/js',
