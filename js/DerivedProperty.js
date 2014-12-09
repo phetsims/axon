@@ -43,7 +43,6 @@ define( function( require ) {
         derivedProperty.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
       })( dependency, i );
-
     }
   };
 
