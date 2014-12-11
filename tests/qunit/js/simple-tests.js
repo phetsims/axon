@@ -165,4 +165,28 @@
     } );
     equal( callbacks, 0, 'shouldnt call back to a lazy multilink' );
   } );
+
+  test( 'Test DerivedProperty.detach', function() {
+
+    var widthProperty = new Property( 2 );
+    var heightProperty = new Property( 3 );
+    var areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
+      function( width, height ) { return width * height; } );
+    areaProperty.link( function( area ) { console.log( 'area = ' + area ); } );
+
+    equal( widthProperty._observers.length, 1 );
+    equal( heightProperty._observers.length, 1 );
+    equal( areaProperty.dependencies.length, 2 );
+    equal( areaProperty.dependencyListeners.length, 2 );
+
+    areaProperty.detach();
+
+    equal( widthProperty._observers.length, 0 );
+    equal( heightProperty._observers.length, 0 );
+    equal( heightProperty._observers.length, 0 );
+
+    equal( areaProperty.dependencies.length, 0 );
+    equal( areaProperty.dependencyListeners.length, 0 );
+
+  } );
 })();
