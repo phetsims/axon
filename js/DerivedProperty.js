@@ -56,6 +56,9 @@ define( function( require ) {
           var dependency = this.dependencies[i];
           dependency.unlink( this.dependencyListeners[i] );
         }
+        this.dependencies = null;
+        this.dependencyListeners = null;
+        this.dependencyValues = null;
       },
 
       //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change

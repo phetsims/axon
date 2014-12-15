@@ -59,6 +59,9 @@ define( function( require ) {
           var dependency = this.dependencies[i];
           dependency.unlink( this.dependencyListeners[i] );
         }
+        this.dependencies = null;
+        this.dependencyListeners = null;
+        this.dependencyValues = null;
       }
     }
   );

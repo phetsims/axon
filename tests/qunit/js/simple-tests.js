@@ -185,8 +185,9 @@
     equal( heightProperty._observers.length, 0 );
     equal( heightProperty._observers.length, 0 );
 
-    equal( areaProperty.dependencies.length, 0 );
-    equal( areaProperty.dependencyListeners.length, 0 );
+    equal( areaProperty.dependencies, null );
+    equal( areaProperty.dependencyListeners, null );
+    equal( areaProperty.dependencyValues, null );
 
   } );
 })();
