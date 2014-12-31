@@ -236,6 +236,36 @@ define( function( require ) {
     },
 
     /**
+     * Multiply this property's value by a constant scalar number, and return the derived property.
+     *
+     * @param number
+     * @returns {axon.DerivedProperty}
+     */
+    plus: function( number ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue + number; } );
+    },
+
+    /**
+     * Return a derived property that is true if and only if this value is less than the specified number.
+     *
+     * @param number
+     * @returns {axon.DerivedProperty}
+     */
+    lessThanNumber: function( number ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue < number; } );
+    },
+
+    /**
+     * Return a derived property that is true if and only if this value is greater than the specified number.
+     *
+     * @param number
+     * @returns {axon.DerivedProperty}
+     */
+    greaterThanNumber: function( number ) {
+      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue > number; } );
+    },
+
+    /**
      * Not property, which does not propagate changes to dependents.
      * @returns {DerivedProperty}
      */
