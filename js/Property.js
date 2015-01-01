@@ -22,12 +22,20 @@ define( function( require ) {
    * @param {*} value
    * @constructor
    */
-  axon.Property = function Property( value ) {
+  axon.Property = function Property( value, options ) {
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
+
+    //Model component ID for data studies, regression testing, etc
+    this.id = options ? options.id : null;
+
+    //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
+    this.sendPhetEvents = true;
+    this.lastMessageTime = 0;//Start at the epoch, so the first message will be sent.
+    this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
   };
 
   axon.Property.prototype = {
@@ -79,11 +87,36 @@ define( function( require ) {
     },
 
     _notifyObservers: function( oldValue ) {
+
+      // Note the current value, since it will be sent to possibly multiple listeners.
       var value = this.get();
+
+      // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
+      var time = null;
+      var sendMessage = null;
+      if ( phet.arch.active ) {
+        time = Date.now();
+
+        //Only send a message if sendPhetEvents is on and the throttling permits it (i.e. it has been long enough since the last message).
+        sendMessage = this.sendPhetEvents && (this.delay === 0 || (time - this.lastMessageTime > this.delay * 1000));
+
+        // Deliver the change event message to phet.arch
+        if ( sendMessage ) {
+          assert && assert( this.id !== null );
+          phet.arch.start( 'propertyChanged', {id: this.id, value: value} );
+        }
+      }
+
       // TODO: JO: avoid slice() by storing observers array correctly
       var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
       for ( var i = 0; i < observersCopy.length; i++ ) {
         observersCopy[i]( value, oldValue );
+      }
+
+      // Send the end message to phet.arch
+      if ( sendMessage ) {
+        phet.arch.end();
+        this.lastMessageTime = time;
       }
     },
 
@@ -363,6 +396,16 @@ define( function( require ) {
 
   axon.Property.lazyMultilink = function( properties, observer ) {
     return new axon.Multilink( properties, observer, true );
+  };
+
+  axon.Property.prototype.setSendPhetEvents = function( sendPhetEvents ) {
+    this.sendPhetEvents = sendPhetEvents;
+    return this;
+  };
+
+  axon.Property.prototype.throttle = function( delay ) {
+    this.delay = delay;
+    return this;
   };
 
   return axon.Property;

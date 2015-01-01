@@ -18,6 +18,12 @@ define( function( require ) {
 
   axon.ObservableArray = function ObservableArray( array, options ) {
 
+    // Special case that the user supplied options but no array
+    if ( array instanceof Object && !(array instanceof Array) ) {
+      options = array;
+      array = null;
+    }
+
     this._options = _.extend( {
       allowDuplicates: false // are duplicate items allowed in the array?
     }, options );
@@ -26,10 +32,18 @@ define( function( require ) {
     this._addedListeners = []; // listeners called when an item is added
     this._removedListeners = []; // listeners called when an item is removed
 
+    //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events
+    //that should not be recorded (such as the passage of time).
+    this.sendPhetEvents = true;
+
     this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
+    this.lengthProperty.setSendPhetEvents( false );
 
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
+
+    //Model component ID for data studies, regression testing, etc
+    this.id = options ? options.id : null;
   };
 
   axon.ObservableArray.prototype = {
@@ -99,18 +113,31 @@ define( function( require ) {
 
     // Internal: called when an item is added.
     _fireItemAdded: function( item ) {
+
+      //Signify that an item was added to the list
+      phet.arch.active && this.sendPhetEvents && phet.arch.start( 'itemAdded', {observableArray: this.id, added: item.toString()} );
+
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
         copy[i]( item, this );
       }
+
+      //Finish the "itemAdded" event
+      phet.arch.active && this.sendPhetEvents && phet.arch.end();
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
+
+      //Signify that an item was removed from the list
+      phet.arch.active && this.sendPhetEvents && phet.arch.start( 'itemRemoved', {observableArray: this.id, removed: item.toString()} );
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
         copy[i]( item, this );
       }
+
+      //Finish the "itemRemoved" event
+      phet.arch.active && this.sendPhetEvents && phet.arch.end();
     },
 
     /**
@@ -272,6 +299,12 @@ define( function( require ) {
      */
     getArray: function() {
       return this._array;
+    },
+
+    setSendPhetEvents: function( sendPhetEvents ) {
+      this.sendPhetEvents = sendPhetEvents;
+      this.lengthProperty.setSendPhetEvents( sendPhetEvents );
+      return this;
     }
   };
 
