@@ -18,6 +18,10 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   require( 'AXON/Multilink' );
 
+  // Add stubs for
+  window.phet = window.phet || {};
+  window.phet.arch = window.phet.arch || {};
+
   /**
    * @param {*} value
    * @constructor
@@ -406,6 +410,27 @@ define( function( require ) {
   axon.Property.prototype.throttle = function( delay ) {
     this.delay = delay;
     return this;
+  };
+
+  axon.Property.initArch = function() {
+    //TODO: Is there a better place for this declaration?
+    window.phet = window.phet || {};
+    window.phet.arch = window.phet.arch || {
+
+      //Flag that indicates the sim is not instrumented for a data-driven study.  Provides short-circuiting for lines like: phet.arch.active && (...)
+      active: false,
+
+      //Just return the callback directly.
+      wrap: function( name, callback ) {
+        return callback;
+      },
+
+      trigger: function() {},
+
+      start: function() {},
+
+      end: function() {}
+    };
   };
 
   return axon.Property;
