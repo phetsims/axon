@@ -417,7 +417,8 @@ define( function( require ) {
       active: false,
 
       //Just return the callback directly.
-      wrap: function( name, callback ) {
+      //'user', options.componentID, 'CheckBox', 'toggled',
+      wrap: function( messageType, componentID, componentType, action, callback, options ) {
         return callback;
       },
 
