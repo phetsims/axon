@@ -18,10 +18,6 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   require( 'AXON/Multilink' );
 
-  // Add stubs for
-  window.phet = window.phet || {};
-  window.phet.arch = window.phet.arch || {};
-
   /**
    * @param {*} value
    * @constructor
@@ -432,6 +428,8 @@ define( function( require ) {
       end: function() {}
     };
   };
+
+  axon.Property.initArch();
 
   return axon.Property;
 } );
