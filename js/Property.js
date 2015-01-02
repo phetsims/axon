@@ -107,7 +107,7 @@ define( function( require ) {
         // Deliver the change event message to phet.arch
         if ( sendMessage ) {
           assert && assert( this.id !== null );
-          phet.arch.start( 'propertyChanged', {id: this.id, value: value} );
+          phet.arch.start( 'model', this.id, 'Property', 'changed', {value: value} );
         }
       }
 
