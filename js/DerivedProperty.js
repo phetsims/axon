@@ -1,8 +1,9 @@
 // Copyright 2002-2013, University of Colorado Boulder
 
 /**
- * A DerivedProperty is computed based on other properties.  This implementation inherits from Property to (a) simplify implementation and (b) ensure it remains consistent.
- * Note that the setters should not be called directly, so the setters (set, reset and es5 setter) throw an error if used directly.
+ * A DerivedProperty is computed based on other properties.  This implementation inherits from Property to (a) simplify
+ * implementation and (b) ensure it remains consistent. Note that the setters should not be called directly, so the
+ * setters (set, reset and es5 setter) throw an error if used directly.
  *
  * @author Sam Reid
  */
