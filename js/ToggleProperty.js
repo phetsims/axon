@@ -1,10 +1,10 @@
 //  Copyright 2002-2014, University of Colorado Boulder
 
 /**
- * The ToggleProperty represents a Property.<boolean> mapped from another Property.<Object> that can take one of two values.  If another value is specified, an error will be thrown.
- * This property provides two way binding between the source Property.<Object> and the Property.<boolean>,
- * setting the value on the ToggleProperty propagates the cange back to the source Property, and vice versa.
- * It is used in RectangularStickyToggleButton, for example.
+ * The ToggleProperty represents a Property.<boolean> mapped from another Property.<Object> that can take one of two
+ * values.  If another value is specified, an error will be thrown. This property provides two way binding between the
+ * source Property.<Object> and the Property.<boolean>, setting the value on the ToggleProperty propagates the change
+ * back to the source Property, and vice versa. It is used in RectangularStickyToggleButton, for example.
  *
  * TODO: Can/Should this be rewritten using Property.map or Property.invertibleMap or related functions?
  *
