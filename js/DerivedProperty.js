@@ -35,10 +35,10 @@ define( function( require ) {
     this.dependencyListeners = [];
 
     for ( var i = 0; i < dependencies.length; i++ ) {
-      var dependency = dependencies[i];
+      var dependency = dependencies[ i ];
       (function( dependency, i ) {
         var listener = function( newValue ) {
-          derivedProperty.dependencyValues[i] = newValue;
+          derivedProperty.dependencyValues[ i ] = newValue;
           Property.prototype.set.call( derivedProperty, derivation.apply( null, derivedProperty.dependencyValues ) );
         };
         derivedProperty.dependencyListeners.push( listener );
@@ -54,8 +54,8 @@ define( function( require ) {
        */
       detach: function() {
         for ( var i = 0; i < this.dependencies.length; i++ ) {
-          var dependency = this.dependencies[i];
-          dependency.unlink( this.dependencyListeners[i] );
+          var dependency = this.dependencies[ i ];
+          dependency.unlink( this.dependencyListeners[ i ] );
         }
         this.dependencies = null;
         this.dependencyListeners = null;
@@ -80,6 +80,7 @@ define( function( require ) {
     {
       //Create a DerivedProperty using a static create method to avoid the linting error: W031: Do not use 'new' for side effects.
       //This should be used only when using DerivedProperty to create side effects (and not to assign a property value)
-      multilink: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }}
+      multilink: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }
+    }
   );
 } );

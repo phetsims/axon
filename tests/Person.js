@@ -12,10 +12,10 @@ define( function( require ) {
     this.id = id;
 
     //Call the super class by specifying the values that should be converted to properties
-    PropertySet.call( this, {name: name, age: age, weight: weight, height: height, paused: false} );
+    PropertySet.call( this, { name: name, age: age, weight: weight, height: height, paused: false } );
 
     //Add a derived (computed) property that is computed as a function of other properties
-    this.addDerivedProperty( 'bmi', ['weight', 'height'], function( weight, height ) {return weight / height / height;} );
+    this.addDerivedProperty( 'bmi', [ 'weight', 'height' ], function( weight, height ) {return weight / height / height;} );
   }
 
   inherit( PropertySet, Person, {

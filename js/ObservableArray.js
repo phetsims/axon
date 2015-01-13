@@ -53,11 +53,11 @@ define( function( require ) {
     //This may or may not change in the future, see #4
     reset: function() {
       for ( var i = 0; i < this._array.length; i++ ) {
-        this._fireItemRemoved( this._array[i] );
+        this._fireItemRemoved( this._array[ i ] );
       }
       this._array = this.initialArray.slice();
       for ( i = 0; i < this._array.length; i++ ) {
-        this._fireItemAdded( this._array[i] );
+        this._fireItemAdded( this._array[ i ] );
       }
     },
 
@@ -116,11 +116,11 @@ define( function( require ) {
 
       //Signify that an item was added to the list
       phet.arch.active && this.sendPhetEvents &&
-      phet.arch.start( 'model', this.id, 'ObservableArray', 'itemAdded', {added: item.toString()} );
+                                              phet.arch.start( 'model', this.id, 'ObservableArray', 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
-        copy[i]( item, this );
+        copy[ i ]( item, this );
       }
 
       //Finish the "itemAdded" event
@@ -131,10 +131,13 @@ define( function( require ) {
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      phet.arch.active && this.sendPhetEvents && phet.arch.start( 'model', this.id, 'ObservableArray', 'itemAdded', {observableArray: this.id, removed: item.toString()} );
+      phet.arch.active && this.sendPhetEvents && phet.arch.start( 'model', this.id, 'ObservableArray', 'itemAdded', {
+        observableArray: this.id,
+        removed: item.toString()
+      } );
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
-        copy[i]( item, this );
+        copy[ i ]( item, this );
       }
 
       //Finish the "itemRemoved" event
@@ -181,7 +184,7 @@ define( function( require ) {
      */
     removeAll: function( list ) {
       for ( var i = 0; i < list.length; i++ ) {
-        var item = list[i];
+        var item = list[ i ];
         this.remove( item );
       }
     },
@@ -241,7 +244,7 @@ define( function( require ) {
      * @returns {*} the item, or undefined if there is no item at the specified index
      */
     get: function( index ) {
-      return this._array[index];
+      return this._array[ index ];
     },
 
     /**
@@ -259,7 +262,7 @@ define( function( require ) {
     clear: function() {
       var copy = this._array.slice( 0 );
       for ( var i = 0; i < copy.length; i++ ) {
-        this.remove( copy[i] );
+        this.remove( copy[ i ] );
       }
     },
 
@@ -289,7 +292,7 @@ define( function( require ) {
      */
     reduce: function( value, combiner ) {
       for ( var i = 0; i < this._array.length; i++ ) {
-        value = combiner( value, this._array[i] );
+        value = combiner( value, this._array[ i ] );
       }
       return value;
     },

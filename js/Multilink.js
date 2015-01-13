@@ -32,10 +32,10 @@ define( function( require ) {
 
     //When a dependency value changes, update the list of dependencies and call back to the callback
     for ( var i = 0; i < dependencies.length; i++ ) {
-      var dependency = dependencies[i];
+      var dependency = dependencies[ i ];
       (function( dependency, i ) {
         var listener = function( newValue ) {
-          multilink.dependencyValues[i] = newValue;
+          multilink.dependencyValues[ i ] = newValue;
           callback.apply( null, multilink.dependencyValues );
         };
         multilink.dependencyListeners.push( listener );
@@ -56,8 +56,8 @@ define( function( require ) {
        */
       detach: function() {
         for ( var i = 0; i < this.dependencies.length; i++ ) {
-          var dependency = this.dependencies[i];
-          dependency.unlink( this.dependencyListeners[i] );
+          var dependency = this.dependencies[ i ];
+          dependency.unlink( this.dependencyListeners[ i ] );
         }
         this.dependencies = null;
         this.dependencyListeners = null;

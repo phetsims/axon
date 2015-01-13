@@ -33,8 +33,8 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
-      this._eventListeners[eventName] = this._eventListeners[eventName] || [];
-      this._eventListeners[eventName].push( callback );
+      this._eventListeners[ eventName ] = this._eventListeners[ eventName ] || [];
+      this._eventListeners[ eventName ].push( callback );
     },
 
     /**
@@ -50,8 +50,8 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
-      this._staticEventListeners[eventName] = this._staticEventListeners[eventName] || [];
-      this._staticEventListeners[eventName].push( callback );
+      this._staticEventListeners[ eventName ] = this._staticEventListeners[ eventName ] || [];
+      this._staticEventListeners[ eventName ].push( callback );
     },
 
     /**
@@ -94,10 +94,10 @@ define( function( require ) {
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
       var index = -1;
-      if ( this._eventListeners[eventName] ) {
-        index = this._eventListeners[eventName].indexOf( callback );
+      if ( this._eventListeners[ eventName ] ) {
+        index = this._eventListeners[ eventName ].indexOf( callback );
         if ( index !== -1 ) {
-          this._eventListeners[eventName].splice( index, 1 );
+          this._eventListeners[ eventName ].splice( index, 1 );
         }
       }
 
@@ -114,10 +114,10 @@ define( function( require ) {
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
       var index = -1;
-      if ( this._staticEventListeners[eventName] ) {
-        index = this._staticEventListeners[eventName].indexOf( callback );
+      if ( this._staticEventListeners[ eventName ] ) {
+        index = this._staticEventListeners[ eventName ].indexOf( callback );
         if ( index !== -1 ) {
-          this._staticEventListeners[eventName].splice( index, 1 );
+          this._staticEventListeners[ eventName ].splice( index, 1 );
         }
       }
 
@@ -134,7 +134,7 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
-      var array = this._eventListeners[eventName];
+      var array = this._eventListeners[ eventName ];
       return !!array && array.indexOf( callback ) >= 0;
     },
 
@@ -148,7 +148,7 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
-      var array = this._staticEventListeners[eventName];
+      var array = this._staticEventListeners[ eventName ];
       return !!array && array.indexOf( callback ) >= 0;
     },
 
@@ -160,8 +160,8 @@ define( function( require ) {
     trigger: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
-      var listeners = this._eventListeners[eventName];
-      var staticListeners = this._staticEventListeners[eventName];
+      var listeners = this._eventListeners[ eventName ];
+      var staticListeners = this._staticEventListeners[ eventName ];
 
       // listener quantities for normal and static
       var count = listeners ? listeners.length : 0;
@@ -183,7 +183,7 @@ define( function( require ) {
       var i;
 
       for ( i = 0; i < count; i++ ) {
-        var listener = listeners[i];
+        var listener = listeners[ i ];
 
         //Simple case of no arguments, call it separately for improved performance in case it is faster (untested)
         if ( hasNoArguments ) {
@@ -197,7 +197,7 @@ define( function( require ) {
       }
 
       for ( i = 0; i < staticCount; i++ ) {
-        var staticListener = staticListeners[i];
+        var staticListener = staticListeners[ i ];
 
         //Simple case of no arguments, call it separately for improved performance in case it is faster (untested)
         if ( hasNoArguments ) {
@@ -218,8 +218,8 @@ define( function( require ) {
     trigger0: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
-      var listeners = this._eventListeners[eventName];
-      var staticListeners = this._staticEventListeners[eventName];
+      var listeners = this._eventListeners[ eventName ];
+      var staticListeners = this._staticEventListeners[ eventName ];
 
       // listener quantities for normal and static
       var count = listeners ? listeners.length : 0;
@@ -233,13 +233,13 @@ define( function( require ) {
       var i;
 
       for ( i = 0; i < count; i++ ) {
-        listeners[i]();
+        listeners[ i ]();
 
         assert && assert( !staticListeners || staticListeners.length === staticCount, 'Concurrent modifications of static listeners from within non-static listeners are forbidden' );
       }
 
       for ( i = 0; i < staticCount; i++ ) {
-        staticListeners[i]();
+        staticListeners[ i ]();
 
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
@@ -252,8 +252,8 @@ define( function( require ) {
     trigger1: function( eventName, param1 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
-      var listeners = this._eventListeners[eventName];
-      var staticListeners = this._staticEventListeners[eventName];
+      var listeners = this._eventListeners[ eventName ];
+      var staticListeners = this._staticEventListeners[ eventName ];
 
       // listener quantities for normal and static
       var count = listeners ? listeners.length : 0;
@@ -267,13 +267,13 @@ define( function( require ) {
       var i;
 
       for ( i = 0; i < count; i++ ) {
-        listeners[i]( param1 );
+        listeners[ i ]( param1 );
 
         assert && assert( !staticListeners || staticListeners.length === staticCount, 'Concurrent modifications of static listeners from within non-static listeners are forbidden' );
       }
 
       for ( i = 0; i < staticCount; i++ ) {
-        staticListeners[i]( param1 );
+        staticListeners[ i ]( param1 );
 
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }
@@ -286,8 +286,8 @@ define( function( require ) {
     trigger2: function( eventName, param1, param2 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
-      var listeners = this._eventListeners[eventName];
-      var staticListeners = this._staticEventListeners[eventName];
+      var listeners = this._eventListeners[ eventName ];
+      var staticListeners = this._staticEventListeners[ eventName ];
 
       // listener quantities for normal and static
       var count = listeners ? listeners.length : 0;
@@ -301,13 +301,13 @@ define( function( require ) {
       var i;
 
       for ( i = 0; i < count; i++ ) {
-        listeners[i]( param1, param2 );
+        listeners[ i ]( param1, param2 );
 
         assert && assert( !staticListeners || staticListeners.length === staticCount, 'Concurrent modifications of static listeners from within non-static listeners are forbidden' );
       }
 
       for ( i = 0; i < staticCount; i++ ) {
-        staticListeners[i]( param1, param2 );
+        staticListeners[ i ]( param1, param2 );
 
         assert && assert( staticListeners.length === staticCount, 'Concurrent modifications from static listeners are forbidden' );
       }

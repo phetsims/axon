@@ -30,11 +30,11 @@ define( function( require ) {
   return inherit( axon.Property, axon.NumberProperty, {
 
     lessThanNumber: function( number ) {
-      return new DerivedProperty( [this], function( thisValue ) { return thisValue < number; } );
+      return new DerivedProperty( [ this ], function( thisValue ) { return thisValue < number; } );
     },
 
     greaterThanNumber: function( number ) {
-      return new DerivedProperty( [this], function( thisValue ) { return thisValue > number; } );
+      return new DerivedProperty( [ this ], function( thisValue ) { return thisValue > number; } );
     }
   } );
 } );

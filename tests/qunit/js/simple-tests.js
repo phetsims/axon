@@ -8,7 +8,7 @@
 
   test( 'Simple tests', function() {
 
-    var person = new axon.PropertySet( {name: 'larry', age: '100'} );
+    var person = new axon.PropertySet( { name: 'larry', age: '100' } );
     equal( person.name, 'larry', 'name should be larry and accessible through es5 get' );
 
     person.name = 'susan';
@@ -25,7 +25,7 @@
     equal( person.name, 'larry', 'should have reset to the initial name' );
 
     var myValue = '';
-    person.multilink( ['name', 'age'], function( name, age ) {
+    person.multilink( [ 'name', 'age' ], function( name, age ) {
       myValue = name + '/' + age;
     } );
     person.name = '123';
@@ -47,7 +47,7 @@
   } );
 
   test( 'Test observable array', function() {
-    var array = new ObservableArray( ['a', 'b', 'c'] );
+    var array = new ObservableArray( [ 'a', 'b', 'c' ] );
     var dChecker = function( item ) {
       equal( item, 'd' );
     };
@@ -63,7 +63,7 @@
   } );
 
   test( 'Test events', function() {
-    var person = new axon.PropertySet( {name: 'larry', age: '100'} );
+    var person = new axon.PropertySet( { name: 'larry', age: '100' } );
     var count = 0;
     var listener = function( person ) {
       count = count + 1;
@@ -129,15 +129,15 @@
     p.link( c );
     equal( p._observers.length, 3, 'should have 3 observers now' );
     p.unlink( b );
-    equal( p._observers[0], a, 'should have removed b' );
-    equal( p._observers[1], c, 'should have removed b' );
+    equal( p._observers[ 0 ], a, 'should have removed b' );
+    equal( p._observers[ 1 ], c, 'should have removed b' );
     equal( p._observers.length, 2, 'should have removed an item' );
   } );
 
   test( 'Test stale values in DerivedProperty', function() {
     var a = new Property( 1 );
     var b = new Property( 2 );
-    var c = new DerivedProperty( [a, b], function( a, b ) {return a + b;} );
+    var c = new DerivedProperty( [ a, b ], function( a, b ) {return a + b;} );
     a.value = 7;
     equal( c.value, 9 );
   } );
@@ -146,7 +146,7 @@
     var a = new Property( 1 );
     var b = new Property( 2 );
     var callbacks = 0;
-    Property.multilink( [a, b], function( a, b ) {
+    Property.multilink( [ a, b ], function( a, b ) {
       callbacks++;
       equal( a, 1, 'first value should pass through' );
       equal( b, 2, 'second value should pass through' );
@@ -158,7 +158,7 @@
     var a = new Property( 1 );
     var b = new Property( 2 );
     var callbacks = 0;
-    Property.lazyMultilink( [a, b], function( a, b ) {
+    Property.lazyMultilink( [ a, b ], function( a, b ) {
       callbacks++;
       equal( a, 1 );
       equal( b, 2 );

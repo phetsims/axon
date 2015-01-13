@@ -65,7 +65,7 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[value], propertySet.id );
+      propertySet.addProperty( value, values[ value ], propertySet.id );
     } );
   };
 
@@ -89,7 +89,7 @@ define( function( require ) {
       else {
         propertyID = name;
       }
-      this[name + 'Property'] = new Property( value, {id: propertyID} );
+      this[ name + 'Property' ] = new Property( value, { id: propertyID } );
       this.addGetterAndSetter( name );
       this.keys.push( name );
     },
@@ -107,15 +107,15 @@ define( function( require ) {
       }
 
       //Unregister the Property instance from the PropertySet
-      delete this[name + 'Property'];
+      delete this[ name + 'Property' ];
 
       //Unregister the getter/setter, if they exist
-      delete this[name];
+      delete this[ name ];
     },
 
     //Add a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
     addGetterAndSetter: function( name ) {
-      var property = this[name + 'Property'];
+      var property = this[ name + 'Property' ];
 
       Object.defineProperty( this, name, {
 
@@ -132,7 +132,7 @@ define( function( require ) {
     },
 
     addGetter: function( name ) {
-      var property = this[name + 'Property'];
+      var property = this[ name + 'Property' ];
 
       Object.defineProperty( this, name, {
 
@@ -148,7 +148,7 @@ define( function( require ) {
     reset: function() {
       var propertySet = this;
       this.keys.forEach( function( key ) {
-        propertySet[key + 'Property'].reset();
+        propertySet[ key + 'Property' ].reset();
       } );
     },
 
@@ -161,13 +161,13 @@ define( function( require ) {
     toDerivedProperty: function( dependencyNames, derivation ) {
       var propertySet = this;
       var dependencies = dependencyNames.map( function( dependency ) {
-        return propertySet[dependency + 'Property'];
+        return propertySet[ dependency + 'Property' ];
       } );
       return new DerivedProperty( dependencies, derivation );
     },
 
     addDerivedProperty: function( name, dependencyNames, derivation ) {
-      this[name + 'Property'] = this.toDerivedProperty( dependencyNames, derivation );
+      this[ name + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
       this.addGetter( name );
     },
 
@@ -186,8 +186,8 @@ define( function( require ) {
     set: function( values ) {
       var propertySet = this;
       Object.getOwnPropertyNames( values ).forEach( function( val ) {
-        if ( typeof(propertySet[val + 'Property'] === 'Property') ) {
-          propertySet[val + 'Property'].set( values[val] );
+        if ( typeof(propertySet[ val + 'Property' ] === 'Property') ) {
+          propertySet[ val + 'Property' ].set( values[ val ] );
         }
         else {
           throw new Error( 'property not found: ' + val );
@@ -203,8 +203,8 @@ define( function( require ) {
     get: function() {
       var state = {};
       for ( var i = 0; i < this.keys.length; i++ ) {
-        var key = this.keys[i];
-        state[key] = this.property( key ).value;
+        var key = this.keys[ i ];
+        state[ key ] = this.property( key ).value;
       }
       return state;
     },
@@ -233,8 +233,8 @@ define( function( require ) {
       var text = 'PropertySet{';
       var propertySet = this;
       for ( var i = 0; i < this.keys.length; i++ ) {
-        var key = this.keys[i];
-        text = text + key + ':' + propertySet[key].toString();
+        var key = this.keys[ i ];
+        text = text + key + ':' + propertySet[ key ].toString();
         if ( i < this.keys.length - 1 ) {
           text = text + ',';
         }
@@ -248,7 +248,7 @@ define( function( require ) {
      * @param {function }observer the callback to link to the property
      */
     link: function( propertyName, observer ) {
-      this[propertyName + 'Property'].link( observer );
+      this[ propertyName + 'Property' ].link( observer );
     },
 
     /**
@@ -256,7 +256,7 @@ define( function( require ) {
      * @param {string} propertyName the name of the property to get
      */
     property: function( propertyName ) {
-      return this[propertyName + 'Property'];
+      return this[ propertyName + 'Property' ];
     },
 
     /**

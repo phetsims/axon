@@ -103,14 +103,14 @@ define( function( require ) {
         // Deliver the change event message to phet.arch
         if ( sendMessage ) {
           assert && assert( this.id !== null );
-          phet.arch.start( 'model', this.id, 'Property', 'changed', {value: value} );
+          phet.arch.start( 'model', this.id, 'Property', 'changed', { value: value } );
         }
       }
 
       // TODO: JO: avoid slice() by storing observers array correctly
       var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
       for ( var i = 0; i < observersCopy.length; i++ ) {
-        observersCopy[i]( value, oldValue );
+        observersCopy[ i ]( value, oldValue );
       }
 
       // Send the end message to phet.arch
@@ -128,7 +128,7 @@ define( function( require ) {
     notifyObserversStatic: function() {
       var value = this.get();
       for ( var i = 0; i < this._observers.length; i++ ) {
-        this._observers[i]( value );
+        this._observers[ i ]( value );
       }
     },
 
@@ -226,7 +226,7 @@ define( function( require ) {
      * @param attributeName
      */
     linkAttribute: function( object, attributeName ) {
-      var handle = function( value ) {object[attributeName] = value;};
+      var handle = function( value ) {object[ attributeName ] = value;};
       this.link( handle );
       return handle;
     },
@@ -237,7 +237,7 @@ define( function( require ) {
      * @returns {axon.DerivedProperty}
      */
     valueEquals: function( value ) {
-      return new axon.DerivedProperty( [this], function( propertyValue ) { return propertyValue === value; } );
+      return new axon.DerivedProperty( [ this ], function( propertyValue ) { return propertyValue === value; } );
     },
 
     /**
@@ -246,7 +246,7 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     and: function( otherProperty ) {
-      return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue && otherValue; } );
+      return new axon.DerivedProperty( [ this, otherProperty ], function( thisValue, otherValue ) { return thisValue && otherValue; } );
     },
 
     /**
@@ -255,7 +255,7 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     or: function( otherProperty ) {
-      return new axon.DerivedProperty( [this, otherProperty], function( thisValue, otherValue ) { return thisValue || otherValue; } );
+      return new axon.DerivedProperty( [ this, otherProperty ], function( thisValue, otherValue ) { return thisValue || otherValue; } );
     },
 
     /**
@@ -265,7 +265,7 @@ define( function( require ) {
      * @returns {axon.DerivedProperty}
      */
     times: function( scalar ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue * scalar; } );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue * scalar; } );
     },
 
     /**
@@ -275,7 +275,7 @@ define( function( require ) {
      * @returns {axon.DerivedProperty}
      */
     plus: function( number ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue + number; } );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue + number; } );
     },
 
     /**
@@ -285,7 +285,7 @@ define( function( require ) {
      * @returns {axon.DerivedProperty}
      */
     lessThanNumber: function( number ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue < number; } );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue < number; } );
     },
 
     /**
@@ -295,7 +295,7 @@ define( function( require ) {
      * @returns {axon.DerivedProperty}
      */
     greaterThanNumber: function( number ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return thisValue > number; } );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue > number; } );
     },
 
     /**
@@ -303,7 +303,7 @@ define( function( require ) {
      * @returns {DerivedProperty}
      */
     derivedNot: function() {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return !thisValue; } );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return !thisValue; } );
     },
 
     /**
@@ -342,13 +342,13 @@ define( function( require ) {
     //Returns a new Property that maps its values using the specified lookup table.
     //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
     mapValues: function( values ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) { return values[thisValue];} );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) { return values[ thisValue ];} );
     },
 
     //Returns a new Property that maps its values using the specified function
     //See https://github.com/phetsims/axon/issues/25
     map: function( f ) {
-      return new axon.DerivedProperty( [this], function( thisValue ) {return f( thisValue );} );
+      return new axon.DerivedProperty( [ this ], function( thisValue ) {return f( thisValue );} );
     },
 
     /**
