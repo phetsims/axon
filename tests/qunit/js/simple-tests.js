@@ -172,7 +172,7 @@
     var heightProperty = new Property( 3 );
     var areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
       function( width, height ) { return width * height; } );
-    areaProperty.link( function( area ) { console.log( 'area = ' + area ); } );
+    areaProperty.link( function( area ) { /*console.log( 'area = ' + area );*/ } );
 
     equal( widthProperty._observers.length, 1 );
     equal( heightProperty._observers.length, 1 );
