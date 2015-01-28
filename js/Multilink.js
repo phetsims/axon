@@ -51,9 +51,7 @@ define( function( require ) {
 
   return inherit( Object, axon.Multilink, {
 
-      /**
-       * Detaches this derived property from its dependencies.
-       */
+      // Detaches dependencies from listeners.
       detach: function() {
         for ( var i = 0; i < this.dependencies.length; i++ ) {
           var dependency = this.dependencies[ i ];
