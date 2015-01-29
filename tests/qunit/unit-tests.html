@@ -30,6 +30,8 @@
 
   <!-- <script src="../../dist/standalone/dot.min.js"></script> -->
   <script data-main="../../js/config.js" src="../../../sherpa/require-2.1.11.js"></script>
+
+  <!-- Loads the code needed to run unit tests for each particular library/codebase -->
   <script src="unit-tests.js"></script>
 
   <script>
@@ -39,7 +41,9 @@
   </script>
 </head>
 <body>
+<!-- Where test results HTML is placed -->
 <div id="qunit"></div>
+<!-- Div for holding temporary HTML content needed by tests, which is reset by QUnit before every test -->
 <div id="qunit-fixture"></div>
 <script src="../../../sherpa/qunit-1.14.0.js"></script>
 <script>
