@@ -47,28 +47,14 @@
 <div id="qunit-fixture"></div>
 <script src="../../../sherpa/qunit-1.14.0.js"></script>
 <script>
-  // QUnit.moduleDone( function( details ) {
-  //   collapseTests();
-  // } );
-</script>
-<script>
+  require( [ 'config' ], function() {
+    require( [ 'main', 'PHET_CORE/phetAllocation' ], function( axon, phetAllocation ) {
+      window.axon = axon;
+      window.phetAllocation = phetAllocation; // patch so we can track allocations properly
 
-  // we need to wait until our config file is loaded before our require statement. apparently this was not guaranteed
-  function check() {
-    if ( window.loadedAxonConfig ) {
-      require( [ 'main', 'PHET_CORE/phetAllocation' ], function( axon, phetAllocation ) {
-        window.axon = axon;
-        window.phetAllocation = phetAllocation; // patch so we can track allocations properly
-
-        runAxonTests( '.' );
-      } );
-    }
-    else {
-      setTimeout( check, 4 );
-    }
-  }
-  setTimeout( check, 4 );
-
+      runAxonTests( '.' );
+    } );
+  } );
 </script>
 </body>
 </html>
