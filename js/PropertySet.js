@@ -53,11 +53,12 @@ define( function( require ) {
    * @class PropertySet
    * @constructor
    * @param values an object hash with the initial values for the properties
-   * @param id an optional identifier used in data collection messages
+   * @param {object} [options] -
+   *                           - propertySetID: optional identifier used in data collection messages
    */
   axon.PropertySet = function PropertySet( values, options ) {
     var propertySet = this;
-    this.id = options ? options.id : null;
+    this.propertySetID = options ? options.propertySetID : null;
 
     Events.call( this );
 
@@ -65,7 +66,7 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[ value ], propertySet.id );
+      propertySet.addProperty( value, values[ value ], propertySet.propertySetID );
     } );
   };
 
@@ -80,7 +81,7 @@ define( function( require ) {
      */
     addProperty: function( name, value, propertySetID ) {
       if ( propertySetID !== null && typeof( propertySetID ) !== 'undefined' && typeof( propertySetID ) !== 'string' ) {
-        throw new Error( 'If defined, the PropertySet ID must be a string.' );
+        throw new Error( 'If defined, the propertySetID must be a string.' );
       }
       var propertyID;
       if ( typeof( propertySetID ) === 'string' ) {
@@ -89,7 +90,7 @@ define( function( require ) {
       else {
         propertyID = name;
       }
-      this[ name + 'Property' ] = new Property( value, { id: propertyID } );
+      this[ name + 'Property' ] = new Property( value, { propertyID: propertyID } );
       this.addGetterAndSetter( name );
       this.keys.push( name );
     },

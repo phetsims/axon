@@ -30,7 +30,7 @@ define( function( require ) {
     this._observers = [];
 
     //Model component ID for data studies, regression testing, etc
-    this.id = options ? options.id : null;
+    this.propertyID = options ? options.propertyID : null;
 
     //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
     this.sendPhetEvents = true;
@@ -102,8 +102,8 @@ define( function( require ) {
 
         // Deliver the change event message to phet.arch
         if ( sendMessage ) {
-          assert && assert( this.id !== null );
-          phet.arch.start( 'model', this.id, 'Property', 'changed', { value: value } );
+          assert && assert( this.propertyID !== null );
+          phet.arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
         }
       }
 
