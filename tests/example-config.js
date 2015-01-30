@@ -1,4 +1,3 @@
-window.loadedAxonConfig = true;
 
 require.config( {
   deps: [ 'example-main' ],
