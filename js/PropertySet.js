@@ -160,16 +160,27 @@ define( function( require ) {
      * @returns {DerivedProperty}
      */
     toDerivedProperty: function( dependencyNames, derivation ) {
-      var propertySet = this;
-      var dependencies = dependencyNames.map( function( dependency ) {
-        return propertySet[ dependency + 'Property' ];
-      } );
-      return new DerivedProperty( dependencies, derivation );
+      return new DerivedProperty( this.getProperties( dependencyNames ), derivation );
     },
 
     addDerivedProperty: function( name, dependencyNames, derivation ) {
       this[ name + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
       this.addGetter( name );
+    },
+
+    /**
+     * Returns an array of the requested properties.
+     * @param dependencyNames
+     * @returns {*}
+     * @private
+     */
+    getProperties: function( dependencyNames ) {
+      var propertySet = this;
+      return dependencyNames.map( function( dependency ) {
+        var propertyKey = dependency + 'Property';
+        assert && assert( propertySet.hasOwnProperty( propertyKey ) );
+        return propertySet[ propertyKey ];
+      } );
     },
 
     /**
@@ -211,14 +222,16 @@ define( function( require ) {
     },
 
     /**
-     * Add a listener to zero or more properties in this PropertySet, useful when you have an update function
-     * that relies on several properties.  Similar to DerivedProperty.
-     * Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
-     * @param {string[]} dependencyNames the list of dependencies to use
-     * @param {function} listener the listener to call back, with signature matching the dependency names
+     * Registers an observer with multiple properties, then notifies the observer immediately.
+     * @param {string[]} dependencyNames
+     * @param {function} observer no params, returns nothing
      */
-    multilink: function( dependencyNames, listener ) {
-      return this.toDerivedProperty( dependencyNames, listener );
+    multilink: function( dependencyNames, observer ) {
+      return new axon.Multilink( this.getProperties( dependencyNames ), observer, false );
+    },
+
+    lazyMultilink: function( dependencyNames, observer ) {
+      return new axon.Multilink( this.getProperties( dependencyNames ), observer, true );
     },
 
     /**

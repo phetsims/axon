@@ -398,6 +398,15 @@ define( function( require ) {
     return new axon.Multilink( properties, observer, true );
   };
 
+  /**
+   * Removes the multilinked listener from this Property.
+   * Same as calling detach() on the handle (which happens to be a DerivedProperty instance)
+   * @param derivedProperty
+   */
+  axon.Property.unmultilink = function( derivedProperty ) {
+    derivedProperty.detach();
+  };
+
   axon.Property.prototype.setSendPhetEvents = function( sendPhetEvents ) {
     this.sendPhetEvents = sendPhetEvents;
     return this;
