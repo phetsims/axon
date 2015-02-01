@@ -190,4 +190,35 @@
     equal( areaProperty.dependencyValues, null );
 
   } );
+
+
+  /**
+   * Make sure linking attributes and unlinking attributes works on Property
+   */
+  test( 'Property.linkAttribute', function() {
+    var property = new axon.Property( 7 );
+    var state = { age: 99 };
+    var listener = property.linkAttribute( state, 'age' );
+    equal( state.age, 7, 'link should synchronize values' );
+    property.value = 8;
+    equal( state.age, 8, 'link should update values' );
+    property.unlinkAttribute( listener );
+    property.value = 9;
+    equal( state.age, 8, 'state shouldnt have changed after unlink' );
+  } );
+
+  /**
+   * Make sure linking attributes and unlinking attributes works on PropertySet
+   */
+  test( 'PropertySet.linkAttribute', function() {
+    var propertySet = new axon.PropertySet( { time: 7 } );
+    var state = { age: 99 };
+    var listener = propertySet.linkAttribute( 'time', state, 'age' );
+    equal( state.age, 7, 'link should synchronize values' );
+    propertySet.time = 8;
+    equal( state.age, 8, 'link should update values' );
+    propertySet.unlinkAttribute( 'time', listener );
+    propertySet.time = 9;
+    equal( state.age, 8, 'state shouldnt have changed after unlink' );
+  } );
 })();

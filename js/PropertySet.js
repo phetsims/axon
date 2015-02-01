@@ -281,6 +281,16 @@ define( function( require ) {
      */
     linkAttribute: function( propertyName, object, attributeName ) {
       return this.property( propertyName ).linkAttribute( object, attributeName );
-    }
+    },
+
+    /**
+     * Unlink a listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
+     * @param {string} propertyName - the name of the property that the listener will be removed from
+     * @param {function} listener
+     */
+    unlinkAttribute: function( propertyName, listener ) {
+      this.property( propertyName ).unlink( listener );
+    },
   } );
 } );
