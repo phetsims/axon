@@ -195,7 +195,7 @@ define( function( require ) {
      *
      * Throws an error if you try to set a value for which there is no property.
      */
-    set: function( values ) {
+    setValues: function( values ) {
       var propertySet = this;
       Object.getOwnPropertyNames( values ).forEach( function( val ) {
         if ( typeof(propertySet[ val + 'Property' ] === 'Property') ) {
@@ -212,7 +212,7 @@ define( function( require ) {
      * TODO: this works well to serialize numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
      * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
      */
-    get: function() {
+    getValues: function() {
       var state = {};
       for ( var i = 0; i < this.keys.length; i++ ) {
         var key = this.keys[ i ];
