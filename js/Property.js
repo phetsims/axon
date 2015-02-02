@@ -171,6 +171,16 @@ define( function( require ) {
     },
 
     /**
+     * Add an observer to the Property, without calling it back right away.  This is used when you need to register a observer without an immediate callback.
+     * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
+     */
+    lazyLink: function( observer ) {
+      if ( this._observers.indexOf( observer ) === -1 ) {
+        this._observers.push( observer );
+      }
+    },
+
+    /**
      * Removes an observer.
      * If observer is not registered, this is a no-op.
      *
@@ -184,22 +194,25 @@ define( function( require ) {
     },
 
     /**
+     * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
+     * Example: modelVisibleProperty.linkAttribute(view,'visible');
+     *
+     * @param object
+     * @param attributeName
+     */
+    linkAttribute: function( object, attributeName ) {
+      var handle = function( value ) {object[ attributeName ] = value;};
+      this.link( handle );
+      return handle;
+    },
+
+    /**
      * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
      * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
      * @param observer
      */
     unlinkAttribute: function( observer ) {
       this.unlink( observer );
-    },
-
-    /**
-     * Add an observer to the Property, without calling it back right away.  This is used when you need to register a observer without an immediate callback.
-     * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
-     */
-    lazyLink: function( observer ) {
-      if ( this._observers.indexOf( observer ) === -1 ) {
-        this._observers.push( observer );
-      }
     },
 
     //Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
@@ -225,19 +238,6 @@ define( function( require ) {
       };
       this.lazyLink( wrapper );
       return wrapper;
-    },
-
-    /**
-     * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
-     * Example: modelVisibleProperty.linkAttribute(view,'visible');
-     *
-     * @param object
-     * @param attributeName
-     */
-    linkAttribute: function( object, attributeName ) {
-      var handle = function( value ) {object[ attributeName ] = value;};
-      this.link( handle );
-      return handle;
     },
 
     /**

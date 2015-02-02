@@ -222,6 +222,35 @@ define( function( require ) {
     },
 
     /**
+     * Link to a property by name, see https://github.com/phetsims/axon/issues/16
+     * @param {string} propertyName the name of the property to link to
+     * @param {function }observer the callback to link to the property
+     */
+    link: function( propertyName, observer ) {
+      this[ propertyName + 'Property' ].link( observer );
+    },
+
+    /**
+     * Link an attribute to a property by name.  Return a handle to the observer so it can be removed using unlink().
+     * @param {string} propertyName the property to link to
+     * @param {object} object the object for which the attribute will be set
+     * @param {string} attributeName the name of the attribute to set on the object
+     */
+    linkAttribute: function( propertyName, object, attributeName ) {
+      return this.property( propertyName ).linkAttribute( object, attributeName );
+    },
+
+    /**
+     * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
+     * @param {string} propertyName - the name of the property that the observer will be removed from
+     * @param {function} observer
+     */
+    unlinkAttribute: function( propertyName, observer ) {
+      this.property( propertyName ).unlink( observer );
+    },
+
+    /**
      * Registers an observer with multiple properties, then notifies the observer immediately.
      * @param {string[]} dependencyNames
      * @param {function} observer no params, returns nothing
@@ -257,40 +286,11 @@ define( function( require ) {
     },
 
     /**
-     * Link to a property by name, see https://github.com/phetsims/axon/issues/16
-     * @param {string} propertyName the name of the property to link to
-     * @param {function }observer the callback to link to the property
-     */
-    link: function( propertyName, observer ) {
-      this[ propertyName + 'Property' ].link( observer );
-    },
-
-    /**
      * Get a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to get
      */
     property: function( propertyName ) {
       return this[ propertyName + 'Property' ];
-    },
-
-    /**
-     * Link an attribute to a property by name.  Return a handle to the observer so it can be removed using unlink().
-     * @param {string} propertyName the property to link to
-     * @param {object} object the object for which the attribute will be set
-     * @param {string} attributeName the name of the attribute to set on the object
-     */
-    linkAttribute: function( propertyName, object, attributeName ) {
-      return this.property( propertyName ).linkAttribute( object, attributeName );
-    },
-
-    /**
-     * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-     * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
-     * @param {string} propertyName - the name of the property that the observer will be removed from
-     * @param {function} observer
-     */
-    unlinkAttribute: function( propertyName, observer ) {
-      this.property( propertyName ).unlink( observer );
     }
   } );
 } );
