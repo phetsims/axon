@@ -291,6 +291,6 @@ define( function( require ) {
      */
     unlinkAttribute: function( propertyName, listener ) {
       this.property( propertyName ).unlink( listener );
-    },
+    }
   } );
 } );
