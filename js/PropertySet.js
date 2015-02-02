@@ -160,16 +160,27 @@ define( function( require ) {
      * @returns {DerivedProperty}
      */
     toDerivedProperty: function( dependencyNames, derivation ) {
-      var propertySet = this;
-      var dependencies = dependencyNames.map( function( dependency ) {
-        return propertySet[ dependency + 'Property' ];
-      } );
-      return new DerivedProperty( dependencies, derivation );
+      return new DerivedProperty( this.getProperties( dependencyNames ), derivation );
     },
 
     addDerivedProperty: function( name, dependencyNames, derivation ) {
       this[ name + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
       this.addGetter( name );
+    },
+
+    /**
+     * Returns an array of the requested properties.
+     * @param dependencyNames
+     * @returns {*}
+     * @private
+     */
+    getProperties: function( dependencyNames ) {
+      var propertySet = this;
+      return dependencyNames.map( function( dependency ) {
+        var propertyKey = dependency + 'Property';
+        assert && assert( propertySet.hasOwnProperty( propertyKey ) );
+        return propertySet[ propertyKey ];
+      } );
     },
 
     /**
@@ -184,7 +195,7 @@ define( function( require ) {
      *
      * Throws an error if you try to set a value for which there is no property.
      */
-    set: function( values ) {
+    setValues: function( values ) {
       var propertySet = this;
       Object.getOwnPropertyNames( values ).forEach( function( val ) {
         if ( typeof(propertySet[ val + 'Property' ] === 'Property') ) {
@@ -201,7 +212,7 @@ define( function( require ) {
      * TODO: this works well to serialize numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
      * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
      */
-    get: function() {
+    getValues: function() {
       var state = {};
       for ( var i = 0; i < this.keys.length; i++ ) {
         var key = this.keys[ i ];
@@ -211,14 +222,16 @@ define( function( require ) {
     },
 
     /**
-     * Add a listener to zero or more properties in this PropertySet, useful when you have an update function
-     * that relies on several properties.  Similar to DerivedProperty.
-     * Discussion result: Let's use 'multilink' for now, and in the future we may change it to link.
-     * @param {string[]} dependencyNames the list of dependencies to use
-     * @param {function} listener the listener to call back, with signature matching the dependency names
+     * Registers an observer with multiple properties, then notifies the observer immediately.
+     * @param {string[]} dependencyNames
+     * @param {function} observer no params, returns nothing
      */
-    multilink: function( dependencyNames, listener ) {
-      return this.toDerivedProperty( dependencyNames, listener );
+    multilink: function( dependencyNames, observer ) {
+      return new axon.Multilink( this.getProperties( dependencyNames ), observer, false );
+    },
+
+    lazyMultilink: function( dependencyNames, observer ) {
+      return new axon.Multilink( this.getProperties( dependencyNames ), observer, true );
     },
 
     /**
@@ -268,6 +281,16 @@ define( function( require ) {
      */
     linkAttribute: function( propertyName, object, attributeName ) {
       return this.property( propertyName ).linkAttribute( object, attributeName );
-    }
+    },
+
+    /**
+     * Unlink a listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
+     * @param {string} propertyName - the name of the property that the listener will be removed from
+     * @param {function} listener
+     */
+    unlinkAttribute: function( propertyName, listener ) {
+      this.property( propertyName ).unlink( listener );
+    },
   } );
 } );

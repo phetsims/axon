@@ -184,6 +184,15 @@ define( function( require ) {
     },
 
     /**
+     * Unlink a listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
+     * @param listener
+     */
+    unlinkAttribute: function( listener ) {
+      this.unlink( listener );
+    },
+
+    /**
      * Add an observer to the Property, without calling it back right away.  This is used when you need to register a listener without an immediate callback.
      * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
      */
@@ -396,6 +405,15 @@ define( function( require ) {
 
   axon.Property.lazyMultilink = function( properties, observer ) {
     return new axon.Multilink( properties, observer, true );
+  };
+
+  /**
+   * Removes the multilinked listener from this Property.
+   * Same as calling detach() on the handle (which happens to be a DerivedProperty instance)
+   * @param derivedProperty
+   */
+  axon.Property.unmultilink = function( derivedProperty ) {
+    derivedProperty.detach();
   };
 
   axon.Property.prototype.setSendPhetEvents = function( sendPhetEvents ) {

@@ -74,13 +74,6 @@ define( function( require ) {
 
       //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
       reset: function() { throw new Error( 'Cannot reset a derived property directly' ); }
-    },
-
-    //statics
-    {
-      //Create a DerivedProperty using a static create method to avoid the linting error: W031: Do not use 'new' for side effects.
-      //This should be used only when using DerivedProperty to create side effects (and not to assign a property value)
-      multilink: function( dependencies, derivation ) { return new axon.DerivedProperty( dependencies, derivation ); }
     }
   );
 } );
