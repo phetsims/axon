@@ -49,9 +49,7 @@ define( function( require ) {
 
   return inherit( Property, axon.DerivedProperty, {
 
-      /**
-       * Detaches this derived property from its dependencies.
-       */
+      // Detaches this derived property from its dependencies.
       detach: function() {
         for ( var i = 0; i < this.dependencies.length; i++ ) {
           var dependency = this.dependencies[ i ];
