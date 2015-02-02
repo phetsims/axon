@@ -383,13 +383,13 @@ define( function( require ) {
      * @param observer the observer that is called when this Property
      */
     onValue: function( value, observer ) {
-      var observer = function( v ) {
+      var onValueObserver = function( v ) {
         if ( v === value ) {
           observer();
         }
       };
-      this.link( observer );
-      return observer;
+      this.link( onValueObserver );
+      return onValueObserver;
     }
   };
 
