@@ -16,8 +16,8 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
 
   /**
-   * @param {Property[]} dependencies
-   * @param {function} derivation function that expects args in the same order as dependencies
+   * @param {Property[]} dependencies properties that this property's value is derived from
+   * @param {function} derivation function that derives this property's value, expects args in the same order as dependencies
    * @constructor
    */
   axon.DerivedProperty = function DerivedProperty( dependencies, derivation ) {
