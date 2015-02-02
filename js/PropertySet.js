@@ -235,12 +235,12 @@ define( function( require ) {
     },
 
     /**
-     * Removes the multilinked listener from this PropertySet.
-     * Same as calling detach() on the handle (which happens to be a DerivedProperty instance)
-     * @param derivedProperty
+     * Removes the multilink from this PropertySet.
+     * Same as calling detach() on the multilink
+     * @param {Multilink} multilink
      */
-    unmultilink: function( derivedProperty ) {
-      derivedProperty.detach();
+    unmultilink: function( multilink ) {
+      multilink.detach();
     },
 
     toString: function() {
@@ -274,7 +274,7 @@ define( function( require ) {
     },
 
     /**
-     * Link an attribute to a property by name.  Return a handle to the listener so it can be removed using unlink().
+     * Link an attribute to a property by name.  Return a handle to the observer so it can be removed using unlink().
      * @param {string} propertyName the property to link to
      * @param {object} object the object for which the attribute will be set
      * @param {string} attributeName the name of the attribute to set on the object
@@ -284,13 +284,13 @@ define( function( require ) {
     },
 
     /**
-     * Unlink a listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-     * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-     * @param {string} propertyName - the name of the property that the listener will be removed from
-     * @param {function} listener
+     * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
+     * @param {string} propertyName - the name of the property that the observer will be removed from
+     * @param {function} observer
      */
-    unlinkAttribute: function( propertyName, listener ) {
-      this.property( propertyName ).unlink( listener );
+    unlinkAttribute: function( propertyName, observer ) {
+      this.property( propertyName ).unlink( observer );
     }
   } );
 } );

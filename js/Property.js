@@ -88,7 +88,7 @@ define( function( require ) {
 
     _notifyObservers: function( oldValue ) {
 
-      // Note the current value, since it will be sent to possibly multiple listeners.
+      // Note the current value, since it will be sent to possibly multiple observers.
       var value = this.get();
 
       // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
@@ -184,16 +184,16 @@ define( function( require ) {
     },
 
     /**
-     * Unlink a listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-     * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-     * @param listener
+     * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+     * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
+     * @param observer
      */
-    unlinkAttribute: function( listener ) {
-      this.unlink( listener );
+    unlinkAttribute: function( observer ) {
+      this.unlink( observer );
     },
 
     /**
-     * Add an observer to the Property, without calling it back right away.  This is used when you need to register a listener without an immediate callback.
+     * Add an observer to the Property, without calling it back right away.  This is used when you need to register a observer without an immediate callback.
      * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
      */
     lazyLink: function( observer ) {
@@ -207,14 +207,14 @@ define( function( require ) {
     valueOf: function() {return this.toString();},
 
     /**
-     * Add a listener so that it will only fire once (and not on registration)
+     * Add an observer so that it will only fire once (and not on registration)
      *
      * I can see two ways to implement this:
      * (a) add a field to the observer so after notifications it can be checked and possibly removed. Disadvantage: will make everything slower even if not using 'once'
      * (b) wrap the observer in a new function which will call the observer and then remove itself.  Disadvantage: cannot remove an observer added using 'once'
-     * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' listener must be removed before it is called once
+     * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' observer must be removed before it is called once
      *
-     * @param observer the listener which should be called back only for one property change (and not on registration)
+     * @param observer the observer which should be called back only for one property change (and not on registration)
      * @returns {function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
      */
     once: function( observer ) {
@@ -318,7 +318,7 @@ define( function( require ) {
     /**
      * Two way communication for not, so you can set the value and have it come back to the parent
      * Note that noting about the following code is specific to booleans, although this should probably be used mostly for booleans.
-     * To unlink both listeners attached unlink a property created with not(), use detach()
+     * To unlink both observers attached unlink a property created with not(), use detach()
      */
     not: function() {
       var parentProperty = this;
@@ -340,12 +340,12 @@ define( function( require ) {
     /**
      * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
      * @param name debug name to be printed on the console
-     * @returns {function} the handle to the linked listener in case it needs to be removed later
+     * @returns {function} the handle to the linked observer in case it needs to be removed later
      */
     debug: function( name ) {
-      var listener = function( value ) { console.log( name, value ); };
-      this.link( listener );
-      return listener;
+      var observer = function( value ) { console.log( name, value ); };
+      this.link( observer );
+      return observer;
     },
 
     //Returns a new Property that maps its values using the specified lookup table.
@@ -376,16 +376,16 @@ define( function( require ) {
     },
 
     /**
-     * Adds a listener that is fired when the property takes the specified value.  If the property has the value already, the listener is called back
-     * immediately.  A reference to the listener is returned so that it can be removed.
+     * Adds an observer that is fired when the property takes the specified value.  If the property has the value already,
+     * the observer is called back immediately.  A reference to the observer is returned so that it can be removed.
      *
      * @param value the value to match
-     * @param the listener that is called when this Property
+     * @param observer the observer that is called when this Property
      */
-    onValue: function( value, listener ) {
+    onValue: function( value, observer ) {
       var observer = function( v ) {
         if ( v === value ) {
-          listener();
+          observer();
         }
       };
       this.link( observer );
@@ -408,7 +408,7 @@ define( function( require ) {
   };
 
   /**
-   * Removes the multilinked listener from this Property.
+   * Removes the multilinked observer from this Property.
    * Same as calling detach() on the handle (which happens to be a DerivedProperty instance)
    * @param derivedProperty
    */
