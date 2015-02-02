@@ -43,11 +43,15 @@
 define( function( require ) {
   'use strict';
 
+  // modules
   var Property = require( 'AXON/Property' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
   var Events = require( 'AXON/Events' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
+
+  // constants
+  var SUFFIX = 'Property';
 
   /**
    * @class PropertySet
@@ -89,7 +93,7 @@ define( function( require ) {
       else {
         propertyID = propertyName;
       }
-      this[ propertyName + 'Property' ] = new Property( value, { propertyID: propertyID } );
+      this[ propertyName + SUFFIX ] = new Property( value, { propertyID: propertyID } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },
@@ -107,7 +111,7 @@ define( function( require ) {
       }
 
       //Unregister the Property instance from the PropertySet
-      delete this[ propertyName + 'Property' ];
+      delete this[ propertyName + SUFFIX ];
 
       //Unregister the getter/setter, if they exist
       delete this[ propertyName ];
@@ -118,7 +122,7 @@ define( function( require ) {
      * @param {string} propertyName
      */
     addGetterAndSetter: function( propertyName ) {
-      var property = this[ propertyName + 'Property' ];
+      var property = this[ propertyName + SUFFIX ];
 
       Object.defineProperty( this, propertyName, {
 
@@ -139,7 +143,7 @@ define( function( require ) {
      * @param {string} propertyName
      */
     addGetter: function( propertyName ) {
-      var property = this[ propertyName + 'Property' ];
+      var property = this[ propertyName + SUFFIX ];
 
       Object.defineProperty( this, propertyName, {
 
@@ -155,7 +159,7 @@ define( function( require ) {
     reset: function() {
       var propertySet = this;
       this.keys.forEach( function( key ) {
-        propertySet[ key + 'Property' ].reset();
+        propertySet[ key + SUFFIX ].reset();
       } );
     },
 
@@ -176,7 +180,7 @@ define( function( require ) {
      * @param {function} derivation function that expects args in the same order as dependencies
      */
     addDerivedProperty: function( propertyName, dependencyNames, derivation ) {
-      this[ propertyName + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
+      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation );
       this.addGetter( propertyName );
     },
 
@@ -189,7 +193,7 @@ define( function( require ) {
     getProperties: function( propertyNames ) {
       var propertySet = this;
       return propertyNames.map( function( propertyName ) {
-        var propertyKey = propertyName + 'Property';
+        var propertyKey = propertyName + SUFFIX;
         assert && assert( propertySet.hasOwnProperty( propertyKey ) );
         return propertySet[ propertyKey ];
       } );
@@ -209,12 +213,12 @@ define( function( require ) {
      */
     setValues: function( values ) {
       var propertySet = this;
-      Object.getOwnPropertyNames( values ).forEach( function( val ) {
-        if ( typeof(propertySet[ val + 'Property' ] === 'Property') ) {
-          propertySet[ val + 'Property' ].set( values[ val ] );
+      Object.getOwnPropertyNames( values ).forEach( function( propertyName ) {
+        if ( typeof(propertySet[ propertyName + SUFFIX ] === 'Property') ) {
+          propertySet[ propertyName + SUFFIX ].set( values[ propertyName ] );
         }
         else {
-          throw new Error( 'property not found: ' + val );
+          throw new Error( 'property not found: ' + propertyName );
         }
       } );
     },
@@ -239,7 +243,7 @@ define( function( require ) {
      * @param {function }observer the callback to link to the property
      */
     link: function( propertyName, observer ) {
-      this[ propertyName + 'Property' ].link( observer );
+      this[ propertyName + SUFFIX ].link( observer );
     },
 
     /**
@@ -248,7 +252,7 @@ define( function( require ) {
      * @param {function }observer the callback to link to the property
      */
     unlink: function( propertyName, observer ) {
-      this[ propertyName + 'Property' ].unlink( observer );
+      this[ propertyName + SUFFIX ].unlink( observer );
     },
 
     /**
@@ -311,7 +315,7 @@ define( function( require ) {
      * @param {string} propertyName the name of the property to get
      */
     property: function( propertyName ) {
-      return this[ propertyName + 'Property' ];
+      return this[ propertyName + SUFFIX ];
     }
   } );
 } );
