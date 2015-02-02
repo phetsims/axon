@@ -231,6 +231,15 @@ define( function( require ) {
     },
 
     /**
+     * Unlink for a property by name, see https://github.com/phetsims/axon/issues/16
+     * @param {string} propertyName the name of the property to link to
+     * @param {function }observer the callback to link to the property
+     */
+    unlink: function( propertyName, observer ) {
+      this[ propertyName + 'Property' ].unlink( observer );
+    },
+
+    /**
      * Link an attribute to a property by name.  Return a handle to the observer so it can be removed using unlink().
      * @param {string} propertyName the property to link to
      * @param {object} object the object for which the attribute will be set
