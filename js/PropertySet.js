@@ -74,51 +74,53 @@ define( function( require ) {
 
     /**
      * Adds a new property to this PropertySet
-     *
-     * @param {string} name
-     * @param value
-     * @param propertySetID
+     * @param {string} propertyName
+     * @param {*} value the property's initial value
+     * @param {string} [propertySetID] optional identifier for data-collection studies
      */
-    addProperty: function( name, value, propertySetID ) {
+    addProperty: function( propertyName, value, propertySetID ) {
       if ( propertySetID !== null && typeof( propertySetID ) !== 'undefined' && typeof( propertySetID ) !== 'string' ) {
         throw new Error( 'If defined, the propertySetID must be a string.' );
       }
       var propertyID;
       if ( typeof( propertySetID ) === 'string' ) {
-        propertyID = propertySetID + '.' + name;
+        propertyID = propertySetID + '.' + propertyName;
       }
       else {
-        propertyID = name;
+        propertyID = propertyName;
       }
-      this[ name + 'Property' ] = new Property( value, { propertyID: propertyID } );
-      this.addGetterAndSetter( name );
-      this.keys.push( name );
+      this[ propertyName + 'Property' ] = new Property( value, { propertyID: propertyID } );
+      this.addGetterAndSetter( propertyName );
+      this.keys.push( propertyName );
     },
 
     /**
      * Remove any property (whether a derived property or not) that was added to this PropertySet
-     * @param name
+     * @param {String} propertyName
      */
-    removeProperty: function( name ) {
+    removeProperty: function( propertyName ) {
 
       //Remove from the keys (only for non-derived properties)
-      var index = this.keys.indexOf( name );
+      var index = this.keys.indexOf( propertyName );
       if ( index !== -1 ) {
         this.keys.splice( index, 1 );
       }
 
       //Unregister the Property instance from the PropertySet
-      delete this[ name + 'Property' ];
+      delete this[ propertyName + 'Property' ];
 
       //Unregister the getter/setter, if they exist
-      delete this[ name ];
+      delete this[ propertyName ];
     },
 
-    //Add a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
-    addGetterAndSetter: function( name ) {
-      var property = this[ name + 'Property' ];
+    /**
+     * Adds a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
+     * @param {string} propertyName
+     */
+    addGetterAndSetter: function( propertyName ) {
+      var property = this[ propertyName + 'Property' ];
 
-      Object.defineProperty( this, name, {
+      Object.defineProperty( this, propertyName, {
 
         // Getter proxies to Model#get()...
         get: function() { return property.get();},
@@ -132,10 +134,14 @@ define( function( require ) {
       } );
     },
 
-    addGetter: function( name ) {
-      var property = this[ name + 'Property' ];
+    /**
+     * Adds an ES5 getter to a property.
+     * @param {string} propertyName
+     */
+    addGetter: function( propertyName ) {
+      var property = this[ propertyName + 'Property' ];
 
-      Object.defineProperty( this, name, {
+      Object.defineProperty( this, propertyName, {
 
         get: function() { return property.get();},
 
@@ -145,7 +151,7 @@ define( function( require ) {
       } );
     },
 
-    //Resets all of the properties associated with this PropertySet
+    // Resets all of the properties associated with this PropertySet
     reset: function() {
       var propertySet = this;
       this.keys.forEach( function( key ) {
@@ -154,30 +160,36 @@ define( function( require ) {
     },
 
     /**
-     * Creates a DerivedProperty from the given dependency names and derivation.
-     * @param {string[]} dependencyNames
+     * Creates a DerivedProperty from the given property property names and derivation.
+     * @param {string[]} propertyNames
      * @param {function} derivation
      * @returns {DerivedProperty}
      */
-    toDerivedProperty: function( dependencyNames, derivation ) {
-      return new DerivedProperty( this.getProperties( dependencyNames ), derivation );
+    toDerivedProperty: function( propertyNames, derivation ) {
+      return new DerivedProperty( this.getProperties( propertyNames ), derivation );
     },
 
-    addDerivedProperty: function( name, dependencyNames, derivation ) {
-      this[ name + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
-      this.addGetter( name );
+    /**
+     * Adds a derived property to the property set.
+     * @param {string} propertyName name for the derived property
+     * @param {string[]} dependencyNames names of the properties that it depends on
+     * @param {function} derivation function that expects args in the same order as dependencies
+     */
+    addDerivedProperty: function( propertyName, dependencyNames, derivation ) {
+      this[ propertyName + 'Property' ] = this.toDerivedProperty( dependencyNames, derivation );
+      this.addGetter( propertyName );
     },
 
     /**
      * Returns an array of the requested properties.
-     * @param dependencyNames
+     * @param propertyNames
      * @returns {*}
      * @private
      */
-    getProperties: function( dependencyNames ) {
+    getProperties: function( propertyNames ) {
       var propertySet = this;
-      return dependencyNames.map( function( dependency ) {
-        var propertyKey = dependency + 'Property';
+      return propertyNames.map( function( propertyName ) {
+        var propertyKey = propertyName + 'Property';
         assert && assert( propertySet.hasOwnProperty( propertyKey ) );
         return propertySet[ propertyKey ];
       } );
@@ -261,15 +273,15 @@ define( function( require ) {
 
     /**
      * Registers an observer with multiple properties, then notifies the observer immediately.
-     * @param {string[]} dependencyNames
+     * @param {string[]} propertyNames
      * @param {function} observer no params, returns nothing
      */
-    multilink: function( dependencyNames, observer ) {
-      return new axon.Multilink( this.getProperties( dependencyNames ), observer, false );
+    multilink: function( propertyNames, observer ) {
+      return new axon.Multilink( this.getProperties( propertyNames ), observer, false );
     },
 
-    lazyMultilink: function( dependencyNames, observer ) {
-      return new axon.Multilink( this.getProperties( dependencyNames ), observer, true );
+    lazyMultilink: function( propertyNames, observer ) {
+      return new axon.Multilink( this.getProperties( propertyNames ), observer, true );
     },
 
     /**
