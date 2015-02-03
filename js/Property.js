@@ -34,7 +34,6 @@ define( function( require ) {
 
     //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
     this.sendPhetEvents = true;
-    this.lastMessageTime = 0;//Start at the epoch, so the first message will be sent.
     this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
   };
 
@@ -92,20 +91,7 @@ define( function( require ) {
       var value = this.get();
 
       // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-      var time = null;
-      var sendMessage = null;
-      if ( arch ) {
-        time = Date.now();
-
-        //Only send a message if sendPhetEvents is on and the throttling permits it (i.e. it has been long enough since the last message).
-        sendMessage = this.sendPhetEvents && (this.delay === 0 || (time - this.lastMessageTime > this.delay * 1000));
-
-        // Deliver the change event message to phet.arch
-        if ( sendMessage ) {
-          assert && assert( this.propertyID !== null );
-          arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
-        }
-      }
+      var archID = arch && this.sendPhetEvents && arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
 
       // TODO: JO: avoid slice() by storing observers array correctly
       var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
@@ -114,10 +100,7 @@ define( function( require ) {
       }
 
       // Send the end message to phet.arch
-      if ( arch && sendMessage ) {
-        arch.end();
-        this.lastMessageTime = time;
-      }
+      archID && this.sendPhetEvents && arch.end( archID );
     },
 
     //Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
