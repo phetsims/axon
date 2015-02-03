@@ -94,7 +94,7 @@ define( function( require ) {
       // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
       var time = null;
       var sendMessage = null;
-      if ( phet.arch.active ) {
+      if ( arch ) {
         time = Date.now();
 
         //Only send a message if sendPhetEvents is on and the throttling permits it (i.e. it has been long enough since the last message).
@@ -103,7 +103,7 @@ define( function( require ) {
         // Deliver the change event message to phet.arch
         if ( sendMessage ) {
           assert && assert( this.propertyID !== null );
-          phet.arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
+          arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
         }
       }
 
@@ -114,8 +114,8 @@ define( function( require ) {
       }
 
       // Send the end message to phet.arch
-      if ( sendMessage ) {
-        phet.arch.end();
+      if ( arch && sendMessage ) {
+        arch.end();
         this.lastMessageTime = time;
       }
     },
@@ -425,30 +425,6 @@ define( function( require ) {
     this.delay = delay;
     return this;
   };
-
-  axon.Property.initArch = function() {
-    //TODO: Is there a better place for this declaration?
-    window.phet = window.phet || {};
-    window.phet.arch = window.phet.arch || {
-
-      //Flag that indicates the sim is not instrumented for a data-driven study.  Provides short-circuiting for lines like: phet.arch.active && (...)
-      active: false,
-
-      //Just return the callback directly.
-      //'user', options.componentID, 'CheckBox', 'toggled',
-      wrap: function( messageType, componentID, componentType, action, callback, options ) {
-        return callback;
-      },
-
-      trigger: function() {},
-
-      start: function() {},
-
-      end: function() {}
-    };
-  };
-
-  axon.Property.initArch();
 
   return axon.Property;
 } );
