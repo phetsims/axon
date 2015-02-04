@@ -35,7 +35,7 @@
 
   test( 'Test once', function() {
     var count = 0;
-    var p = new Property( 1 );
+    var p = new axon.Property( 1 );
     p.once( function( newVal, oldVal ) {
       count++;
     } );

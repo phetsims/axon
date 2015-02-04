@@ -26,7 +26,7 @@ define( function( require ) {
    * @param {object} [options] - optional values for the property, see below
    * @constructor
    */
-  function Property( value, options ) {
+  axon.Property = function Property( value, options ) {
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
@@ -39,9 +39,9 @@ define( function( require ) {
     //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
     this.sendPhetEvents = true;
     this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
-  }
+  };
 
-  return inherit( Object, Property, {
+  return inherit( Object, axon.Property, {
 
       /**
        * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
@@ -309,7 +309,7 @@ define( function( require ) {
        */
       not: function() {
         var parentProperty = this;
-        var childProperty = new Property( !this.value );
+        var childProperty = new axon.Property( !this.value );
 
         var setParentToChild = function( value ) {childProperty.set( !value );};
         parentProperty.link( setParentToChild );
