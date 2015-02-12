@@ -46,6 +46,7 @@ define( function( require ) {
   // modules
   var Property = require( 'AXON/Property' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
+  var Multilink = require( 'AXON/Multilink' );
   var Events = require( 'AXON/Events' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
@@ -281,11 +282,11 @@ define( function( require ) {
      * @param {function} observer no params, returns nothing
      */
     multilink: function( propertyNames, observer ) {
-      return new axon.Multilink( this.getProperties( propertyNames ), observer, false );
+      return new Multilink( this.getProperties( propertyNames ), observer, false );
     },
 
     lazyMultilink: function( propertyNames, observer ) {
-      return new axon.Multilink( this.getProperties( propertyNames ), observer, true );
+      return new Multilink( this.getProperties( propertyNames ), observer, true );
     },
 
     /**
