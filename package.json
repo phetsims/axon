@@ -2,7 +2,6 @@
   "name": "axon",
   "version": "1.0.0-dev.1",
   "phetLibs": "axon phet-core",
-  "preload": "",
   "license": "MIT",
   "repository": {
     "type": "git",
