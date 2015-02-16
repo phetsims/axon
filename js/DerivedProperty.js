@@ -18,16 +18,17 @@ define( function( require ) {
   /**
    * @param {Property[]} dependencies properties that this property's value is derived from
    * @param {function} derivation function that derives this property's value, expects args in the same order as dependencies
+   * @param {object} [options] - see code 
    * @constructor
    */
-  axon.DerivedProperty = function DerivedProperty( dependencies, derivation ) {
+  axon.DerivedProperty = function DerivedProperty( dependencies, derivation, options ) {
     this.dependencies = dependencies;
 
     //Keep track of each dependency and only update the changed value, for speed
     this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
 
     var initialValue = derivation.apply( null, this.dependencyValues );
-    Property.call( this, initialValue );
+    Property.call( this, initialValue, options );
 
     var derivedProperty = this;
 
