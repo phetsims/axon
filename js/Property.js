@@ -28,13 +28,15 @@ define( function( require ) {
    */
   axon.Property = function Property( value, options ) {
 
+    options = _.extend( { elementType: 'object' }, options );
+
+    // Optional field used for arch data streaming, set by `together` after the application starts up.
+    this._componentID = null;
+
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
-
-    //Model component ID for data studies, regression testing, etc
-    this.propertyID = options ? options.propertyID : null;
 
     //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
     this.sendPhetEvents = true;
@@ -95,7 +97,7 @@ define( function( require ) {
         var value = this.get();
 
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var archID = arch && this.sendPhetEvents && arch.start( 'model', this.propertyID, 'Property', 'changed', { value: value } );
+        var archID = arch && this.componentID && this.sendPhetEvents && arch.start( 'model', this.componentID, 'Property', 'changed', { value: value } );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
@@ -370,7 +372,13 @@ define( function( require ) {
       throttle: function( delay ) {
         this.delay = delay;
         return this;
-      }
+      },
+
+      // Getters and setters not strictly necessary (since no additional logic is included here), but put here as 
+      // warning documentation to avoid collisions with other subclasses that want to add componentID.
+      // This is used for the arch data collection and other API features.
+      set componentID( id ) {this._componentID = id;},
+      get componentID() {return this._componentID;}
     },
 
     //statics
