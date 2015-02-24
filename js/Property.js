@@ -323,14 +323,22 @@ define( function( require ) {
         return observer;
       },
 
-      //Returns a new Property that maps its values using the specified lookup table.
-      //If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
+      /**
+       * Returns a new Property that maps its values using the specified lookup table.
+       * If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
+       * @param {array} values
+       * @returns {DerivedProperty}
+       */
       mapValues: function( values ) {
         return new axon.DerivedProperty( [ this ], function( thisValue ) { return values[ thisValue ];} );
       },
 
-      //Returns a new Property that maps its values using the specified function
-      //See https://github.com/phetsims/axon/issues/25
+      /**
+       * Returns a new Property that maps its values using the specified function
+       * See https://github.com/phetsims/axon/issues/25
+       * @param f
+       * @returns {DerivedProperty}
+       */
       map: function( f ) {
         return new axon.DerivedProperty( [ this ], function( thisValue ) {return f( thisValue );} );
       },
