@@ -18,8 +18,8 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-  // Also requires Multilink and DerivedProperty but cannot reference them here or it will create a
-  // Circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty
+  // Also requires Multilink and DerivedProperty, but cannot reference them here or it will create a
+  // circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty.
 
   /**
    * @param {*} value - the initial value of the property
