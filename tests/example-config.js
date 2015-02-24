@@ -25,10 +25,6 @@ require.config( {
     text: '../../sherpa/text'
   },
 
-  shim: {
-    underscore: { exports: '_' }
-  },
-
   // optional cache buster to make browser refresh load all included scripts, can be disabled with ?cacheBuster=false
   urlArgs: phet.chipper.getCacheBusterArgs()
 } );
