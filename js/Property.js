@@ -23,12 +23,13 @@ define( function( require ) {
 
   /**
    * @param {*} value - the initial value of the property
-   * @param {object} [options] - optional values for the property, see below
+   * @param {Object} [options] - optional values for the property, see below
    * @constructor
    */
   axon.Property = function Property( value, options ) {
 
-    options = _.extend( { elementType: 'object' }, options );
+    //TODO added for potential use in data collection, delete if unused
+    options = _.extend( { elementType: 'Object' }, options );
 
     // Optional field used for arch data streaming, set by `together` after the application starts up.
     this._componentID = null;
