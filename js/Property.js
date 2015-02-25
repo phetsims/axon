@@ -242,15 +242,6 @@ define( function( require ) {
       },
 
       /**
-       * Returns a new boolean DerivedProperty which is true/false based on && operator.
-       * @param otherProperty
-       * @returns {DerivedProperty.<boolean>}
-       */
-      and: function( otherProperty ) {
-        return new axon.DerivedProperty( [ this, otherProperty ], function( thisValue, otherValue ) { return thisValue && otherValue; } );
-      },
-
-      /**
        * Multiply this property's value by a constant scalar number, and return the derived property.
        *
        * @param scalar
