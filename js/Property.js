@@ -262,16 +262,6 @@ define( function( require ) {
       },
 
       /**
-       * Return a derived property that is true if and only if this value is less than the specified number.
-       *
-       * @param number
-       * @returns {DerivedProperty}
-       */
-      lessThanNumber: function( number ) {
-        return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue < number; } );
-      },
-
-      /**
        * Two way communication for not, so you can set the value and have it come back to the parent
        * Note that noting about the following code is specific to booleans, although this should probably be used mostly for booleans.
        * To unlink both observers attached unlink a property created with not(), use detach()
