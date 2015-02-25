@@ -233,15 +233,6 @@ define( function( require ) {
       },
 
       /**
-       * Returns a new axon.DerivedProperty which is true/false based on whether the value matches (based on ===) the passed in argument.
-       * @param value
-       * @returns {DerivedProperty}
-       */
-      valueEquals: function( value ) {
-        return new axon.DerivedProperty( [ this ], function( propertyValue ) { return propertyValue === value; } );
-      },
-
-      /**
        * Multiply this property's value by a constant scalar number, and return the derived property.
        *
        * @param scalar
