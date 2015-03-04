@@ -233,48 +233,6 @@ define( function( require ) {
       },
 
       /**
-       * Multiply this property's value by a constant scalar number, and return the derived property.
-       *
-       * @param scalar
-       * @returns {DerivedProperty}
-       */
-      times: function( scalar ) {
-        return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue * scalar; } );
-      },
-
-      /**
-       * Multiply this property's value by a constant scalar number, and return the derived property.
-       *
-       * @param number
-       * @returns {DerivedProperty}
-       */
-      plus: function( number ) {
-        return new axon.DerivedProperty( [ this ], function( thisValue ) { return thisValue + number; } );
-      },
-
-      /**
-       * Two way communication for not, so you can set the value and have it come back to the parent
-       * Note that noting about the following code is specific to booleans, although this should probably be used mostly for booleans.
-       * To unlink both observers attached unlink a property created with not(), use detach()
-       */
-      not: function() {
-        var parentProperty = this;
-        var childProperty = new axon.Property( !this.value );
-
-        var setParentToChild = function( value ) {childProperty.set( !value );};
-        parentProperty.link( setParentToChild );
-
-        var setChildToParent = function( value ) {parentProperty.set( !value );};
-        childProperty.link( setChildToParent );
-
-        childProperty.detach = function() {
-          parentProperty.unlink( setParentToChild );
-          childProperty.unlink( setChildToParent );
-        };
-        return childProperty;
-      },
-
-      /**
        * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
        * @param name debug name to be printed on the console
        * @returns {function} the handle to the linked observer in case it needs to be removed later
@@ -283,26 +241,6 @@ define( function( require ) {
         var observer = function( value ) { console.log( name, value ); };
         this.link( observer );
         return observer;
-      },
-
-      /**
-       * Returns a new Property that maps its values using the specified lookup table.
-       * If the parent property value does not appear as a key in the lookup table, the returned property value is undefined
-       * @param {array} values
-       * @returns {DerivedProperty}
-       */
-      mapValues: function( values ) {
-        return new axon.DerivedProperty( [ this ], function( thisValue ) { return values[ thisValue ];} );
-      },
-
-      /**
-       * Returns a new Property that maps its values using the specified function
-       * See https://github.com/phetsims/axon/issues/25
-       * @param f
-       * @returns {DerivedProperty}
-       */
-      map: function( f ) {
-        return new axon.DerivedProperty( [ this ], function( thisValue ) {return f( thisValue );} );
       },
 
       /**
