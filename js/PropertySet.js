@@ -317,20 +317,6 @@ define( function( require ) {
      */
     property: function( propertyName ) {
       return this[ propertyName + SUFFIX ];
-    },
-
-    getAPI: function( route ) {
-      var api = { route: route };
-      for ( var i = 0; i < this.keys.length; i++ ) {
-        var key = this.keys[ i ];
-
-        // TODO: Delegate this to Property itself
-        api[ key ] = {
-          type: 'AXON/Property',
-          route: route + '.' + key + 'Property'
-        };
-      }
-      return api;
     }
   } );
 } );
