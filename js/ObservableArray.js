@@ -130,7 +130,7 @@ define( function( require ) {
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var archID = arch && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'ObservableArray', 'itemAdded', {
+      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'ObservableArray', 'itemAdded', {
           observableArray: this.observableArrayID,
           removed: item.toString()
         } );
@@ -140,7 +140,7 @@ define( function( require ) {
       }
 
       //Finish the "itemRemoved" event
-      arch && this.sendPhetEvents && arch.end( archID );
+      arch && this.sendPhetEvents && this.observableArrayID && arch.end( archID );
     },
 
     /**
