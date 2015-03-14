@@ -115,7 +115,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
 
       //Signify that an item was added to the list
-      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'ObservableArray', 'itemAdded', { added: item.toString() } );
+      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
@@ -130,7 +130,7 @@ define( function( require ) {
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'ObservableArray', 'itemAdded', {
+      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'itemAdded', {
           observableArray: this.observableArrayID,
           removed: item.toString()
         } );

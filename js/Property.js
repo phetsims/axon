@@ -98,7 +98,7 @@ define( function( require ) {
         var value = this.get();
 
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var archID = arch && this.componentID && this.sendPhetEvents && arch.start( 'model', this.componentID, 'Property', 'changed', { value: value } );
+        var archID = arch && this.componentID && this.sendPhetEvents && arch.start( 'model', this.componentID, 'changed', { value: value } );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
