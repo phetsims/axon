@@ -28,11 +28,11 @@ define( function( require ) {
    */
   axon.Property = function Property( value, options ) {
 
-    //TODO added for potential use in data collection, delete if unused
-    options = _.extend( { elementType: 'Object' }, options );
+    options = _.extend( {
+      componentID: null
+    }, options );
 
-    // Optional field used for arch data streaming, set by `together` after the application starts up.
-    this._componentID = null;
+    this.componentID = options.componentID;
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
@@ -42,6 +42,10 @@ define( function( require ) {
     //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
     this.sendPhetEvents = true;
     this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
+
+    if ( this.componentID ) {
+      together && together.addComponent( this );
+    }
   };
 
   return inherit( Object, axon.Property, {
@@ -283,13 +287,7 @@ define( function( require ) {
       throttle: function( delay ) {
         this.delay = delay;
         return this;
-      },
-
-      // Getters and setters not strictly necessary (since no additional logic is included here), but put here as 
-      // warning documentation to avoid collisions with other subclasses that want to add componentID.
-      // This is used for the arch data collection and other API features.
-      set componentID( id ) {this._componentID = id;},
-      get componentID() {return this._componentID;}
+      }
     },
 
     //statics
