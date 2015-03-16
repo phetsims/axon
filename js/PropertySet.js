@@ -55,15 +55,13 @@ define( function( require ) {
   var SUFFIX = 'Property';
 
   /**
-   * @class PropertySet
+   * PropertySet main constructor
+   * @param {object} values - an object hash with the initial values for the properties
+   * @param {object} [options] - componentIDMap: optional identifiers used in data collection messages
    * @constructor
-   * @param values an object hash with the initial values for the properties
-   * @param {object} [options] -
-   *                           - propertySetID: optional identifier used in data collection messages
    */
   axon.PropertySet = function PropertySet( values, options ) {
     var propertySet = this;
-    this.propertySetID = options ? options.propertySetID : null;
 
     Events.call( this );
 
@@ -71,7 +69,8 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[ value ], propertySet.propertySetID );
+      var componentID = options && options.componentIDMap && options.componentIDMap[ value ];
+      propertySet.addProperty( value, values[ value ], componentID );
     } );
   };
 
@@ -81,20 +80,13 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
-     * @param {string} [propertySetID] optional identifier for data-collection studies
+     * @param {string} [componentID] optional identifier for data-collection studies
      */
-    addProperty: function( propertyName, value, propertySetID ) {
-      if ( propertySetID !== null && typeof( propertySetID ) !== 'undefined' && typeof( propertySetID ) !== 'string' ) {
-        throw new Error( 'If defined, the propertySetID must be a string.' );
+    addProperty: function( propertyName, value, componentID ) {
+      if ( componentID !== null && typeof( componentID ) !== 'undefined' && typeof( componentID ) !== 'string' ) {
+        throw new Error( 'If defined, the componentID must be a string.' );
       }
-      var propertyID;
-      if ( typeof( propertySetID ) === 'string' ) {
-        propertyID = propertySetID + '.' + propertyName;
-      }
-      else {
-        propertyID = propertyName;
-      }
-      this[ propertyName + SUFFIX ] = new Property( value, { propertyID: propertyID } );
+      this[ propertyName + SUFFIX ] = new Property( value, { componentID: componentID } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },
