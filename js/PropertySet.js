@@ -72,6 +72,23 @@ define( function( require ) {
       var componentID = options && options.componentIDMap && options.componentIDMap[ value ];
       propertySet.addProperty( value, values[ value ], componentID );
     } );
+
+    // Make sure all entries in the componentIDMap have entries in the values.  If not, it could indicate
+    // an inconsistent state.  Define in a function/closure so it can be skipped when assertions are off.
+    var allComponentIDMapHaveEntries = function() {
+      var valueKeys = Object.getOwnPropertyNames( values );
+      if ( options && options.componentIDMap ) {
+        Object.getOwnPropertyNames( options.componentIDMap ).forEach( function( componentIDKey ) {
+          assert && assert( valueKeys.indexOf( componentIDKey ) >= 0, 'ComponentID was provided for non-existing value: ' + componentIDKey );
+        } );
+        return true;
+      }
+      else {
+        return true;
+      }
+    };
+
+    assert && assert( allComponentIDMapHaveEntries(), 'All entries in the componentIDMap should have matching entries in the values' );
   };
 
   return inherit( Events, axon.PropertySet, {
