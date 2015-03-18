@@ -36,9 +36,6 @@ define( function( require ) {
 
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
-
-    //Model component ID for data studies, regression testing, etc
-    this.observableArrayID = options ? options.observableArrayID : null;
   };
 
   axon.ObservableArray.prototype = {
@@ -110,7 +107,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
 
       //Signify that an item was added to the list
-      var archID = arch && this.observableArrayID && arch.start( 'model', this.observableArrayID, 'itemAdded', { added: item.toString() } );
+      var archID = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
@@ -118,15 +115,15 @@ define( function( require ) {
       }
 
       //Finish the "itemAdded" event
-      arch && this.observableArrayID && arch.end( archID );
+      arch && this.componentID && arch.end( archID );
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var archID = arch && this.observableArrayID && arch.start( 'model', this.observableArrayID, 'itemAdded', {
-          observableArray: this.observableArrayID,
+      var archID = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', {
+          observableArray: this.componentID,
           removed: item.toString()
         } );
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -135,7 +132,7 @@ define( function( require ) {
       }
 
       //Finish the "itemRemoved" event
-      arch && this.observableArrayID && arch.end( archID );
+      arch && this.componentID && arch.end( archID );
     },
 
     /**
