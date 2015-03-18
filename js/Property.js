@@ -39,8 +39,6 @@ define( function( require ) {
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
 
-    this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
-
     // Many sim Properties are completely internal to the simulation, so only register with the together.js api
     // if the componentID is non-null
     if ( this.componentID ) {
@@ -277,11 +275,6 @@ define( function( require ) {
         };
         this.link( onValueObserver );
         return onValueObserver;
-      },
-
-      throttle: function( delay ) {
-        this.delay = delay;
-        return this;
       }
     },
 
