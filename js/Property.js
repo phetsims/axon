@@ -39,8 +39,6 @@ define( function( require ) {
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
 
-    //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events that should not be recorded (such as the passage of time).
-    this.sendPhetEvents = true;
     this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
 
     // Many sim Properties are completely internal to the simulation, so only register with the together.js api
@@ -104,7 +102,7 @@ define( function( require ) {
         var value = this.get();
 
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var archID = arch && this.componentID && this.sendPhetEvents && arch.start( 'model', this.componentID, 'changed', { value: value } );
+        var archID = arch && this.componentID && arch.start( 'model', this.componentID, 'changed', { value: value } );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
@@ -113,7 +111,7 @@ define( function( require ) {
         }
 
         // Send the end message to phet.arch
-        archID && this.sendPhetEvents && arch.end( archID );
+        archID && arch.end( archID );
       },
 
       /**
@@ -279,11 +277,6 @@ define( function( require ) {
         };
         this.link( onValueObserver );
         return onValueObserver;
-      },
-
-      setSendPhetEvents: function( sendPhetEvents ) {
-        this.sendPhetEvents = sendPhetEvents;
-        return this;
       },
 
       throttle: function( delay ) {

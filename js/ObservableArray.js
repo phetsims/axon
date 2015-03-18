@@ -32,12 +32,7 @@ define( function( require ) {
     this._addedListeners = []; // listeners called when an item is added
     this._removedListeners = []; // listeners called when an item is removed
 
-    //By default, events can be logged for data analysis studies, but setSendPhetEvents can be set to false for events
-    //that should not be recorded (such as the passage of time).
-    this.sendPhetEvents = true;
-
     this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
-    this.lengthProperty.setSendPhetEvents( false );
 
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
@@ -115,7 +110,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
 
       //Signify that an item was added to the list
-      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'itemAdded', { added: item.toString() } );
+      var archID = arch && this.observableArrayID && arch.start( 'model', this.observableArrayID, 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
@@ -123,14 +118,14 @@ define( function( require ) {
       }
 
       //Finish the "itemAdded" event
-      arch && this.sendPhetEvents && this.observableArrayID && arch.end( archID );
+      arch && this.observableArrayID && arch.end( archID );
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var archID = arch && this.observableArrayID && this.sendPhetEvents && arch.start( 'model', this.observableArrayID, 'itemAdded', {
+      var archID = arch && this.observableArrayID && arch.start( 'model', this.observableArrayID, 'itemAdded', {
           observableArray: this.observableArrayID,
           removed: item.toString()
         } );
@@ -140,7 +135,7 @@ define( function( require ) {
       }
 
       //Finish the "itemRemoved" event
-      arch && this.sendPhetEvents && this.observableArrayID && arch.end( archID );
+      arch && this.observableArrayID && arch.end( archID );
     },
 
     /**
@@ -302,12 +297,6 @@ define( function( require ) {
      */
     getArray: function() {
       return this._array;
-    },
-
-    setSendPhetEvents: function( sendPhetEvents ) {
-      this.sendPhetEvents = sendPhetEvents;
-      this.lengthProperty.setSendPhetEvents( sendPhetEvents );
-      return this;
     }
   };
 
