@@ -43,6 +43,8 @@ define( function( require ) {
     this.sendPhetEvents = true;
     this.delay = 0; //Seconds between messages (if throttled).  Zero means no throttling
 
+    // Many sim Properties are completely internal to the simulation, so only register with the together.js api
+    // if the componentID is non-null
     if ( this.componentID ) {
       together && together.addComponent( this );
     }
