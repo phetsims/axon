@@ -107,7 +107,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
 
       //Signify that an item was added to the list
-      var archID = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', { added: item.toString() } );
+      var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
@@ -115,14 +115,14 @@ define( function( require ) {
       }
 
       //Finish the "itemAdded" event
-      arch && this.componentID && arch.end( archID );
+      arch && this.componentID && arch.end( messageIndex );
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var archID = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', {
+      var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', {
           observableArray: this.componentID,
           removed: item.toString()
         } );
@@ -132,7 +132,7 @@ define( function( require ) {
       }
 
       //Finish the "itemRemoved" event
-      arch && this.componentID && arch.end( archID );
+      arch && this.componentID && arch.end( messageIndex );
     },
 
     /**
