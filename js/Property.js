@@ -18,9 +18,14 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var TogetherTypes = require( 'JOIST/TogetherTypes' );
+
   // Also requires Multilink and DerivedProperty, but cannot reference them here or it will create a
   // circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty.
 
+  // together events
+  var changed = TogetherTypes.property.events.changed;
+  
   /**
    * @param {*} value - the initial value of the property
    * @param {Object} [options] - optional values for the property, see below
@@ -100,7 +105,10 @@ define( function( require ) {
         var value = this.get();
 
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'changed', { value: value } );
+        var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, changed, {
+            oldValue: oldValue,
+            newValue: value
+          } );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
