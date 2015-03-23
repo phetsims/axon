@@ -18,7 +18,6 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-  var TogetherTypes = require( 'JOIST/TogetherTypes' );
 
   // Also requires Multilink and DerivedProperty, but cannot reference them here or it will create a
   // circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty.
