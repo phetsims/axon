@@ -98,6 +98,8 @@ define( function( require ) {
      * @param {string} propertyName
      * @param {*} value the property's initial value
      * @param {string} [componentID] optional identifier for data-collection studies
+     * TODO: Perhaps the componentID should be buried in an options parameter to match
+     * TODO: the rest of the API?
      */
     addProperty: function( propertyName, value, componentID ) {
       if ( componentID !== null && typeof( componentID ) !== 'undefined' && typeof( componentID ) !== 'string' ) {
