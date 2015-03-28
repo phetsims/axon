@@ -36,6 +36,12 @@ define( function( require ) {
 
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
+
+    // Some ObservableArray are exposed to together.js for public features--if and only if they have a componentID
+    if ( options && options.componentID ) {
+      this.componentID = options.componentID;
+      together && together.addComponent( this );
+    }
   };
 
   axon.ObservableArray.prototype = {
