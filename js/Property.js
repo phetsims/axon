@@ -100,8 +100,8 @@ define( function( require ) {
         // Note the current value, since it will be sent to possibly multiple observers.
         var value = this.get();
 
-        // Format values for arch.  Otherwise things like Property(Solute) will output arch messages that are 
-        // a big JSON instance describing the entire Solute structure.  We would rather just receive an ID 
+        // Format values for arch.  Otherwise things like Property(Solute) will output arch messages that are
+        // a big JSON instance describing the entire Solute structure.  We would rather just receive an ID
         // or a nickname in cases like that.
         var oldValueForArch = null;
         var newValueForArch = null;
@@ -324,6 +324,28 @@ define( function( require ) {
        */
       unmultilink: function( derivedProperty ) {
         derivedProperty.detach();
+      },
+
+      /**
+       * Set up a PropertySet-like property on any object (see https://github.com/phetsims/axon/issues/42).
+       *
+       * @param {Object} object - The object that the property will be placed on
+       * @param {string} propertyName - Name of the property
+       * @param {*} initialValue - The initial value of the property
+       */
+      addProperty: function( object, propertyName, initialValue ) {
+        // defines the property
+        var property = this[ propertyName + 'Property' ] = new axon.Property( initialValue );
+
+        // defines ES5 getter/setter
+        Object.defineProperty( this, propertyName, {
+          get: function() { return property.get(); },
+          set: function( value ) { property.set( value ); },
+
+          // Make it configurable and enumerable so it's easy to override...
+          configurable: true,
+          enumerable: true
+        } );
       }
     } );
 } );
