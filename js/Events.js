@@ -8,6 +8,7 @@ define( function( require ) {
   'use strict';
 
   var axon = require( 'AXON/axon' );
+  var cleanArray = require( 'PHET_CORE/cleanArray' );
 
   /**
    * @class Events
@@ -150,6 +151,19 @@ define( function( require ) {
 
       var array = this._staticEventListeners[ eventName ];
       return !!array && array.indexOf( callback ) >= 0;
+    },
+
+    /**
+     * Removes all listeners added with on() and onStatic().
+     */
+    removeAllEventListeners: function() {
+      var eventName;
+      for ( eventName in this._eventListeners ) {
+        cleanArray( this._eventListeners[eventName] );
+      }
+      for ( eventName in this._staticEventListeners ) {
+        cleanArray( this._staticEventListeners[eventName] );
+      }
     },
 
     /**
