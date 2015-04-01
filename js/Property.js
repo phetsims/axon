@@ -100,10 +100,28 @@ define( function( require ) {
         // Note the current value, since it will be sent to possibly multiple observers.
         var value = this.get();
 
+        // Format values for arch.  Otherwise things like Property(Solute) will output arch messages that are 
+        // a big JSON instance describing the entire Solute structure.  We would rather just receive an ID 
+        // or a nickname in cases like that.
+        var oldValueForArch = null;
+        var newValueForArch = null;
+
+        if ( arch && this.componentID ) {
+          var archValueType = together.getType( this.componentID ).valueType;
+          if ( archValueType.formatForArch ) {
+            oldValueForArch = archValueType.formatForArch( oldValue );
+            newValueForArch = archValueType.formatForArch( value );
+          }
+          else {
+            oldValueForArch = oldValue;
+            newValueForArch = value;
+          }
+        }
+
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
         var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'changed', {
-            oldValue: oldValue,
-            newValue: value
+            oldValue: oldValueForArch,
+            newValue: newValueForArch
           } );
 
         // TODO: JO: avoid slice() by storing observers array correctly
