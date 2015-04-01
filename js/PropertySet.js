@@ -28,7 +28,7 @@
  * //Normally would be created in a class but that is omitted here for brevity.
  * var p ={name: new Property('larry'), age: new Property('age'), kids: new Property(['alice','bob'])}
  * p.reset = function(){
- *   this.name.reset(); 
+ *   this.name.reset();
  *   this.age.reset();
  *   this.kids.reset();
  * }
