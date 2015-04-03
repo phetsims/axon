@@ -328,6 +328,15 @@ define( function( require ) {
      */
     property: function( propertyName ) {
       return this[ propertyName + SUFFIX ];
+    },
+
+    /**
+     * When the PropertySet is no longer used by the sim, it can be eliminated.  All Properties are disposed.
+     */
+    dispose: function() {
+      for ( var i = 0; i < this.keys.length; i++ ) {
+        this[ this.keys[ i ] + 'Property' ].dispose();
+      }
     }
   } );
 } );

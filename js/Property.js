@@ -297,6 +297,21 @@ define( function( require ) {
         };
         this.link( onValueObserver );
         return onValueObserver;
+      },
+
+      /**
+       * When the Property is no longer used by the sim, it can be eliminated.  All listeners are removed
+       * and it is unregistered from any pertinent modules.
+       */
+      dispose: function() {
+
+        while ( this._observers.length > 0 ) {
+          this.unlink( this._observers[ 0 ] );
+        }
+
+        if ( this.componentID ) {
+          together && together.removeComponent( this );
+        }
       }
     },
 
