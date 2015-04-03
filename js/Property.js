@@ -108,9 +108,9 @@ define( function( require ) {
 
         if ( arch && this.componentID ) {
           var archValueType = together.getType( this.componentID ).valueType;
-          if ( archValueType.formatForArch ) {
-            oldValueForArch = archValueType.formatForArch( oldValue );
-            newValueForArch = archValueType.formatForArch( value );
+          if ( archValueType.formatForEventStream ) {
+            oldValueForArch = archValueType.formatForEventStream( oldValue );
+            newValueForArch = archValueType.formatForEventStream( value );
           }
           else {
             oldValueForArch = oldValue;
