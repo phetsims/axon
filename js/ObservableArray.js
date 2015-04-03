@@ -15,6 +15,7 @@ define( function( require ) {
   // modules
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
+  var inherit = require( 'PHET_CORE/inherit' );
 
   axon.ObservableArray = function ObservableArray( array, options ) {
 
@@ -44,7 +45,7 @@ define( function( require ) {
     }
   };
 
-  axon.ObservableArray.prototype = {
+  return inherit( Object, axon.ObservableArray, {
 
     //Restore the array back to its initial state
     //Note: if an item is in the current array and original array, it is removed and added back
@@ -156,7 +157,9 @@ define( function( require ) {
      * @param {Array} items
      */
     addAll: function( items ) {
-      this._array.push.apply( this._array, items );
+      for ( var i = 0; i < items.length; i++ ) {
+        this.add( items[ i ] );
+      }
     },
 
     /**
@@ -300,8 +303,13 @@ define( function( require ) {
      */
     getArray: function() {
       return this._array;
-    }
-  };
+    },
 
-  return axon.ObservableArray;
+    setElements: function( elements ) {
+
+      // TODO: do a better diff here for efficiency
+      this.clear();
+      this.addAll( elements );
+    }
+  } );
 } );
