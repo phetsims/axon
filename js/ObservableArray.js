@@ -38,9 +38,9 @@ define( function( require ) {
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    // Some ObservableArray are exposed to together.js for public features--if and only if they have a componentID
-    if ( options && options.componentID ) {
-      this.componentID = options.componentID;
+    // Some ObservableArray are exposed to together.js for public features--if and only if they have a togetherID
+    if ( options && options.togetherID ) {
+      this.togetherID = options.togetherID;
       together && together.addComponent( this );
     }
   };
@@ -114,7 +114,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
 
       //Signify that an item was added to the list
-      var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', { added: item.toString() } );
+      var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'itemAdded', { added: item.toString() } );
 
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
@@ -122,15 +122,15 @@ define( function( require ) {
       }
 
       //Finish the "itemAdded" event
-      arch && this.componentID && arch.end( messageIndex );
+      arch && this.togetherID && arch.end( messageIndex );
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
       //Signify that an item was removed from the list
-      var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'itemAdded', {
-          observableArray: this.componentID,
+      var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'itemAdded', {
+          observableArray: this.togetherID,
           removed: item.toString()
         } );
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -139,7 +139,7 @@ define( function( require ) {
       }
 
       //Finish the "itemRemoved" event
-      arch && this.componentID && arch.end( messageIndex );
+      arch && this.togetherID && arch.end( messageIndex );
     },
 
     /**

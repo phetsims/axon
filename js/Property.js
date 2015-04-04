@@ -30,10 +30,10 @@ define( function( require ) {
   axon.Property = function Property( value, options ) {
 
     options = _.extend( {
-      componentID: null
+      togetherID: null
     }, options );
 
-    this.componentID = options.componentID;
+    this.togetherID = options.togetherID;
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
@@ -41,8 +41,8 @@ define( function( require ) {
     this._observers = [];
 
     // Many sim Properties are completely internal to the simulation, so only register with the together.js api
-    // if the componentID is non-null
-    if ( this.componentID ) {
+    // if the togetherID is non-null
+    if ( this.togetherID ) {
       together && together.addComponent( this );
     }
   };
@@ -106,8 +106,8 @@ define( function( require ) {
         var oldValueForArch = null;
         var newValueForArch = null;
 
-        if ( arch && this.componentID ) {
-          var archValueType = together.getType( this.componentID ).valueType;
+        if ( arch && this.togetherID ) {
+          var archValueType = together.getType( this.togetherID ).valueType;
           if ( archValueType.formatForEventStream ) {
             oldValueForArch = archValueType.formatForEventStream( oldValue );
             newValueForArch = archValueType.formatForEventStream( value );
@@ -119,7 +119,7 @@ define( function( require ) {
         }
 
         // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var messageIndex = arch && this.componentID && arch.start( 'model', this.componentID, 'changed', {
+        var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'changed', {
             oldValue: oldValueForArch,
             newValue: newValueForArch
           } );
@@ -309,7 +309,7 @@ define( function( require ) {
           this.unlink( this._observers[ 0 ] );
         }
 
-        if ( this.componentID ) {
+        if ( this.togetherID ) {
           together && together.removeComponent( this );
         }
       }

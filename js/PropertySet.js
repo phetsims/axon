@@ -69,8 +69,8 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      var componentID = options && options.componentIDMap && options.componentIDMap[ value ];
-      propertySet.addProperty( value, values[ value ], componentID );
+      var togetherID = options && options.componentIDMap && options.componentIDMap[ value ];
+      propertySet.addProperty( value, values[ value ], togetherID );
     } );
 
     // Make sure all entries in the componentIDMap have entries in the values.  If not, it could indicate
@@ -97,15 +97,15 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
-     * @param {string} [componentID] optional identifier for data-collection studies
-     * TODO: Perhaps the componentID should be buried in an options parameter to match
+     * @param {string} [togetherID] optional identifier for data-collection studies
+     * TODO: Perhaps the togetherID should be buried in an options parameter to match
      * TODO: the rest of the API?
      */
-    addProperty: function( propertyName, value, componentID ) {
-      if ( componentID !== null && typeof( componentID ) !== 'undefined' && typeof( componentID ) !== 'string' ) {
-        throw new Error( 'If defined, the componentID must be a string.' );
+    addProperty: function( propertyName, value, togetherID ) {
+      if ( togetherID !== null && typeof( togetherID ) !== 'undefined' && typeof( togetherID ) !== 'string' ) {
+        throw new Error( 'If defined, the togetherID must be a string.' );
       }
-      this[ propertyName + SUFFIX ] = new Property( value, { componentID: componentID } );
+      this[ propertyName + SUFFIX ] = new Property( value, { togetherID: togetherID } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },
