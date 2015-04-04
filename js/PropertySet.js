@@ -57,7 +57,7 @@ define( function( require ) {
   /**
    * PropertySet main constructor
    * @param {object} values - an object hash with the initial values for the properties
-   * @param {object} [options] - componentIDMap: optional identifiers used in data collection messages
+   * @param {object} [options] - togetherIDMap: optional identifiers used in data collection messages
    * @constructor
    */
   axon.PropertySet = function PropertySet( values, options ) {
@@ -69,17 +69,17 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      var togetherID = options && options.componentIDMap && options.componentIDMap[ value ];
+      var togetherID = options && options.togetherIDMap && options.togetherIDMap[ value ];
       propertySet.addProperty( value, values[ value ], togetherID );
     } );
 
-    // Make sure all entries in the componentIDMap have entries in the values.  If not, it could indicate
+    // Make sure all entries in the togetherIDMap have entries in the values.  If not, it could indicate
     // an inconsistent state.  Define in a function/closure so it can be skipped when assertions are off.
-    var allComponentIDMapHaveEntries = function() {
+    var allTogetherIDMapHaveEntries = function() {
       var valueKeys = Object.getOwnPropertyNames( values );
-      if ( options && options.componentIDMap ) {
-        Object.getOwnPropertyNames( options.componentIDMap ).forEach( function( componentIDKey ) {
-          assert && assert( valueKeys.indexOf( componentIDKey ) >= 0, 'ComponentID was provided for non-existing value: ' + componentIDKey );
+      if ( options && options.togetherIDMap ) {
+        Object.getOwnPropertyNames( options.togetherIDMap ).forEach( function( togetherIDKey ) {
+          assert && assert( valueKeys.indexOf( togetherIDKey ) >= 0, 'TogetherID was provided for non-existing value: ' + togetherIDKey );
         } );
         return true;
       }
@@ -88,7 +88,7 @@ define( function( require ) {
       }
     };
 
-    assert && assert( allComponentIDMapHaveEntries(), 'All entries in the componentIDMap should have matching entries in the values' );
+    assert && assert( allTogetherIDMapHaveEntries(), 'All entries in the togetherIDMap should have matching entries in the values' );
   };
 
   return inherit( Events, axon.PropertySet, {
