@@ -16,7 +16,7 @@ define( function( require ) {
   /**
    * @param {Property[]} dependencies
    * @param {function} callback function that expects args in the same order as dependencies
-   * @param {boolean} lazy Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
+   * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
    * @constructor
    */
   axon.Multilink = function Multilink( dependencies, callback, lazy ) {
