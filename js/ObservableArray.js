@@ -16,6 +16,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var Events = require( 'AXON/Events' );
 
   axon.ObservableArray = function ObservableArray( array, options ) {
 
@@ -38,11 +39,8 @@ define( function( require ) {
     //Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    // Some ObservableArray are exposed to together.js for public features--if and only if they have a togetherID
-    if ( options && options.togetherID ) {
-      this.togetherID = options.togetherID;
-      together && together.addComponent( this );
-    }
+    // Event stream for signifying begin/end of callbacks
+    this.events = new Events();
   };
 
   return inherit( Object, axon.ObservableArray, {
@@ -113,33 +111,29 @@ define( function( require ) {
     // Internal: called when an item is added.
     _fireItemAdded: function( item ) {
 
-      //Signify that an item was added to the list
-      var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'itemAdded', { added: item.toString() } );
+      this.events.trigger1( 'startedCallbacksForItemAdded', item );
 
+      //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
         copy[ i ]( item, this );
       }
 
-      //Finish the "itemAdded" event
-      arch && this.togetherID && arch.end( messageIndex );
+      this.events.trigger1( 'endedCallbacksForItemAdded', item );
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
+      this.events.trigger1( 'startedCallbacksForItemRemoved', item );
+
       //Signify that an item was removed from the list
-      var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'itemAdded', {
-          observableArray: this.togetherID,
-          removed: item.toString()
-        } );
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
       for ( var i = 0; i < copy.length; i++ ) {
         copy[ i ]( item, this );
       }
 
-      //Finish the "itemRemoved" event
-      arch && this.togetherID && arch.end( messageIndex );
+      this.events.trigger1( 'startedCallbacksForItemRemoved', item );
     },
 
     /**

@@ -57,7 +57,6 @@ define( function( require ) {
   /**
    * PropertySet main constructor
    * @param {object} values - an object hash with the initial values for the properties
-   * @param {object} [options] - togetherIDMap: optional identifiers used in data collection messages
    * @constructor
    */
   axon.PropertySet = function PropertySet( values, options ) {
@@ -69,26 +68,8 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      var togetherID = options && options.togetherIDMap && options.togetherIDMap[ value ];
-      propertySet.addProperty( value, values[ value ], togetherID );
+      propertySet.addProperty( value, values[ value ] );
     } );
-
-    // Make sure all entries in the togetherIDMap have entries in the values.  If not, it could indicate
-    // an inconsistent state.  Define in a function/closure so it can be skipped when assertions are off.
-    var allTogetherIDMapHaveEntries = function() {
-      var valueKeys = Object.getOwnPropertyNames( values );
-      if ( options && options.togetherIDMap ) {
-        Object.getOwnPropertyNames( options.togetherIDMap ).forEach( function( togetherIDKey ) {
-          assert && assert( valueKeys.indexOf( togetherIDKey ) >= 0, 'TogetherID was provided for non-existing value: ' + togetherIDKey );
-        } );
-        return true;
-      }
-      else {
-        return true;
-      }
-    };
-
-    assert && assert( allTogetherIDMapHaveEntries(), 'All entries in the togetherIDMap should have matching entries in the values' );
   };
 
   return inherit( Events, axon.PropertySet, {
@@ -97,15 +78,9 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
-     * @param {string} [togetherID] optional identifier for data-collection studies
-     * TODO: Perhaps the togetherID should be buried in an options parameter to match
-     * TODO: the rest of the API?
      */
-    addProperty: function( propertyName, value, togetherID ) {
-      if ( togetherID !== null && typeof( togetherID ) !== 'undefined' && typeof( togetherID ) !== 'string' ) {
-        throw new Error( 'If defined, the togetherID must be a string.' );
-      }
-      this[ propertyName + SUFFIX ] = new Property( value, { togetherID: togetherID } );
+    addProperty: function( propertyName, value ) {
+      this[ propertyName + SUFFIX ] = new Property( value );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },

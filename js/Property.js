@@ -18,6 +18,7 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var Events = require( 'AXON/Events' );
 
   // Also requires Multilink and DerivedProperty, but cannot reference them here or it will create a
   // circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty.
@@ -29,22 +30,13 @@ define( function( require ) {
    */
   axon.Property = function Property( value, options ) {
 
-    options = _.extend( {
-      togetherID: null
-    }, options );
-
-    this.togetherID = options.togetherID;
+    // Internal Events for sending changeStarted & changeEnded
+    this.events = new Events();
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
-
-    // Many sim Properties are completely internal to the simulation, so only register with the together.js api
-    // if the togetherID is non-null
-    if ( this.togetherID ) {
-      together && together.addComponent( this );
-    }
   };
 
   return inherit( Object, axon.Property, {
@@ -100,29 +92,8 @@ define( function( require ) {
         // Note the current value, since it will be sent to possibly multiple observers.
         var value = this.get();
 
-        // Format values for arch.  Otherwise things like Property(Solute) will output arch messages that are
-        // a big JSON instance describing the entire Solute structure.  We would rather just receive an ID
-        // or a nickname in cases like that.
-        var oldValueForArch = null;
-        var newValueForArch = null;
-
-        if ( arch && this.togetherID ) {
-          var archValueType = together.getType( this.togetherID ).valueType;
-          if ( archValueType.formatForEventStream ) {
-            oldValueForArch = archValueType.formatForEventStream( oldValue );
-            newValueForArch = archValueType.formatForEventStream( value );
-          }
-          else {
-            oldValueForArch = oldValue;
-            newValueForArch = value;
-          }
-        }
-
-        // If enabled, send a message to phet events.  Avoid as much work as possible if phet.arch is inactive.
-        var messageIndex = arch && this.togetherID && arch.start( 'model', this.togetherID, 'changed', {
-            oldValue: oldValueForArch,
-            newValue: newValueForArch
-          } );
+        // TODO: Should Property extend or compose Events?  Would extending Events broaden its interface too much?
+        this.events.trigger2( 'changeStarted', value, oldValue );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
@@ -130,8 +101,7 @@ define( function( require ) {
           observersCopy[ i ]( value, oldValue );
         }
 
-        // Send the end message to phet.arch
-        messageIndex && arch.end( messageIndex );
+        this.events.trigger0( 'changeEnded' );
       },
 
       /**
@@ -307,10 +277,6 @@ define( function( require ) {
 
         while ( this._observers.length > 0 ) {
           this.unlink( this._observers[ 0 ] );
-        }
-
-        if ( this.togetherID ) {
-          together && together.removeComponent( this );
         }
       }
     },
