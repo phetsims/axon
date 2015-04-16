@@ -56,10 +56,10 @@ define( function( require ) {
 
   /**
    * PropertySet main constructor
-   * @param {object} values - an object hash with the initial values for the properties
+   * @param {Object} values - an object hash with the initial values for the properties
    * @constructor
    */
-  axon.PropertySet = function PropertySet( values, options ) {
+  axon.PropertySet = function PropertySet( values ) {
     var propertySet = this;
 
     Events.call( this );

@@ -25,10 +25,9 @@ define( function( require ) {
 
   /**
    * @param {*} value - the initial value of the property
-   * @param {Object} [options] - optional values for the property, see below
    * @constructor
    */
-  axon.Property = function Property( value, options ) {
+  axon.Property = function Property( value ) {
 
     // Internal Events for sending changeStarted & changeEnded
     this.events = new Events();
