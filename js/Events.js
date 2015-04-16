@@ -159,10 +159,10 @@ define( function( require ) {
     removeAllEventListeners: function() {
       var eventName;
       for ( eventName in this._eventListeners ) {
-        cleanArray( this._eventListeners[eventName] );
+        cleanArray( this._eventListeners[ eventName ] );
       }
       for ( eventName in this._staticEventListeners ) {
-        cleanArray( this._staticEventListeners[eventName] );
+        cleanArray( this._staticEventListeners[ eventName ] );
       }
     },
 
