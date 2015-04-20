@@ -262,6 +262,7 @@ define( function( require ) {
     /**
      * Trigger an event with the specified name, with a single argument. Should get optimized in browsers better than trigger, so we have code duplication for now.
      * @param {string} eventName the name for the event channel
+     * @param {object} param1 - the argument to pass through to the listeners
      */
     trigger1: function( eventName, param1 ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
