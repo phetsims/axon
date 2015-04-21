@@ -59,7 +59,10 @@ define( function( require ) {
    * @param {Object} values - an object hash with the initial values for the properties
    * @constructor
    */
-  axon.PropertySet = function PropertySet( values ) {
+  axon.PropertySet = function PropertySet( values, options ) {
+
+    options = _.extend( { tandemSet: {} }, options );
+
     var propertySet = this;
 
     Events.call( this );
@@ -68,7 +71,7 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[ value ] );
+      propertySet.addProperty( value, values[ value ], options.tandemSet[ value ] );
     } );
   };
 
@@ -78,9 +81,10 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
+     * @param {Tandem} [tandem] - optional support for tandem
      */
-    addProperty: function( propertyName, value ) {
-      this[ propertyName + SUFFIX ] = new Property( value );
+    addProperty: function( propertyName, value, tandem ) {
+      this[ propertyName + SUFFIX ] = new Property( value, { tandem: tandem } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },

@@ -25,10 +25,13 @@ define( function( require ) {
 
   /**
    * @param {*} value - the initial value of the property
+   * @param {Object} [options] - options 
    * @constructor
    */
-  axon.Property = function Property( value ) {
+  axon.Property = function Property( value, options ) {
 
+    options = _.extend( { tandem: null }, options );
+    
     // Internal Events for sending changeStarted & changeEnded
     this.events = new Events();
 
@@ -36,6 +39,8 @@ define( function( require ) {
     this.storeValue( value );        // typically sets this._value
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = [];
+
+    options.tandem && options.tandem.addInstance( this );
   };
 
   return inherit( Object, axon.Property, {
