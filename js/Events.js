@@ -227,7 +227,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with no arguments.  Since the number of arguments is known
-     * no additional work is required to process and pass through the arguments (as in trigger() itself).
+     * no additional work is required to process and pass through the arguments (as opposed to trigger() itself).
      * @param {string} eventName the name for the event channel
      */
     trigger0: function( eventName ) {
@@ -262,7 +262,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with a single argument.  Since the number of arguments is known
-     * no additional work is required to process and pass through the arguments (as in trigger() itself).
+     * no additional work is required to process and pass through the arguments (as opposed to trigger() itself).
      * @param {string} eventName the name for the event channel
      * @param {Object} param1 - the argument to pass through to the listeners
      */
@@ -298,7 +298,7 @@ define( function( require ) {
 
     /**
      * Trigger an event with the specified name, with two arguments.  Since the number of arguments is known
-     * no additional work is required to process and pass through the arguments (as in trigger() itself).
+     * no additional work is required to process and pass through the arguments (as opposed to trigger() itself).
      * @param {string} eventName the name for the event channel
      * @param {Object} param1 - the first parameter
      * @param {Object} param2 - the second parameter
