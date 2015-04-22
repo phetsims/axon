@@ -201,7 +201,7 @@ define( function( require ) {
 
         //Simple case of no arguments, call it separately for improved performance in case it is faster (untested)
         if ( hasNoArguments ) {
-          listener( arguments );
+          listener();
         }
         else {
           listener.apply( this, suffix );
