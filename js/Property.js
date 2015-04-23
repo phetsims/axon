@@ -41,6 +41,14 @@ define( function( require ) {
     this._observers = [];
 
     options.tandem && options.tandem.addInstance( this );
+
+    // @private
+    this.disposeProperty = function() {
+      options.tandem && options.tandem.removeInstance( this );
+      while ( this._observers.length > 0 ) {
+        this.unlink( this._observers[ 0 ] );
+      }
+    }
   };
 
   return inherit( Object, axon.Property, {
@@ -273,15 +281,9 @@ define( function( require ) {
         return onValueObserver;
       },
 
-      /**
-       * When the Property is no longer used by the sim, it can be eliminated.  All listeners are removed
-       * and it is unregistered from any pertinent modules.
-       */
+      // Ensures that the Property is eligible for GC
       dispose: function() {
-
-        while ( this._observers.length > 0 ) {
-          this.unlink( this._observers[ 0 ] );
-        }
+        this.disposeProperty();
       }
     },
 
