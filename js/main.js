@@ -2,7 +2,6 @@
 
 define( [
   'AXON/axon',
-  'AXON/BooleanProperty',
   'AXON/Property',
   'AXON/DerivedProperty',
   'AXON/ObservableArray',

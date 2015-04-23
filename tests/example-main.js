@@ -1,11 +1,10 @@
 define( [
   'AXON/axon',
-  'AXON/BooleanProperty',
   'AXON/Property',
   'AXON/DerivedProperty',
   'AXON/PropertySet',
   'Person'
-], function( axon, BooleanProperty, Property, DerivedProperty, PropertySet, Person ) {
+], function( axon, Property, DerivedProperty, PropertySet, Person ) {
   'use strict';
 
 //Create the property
