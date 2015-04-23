@@ -55,6 +55,26 @@ define( function( require ) {
   var SUFFIX = 'Property';
 
   /**
+   * Utility function for ensuring all tandem keys appear in the PropertySet.  Only called when assert is enabled
+   * @param {Array.<string>} tandemKeys
+   * @param {Array.<string>} propertySetKeys
+   * @returns {boolean}
+   */
+  var containsAll = function( tandemKeys, propertySetKeys ) {
+    for ( var i = 0; i < tandemKeys.length; i++ ) {
+
+      var ok = _.contains( propertySetKeys, tandemKeys[ i ] );
+
+      // Use a nested assert so we can get an error message containing the offending key
+      assert && assert( ok, '' + tandemKeys[ i ] + ' in tandemSet but not PropertySet keys' );
+      if ( !ok ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  /**
    * PropertySet main constructor
    * @param {Object} values - an object hash with the initial values for the properties
    * @constructor
@@ -73,6 +93,10 @@ define( function( require ) {
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[ value ], options.tandemSet[ value ] );
     } );
+
+    // Top level assert for that there are no entries in the tandemSet that don't appear in the value keys
+    // This is a nested assert so that we can get a fine-grained error message for the first mismatched key
+    assert && assert( containsAll( _.keys( options.tandemSet ), _.keys( values ) ), 'All tandem keys should appear in the PropertySet keys' );
   };
 
   return inherit( Events, axon.PropertySet, {
