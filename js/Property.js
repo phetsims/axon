@@ -48,7 +48,7 @@ define( function( require ) {
       while ( this._observers.length > 0 ) {
         this.unlink( this._observers[ 0 ] );
       }
-    }
+    };
   };
 
   return inherit( Object, axon.Property, {
