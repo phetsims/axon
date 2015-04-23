@@ -63,7 +63,7 @@ define( function( require ) {
 
     options = _.extend( { tandemSet: {} }, options );
 
-    // Verify that the tandemSet doesn't contain bogus keys.
+    // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
     assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
       var isBad = !values.hasOwnProperty( key );
       if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
