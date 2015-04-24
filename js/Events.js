@@ -14,12 +14,20 @@ define( function( require ) {
    * @class Events
    * @constructor
    */
-  axon.Events = function Events() {
+  axon.Events = function Events( options ) {
     this._eventListeners = {}; // @private
     this._staticEventListeners = {}; // @private
+
+    options && options.tandem && options.tandem.addInstance( this );
+    this.disposeEvents = function() {
+      options && options.tandem && options.tandem.removeInstance( this );
+    };
   };
 
   axon.Events.prototype = {
+    dispose: function() {
+      this.disposeEvents();
+    },
 
     /////////////////////////////////////////////
     // Below this point are the functions for event handling, basically orthogonal to property value change notifications
