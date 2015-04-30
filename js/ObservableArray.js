@@ -27,7 +27,9 @@ define( function( require ) {
     }
 
     this._options = _.extend( {
-      allowDuplicates: false // are duplicate items allowed in the array?
+      allowDuplicates: false, // are duplicate items allowed in the array?
+      tandem: null            // Tandem is supported here.  This line doesn't do anything different than leaving tandem as undefined
+                              // but this entry serves as an indicator that tandem is supported here.
     }, options );
 
     this._array = array || []; // internal, do not access directly
@@ -41,9 +43,18 @@ define( function( require ) {
 
     // Event stream for signifying begin/end of callbacks
     this.events = new Events();
+
+    options && options.tandem && options.tandem.addInstance( this );
+    this.disposeObservableArray = function() {
+      options && options.tandem && options.tandem.removeInstance( this );
+    };
   };
 
   return inherit( Object, axon.ObservableArray, {
+
+    dispose: function() {
+      this.disposeObservableArray();
+    },
 
     //Restore the array back to its initial state
     //Note: if an item is in the current array and original array, it is removed and added back
