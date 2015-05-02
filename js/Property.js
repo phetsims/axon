@@ -32,7 +32,7 @@ define( function( require ) {
 
     options = _.extend( { tandem: null }, options );
     
-    // Internal Events for sending changeStarted & changeEnded
+    // Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
     this.events = new Events();
 
     //Store the internal value and the initial value
@@ -105,7 +105,7 @@ define( function( require ) {
         var value = this.get();
 
         // TODO: Should Property extend or compose Events?  Would extending Events broaden its interface too much?
-        this.events.trigger2( 'changeStarted', value, oldValue );
+        this.events.trigger2( 'startedCallbacksForChanged', value, oldValue );
 
         // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
@@ -113,7 +113,7 @@ define( function( require ) {
           observersCopy[ i ]( value, oldValue );
         }
 
-        this.events.trigger0( 'changeEnded' );
+        this.events.trigger0( 'endedCallbacksForChanged' );
       },
 
       /**
