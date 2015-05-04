@@ -13,6 +13,7 @@ require.config( {
     KITE: '../../kite/js',
     PHET_CORE: '../../phet-core/js',
     PHETCOMMON: '../../phetcommon/js',
+    REPOSITORY: '..',
     SUN: '../../sun/js',
     JOIST: '../../joist/js',
     ENERGY_SKATE_PARK_BASICS: '.',
