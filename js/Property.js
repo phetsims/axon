@@ -25,13 +25,13 @@ define( function( require ) {
 
   /**
    * @param {*} value - the initial value of the property
-   * @param {Object} [options] - options 
+   * @param {Object} [options] - options
    * @constructor
    */
   axon.Property = function Property( value, options ) {
 
     options = _.extend( { tandem: null }, options );
-    
+
     // Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
     this.events = new Events();
 
@@ -107,7 +107,6 @@ define( function( require ) {
         // TODO: Should Property extend or compose Events?  Would extending Events broaden its interface too much?
         this.events.trigger2( 'startedCallbacksForChanged', value, oldValue );
 
-        // TODO: JO: avoid slice() by storing observers array correctly
         var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
         for ( var i = 0; i < observersCopy.length; i++ ) {
           observersCopy[ i ]( value, oldValue );
