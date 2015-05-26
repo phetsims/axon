@@ -165,10 +165,11 @@ define( function( require ) {
      * Creates a DerivedProperty from the given property property names and derivation.
      * @param {string[]} propertyNames
      * @param {function} derivation
+     * @param {Tandem} [tandem] - optional support for tandem
      * @returns {DerivedProperty}
      */
-    toDerivedProperty: function( propertyNames, derivation ) {
-      return new DerivedProperty( this.getProperties( propertyNames ), derivation );
+    toDerivedProperty: function( propertyNames, derivation, tandem ) {
+      return new DerivedProperty( this.getProperties( propertyNames ), derivation, { tandem: tandem } );
     },
 
     /**
@@ -176,9 +177,10 @@ define( function( require ) {
      * @param {string} propertyName name for the derived property
      * @param {string[]} dependencyNames names of the properties that it depends on
      * @param {function} derivation function that expects args in the same order as dependencies
+     * @param {Tandem} [tandem] - optional support for tandem
      */
-    addDerivedProperty: function( propertyName, dependencyNames, derivation ) {
-      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation );
+    addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem ) {
+      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, tandem );
       this.addGetter( propertyName );
     },
 
