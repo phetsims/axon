@@ -50,6 +50,11 @@ define( function( require ) {
 
   return inherit( Property, axon.DerivedProperty, {
 
+      dispose: function() {
+        Property.prototype.dispose.call( this );
+        this.detach();
+      },
+
       // Detaches this derived property from its dependencies.
       detach: function() {
         for ( var i = 0; i < this.dependencies.length; i++ ) {
