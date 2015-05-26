@@ -325,7 +325,7 @@ define( function( require ) {
      */
     dispose: function() {
       for ( var i = 0; i < this.keys.length; i++ ) {
-        this[ this.keys[ i ] + 'Property' ].dispose();
+        this[ this.keys[ i ] + SUFFIX ].dispose();
       }
     }
   } );
