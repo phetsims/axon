@@ -108,6 +108,8 @@ define( function( require ) {
         this.keys.splice( index, 1 );
       }
 
+      this[ propertyName + SUFFIX ].dispose();
+
       //Unregister the Property instance from the PropertySet
       delete this[ propertyName + SUFFIX ];
 
