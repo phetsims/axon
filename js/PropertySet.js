@@ -56,12 +56,15 @@ define( function( require ) {
 
   /**
    * PropertySet main constructor
-   * @param {Object} values - an object hash with the initial values for the properties
+   * @param {Object} values - a hash: keys are the names of properties, values are initial property values. Eg { name: 'Curly', age: 40 }
+   * @param {Object} [options]
    * @constructor
    */
   axon.PropertySet = function PropertySet( values, options ) {
 
-    options = _.extend( { tandemSet: {} }, options );
+    options = _.extend( {
+      tandemSet: {} // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
+    }, options );
 
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
     assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
