@@ -305,11 +305,11 @@ define( function( require ) {
 
       /**
        * Removes the multilinked observer from this Property.
-       * Same as calling detach() on the handle (which happens to be a DerivedProperty instance)
-       * @param derivedProperty
+       * Same as calling dispose() on the handle (which happens to be a DerivedProperty instance)
+       * @param {DerivedProperty} derivedProperty
        */
       unmultilink: function( derivedProperty ) {
-        derivedProperty.detach();
+        derivedProperty.dispose();
       },
 
       /**

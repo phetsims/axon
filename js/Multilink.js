@@ -51,8 +51,8 @@ define( function( require ) {
 
   return inherit( Object, axon.Multilink, {
 
-      // Detaches dependencies from listeners.
-      detach: function() {
+      dispose: function() {
+        // Unlink from dependent properties
         for ( var i = 0; i < this.dependencies.length; i++ ) {
           var dependency = this.dependencies[ i ];
           dependency.unlink( this.dependencyListeners[ i ] );

@@ -179,7 +179,7 @@
     equal( areaProperty.dependencies.length, 2 );
     equal( areaProperty.dependencyListeners.length, 2 );
 
-    areaProperty.detach();
+    areaProperty.dispose();
 
     equal( widthProperty._observers.length, 0 );
     equal( heightProperty._observers.length, 0 );

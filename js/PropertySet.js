@@ -295,11 +295,11 @@ define( function( require ) {
 
     /**
      * Removes the multilink from this PropertySet.
-     * Same as calling detach() on the multilink
+     * Same as calling dispose() on the multilink
      * @param {Multilink} multilink
      */
     unmultilink: function( multilink ) {
-      multilink.detach();
+      multilink.dispose();
     },
 
     toString: function() {
