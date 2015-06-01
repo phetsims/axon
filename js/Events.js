@@ -239,6 +239,7 @@ define( function( require ) {
      * @param {string} eventName the name for the event channel
      */
     trigger0: function( eventName ) {
+      assert && assert( arguments.length === 1 );
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
       var listeners = this._eventListeners[ eventName ];
@@ -275,6 +276,7 @@ define( function( require ) {
      * @param {Object} param1 - the argument to pass through to the listeners
      */
     trigger1: function( eventName, param1 ) {
+      assert && assert( arguments.length === 2 );
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
       var listeners = this._eventListeners[ eventName ];
@@ -312,6 +314,7 @@ define( function( require ) {
      * @param {Object} param2 - the second parameter
      */
     trigger2: function( eventName, param1, param2 ) {
+      assert && assert( arguments.length === 3 );
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
 
       var listeners = this._eventListeners[ eventName ];
