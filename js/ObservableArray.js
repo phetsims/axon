@@ -130,7 +130,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.events.trigger1( 'endedCallbacksForItemAdded', item );
+      this.events.trigger0( 'endedCallbacksForItemAdded' );
     },
 
     // Internal: called when an item is removed.
