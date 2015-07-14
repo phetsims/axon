@@ -318,6 +318,7 @@ define( function( require ) {
     /**
      * Get a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to get
+     * @deprecated see https://github.com/phetsims/axon/issues/43
      */
     property: function( propertyName ) {
       return this[ propertyName + SUFFIX ];
