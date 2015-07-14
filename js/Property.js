@@ -321,10 +321,10 @@ define( function( require ) {
        */
       addProperty: function( object, propertyName, initialValue ) {
         // defines the property
-        var property = this[ propertyName + 'Property' ] = new axon.Property( initialValue );
+        var property = object[ propertyName + 'Property' ] = new axon.Property( initialValue );
 
         // defines ES5 getter/setter
-        Object.defineProperty( this, propertyName, {
+        Object.defineProperty( object, propertyName, {
           get: function() { return property.get(); },
           set: function( value ) { property.set( value ); },
 
