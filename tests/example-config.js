@@ -6,7 +6,7 @@ require.config( {
 
     //Load dependencies from sibling directories
     AXON: '../../axon/js',
-    BRAND: '../../brand/' + phet.chipper.getBrandName() + '/js',
+    BRAND: '../../brand/' + phet.chipper.brand + '/js',
     DOT: '../../dot/js',
     SCENERY: '../../scenery/js',
     SCENERY_PHET: '../../scenery-phet/js',
