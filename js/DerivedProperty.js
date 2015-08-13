@@ -18,7 +18,7 @@ define( function( require ) {
   /**
    * @param {Property[]} dependencies properties that this property's value is derived from
    * @param {function} derivation function that derives this property's value, expects args in the same order as dependencies
-   * @param {object} [options] - see Property
+   * @param {Object} [options] - see Property
    * @constructor
    */
   axon.DerivedProperty = function DerivedProperty( dependencies, derivation, options ) {

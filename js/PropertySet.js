@@ -263,7 +263,7 @@ define( function( require ) {
     /**
      * Link an attribute to a property by name.  Return a handle to the observer so it can be removed using unlink().
      * @param {string} propertyName the property to link to
-     * @param {object} object the object for which the attribute will be set
+     * @param {Object} object the object for which the attribute will be set
      * @param {string} attributeName the name of the attribute to set on the object
      */
     linkAttribute: function( propertyName, object, attributeName ) {
