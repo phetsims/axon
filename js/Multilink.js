@@ -10,6 +10,7 @@
 define( function( require ) {
   'use strict';
 
+  // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
 
@@ -20,14 +21,15 @@ define( function( require ) {
    * @constructor
    */
   axon.Multilink = function Multilink( dependencies, callback, lazy ) {
-    this.dependencies = dependencies;
 
-    //Keep track of each dependency and only update the changed value, for speed
+    this.dependencies = dependencies; // @private
+
+    // @private Keep track of each dependency and only update the changed value, for speed
     this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
 
     var multilink = this;
 
-    //Keep track of listeners so they can be detached
+    // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
 
     //When a dependency value changes, update the list of dependencies and call back to the callback
@@ -51,16 +53,16 @@ define( function( require ) {
 
   return inherit( Object, axon.Multilink, {
 
-      dispose: function() {
-        // Unlink from dependent properties
-        for ( var i = 0; i < this.dependencies.length; i++ ) {
-          var dependency = this.dependencies[ i ];
-          dependency.unlink( this.dependencyListeners[ i ] );
-        }
-        this.dependencies = null;
-        this.dependencyListeners = null;
-        this.dependencyValues = null;
+    // @public
+    dispose: function() {
+      // Unlink from dependent properties
+      for ( var i = 0; i < this.dependencies.length; i++ ) {
+        var dependency = this.dependencies[ i ];
+        dependency.unlink( this.dependencyListeners[ i ] );
       }
+      this.dependencies = null;
+      this.dependencyListeners = null;
+      this.dependencyValues = null;
     }
-  );
+  } );
 } );

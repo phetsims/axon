@@ -7,6 +7,7 @@
 define( function( require ) {
   'use strict';
 
+  // modules
   var axon = require( 'AXON/axon' );
   var cleanArray = require( 'PHET_CORE/cleanArray' );
 
@@ -15,6 +16,7 @@ define( function( require ) {
    * @constructor
    */
   axon.Events = function Events( options ) {
+
     this._eventListeners = {}; // @private
     this._staticEventListeners = {}; // @private
 
@@ -25,6 +27,8 @@ define( function( require ) {
   };
 
   axon.Events.prototype = {
+
+    // @public
     dispose: function() {
       this.disposeEvents();
     },
@@ -37,6 +41,7 @@ define( function( require ) {
      * Concurrent modification of listeners (on/off) from within the callback is acceptable.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @public
      */
     on: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -54,6 +59,7 @@ define( function( require ) {
      * Since static listeners are stored separately, use offStatic() to remove listeners added with onStatic()
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @public
      */
     onStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -68,6 +74,7 @@ define( function( require ) {
      * If you need to remove a function added with 'once' you will have to remove its handle, which is returned by the function.
      * @param {string} eventName the name for the event channel
      * @param {function} callback function to be called back once (if at all)
+     * @public
      */
     once: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -97,6 +104,7 @@ define( function( require ) {
      * Remove a listener added with on() from the specified event type.  Does nothing if the listener did not exist.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @public
      */
     off: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -117,6 +125,7 @@ define( function( require ) {
      * Remove a listener added with onStatic() from the specified event type.  Does nothing if the listener did not exist.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @public
      */
     offStatic: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -138,6 +147,7 @@ define( function( require ) {
      * @param {string} eventName the name for the event channel
      * @param {function} callback
      * @returns {boolean}
+     * @public
      */
     hasListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -152,6 +162,7 @@ define( function( require ) {
      * @param {string} eventName the name for the event channel
      * @param {function} callback
      * @returns {boolean}
+     * @public
      */
     hasStaticListener: function( eventName, callback ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -163,6 +174,7 @@ define( function( require ) {
 
     /**
      * Removes all listeners added with on() and onStatic().
+     * @public
      */
     removeAllEventListeners: function() {
       var eventName;
@@ -178,6 +190,7 @@ define( function( require ) {
      * Trigger an event with the specified name and arguments.
      * @param {string} eventName the name for the event channel
      * @param args... optional arguments to pass to the listeners
+     * @public
      */
     trigger: function( eventName ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
@@ -237,6 +250,7 @@ define( function( require ) {
      * Trigger an event with the specified name, with no arguments.  Since the number of arguments is known
      * no additional work is required to process and pass through the arguments (as opposed to trigger() itself).
      * @param {string} eventName the name for the event channel
+     * @public
      */
     trigger0: function( eventName ) {
       assert && assert( arguments.length === 1 );
@@ -274,6 +288,7 @@ define( function( require ) {
      * no additional work is required to process and pass through the arguments (as opposed to trigger() itself).
      * @param {string} eventName the name for the event channel
      * @param {Object} param1 - the argument to pass through to the listeners
+     * @public
      */
     trigger1: function( eventName, param1 ) {
       assert && assert( arguments.length === 2 );
@@ -312,6 +327,7 @@ define( function( require ) {
      * @param {string} eventName the name for the event channel
      * @param {Object} param1 - the first parameter
      * @param {Object} param2 - the second parameter
+     * @public
      */
     trigger2: function( eventName, param1, param2 ) {
       assert && assert( arguments.length === 3 );

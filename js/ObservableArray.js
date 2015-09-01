@@ -32,16 +32,16 @@ define( function( require ) {
                               // but this entry serves as an indicator that tandem is supported here.
     }, options );
 
-    this._array = array || []; // internal, do not access directly
-    this._addedListeners = []; // listeners called when an item is added
-    this._removedListeners = []; // listeners called when an item is removed
+    this._array = array || []; // @private internal, do not access directly
+    this._addedListeners = []; // @private listeners called when an item is added
+    this._removedListeners = []; // @private listeners called when an item is removed
 
-    this.lengthProperty = new Property( this._array.length ); // observe this, but don't set it
+    this.lengthProperty = new Property( this._array.length ); // @public (read-only) observe this, but don't set it
 
-    //Store the initial array, if any, for resetting, see #4
+    // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    // Event stream for signifying begin/end of callbacks
+    // @private Event stream for signifying begin/end of callbacks
     this.events = new Events();
 
     options && options.tandem && options.tandem.addInstance( this );
@@ -52,13 +52,17 @@ define( function( require ) {
 
   return inherit( Object, axon.ObservableArray, {
 
+    // @public
     dispose: function() {
       this.disposeObservableArray();
     },
 
-    //Restore the array back to its initial state
-    //Note: if an item is in the current array and original array, it is removed and added back
-    //This may or may not change in the future, see #4
+    /**
+     * Restore the array back to its initial state
+     * Note: if an item is in the current array and original array, it is removed and added back
+     * This may or may not change in the future, see #4
+     * @public
+     */
     reset: function() {
       for ( var i = 0; i < this._array.length; i++ ) {
         this._fireItemRemoved( this._array[ i ] );
@@ -69,11 +73,13 @@ define( function( require ) {
       }
     },
 
+    // @public
     get length() { return this._array.length; },
 
     /**
      * Adds a listener that will be notified when an item is added to the list.
      * @param listener function( item, observableArray )
+     * @public
      */
     addItemAddedListener: function( listener ) {
       assert && assert( this._addedListeners.indexOf( listener ) === -1 ); // listener is not already registered
@@ -83,6 +89,7 @@ define( function( require ) {
     /**
      * Removes a listener that was added via addItemAddedListener.
      * @param listener
+     * @public
      */
     removeItemAddedListener: function( listener ) {
       var index = this._addedListeners.indexOf( listener );
@@ -93,6 +100,7 @@ define( function( require ) {
     /**
      * Adds a listener that will be notified when an item is removed from the list.
      * @param listener function( item, observableArray )
+     * @public
      */
     addItemRemovedListener: function( listener ) {
       assert && assert( this._removedListeners.indexOf( listener ) === -1 ); // listener is not already registered
@@ -102,6 +110,7 @@ define( function( require ) {
     /**
      * Removes a listener that was added via addItemRemovedListener.
      * @param listener
+     * @public
      */
     removeItemRemovedListener: function( listener ) {
       var index = this._removedListeners.indexOf( listener );
@@ -113,13 +122,14 @@ define( function( require ) {
      * Convenience function for adding both types of listeners in one shot.
      * @param itemAddedListener
      * @param itemRemovedListener
+     * @public
      */
     addListeners: function( itemAddedListener, itemRemovedListener ) {
       this.addItemAddedListener( itemAddedListener );
       this.addItemRemovedListener( itemRemovedListener );
     },
 
-    // Internal: called when an item is added.
+    // @private Internal: called when an item is added.
     _fireItemAdded: function( item ) {
 
       this.events.trigger1( 'startedCallbacksForItemAdded', item );
@@ -151,6 +161,7 @@ define( function( require ) {
      * Adds an item to the end of the array.
      * This is a convenience function, and is the same as push.
      * @param item
+     * @public
      */
     add: function( item ) {
       this.push( item );
@@ -160,6 +171,7 @@ define( function( require ) {
      * Add items to the end of the array.
      * This is a convenience function, and is the same as push.
      * @param {Array} items
+     * @public
      */
     addAll: function( items ) {
       for ( var i = 0; i < items.length; i++ ) {
@@ -172,6 +184,7 @@ define( function( require ) {
      * If duplicates are allowed (see options.allowDuplicates) you may need to call this multiple
      * times to totally purge item from the array.
      * @param item
+     * @public
      */
     remove: function( item ) {
       var index = this._array.indexOf( item );
@@ -186,6 +199,7 @@ define( function( require ) {
      * Removes the first occurrence of each item in the specified array.
      * @param {Array} list a list of items to remove
      * @see ObservableArray.remove
+     * @public
      */
     removeAll: function( list ) {
       for ( var i = 0; i < list.length; i++ ) {
@@ -198,6 +212,7 @@ define( function( require ) {
      * Pushes an item onto the end of the array.
      * @param item
      * @throws Error if duplicates are not allowed (see options.allowDuplicates) and item is already in the array
+     * @public
      */
     push: function( item ) {
       if ( !this._options.allowDuplicates && this.contains( item ) ) {
@@ -211,6 +226,7 @@ define( function( require ) {
     /**
      * Removes an item from the end of the array and returns it.
      * @returns {*}
+     * @public
      */
     pop: function() {
       var item = this._array.pop();
@@ -224,6 +240,7 @@ define( function( require ) {
     /**
      * Removes an item from the beginning of the array and returns it.
      * @returns {*}
+     * @public
      */
     shift: function() {
       var item = this._array.shift();
@@ -238,6 +255,7 @@ define( function( require ) {
      * Does the array contain the specified item?
      * @param item
      * @returns {boolean}
+     * @public
      */
     contains: function( item ) {
       return this.indexOf( item ) !== -1;
@@ -247,6 +265,7 @@ define( function( require ) {
      * Gets an item at the specified index.
      * @param index
      * @returns {*} the item, or undefined if there is no item at the specified index
+     * @public
      */
     get: function( index ) {
       return this._array[ index ];
@@ -256,6 +275,7 @@ define( function( require ) {
      * Gets the index of a specified item.
      * @param item
      * @returns {*} -1 if item is not in the array
+     * @public
      */
     indexOf: function( item ) {
       return this._array.indexOf( item );
@@ -263,6 +283,7 @@ define( function( require ) {
 
     /**
      * Removes all items from the array.
+     * @public
      */
     clear: function() {
       var copy = this._array.slice( 0 );
@@ -274,6 +295,7 @@ define( function( require ) {
     /**
      * Applies a callback function to each item in the array
      * @param callback function(item)
+     * @public
      */
     forEach: function( callback ) {
       this._array.slice().forEach( callback ); // do this on a copy of the array, in case callbacks involve array modification
@@ -283,6 +305,7 @@ define( function( require ) {
      * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
      * @param mapFunction
      * @returns {axon.ObservableArray}
+     * @public
      */
     map: function( mapFunction ) {
       return new axon.ObservableArray( this._array.map( mapFunction ) );
@@ -294,6 +317,7 @@ define( function( require ) {
      * @param value
      * @param combiner
      * @returns {*}
+     * @public
      */
     reduce: function( value, combiner ) {
       for ( var i = 0; i < this._array.length; i++ ) {
@@ -305,11 +329,18 @@ define( function( require ) {
     /**
      * Return the underlying array
      * @returns {*|Array}
+     * @public
      */
     getArray: function() {
       return this._array;
     },
 
+    //TODO rename this to setItems, see axon#66
+    /**
+     * Replaces all elements in the array
+     * @param {Array} elements
+     * @public
+     */
     setElements: function( elements ) {
 
       // TODO: do a better diff here for efficiency

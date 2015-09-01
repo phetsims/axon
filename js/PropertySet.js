@@ -77,7 +77,7 @@ define( function( require ) {
 
     Events.call( this );
 
-    //Keep track of the keys so we know which to reset
+    // @private Keep track of the keys so we know which to reset
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
@@ -92,6 +92,7 @@ define( function( require ) {
      * @param {string} propertyName
      * @param {*} value the property's initial value
      * @param {Tandem} [tandem] - optional support for tandem
+     * @public
      */
     addProperty: function( propertyName, value, tandem ) {
       this[ propertyName + SUFFIX ] = new Property( value, { tandem: tandem } );
@@ -102,6 +103,7 @@ define( function( require ) {
     /**
      * Remove any property (whether a derived property or not) that was added to this PropertySet
      * @param {String} propertyName
+     * @public
      */
     removeProperty: function( propertyName ) {
 
@@ -123,6 +125,7 @@ define( function( require ) {
     /**
      * Adds a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
      * @param {string} propertyName
+     * @public
      */
     addGetterAndSetter: function( propertyName ) {
       var property = this[ propertyName + SUFFIX ];
@@ -144,6 +147,7 @@ define( function( require ) {
     /**
      * Adds an ES5 getter to a property.
      * @param {string} propertyName
+     * @public
      */
     addGetter: function( propertyName ) {
       var property = this[ propertyName + SUFFIX ];
@@ -158,7 +162,7 @@ define( function( require ) {
       } );
     },
 
-    // Resets all of the properties associated with this PropertySet
+    // @public Resets all of the properties associated with this PropertySet
     reset: function() {
       var propertySet = this;
       this.keys.forEach( function( key ) {
@@ -172,6 +176,7 @@ define( function( require ) {
      * @param {function} derivation
      * @param {Tandem} [tandem] - optional support for tandem
      * @returns {DerivedProperty}
+     * @public
      */
     toDerivedProperty: function( propertyNames, derivation, tandem ) {
       return new DerivedProperty( this.getProperties( propertyNames ), derivation, { tandem: tandem } );
@@ -183,6 +188,7 @@ define( function( require ) {
      * @param {string[]} dependencyNames names of the properties that it depends on
      * @param {function} derivation function that expects args in the same order as dependencies
      * @param {Tandem} [tandem] - optional support for tandem
+     * @public
      */
     addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem ) {
       this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, tandem );
@@ -215,6 +221,7 @@ define( function( require ) {
      * puller.knot.value = knot;
      *
      * Throws an error if you try to set a value for which there is no property.
+     * @public
      */
     setValues: function( values ) {
       var propertySet = this;
@@ -229,7 +236,9 @@ define( function( require ) {
     },
 
     /**
-     * Get a JS object literal with all the current values of the properties in this property set, say for serialization.  See `set`
+     * Get a JS object literal with all the current values of the properties in this property set, say for serialization.
+     * @see set
+     * @public
      * TODO: this works well to serialize numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
      * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
      */
@@ -246,6 +255,7 @@ define( function( require ) {
      * Link to a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to link to
      * @param {function }observer the callback to link to the property
+     * @public
      */
     link: function( propertyName, observer ) {
       this[ propertyName + SUFFIX ].link( observer );
@@ -255,6 +265,7 @@ define( function( require ) {
      * Unlink for a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to link to
      * @param {function }observer the callback to link to the property
+     * @public
      */
     unlink: function( propertyName, observer ) {
       this[ propertyName + SUFFIX ].unlink( observer );
@@ -265,6 +276,7 @@ define( function( require ) {
      * @param {string} propertyName the property to link to
      * @param {Object} object the object for which the attribute will be set
      * @param {string} attributeName the name of the attribute to set on the object
+     * @public
      */
     linkAttribute: function( propertyName, object, attributeName ) {
       return this.property( propertyName ).linkAttribute( object, attributeName );
@@ -275,6 +287,7 @@ define( function( require ) {
      * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
      * @param {string} propertyName - the name of the property that the observer will be removed from
      * @param {function} observer
+     * @public
      */
     unlinkAttribute: function( propertyName, observer ) {
       this.property( propertyName ).unlink( observer );
@@ -284,11 +297,13 @@ define( function( require ) {
      * Registers an observer with multiple properties, then notifies the observer immediately.
      * @param {string[]} propertyNames
      * @param {function} observer no params, returns nothing
+     * @public
      */
     multilink: function( propertyNames, observer ) {
       return new Multilink( this.getProperties( propertyNames ), observer, false );
     },
 
+    // @public
     lazyMultilink: function( propertyNames, observer ) {
       return new Multilink( this.getProperties( propertyNames ), observer, true );
     },
@@ -297,11 +312,13 @@ define( function( require ) {
      * Removes the multilink from this PropertySet.
      * Same as calling dispose() on the multilink
      * @param {Multilink} multilink
+     * @public
      */
     unmultilink: function( multilink ) {
       multilink.dispose();
     },
 
+    // @public
     toString: function() {
       var text = 'PropertySet{';
       var propertySet = this;
@@ -319,6 +336,7 @@ define( function( require ) {
      * Get a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to get
      * @deprecated see https://github.com/phetsims/axon/issues/43
+     * @public
      */
     property: function( propertyName ) {
       return this[ propertyName + SUFFIX ];
@@ -326,6 +344,7 @@ define( function( require ) {
 
     /**
      * When the PropertySet is no longer used by the sim, it can be eliminated.  All Properties are disposed.
+     * @public
      */
     dispose: function() {
       for ( var i = 0; i < this.keys.length; i++ ) {

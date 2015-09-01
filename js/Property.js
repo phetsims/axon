@@ -32,13 +32,13 @@ define( function( require ) {
 
     options = _.extend( { tandem: null }, options );
 
-    // Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
+    // @private Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
     this.events = new Events();
 
     //Store the internal value and the initial value
     this.storeValue( value );        // typically sets this._value
     this.storeInitialValue( value ); // typically sets this._initialValue
-    this._observers = [];
+    this._observers = []; // @private
 
     options.tandem && options.tandem.addInstance( this );
 
@@ -56,6 +56,7 @@ define( function( require ) {
       /**
        * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
        * @return {*}
+       * @public
        */
       get: function() {
         return this._value;
@@ -66,6 +67,7 @@ define( function( require ) {
        * If the value hasn't changed, this is a no-op.
        *
        * @param {*} value
+       * @public
        */
       set: function( value ) {
         if ( !this.equalsValue( value ) ) {
@@ -74,31 +76,34 @@ define( function( require ) {
         return this;
       },
 
-      // whether this property will not "change" when the passed-in value is set
+      // @public whether this property will not "change" when the passed-in value is set
       equalsValue: function( value ) {
         return value === this._value;
       },
 
-      // store the current (new) value
+      // @public store the current (new) value
       storeValue: function( value ) {
         this._value = value;
       },
 
-      // store the initial value
+      // @private store the initial value
       storeInitialValue: function( value ) {
         this._initialValue = value;
       },
 
+      // @public
       get initialValue() {
         return this._initialValue;
       },
 
+      // @private
       _setAndNotifyObservers: function( value ) {
         var oldValue = this.get();
         this.storeValue( value );
         this._notifyObservers( oldValue );
       },
 
+      // @private
       _notifyObservers: function( oldValue ) {
 
         // Note the current value, since it will be sent to possibly multiple observers.
@@ -121,6 +126,7 @@ define( function( require ) {
        * This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
        * Only provides the new reference as a callback (no oldvalue)
        * See https://github.com/phetsims/axon/issues/6
+       * @public
        */
       notifyObserversStatic: function() {
         var value = this.get();
@@ -131,6 +137,7 @@ define( function( require ) {
 
       /**
        * Resets the value to the initial value.
+       * @public
        */
       reset: function() {
         this.set( this._initialValue );
@@ -144,13 +151,16 @@ define( function( require ) {
        * button.click(property._set(true));
        * @param value the value to use when the setter is called.
        * @return a function that can be used to set the specified value.
+       * @public TODO really?
        */
       _set: function( value ) {
         return this.set.bind( this, value );
       },
 
+      // @public
       get value() { return this.get(); },
 
+      // @public
       set value( newValue ) { this.set( newValue ); },
 
       /**
@@ -159,6 +169,7 @@ define( function( require ) {
        * The initial notification provides the current value for newValue and null for oldValue.
        *
        * @param {function} observer a function of the form observer(newValue,oldValue)
+       * @public
        */
       link: function( observer ) {
         if ( this._observers.indexOf( observer ) === -1 ) {
@@ -168,9 +179,12 @@ define( function( require ) {
       },
 
       /**
-       * Add an observer to the Property, without calling it back right away.  This is used when you need to register a observer without an immediate callback.
-       * @param {function} observer  a function with a single argument, which is the value of the property at the time the function is called.
-       */
+       * Add an observer to the Property, without calling it back right away.
+       * This is used when you need to register a observer without an immediate callback.
+       *
+       * @param {function} observer - a function with a single argument, which is the value of the property at the time the function is called.
+       * @public
+       * /
       lazyLink: function( observer ) {
         if ( this._observers.indexOf( observer ) === -1 ) {
           this._observers.push( observer );
@@ -182,6 +196,7 @@ define( function( require ) {
        * If observer is not registered, this is a no-op.
        *
        * @param {function} observer
+       * @public
        */
       unlink: function( observer ) {
         var index = this._observers.indexOf( observer );
@@ -196,6 +211,7 @@ define( function( require ) {
        *
        * @param object
        * @param attributeName
+       * @public
        */
       linkAttribute: function( object, attributeName ) {
         var handle = function( value ) {object[ attributeName ] = value;};
@@ -206,14 +222,18 @@ define( function( require ) {
       /**
        * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
        * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
+       *
        * @param observer
+       * @public
        */
       unlinkAttribute: function( observer ) {
         this.unlink( observer );
       },
 
-      //Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
+      // @public Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
       toString: function() {return 'Property{' + this.get() + '}'; },
+
+      // @public
       valueOf: function() {return this.toString();},
 
       /**
@@ -226,6 +246,7 @@ define( function( require ) {
        *
        * @param observer the observer which should be called back only for one property change (and not on registration)
        * @returns {function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
+       * @public
        */
       once: function( observer ) {
         var property = this;
@@ -241,6 +262,7 @@ define( function( require ) {
        * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
        * @param name debug name to be printed on the console
        * @returns {function} the handle to the linked observer in case it needs to be removed later
+       * @public
        */
       debug: function( name ) {
         var observer = function( value ) { console.log( name, value ); };
@@ -251,6 +273,7 @@ define( function( require ) {
       /**
        * Returns a function that can be used to toggle the property (using !)
        * @returns {function}
+       * @public
        */
       get toggleFunction() {
         return this.toggle.bind( this );
@@ -258,6 +281,7 @@ define( function( require ) {
 
       /**
        * Modifies the value of this Property with the ! operator.  Works for booleans and non-booleans.
+       * @public
        */
       toggle: function() {
         this.value = !this.value;
@@ -269,6 +293,7 @@ define( function( require ) {
        *
        * @param value the value to match
        * @param observer the observer that is called when this Property
+       * @public
        */
       onValue: function( value, observer ) {
         var onValueObserver = function( v ) {
@@ -280,7 +305,7 @@ define( function( require ) {
         return onValueObserver;
       },
 
-      // Ensures that the Property is eligible for GC
+      // @public Ensures that the Property is eligible for GC
       dispose: function() {
         this.disposeProperty();
       }
