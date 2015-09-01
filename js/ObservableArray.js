@@ -335,17 +335,16 @@ define( function( require ) {
       return this._array;
     },
 
-    //TODO rename this to setItems, see axon#66
     /**
-     * Replaces all elements in the array
-     * @param {Array} elements
+     * Replaces all items in the array
+     * @param {Array} items
      * @public
      */
-    setElements: function( elements ) {
+    setItems: function( items ) {
 
       // TODO: do a better diff here for efficiency
       this.clear();
-      this.addAll( elements );
+      this.addAll( items );
     }
   } );
 } );
