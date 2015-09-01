@@ -86,7 +86,7 @@ define( function( require ) {
         this._value = value;
       },
 
-      // @private store the initial value
+      // @public store the initial value
       storeInitialValue: function( value ) {
         this._initialValue = value;
       },
