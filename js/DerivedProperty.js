@@ -50,32 +50,31 @@ define( function( require ) {
 
   return inherit( Property, axon.DerivedProperty, {
 
-      dispose: function() {
+    dispose: function() {
 
-        Property.prototype.dispose.call( this );
+      Property.prototype.dispose.call( this );
 
-        // Unlink from dependent properties
-        for ( var i = 0; i < this.dependencies.length; i++ ) {
-          var dependency = this.dependencies[ i ];
-          dependency.unlink( this.dependencyListeners[ i ] );
-        }
-        this.dependencies = null;
-        this.dependencyListeners = null;
-        this.dependencyValues = null;
-      },
+      // Unlink from dependent properties
+      for ( var i = 0; i < this.dependencies.length; i++ ) {
+        var dependency = this.dependencies[ i ];
+        dependency.unlink( this.dependencyListeners[ i ] );
+      }
+      this.dependencies = null;
+      this.dependencyListeners = null;
+      this.dependencyValues = null;
+    },
 
-      //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
-      set: function( value ) { throw new Error( 'Cannot set values directly to a derived property, tried to set: ' + value ); },
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    set: function( value ) { throw new Error( 'Cannot set values directly to a derived property, tried to set: ' + value ); },
 
-      //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
-      //Keep the newValue output in the string so the argument won't be stripped by minifier (which would cause crashes like https://github.com/phetsims/axon/issues/15)
-      set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a derived property, tried to set: ' + newValue ); },
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    //Keep the newValue output in the string so the argument won't be stripped by minifier (which would cause crashes like https://github.com/phetsims/axon/issues/15)
+    set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a derived property, tried to set: ' + newValue ); },
 
-      //Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
-      get value() {return Property.prototype.get.call( this );},
+    //Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
+    get value() {return Property.prototype.get.call( this );},
 
-      //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
-      reset: function() { throw new Error( 'Cannot reset a derived property directly' ); }
-    }
-  );
+    //Override the mutators to provide an error message.  These should not be called directly, the value should only be modified when the dependencies change
+    reset: function() { throw new Error( 'Cannot reset a derived property directly' ); }
+  } );
 } );
