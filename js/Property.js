@@ -184,7 +184,7 @@ define( function( require ) {
        *
        * @param {function} observer - a function with a single argument, which is the value of the property at the time the function is called.
        * @public
-       * /
+       */
       lazyLink: function( observer ) {
         if ( this._observers.indexOf( observer ) === -1 ) {
           this._observers.push( observer );
