@@ -36,7 +36,7 @@ define( function( require ) {
     this.events = new Events();
 
     //Store the internal value and the initial value
-    this.storeValue( value );        // typically sets this._value
+    this._value = value;
     this.storeInitialValue( value ); // typically sets this._initialValue
     this._observers = []; // @private
 
@@ -81,11 +81,6 @@ define( function( require ) {
         return value === this._value;
       },
 
-      // @public store the current (new) value
-      storeValue: function( value ) {
-        this._value = value;
-      },
-
       // @public store the initial value
       storeInitialValue: function( value ) {
         this._initialValue = value;
@@ -99,7 +94,7 @@ define( function( require ) {
       // @private
       _setAndNotifyObservers: function( value ) {
         var oldValue = this.get();
-        this.storeValue( value );
+        this._value = value;
         this._notifyObservers( oldValue );
       },
 
