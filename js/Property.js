@@ -35,9 +35,13 @@ define( function( require ) {
     // @private Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
     this.events = new Events();
 
-    //Store the internal value and the initial value
+    // @private - Store the internal value and the initial value
     this._value = value;
-    this.storeInitialValue( value ); // typically sets this._initialValue
+
+    // @private - Initial value
+    this._initialValue = value;
+
+    // @private - the property observers that get a callback when the value changes (or on link) 
     this._observers = []; // @private
 
     options.tandem && options.tandem.addInstance( this );
@@ -79,11 +83,6 @@ define( function( require ) {
       // @public whether this property will not "change" when the passed-in value is set
       equalsValue: function( value ) {
         return value === this._value;
-      },
-
-      // @public store the initial value
-      storeInitialValue: function( value ) {
-        this._initialValue = value;
       },
 
       // @public
