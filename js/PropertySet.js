@@ -91,7 +91,7 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
-     * @param {Tandem} [tandem] - optional support for tandem
+     * @param {Tandem} [tandem]
      * @public
      */
     addProperty: function( propertyName, value, tandem ) {
@@ -174,7 +174,7 @@ define( function( require ) {
      * Creates a DerivedProperty from the given property property names and derivation.
      * @param {string[]} propertyNames
      * @param {function} derivation
-     * @param {Tandem} [tandem] - optional support for tandem
+     * @param {Tandem} [tandem]
      * @returns {DerivedProperty}
      * @public
      */
@@ -187,7 +187,7 @@ define( function( require ) {
      * @param {string} propertyName name for the derived property
      * @param {string[]} dependencyNames names of the properties that it depends on
      * @param {function} derivation function that expects args in the same order as dependencies
-     * @param {Tandem} [tandem] - optional support for tandem
+     * @param {Tandem} [tandem]
      * @public
      */
     addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem ) {
