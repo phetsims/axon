@@ -4,6 +4,8 @@ define( [
   'AXON/axon',
   'AXON/Property',
   'AXON/DerivedProperty',
+  'AXON/Emitter',
+  'AXON/Events',
   'AXON/ObservableArray',
   'AXON/PropertySet',
   'AXON/Multilink'

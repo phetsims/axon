@@ -69,6 +69,27 @@
     equal( aCount, 2, 'offStatic() works' );
 
     equal( events.hasStaticListener( 'a', incrementA ), false, 'Should not have increment listener after offStatic()' );
+
   } );
+
+  test( 'Emitter Basics', function() {
+    var stack = [];
+    var emitter = new axon.Emitter();
+    var a = function() {
+      stack.push( 'a' );
+      emitter.removeListener( b );
+    };
+    var b = function() {
+      stack.push( 'b' );
+    };
+    emitter.addListener( a );
+    emitter.addListener( b );
+    emitter.emit();
+
+    equal( stack.length, 2, 'Should have received 2 callbacks' );
+    equal( stack[ 0 ], 'a', 'true' );
+    equal( stack[ 1 ], 'b', 'true' );
+  } );
+
 
 })();
