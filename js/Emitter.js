@@ -70,8 +70,28 @@ define( function( require ) {
       this.listenersToEmitTo = null;
       this.alreadyCopiedDuringEmit = false;
     },
-    emit1: function( arg1 ) {},
-    emit2: function( arg2 ) {},
+    emit1: function( arg1 ) {
+      assert && assert( this.listenersToEmitTo === null, 're-entrant emit not allowed because it would interfere with removal of ' +
+                                                         'listeners while processing emit' );
+      this.listenersToEmitTo = this.listeners;
+      for ( var i = 0; i < this.listenersToEmitTo.length; i++ ) {
+        this.listenersToEmitTo[ i ]( arg1 );
+      }
+
+      this.listenersToEmitTo = null;
+      this.alreadyCopiedDuringEmit = false;
+    },
+    emit2: function( arg1, arg2 ) {
+      assert && assert( this.listenersToEmitTo === null, 're-entrant emit not allowed because it would interfere with removal of ' +
+                                                         'listeners while processing emit' );
+      this.listenersToEmitTo = this.listeners;
+      for ( var i = 0; i < this.listenersToEmitTo.length; i++ ) {
+        this.listenersToEmitTo[ i ]( arg1, arg2 );
+      }
+
+      this.listenersToEmitTo = null;
+      this.alreadyCopiedDuringEmit = false;
+    },
     containsListener: function( listener ) {
       return this.listeners.indexOf( listener ) >= 0;
     }
