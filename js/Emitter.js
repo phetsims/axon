@@ -82,6 +82,7 @@ define( function( require ) {
         this.removeListener( this.listeners[ 0 ] );
       }
     },
+
     /**
      * @public emit a single event.
      * This method is called many times in a simulation and must be well-optimized.
@@ -97,6 +98,7 @@ define( function( require ) {
       this.listenersToEmitTo = null;
       this.alreadyCopiedDuringEmit = false;
     },
+
     /**
      * emit a single event with one argument.  This is a copy-paste of emit() for performance reasons.
      * @param arg1
@@ -112,6 +114,7 @@ define( function( require ) {
       this.listenersToEmitTo = null;
       this.alreadyCopiedDuringEmit = false;
     },
+    
     /**
      * emit a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
      * @param arg1
