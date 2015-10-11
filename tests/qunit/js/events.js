@@ -89,6 +89,8 @@
     equal( stack.length, 2, 'Should have received 2 callbacks' );
     equal( stack[ 0 ], 'a', 'true' );
     equal( stack[ 1 ], 'b', 'true' );
+
+    equal( emitter.containsListener( b ), false, 'b should have been removed' );
   } );
 
 
