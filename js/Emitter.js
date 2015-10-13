@@ -21,12 +21,7 @@ define( function( require ) {
 
     // @private - during emit() keep track of which listeners should receive events
     //            in order to manage removal of listeners during emit() 
-    this.listenersToEmitTo = null;
-
-    // @private - keep track of whether we have already made a defensive copy of listeners during a single emit call
-    //            If we made a 2nd copy, it would be of the wrong listener list and hence wrong, so we must only do that
-    //            once.
-    this.alreadyCopiedDuringEmit = false;
+    this.listenersToEmitTo = [];
   }
 
   axon.Emitter = Emitter;
@@ -68,9 +63,8 @@ define( function( require ) {
      * the rest of the callbacks until the emit call has completed.
      */
     defendCallbacks: function() {
-      if ( this.listenersToEmitTo !== null && !this.alreadyCopiedDuringEmit ) {
-        this.listenersToEmitTo = this.listeners.slice();
-        this.alreadyCopiedDuringEmit = true;
+      if ( this.listenersToEmitTo !== null ) {
+        this.listenersToEmitTo [ this.listenersToEmitTo.length - 1 ] = this.listeners.slice();
       }
     },
 
@@ -88,15 +82,14 @@ define( function( require ) {
      * This method is called many times in a simulation and must be well-optimized.
      */
     emit: function() {
-      assert && assert( this.listenersToEmitTo === null, 're-entrant emit not allowed because it would interfere with removal of ' +
-                                                         'listeners while processing emit' );
-      this.listenersToEmitTo = this.listeners;
-      for ( var i = 0; i < this.listenersToEmitTo.length; i++ ) {
-        this.listenersToEmitTo[ i ]();
+      this.listenersToEmitTo.push( this.listeners );
+      var lastEntry = this.listenersToEmitTo.length - 1;
+
+      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
+        this.listenersToEmitTo[ lastEntry ][ i ]();
       }
 
-      this.listenersToEmitTo = null;
-      this.alreadyCopiedDuringEmit = false;
+      this.listenersToEmitTo.pop();
     },
 
     /**
@@ -112,7 +105,6 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo = null;
-      this.alreadyCopiedDuringEmit = false;
     },
 
     /**
@@ -129,7 +121,6 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo = null;
-      this.alreadyCopiedDuringEmit = false;
     },
 
     /**
