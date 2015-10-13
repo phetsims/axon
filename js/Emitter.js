@@ -114,7 +114,7 @@ define( function( require ) {
       this.listenersToEmitTo = null;
       this.alreadyCopiedDuringEmit = false;
     },
-    
+
     /**
      * emit a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
      * @param arg1
@@ -139,6 +139,14 @@ define( function( require ) {
      */
     containsListener: function( listener ) {
       return this.listeners.indexOf( listener ) >= 0;
+    },
+
+    /**
+     * Returns true if there are any listeners.
+     * @returns {boolean}
+     */
+    hasListeners: function() {
+      return this.listeners.length > 0;
     }
   } );
 } );
