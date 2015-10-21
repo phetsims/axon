@@ -63,9 +63,10 @@ define( function( require ) {
      * the rest of the callbacks until the emit call has completed.
      */
     defendCallbacks: function() {
-      if ( this.listenersToEmitTo !== null ) {
-        this.listenersToEmitTo [ this.listenersToEmitTo.length - 1 ] = this.listeners.slice();
-      }
+
+      // Only defend once per level, otherwise it could get the wrong values from the listeners array.
+      var target = this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] || this.listeners.slice();
+      this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] = target;
     },
 
     /**
