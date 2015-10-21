@@ -97,14 +97,14 @@ define( function( require ) {
      * @param arg1
      */
     emit1: function( arg1 ) {
-      assert && assert( this.listenersToEmitTo === null, 're-entrant emit not allowed because it would interfere with removal of ' +
-                                                         'listeners while processing emit' );
-      this.listenersToEmitTo = this.listeners;
-      for ( var i = 0; i < this.listenersToEmitTo.length; i++ ) {
-        this.listenersToEmitTo[ i ]( arg1 );
+      this.listenersToEmitTo.push( this.listeners );
+      var lastEntry = this.listenersToEmitTo.length - 1;
+
+      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg1 );
       }
 
-      this.listenersToEmitTo = null;
+      this.listenersToEmitTo.pop();
     },
 
     /**
@@ -113,14 +113,14 @@ define( function( require ) {
      * @param arg2
      */
     emit2: function( arg1, arg2 ) {
-      assert && assert( this.listenersToEmitTo === null, 're-entrant emit not allowed because it would interfere with removal of ' +
-                                                         'listeners while processing emit' );
-      this.listenersToEmitTo = this.listeners;
-      for ( var i = 0; i < this.listenersToEmitTo.length; i++ ) {
-        this.listenersToEmitTo[ i ]( arg1, arg2 );
+      this.listenersToEmitTo.push( this.listeners );
+      var lastEntry = this.listenersToEmitTo.length - 1;
+
+      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg1, arg2 );
       }
 
-      this.listenersToEmitTo = null;
+      this.listenersToEmitTo.pop();
     },
 
     /**
