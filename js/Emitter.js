@@ -64,9 +64,13 @@ define( function( require ) {
      */
     defendCallbacks: function() {
 
-      // Only defend once per level, otherwise it could get the wrong values from the listeners array.
-      var target = this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] || this.listeners.slice();
-      this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] = target;
+      if ( this.listenersToEmitTo.length > 0 && !this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ].defended ) {
+        var defendedListeners = this.listeners.slice();
+
+        // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified list.
+        defendedListeners.defended = true;
+        this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] = defendedListeners;
+      }
     },
 
     /**
