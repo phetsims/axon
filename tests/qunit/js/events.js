@@ -93,5 +93,74 @@
     equal( emitter.containsListener( b ), false, 'b should have been removed' );
   } );
 
+  test( 'Emitter Tricks', function() {
+    var entries = [];
+
+    var emitter = new axon.Emitter();
+
+    var a = function( arg ) {
+      entries.push( { listener: 'a', arg: arg } );
+
+      if ( arg === 'first' ) {
+        emitter.emit1( 'second' );
+      }
+    };
+    var b = function( arg ) {
+      entries.push( { listener: 'b', arg: arg } );
+
+      if ( arg === 'second' ) {
+        emitter.addListener( c );
+        emitter.emit1( 'third' );
+      }
+    };
+    var c = function( arg ) {
+      entries.push( { listener: 'c', arg: arg } );
+    };
+
+    emitter.addListener( a );
+    emitter.addListener( b );
+    emitter.emit1( 'first' );
+
+    /*
+     * Expected order:
+     *   a first
+     *     a second
+     *     b second
+     *       a third
+     *       b third
+     *       c third
+     *   b first
+     *
+     * It looks like "c first" is (currently?) being triggered since defendCallbacks only defends the top of the stack.
+     * If the stack is [ undefended, undefended ], changing listeners copies only the top, leaving
+     * [ undefended, defended ], and our first event triggers a listener that wasn't listening when it was called.
+     */
+    _.each( entries, function( entry ) {
+      ok( !( entry.listener === 'c' && entry.arg === 'first' ), 'not C,first' );
+    } );
+
+    equal( entries.length, 7, 'Should have 7 callbacks' );
+
+    equal( entries[ 0 ].listener, 'a' );
+    equal( entries[ 0 ].arg, 'first' );
+
+    equal( entries[ 1 ].listener, 'a' );
+    equal( entries[ 1 ].arg, 'second' );
+
+    equal( entries[ 2 ].listener, 'b' );
+    equal( entries[ 2 ].arg, 'second' );
+
+    equal( entries[ 3 ].listener, 'a' );
+    equal( entries[ 3 ].arg, 'third' );
+
+    equal( entries[ 4 ].listener, 'b' );
+    equal( entries[ 4 ].arg, 'third' );
+
+    equal( entries[ 5 ].listener, 'c' );
+    equal( entries[ 5 ].arg, 'third' );
+
+    equal( entries[ 6 ].listener, 'b' );
+    equal( entries[ 6 ].arg, 'first' );
+  } );
 
 })();
