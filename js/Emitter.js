@@ -29,8 +29,9 @@ define( function( require ) {
   return inherit( Object, Emitter, {
 
     /**
-     * @public add a listener
-     * @param listener
+     * Add a listener
+     * @param {function} listener
+     * @public
      */
     addListener: function( listener ) {
 
@@ -42,8 +43,9 @@ define( function( require ) {
     },
 
     /**
-     * @public remove a listener
-     * @param listener
+     * Remove a listener
+     * @param {function} listener
+     * @public
      */
     removeListener: function( listener ) {
 
@@ -58,9 +60,10 @@ define( function( require ) {
     },
 
     /**
-     * @private - If processing callbacks during an emit() call and addListener/removeListener() is called,
+     * If processing callbacks during an emit() call and addListener/removeListener() is called,
      * make a defensive copy of the array of listener before changing the array, and use it for
      * the rest of the callbacks until the emit call has completed.
+     * @private
      */
     defendCallbacks: function() {
 
@@ -75,6 +78,7 @@ define( function( require ) {
 
     /**
      * Remove all the listeners
+     * @public
      */
     removeAllListeners: function() {
       while ( this.listeners.length > 0 ) {
@@ -83,8 +87,9 @@ define( function( require ) {
     },
 
     /**
-     * @public emit a single event.
+     * Emit a single event.
      * This method is called many times in a simulation and must be well-optimized.
+     * @public
      */
     emit: function() {
       this.listenersToEmitTo.push( this.listeners );
@@ -98,8 +103,9 @@ define( function( require ) {
     },
 
     /**
-     * emit a single event with one argument.  This is a copy-paste of emit() for performance reasons.
-     * @param arg1
+     * Emit a single event with one argument.  This is a copy-paste of emit() for performance reasons.
+     * @param {*} arg1
+     * @public
      */
     emit1: function( arg1 ) {
       this.listenersToEmitTo.push( this.listeners );
@@ -113,9 +119,10 @@ define( function( require ) {
     },
 
     /**
-     * emit a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
-     * @param arg1
-     * @param arg2
+     * Emit a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
+     * @param {*} arg1
+     * @param {*} arg2
+     * @public
      */
     emit2: function( arg1, arg2 ) {
       this.listenersToEmitTo.push( this.listeners );
@@ -129,9 +136,10 @@ define( function( require ) {
     },
 
     /**
-     * @public - check whether the listener is registered with this Emitter
-     * @param listener
+     * Check whether the listener is registered with this Emitter
+     * @param {function} listener
      * @returns {boolean}
+     * @public
      */
     containsListener: function( listener ) {
       return this.listeners.indexOf( listener ) >= 0;
@@ -140,6 +148,7 @@ define( function( require ) {
     /**
      * Returns true if there are any listeners.
      * @returns {boolean}
+     * @public
      */
     hasListeners: function() {
       return this.listeners.length > 0;
