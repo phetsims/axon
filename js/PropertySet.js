@@ -221,6 +221,8 @@ define( function( require ) {
      * puller.knot.value = knot;
      *
      * Throws an error if you try to set a value for which there is no property.
+     *
+     * @param {Object} values - see example above
      * @public
      */
     setValues: function( values ) {
@@ -264,7 +266,7 @@ define( function( require ) {
     /**
      * Unlink for a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to link to
-     * @param {function }observer the callback to link to the property
+     * @param {function} observer the callback to link to the property
      * @public
      */
     unlink: function( propertyName, observer ) {
