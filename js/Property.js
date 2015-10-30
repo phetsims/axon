@@ -152,7 +152,7 @@ define( function( require ) {
        * button.click(property._set(true));
        * @param value the value to use when the setter is called.
        * @return a function that can be used to set the specified value.
-       * @public TODO really?
+       * @public TODO really? see axon#75
        */
       _set: function( value ) {
         return this.set.bind( this, value );
