@@ -144,20 +144,6 @@ define( function( require ) {
         this.set( this._initialValue );
       },
 
-      /**
-       * This function returns a bound function that sets the specified value.  For use in creating closures e.g. with gui classes.
-       * For instance, to have a button that sets a property to true, instead of using
-       * button.click(function(){property.set(true);});
-       * you could use
-       * button.click(property._set(true));
-       * @param value the value to use when the setter is called.
-       * @return a function that can be used to set the specified value.
-       * @public TODO really? see axon#75
-       */
-      _set: function( value ) {
-        return this.set.bind( this, value );
-      },
-
       // @public
       get value() { return this.get(); },
 
