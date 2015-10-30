@@ -18,6 +18,11 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Events = require( 'AXON/Events' );
 
+  /**
+   * @param {[]} array
+   * @param {Object} [options]
+   * @constructor
+   */
   axon.ObservableArray = function ObservableArray( array, options ) {
 
     // Special case that the user supplied options but no array
