@@ -80,7 +80,14 @@ define( function( require ) {
         return this;
       },
 
-      // @public whether this property will not "change" when the passed-in value is set
+      /**
+       * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
+       * wrapped value changes, and whether onValue is triggered.  A different implementation can be provided by
+       * subclasses or instances to change the equals definition. See #10
+       * @public
+       * @param {Object} value, should have the same type as Property element type
+       * @returns {boolean}
+       */
       equalsValue: function( value ) {
         return value === this._value;
       },
