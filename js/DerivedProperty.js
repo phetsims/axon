@@ -71,17 +71,18 @@ define( function( require ) {
      * Override the mutators to provide an error message.  These should not be called directly,
      * the value should only be modified when the dependencies change.
      * @param value
-     * @public
      * @override
+     * @public
      */
     set: function( value ) { throw new Error( 'Cannot set values directly to a derived property, tried to set: ' + value ); },
 
-    // @public @override
     /**
      * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
      * when the dependencies change. Keep the newValue output in the string so the argument won't be stripped by minifier
      * (which would cause crashes like https://github.com/phetsims/axon/issues/15)
      * @param newValue
+     * @override
+     * @public
      */
     set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a derived property, tried to set: ' + newValue ); },
 
