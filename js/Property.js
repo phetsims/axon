@@ -80,16 +80,22 @@ define( function( require ) {
         return this;
       },
 
+      // @public returns true iff the specified value equals the value of this property
+      equalsValue: function( value ) {
+        return this.areValuesEqual( value, this._value );
+      },
+
       /**
        * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
        * wrapped value changes, and whether onValue is triggered.  A different implementation can be provided by
-       * subclasses or instances to change the equals definition. See #10
-       * @public
-       * @param {Object} value, should have the same type as Property element type
+       * subclasses or instances to change the equals definition. See #10 and #73
+       * @param {Object} a - should have the same type as Property element type
+       * @param {Object} b - should have the same type as Property element type
        * @returns {boolean}
+       * @public
        */
-      equalsValue: function( value ) {
-        return value === this._value;
+      areValuesEqual: function( a, b ) {
+        return a === b;
       },
 
       // @public
@@ -283,8 +289,9 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
+        var property = this;
         var onValueObserver = function( v ) {
-          if ( v === value ) {
+          if ( property.areValuesEqual( v, value ) ) {
             observer();
           }
         };
