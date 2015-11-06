@@ -67,12 +67,19 @@ define( function( require ) {
      */
     defendCallbacks: function() {
 
-      if ( this.listenersToEmitTo.length > 0 && !this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ].defended ) {
-        var defendedListeners = this.listeners.slice();
+      for ( var i = this.listenersToEmitTo.length - 1; i >= 0; i-- ) {
 
-        // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified list.
-        defendedListeners.defended = true;
-        this.listenersToEmitTo[ this.listenersToEmitTo.length - 1 ] = defendedListeners;
+        // Once we meet a level that was already defended, we can stop, since all previous levels are also defended
+        if ( this.listenersToEmitTo[ i ].defended ) {
+          break;
+        }
+        else {
+          var defendedListeners = this.listeners.slice();
+
+          // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified list.
+          defendedListeners.defended = true;
+          this.listenersToEmitTo[ i ] = defendedListeners;
+        }
       }
     },
 
