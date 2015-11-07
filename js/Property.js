@@ -1,4 +1,4 @@
-// Copyright 2002-2015, University of Colorado Boulder
+// Copyright 2013-2015, University of Colorado Boulder
 
 /**
  * An observable property, notifies registered observers when the value changes.
