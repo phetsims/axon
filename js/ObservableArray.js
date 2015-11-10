@@ -23,7 +23,7 @@ define( function( require ) {
    * @param {Object} [options]
    * @constructor
    */
-  axon.ObservableArray = function ObservableArray( array, options ) {
+  function ObservableArray( array, options ) {
 
     // Special case that the user supplied options but no array
     if ( array instanceof Object && !(array instanceof Array) ) {
@@ -53,9 +53,10 @@ define( function( require ) {
     this.disposeObservableArray = function() {
       options && options.tandem && options.tandem.removeInstance( this );
     };
-  };
+  }
+  axon.register( 'ObservableArray', ObservableArray );
 
-  return inherit( Object, axon.ObservableArray, {
+  return inherit( Object, ObservableArray, {
 
     // @public
     dispose: function() {

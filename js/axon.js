@@ -3,13 +3,7 @@
 define( function( require ) {
   'use strict';
 
-  var axon = {};
+  var Namespace = require( 'PHET_CORE/Namespace' );
 
-  // store a reference on the PhET namespace if it exists
-  if ( window.phet ) {
-    window.phet.axon = axon;
-  }
-
-  // will be filled in by other modules
-  return axon;
+  return new Namespace( 'axon' );
 } );

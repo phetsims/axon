@@ -20,7 +20,7 @@ define( function( require ) {
    * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
    * @constructor
    */
-  axon.Multilink = function Multilink( dependencies, callback, lazy ) {
+  function Multilink( dependencies, callback, lazy ) {
 
     this.dependencies = dependencies; // @private
 
@@ -49,9 +49,10 @@ define( function( require ) {
     if ( !lazy ) {
       callback.apply( null, this.dependencyValues );
     }
-  };
+  }
+  axon.register( 'Multilink', Multilink );
 
-  return inherit( Object, axon.Multilink, {
+  return inherit( Object, Multilink, {
 
     // @public
     dispose: function() {

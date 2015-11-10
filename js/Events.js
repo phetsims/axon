@@ -15,7 +15,7 @@ define( function( require ) {
    * @class Events
    * @constructor
    */
-  axon.Events = function Events( options ) {
+  function Events( options ) {
 
     this._eventListeners = {}; // @private
     this._staticEventListeners = {}; // @private
@@ -24,9 +24,10 @@ define( function( require ) {
     this.disposeEvents = function() {
       options && options.tandem && options.tandem.removeInstance( this );
     };
-  };
+  }
+  axon.register( 'Events', Events );
 
-  axon.Events.prototype = {
+  Events.prototype = {
 
     // @public
     dispose: function() {
@@ -361,5 +362,5 @@ define( function( require ) {
     }
   };
 
-  return axon.Events;
+  return Events;
 } );

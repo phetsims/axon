@@ -20,11 +20,10 @@ define( function( require ) {
     this.listeners = [];
 
     // @private - during emit() keep track of which listeners should receive events
-    //            in order to manage removal of listeners during emit() 
+    //            in order to manage removal of listeners during emit()
     this.listenersToEmitTo = [];
   }
-
-  axon.Emitter = Emitter;
+  axon.register( 'Emitter', Emitter );
 
   return inherit( Object, Emitter, {
 
@@ -52,7 +51,7 @@ define( function( require ) {
       var index = this.listeners.indexOf( listener );
       assert && assert( index >= 0, 'tried to removeListener on something that wasnt a listener' );
 
-      // If callbacks are in progress, make a copy of the current list of listeners--the removed listener 
+      // If callbacks are in progress, make a copy of the current list of listeners--the removed listener
       // will remain in the list and receive a callback for this emit call, see #72
       this.defendCallbacks();
 

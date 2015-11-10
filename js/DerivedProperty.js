@@ -22,7 +22,7 @@ define( function( require ) {
    * @param {Object} [options] - see Property
    * @constructor
    */
-  axon.DerivedProperty = function DerivedProperty( dependencies, derivation, options ) {
+  function DerivedProperty( dependencies, derivation, options ) {
 
     this.dependencies = dependencies; // @private
 
@@ -48,9 +48,10 @@ define( function( require ) {
         dependency.lazyLink( listener );
       })( dependency, i );
     }
-  };
+  }
+  axon.register( 'DerivedProperty', DerivedProperty );
 
-  return inherit( Property, axon.DerivedProperty, {
+  return inherit( Property, DerivedProperty, {
 
     // @public
     dispose: function() {

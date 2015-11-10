@@ -60,7 +60,7 @@ define( function( require ) {
    * @param {Object} [options]
    * @constructor
    */
-  axon.PropertySet = function PropertySet( values, options ) {
+  function PropertySet( values, options ) {
 
     options = _.extend( {
       tandemSet: {} // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
@@ -83,9 +83,10 @@ define( function( require ) {
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[ value ], options.tandemSet[ value ] );
     } );
-  };
+  }
+  axon.register( 'PropertySet', PropertySet );
 
-  return inherit( Events, axon.PropertySet, {
+  return inherit( Events, PropertySet, {
 
     /**
      * Adds a new property to this PropertySet

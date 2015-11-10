@@ -28,7 +28,7 @@ define( function( require ) {
    * @param {Object} [options] - options
    * @constructor
    */
-  axon.Property = function Property( value, options ) {
+  function Property( value, options ) {
 
     options = _.extend( { tandem: null }, options );
 
@@ -41,7 +41,7 @@ define( function( require ) {
     // @private - Initial value
     this._initialValue = value;
 
-    // @private - the property observers that get a callback when the value changes (or on link) 
+    // @private - the property observers that get a callback when the value changes (or on link)
     this._observers = []; // @private
 
     options.tandem && options.tandem.addInstance( this );
@@ -53,9 +53,10 @@ define( function( require ) {
         this.unlink( this._observers[ 0 ] );
       }
     };
-  };
+  }
+  axon.register( 'Property', Property );
 
-  return inherit( Object, axon.Property, {
+  return inherit( Object, Property, {
 
       /**
        * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
@@ -340,7 +341,7 @@ define( function( require ) {
        */
       addProperty: function( object, propertyName, initialValue ) {
         // defines the property
-        var property = object[ propertyName + 'Property' ] = new axon.Property( initialValue );
+        var property = object[ propertyName + 'Property' ] = new Property( initialValue );
 
         // defines ES5 getter/setter
         Object.defineProperty( object, propertyName, {
