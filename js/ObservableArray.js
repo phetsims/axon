@@ -54,6 +54,7 @@ define( function( require ) {
       options && options.tandem && options.tandem.removeInstance( this );
     };
   }
+
   axon.register( 'ObservableArray', ObservableArray );
 
   return inherit( Object, ObservableArray, {

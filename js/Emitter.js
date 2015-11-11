@@ -23,6 +23,7 @@ define( function( require ) {
     //            in order to manage removal of listeners during emit()
     this.listenersToEmitTo = [];
   }
+
   axon.register( 'Emitter', Emitter );
 
   return inherit( Object, Emitter, {

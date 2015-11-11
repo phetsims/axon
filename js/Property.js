@@ -54,6 +54,7 @@ define( function( require ) {
       }
     };
   }
+
   axon.register( 'Property', Property );
 
   return inherit( Object, Property, {

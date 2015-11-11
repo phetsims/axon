@@ -25,6 +25,7 @@ define( function( require ) {
       options && options.tandem && options.tandem.removeInstance( this );
     };
   }
+
   axon.register( 'Events', Events );
 
   Events.prototype = {

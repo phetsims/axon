@@ -68,10 +68,10 @@ define( function( require ) {
 
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
     assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
-      var isBad = !values.hasOwnProperty( key );
-      if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
-      return isBad;
-    } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
+        var isBad = !values.hasOwnProperty( key );
+        if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
+        return isBad;
+      } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
 
     var propertySet = this;
 
@@ -84,6 +84,7 @@ define( function( require ) {
       propertySet.addProperty( value, values[ value ], options.tandemSet[ value ] );
     } );
   }
+
   axon.register( 'PropertySet', PropertySet );
 
   return inherit( Events, PropertySet, {

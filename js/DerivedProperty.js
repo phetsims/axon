@@ -49,6 +49,7 @@ define( function( require ) {
       })( dependency, i );
     }
   }
+
   axon.register( 'DerivedProperty', DerivedProperty );
 
   return inherit( Property, DerivedProperty, {

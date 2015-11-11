@@ -50,6 +50,7 @@ define( function( require ) {
       callback.apply( null, this.dependencyValues );
     }
   }
+
   axon.register( 'Multilink', Multilink );
 
   return inherit( Object, Multilink, {
