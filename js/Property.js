@@ -30,6 +30,8 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
+    var property = this;
+
     options = _.extend( { tandem: null }, options );
 
     // @private Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
@@ -48,10 +50,14 @@ define( function( require ) {
 
     // @private
     this.disposeProperty = function() {
+
+      // Make sure there were no remaining observers.  If there are observers at disposal time, there may be a latent
+      // memory leak, see #77
+      assert && assert(
+        property._observers.length === 0,
+        'during disposal, expected 0 observers, actual = ' + property._observers.length
+      );
       options.tandem && options.tandem.removeInstance( this );
-      while ( this._observers.length > 0 ) {
-        this.unlink( this._observers[ 0 ] );
-      }
     };
   }
 
