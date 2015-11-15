@@ -19,9 +19,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Events = require( 'AXON/Events' );
-
-  // Also requires Multilink and DerivedProperty, but cannot reference them here or it will create a
-  // circular dependency.  So they are loaded through axon.Multilink and axon.DerivedProperty.
+  var Multilink = require( 'AXON/Multilink' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -323,11 +321,11 @@ define( function( require ) {
        * @static
        */
       multilink: function( properties, observer ) {
-        return new axon.Multilink( properties, observer, false );
+        return new Multilink( properties, observer, false );
       },
 
       lazyMultilink: function( properties, observer ) {
-        return new axon.Multilink( properties, observer, true );
+        return new Multilink( properties, observer, true );
       },
 
       /**
