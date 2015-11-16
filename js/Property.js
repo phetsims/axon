@@ -205,6 +205,14 @@ define( function( require ) {
       },
 
       /**
+       * Removes all observers.
+       * If no observers are registered, this is a no-op.
+       */
+      unlinkAll: function() {
+        this._observers.length = 0;
+      },
+
+      /**
        * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
        * Example: modelVisibleProperty.linkAttribute(view,'visible');
        *
