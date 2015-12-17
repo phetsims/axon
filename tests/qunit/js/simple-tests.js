@@ -127,11 +127,11 @@
     p.link( a );
     p.link( b );
     p.link( c );
-    equal( p._observers.length, 3, 'should have 3 observers now' );
+    equal( p.changedEmitter.listeners.length, 3, 'should have 3 observers now' );
     p.unlink( b );
-    equal( p._observers[ 0 ], a, 'should have removed b' );
-    equal( p._observers[ 1 ], c, 'should have removed b' );
-    equal( p._observers.length, 2, 'should have removed an item' );
+    equal( p.changedEmitter.listeners[ 0 ], a, 'should have removed b' );
+    equal( p.changedEmitter.listeners[ 1 ], c, 'should have removed b' );
+    equal( p.changedEmitter.listeners.length, 2, 'should have removed an item' );
   } );
 
   test( 'Test stale values in DerivedProperty', function() {
@@ -175,8 +175,8 @@
     var listener = function( area ) { /*console.log( 'area = ' + area );*/ };
     areaProperty.link( listener );
 
-    equal( widthProperty._observers.length, 1 );
-    equal( heightProperty._observers.length, 1 );
+    equal( widthProperty.changedEmitter.listeners.length, 1 );
+    equal( heightProperty.changedEmitter.listeners.length, 1 );
     equal( areaProperty.dependencies.length, 2 );
     equal( areaProperty.dependencyListeners.length, 2 );
 
@@ -184,9 +184,9 @@
     areaProperty.unlink( listener );
     areaProperty.dispose();
 
-    equal( widthProperty._observers.length, 0 );
-    equal( heightProperty._observers.length, 0 );
-    equal( heightProperty._observers.length, 0 );
+    equal( widthProperty.changedEmitter.listeners.length, 0 );
+    equal( heightProperty.changedEmitter.listeners.length, 0 );
+    equal( heightProperty.changedEmitter.listeners.length, 0 );
 
     equal( areaProperty.dependencies, null );
     equal( areaProperty.dependencyListeners, null );

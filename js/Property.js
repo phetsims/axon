@@ -19,6 +19,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Events = require( 'AXON/Events' );
+  var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
 
   /**
@@ -41,8 +42,9 @@ define( function( require ) {
     // @private - Initial value
     this._initialValue = value;
 
-    // @private - the property observers that get a callback when the value changes (or on link)
-    this._observers = []; // @private
+    // @public (unit-tests) - emit1 is called when the value changes (or on link)
+    // Also used in ShapePlacementBoard.js at the moment
+    this.changedEmitter = new Emitter();
 
     options.tandem && options.tandem.addInstance( this );
 
@@ -52,8 +54,8 @@ define( function( require ) {
       // Make sure there were no remaining observers.  If there are observers at disposal time, there may be a latent
       // memory leak, see #77
       assert && assert(
-        property._observers.length === 0,
-        'during disposal, expected 0 observers, actual = ' + property._observers.length
+        property.changedEmitter.listeners.length === 0,
+        'during disposal, expected 0 observers, actual = ' + property.changedEmitter.listeners.length
       );
       options.tandem && options.tandem.removeInstance( this );
     };
@@ -125,10 +127,7 @@ define( function( require ) {
         // TODO: Should Property extend or compose Events?  Would extending Events broaden its interface too much?
         this.events.trigger2( 'startedCallbacksForChanged', value, oldValue );
 
-        var observersCopy = this._observers.slice(); // make a copy, in case notification results in removeObserver
-        for ( var i = 0; i < observersCopy.length; i++ ) {
-          observersCopy[ i ]( value, oldValue );
-        }
+        this.changedEmitter.emit2( value, oldValue );
 
         this.events.trigger0( 'endedCallbacksForChanged' );
       },
@@ -142,10 +141,7 @@ define( function( require ) {
        * @public
        */
       notifyObserversStatic: function() {
-        var value = this.get();
-        for ( var i = 0; i < this._observers.length; i++ ) {
-          this._observers[ i ]( value );
-        }
+        this.changedEmitter.emit1( this.get() );
       },
 
       /**
@@ -171,8 +167,8 @@ define( function( require ) {
        * @public
        */
       link: function( observer ) {
-        if ( this._observers.indexOf( observer ) === -1 ) {
-          this._observers.push( observer );
+        if ( !this.changedEmitter.containsListener( observer ) ) {
+          this.changedEmitter.addListener( observer );
           observer( this.get(), null ); // null should be used when an object is expected but unavailable
         }
       },
@@ -185,9 +181,7 @@ define( function( require ) {
        * @public
        */
       lazyLink: function( observer ) {
-        if ( this._observers.indexOf( observer ) === -1 ) {
-          this._observers.push( observer );
-        }
+        this.changedEmitter.addListener( observer );
       },
 
       /**
@@ -198,9 +192,8 @@ define( function( require ) {
        * @public
        */
       unlink: function( observer ) {
-        var index = this._observers.indexOf( observer );
-        if ( index !== -1 ) {
-          this._observers.splice( index, 1 );
+        if ( this.changedEmitter.containsListener( observer ) ) {
+          this.changedEmitter.removeListener( observer );
         }
       },
 
@@ -209,7 +202,7 @@ define( function( require ) {
        * If no observers are registered, this is a no-op.
        */
       unlinkAll: function() {
-        this._observers.length = 0;
+        this.changedEmitter.removeAllListeners();
       },
 
       /**
