@@ -29,7 +29,7 @@ define( function( require ) {
   return inherit( Object, Emitter, {
 
     /**
-     * Add a listener
+     * Adds a listener
      * @param {function} listener
      * @public
      */
@@ -43,7 +43,7 @@ define( function( require ) {
     },
 
     /**
-     * Remove a listener
+     * Removes a listener
      * @param {function} listener
      * @public
      */
@@ -57,6 +57,16 @@ define( function( require ) {
       this.defendCallbacks();
 
       this.listeners.splice( index, 1 );
+    },
+
+    /**
+     * Removes all the listeners
+     * @public
+     */
+    removeAllListeners: function() {
+      while ( this.listeners.length > 0 ) {
+        this.removeListener( this.listeners[ 0 ] );
+      }
     },
 
     /**
@@ -84,17 +94,7 @@ define( function( require ) {
     },
 
     /**
-     * Remove all the listeners
-     * @public
-     */
-    removeAllListeners: function() {
-      while ( this.listeners.length > 0 ) {
-        this.removeListener( this.listeners[ 0 ] );
-      }
-    },
-
-    /**
-     * Emit a single event.
+     * Emits a single event.
      * This method is called many times in a simulation and must be well-optimized.
      * @public
      */
@@ -110,7 +110,7 @@ define( function( require ) {
     },
 
     /**
-     * Emit a single event with one argument.  This is a copy-paste of emit() for performance reasons.
+     * Emits a single event with one argument.  This is a copy-paste of emit() for performance reasons.
      * @param {*} arg1
      * @public
      */
@@ -126,7 +126,7 @@ define( function( require ) {
     },
 
     /**
-     * Emit a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
+     * Emits a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
      * @param {*} arg1
      * @param {*} arg2
      * @public
@@ -143,12 +143,12 @@ define( function( require ) {
     },
 
     /**
-     * Check whether the listener is registered with this Emitter
+     * Checks whether a listener is registered with this Emitter
      * @param {function} listener
      * @returns {boolean}
      * @public
      */
-    containsListener: function( listener ) {
+    isListener: function( listener ) {
       return this.listeners.indexOf( listener ) >= 0;
     },
 
