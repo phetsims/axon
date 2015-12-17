@@ -148,7 +148,7 @@ define( function( require ) {
      * @returns {boolean}
      * @public
      */
-    containsListener: function( listener ) {
+    isListener: function( listener ) {
       return this.listeners.indexOf( listener ) >= 0;
     },
 
