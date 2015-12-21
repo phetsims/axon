@@ -42,7 +42,7 @@ define( function( require ) {
     // @private - Initial value
     this._initialValue = value;
 
-    // @public (unit-tests) - emit1 is called when the value changes (or on link)
+    // @private (unit-tests) - emit1 is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
