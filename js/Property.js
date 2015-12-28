@@ -167,7 +167,7 @@ define( function( require ) {
        * @public
        */
       link: function( observer ) {
-        if ( !this.changedEmitter.containsListener( observer ) ) {
+        if ( !this.changedEmitter.hasListener( observer ) ) {
           this.changedEmitter.addListener( observer );
           observer( this.get(), null ); // null should be used when an object is expected but unavailable
         }
@@ -192,7 +192,7 @@ define( function( require ) {
        * @public
        */
       unlink: function( observer ) {
-        if ( this.changedEmitter.containsListener( observer ) ) {
+        if ( this.changedEmitter.hasListener( observer ) ) {
           this.changedEmitter.removeListener( observer );
         }
       },

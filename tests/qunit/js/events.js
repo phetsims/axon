@@ -90,7 +90,7 @@
     equal( stack[ 0 ], 'a', 'true' );
     equal( stack[ 1 ], 'b', 'true' );
 
-    equal( emitter.containsListener( b ), false, 'b should have been removed' );
+    equal( emitter.hasListener( b ), false, 'b should have been removed' );
   } );
 
   test( 'Emitter Tricks', function() {

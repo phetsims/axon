@@ -148,7 +148,8 @@ define( function( require ) {
      * @returns {boolean}
      * @public
      */
-    containsListener: function( listener ) {
+    hasListener: function( listener ) {
+      assert && assert( arguments.length === 1, 'Emitter.hasListener should be called with 1 argument' );
       return this.listeners.indexOf( listener ) >= 0;
     },
 
@@ -158,6 +159,7 @@ define( function( require ) {
      * @public
      */
     hasListeners: function() {
+      assert && assert( arguments.length === 0, 'Emitter.hasListeners should be called without arguments' );
       return this.listeners.length > 0;
     }
   } );
