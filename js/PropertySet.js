@@ -337,6 +337,17 @@ define( function( require ) {
     },
 
     /**
+     * Unlinks all Property instances from all observers.
+     * @public
+     */
+    unlinkAll: function() {
+      var propertySet = this;
+      this.keys.forEach( function( key ) {
+        propertySet[ key + SUFFIX ].unlinkAll();
+      } );
+    },
+
+    /**
      * Get a property by name, see https://github.com/phetsims/axon/issues/16
      * @param {string} propertyName the name of the property to get
      * @deprecated see https://github.com/phetsims/axon/issues/43
