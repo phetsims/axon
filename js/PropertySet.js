@@ -337,7 +337,7 @@ define( function( require ) {
     },
 
     /**
-     * Unlinks all Property instances from all observers.
+     * Unlinks all observers from all Property instances.
      * @public
      */
     unlinkAll: function() {
