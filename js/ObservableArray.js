@@ -319,6 +319,16 @@ define( function( require ) {
     },
 
     /**
+     * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
+     * @param mapFunction
+     * @returns {axon.ObservableArray}
+     * @public
+     */
+    filter: function( mapFunction ) {
+      return new axon.ObservableArray( this._array.filter( mapFunction ) );
+    },
+
+    /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
      * Same as foldLeft.  In underscore this is called _.reduce aka _.foldl or _.inject
      * @param value
