@@ -224,4 +224,104 @@
     propertySet.time = 9;
     equal( state.age, 8, 'state shouldnt have changed after unlink' );
   } );
+
+  test( 'DerivedProperty.valueEquals', function() {
+    var propA = new axon.Property( 'a' );
+    var propB = new axon.Property( 'b' );
+    var prop = axon.DerivedProperty.valueEquals( propA, propB );
+    equal( prop.value, false );
+    propA.value = 'b';
+    equal( prop.value, true );
+  } );
+
+  test( 'DerivedProperty and/or', function() {
+    var propA = new axon.Property( true );
+    var propB = new axon.Property( false );
+    var propC = new axon.Property( true );
+
+    var and = axon.DerivedProperty.and( [ propA, propB, propC ] );
+    var or = axon.DerivedProperty.or( [ propA, propB, propC ] );
+
+    equal( and.value, false );
+    equal( or.value, true );
+
+    propB.value = true;
+    equal( and.value, true );
+    equal( or.value, true );
+
+    propA.value = false;
+    propB.value = false;
+    propC.value = false;
+
+    equal( and.value, false );
+    equal( or.value, false );
+
+    equal( axon.DerivedProperty.and( [] ).value, true );
+    equal( axon.DerivedProperty.or( [] ).value, false );
+  } );
+
+  test( 'DerivedProperty sum/product', function() {
+    var propA = new axon.Property( 1 );
+    var propB = new axon.Property( 2 );
+    var propC = new axon.Property( 3 );
+
+    var sum = axon.DerivedProperty.sum( [ propA, propB, propC ] );
+    var product = axon.DerivedProperty.product( [ propA, propB, propC ] );
+
+    equal( sum.value, 6 );
+    equal( product.value, 6 );
+
+    propB.value = 4;
+    equal( sum.value, 8 );
+    equal( product.value, 12 );
+
+    equal( axon.DerivedProperty.sum( [] ).value, 0 );
+    equal( axon.DerivedProperty.product( [] ).value, 1 );
+
+    equal( axon.DerivedProperty.plus( propA, propC ).value, 4 );
+    equal( axon.DerivedProperty.times( propA, propC ).value, 3 );
+  } );
+
+  test( 'DerivedProperty comparison', function() {
+    var prop = new axon.Property( 1 );
+
+    var less2 = axon.DerivedProperty.lessThanNumber( prop, 2 );
+    var lessEqual2 = axon.DerivedProperty.lessThanEqualNumber( prop, 2 );
+    var greater2 = axon.DerivedProperty.greaterThanNumber( prop, 2 );
+    var greaterEqual2 = axon.DerivedProperty.greaterThanEqualNumber( prop, 2 );
+
+    equal( less2.value, true );
+    equal( lessEqual2.value, true );
+    equal( greaterEqual2.value, false );
+    equal( greater2.value, false );
+
+    prop.value = 2;
+
+    equal( less2.value, false );
+    equal( lessEqual2.value, true );
+    equal( greaterEqual2.value, true );
+    equal( greater2.value, false );
+
+    prop.value = 3;
+
+    equal( less2.value, false );
+    equal( lessEqual2.value, false );
+    equal( greaterEqual2.value, true );
+    equal( greater2.value, true );
+
+  } );
+
+  test( 'DerivedProperty.derivedNot', function() {
+    var prop = new axon.Property( true );
+
+    var notProp = axon.DerivedProperty.derivedNot( prop );
+
+    equal( prop.value, true );
+    equal( notProp.value, false );
+
+    prop.value = false;
+
+    equal( prop.value, false );
+    equal( notProp.value, true );
+  } );
 })();

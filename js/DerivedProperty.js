@@ -16,6 +16,30 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
 
+  function equalsFunction( a, b ) {
+    return a === b;
+  }
+
+  function notFunction( a ) {
+    return !a;
+  }
+
+  function conjunctionWithProperty( value, property ) {
+    return value && property.value;
+  }
+
+  function disjunctionWithProperty( value, property ) {
+    return value || property.value;
+  }
+
+  function addWithProperty( value, property ) {
+    return value + property.value;
+  }
+
+  function multiplyWithProperty( value, property ) {
+    return value * property.value;
+  }
+
   /**
    * @param {Property[]} dependencies - properties that this property's value is derived from
    * @param {function} derivation - function that derives this property's value, expects args in the same order as dependencies
@@ -103,5 +127,177 @@ define( function( require ) {
      * @public
      */
     reset: function() { throw new Error( 'Cannot reset a derived property directly' ); }
+  }, {
+
+    /**
+     * Creates a derived boolean property whose value is true iff firstProperty's value is equal to secondPropert's
+     * value.
+     * @public
+     *
+     * @param {Property.<*>} firstProperty
+     * @param {Property.<*>} secondProperty
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    valueEquals: function( firstProperty, secondProperty, options ) {
+      return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff every input property value is true.
+     * @public
+     *
+     * @param {Array.<Property.<boolean>>} properties
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    and: function( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, conjunctionWithProperty, true ), options ); // TODO: fix
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff any input property value is true.
+     * @public
+     *
+     * @param {Array.<Property.<boolean>>} properties
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    or: function( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, disjunctionWithProperty, false ), options );
+    },
+
+    /**
+     * Creates a derived number property whose value is the sum of all input property values (or 0 if no properties
+     * are specified).
+     * @public
+     *
+     * @param {Array.<Property.<number>>}
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<number>}
+     */
+    sum: function( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, addWithProperty, 0 ), options );
+    },
+
+    /**
+     * Creates a derived number property whose value is the sum of both input property values.
+     * @public
+     *
+     * @param {Property.<number>} firstProperty
+     * @param {Property.<number>} secondProperty
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<number>}
+     */
+    plus: function( firstProperty, secondProperty, options ) {
+      return DerivedProperty.sum( [ firstProperty, secondProperty ], options );
+    },
+
+    /**
+     * Creates a derived number property whose value is the product of all input property values (or 1 if no properties
+     * are specified).
+     * @public
+     *
+     * @param {Array.<Property.<number>>}
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<number>}
+     */
+    product: function( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, multiplyWithProperty, 1 ), options );
+    },
+
+    /**
+     * Creates a derived number property whose value is the product of both input property values.
+     * @public
+     *
+     * @param {Property.<number>} firstProperty
+     * @param {Property.<number>} secondProperty
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<number>}
+     */
+    times: function( firstProperty, secondProperty, options ) {
+      return DerivedProperty.product( [ firstProperty, secondProperty ], options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff firstProperty's value is strictly less than the input
+     * numeric value.
+     * @public
+     *
+     * @param {Property.<number>} property
+     * @param {number} number
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    lessThanNumber: function( property, number, options ) {
+      return new DerivedProperty( [ property ], function( value ) { return value < number; }, options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff firstProperty's value is less than or equal to the
+     * input numeric value.
+     * @public
+     *
+     * @param {Property.<number>} property
+     * @param {number} number
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    lessThanEqualNumber: function( property, number, options ) {
+      return new DerivedProperty( [ property ], function( value ) { return value <= number; }, options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff firstProperty's value is strictly greater than the
+     * input numeric value.
+     * @public
+     *
+     * @param {Property.<number>} property
+     * @param {number} number
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    greaterThanNumber: function( property, number, options ) {
+      return new DerivedProperty( [ property ], function( value ) { return value > number; }, options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff firstProperty's value is greater than or equal to the
+     * input numeric value.
+     * @public
+     *
+     * @param {Property.<number>} property
+     * @param {number} number
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    greaterThanEqualNumber: function( property, number, options ) {
+      return new DerivedProperty( [ property ], function( value ) { return value >= number; }, options );
+    },
+
+    /**
+     * Creates a derived boolean property whose value is true iff the property's value is falsy.
+     * @public
+     *
+     * @param {Property.<*>} property
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<boolean>}
+     */
+    derivedNot: function( property, options ) {
+      return new DerivedProperty( [ property ], notFunction, options );
+    },
+
+    /**
+     * Creates a derived property whose value is values[ property.value ].
+     * @public
+     *
+     * @param {Property.<*>} property
+     * @param {Object} values
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {Property.<*>}
+     */
+    mapValues: function( property, values, options ) {
+      return new DerivedProperty( [ property ], function( value ) { return values[ value ]; }, options );
+    }
   } );
 } );
