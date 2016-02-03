@@ -16,7 +16,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-  var Events = require( 'AXON/Events' );
+  var Emitter = require( 'AXON/Emitter' );
 
   /**
    * @param {[]} array
@@ -47,7 +47,10 @@ define( function( require ) {
     this.initialArray = array ? array.slice() : [];
 
     // @private Event stream for signifying begin/end of callbacks
-    this.events = new Events();
+    this.startedCallbacksForItemAddedEmitter = new Emitter();
+    this.endedCallbacksForItemAddedEmitter = new Emitter();
+    this.startedCallbacksForItemRemovedEmitter = new Emitter();
+    this.endedCallbacksForItemRemovedEmitter = new Emitter();
 
     options && options.tandem && options.tandem.addInstance( this );
     this.disposeObservableArray = function() {
@@ -138,8 +141,7 @@ define( function( require ) {
 
     // @private Internal: called when an item is added.
     _fireItemAdded: function( item ) {
-
-      this.events.trigger1( 'startedCallbacksForItemAdded', item );
+      this.startedCallbacksForItemAddedEmitter.emit();
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -147,13 +149,13 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.events.trigger0( 'endedCallbacksForItemAdded' );
+      this.endedCallbacksForItemAddedEmitter.emit();
     },
 
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
-      this.events.trigger1( 'startedCallbacksForItemRemoved', item );
+      this.startedCallbacksForItemRemovedEmitter.emit();
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -161,7 +163,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.events.trigger1( 'startedCallbacksForItemRemoved', item );
+      this.endedCallbacksForItemRemovedEmitter.emit();
     },
 
     /**
