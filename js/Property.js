@@ -21,7 +21,6 @@ define( function( require ) {
   var Events = require( 'AXON/Events' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
-  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -31,8 +30,10 @@ define( function( require ) {
   function Property( value, options ) {
 
     var property = this;
-    if ( options && options instanceof Tandem ) {
-      assert && assert( false, 'Tandem should be in the options' );
+
+    // Check duck type for incorrect Tandem argument
+    if ( options && options.createTandem && typeof options.createTandem === 'function' ) {
+      assert && assert( false, 'Options should be an object' );
     }
 
     options = _.extend( { tandem: null }, options );
