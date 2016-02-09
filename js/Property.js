@@ -1,13 +1,7 @@
 // Copyright 2013-2015, University of Colorado Boulder
 
 /**
- * An observable property, notifies registered observers when the value changes.
- *
- * Uses the 'Constructor' pattern for object creation, which has the downside that
- * all properties are created once for each instance. It would be nice if our functions
- * were shared. But since the only way to create private fields is in the constructor,
- * and the functions need access to those private fields, there doesn't seem to be
- * any choice but to define the functions in the constructor.
+ * An observable property which notifies registered observers when the value changes.
  *
  * @author Sam Reid
  * @author Chris Malley (PixelZoom, Inc.)
