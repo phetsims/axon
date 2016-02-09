@@ -32,8 +32,8 @@ define( function( require ) {
     var property = this;
 
     // Check duck type for incorrect Tandem argument
-    if ( options && options.createTandem && typeof options.createTandem === 'function' ) {
-      assert && assert( false, 'Options should be an object' );
+    if ( options && options.isTandem ) {
+      assert && assert( false, 'Options should be an Object, not a Tandem' );
     }
 
     options = _.extend( { tandem: null }, options );
