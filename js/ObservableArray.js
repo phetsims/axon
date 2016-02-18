@@ -352,18 +352,6 @@ define( function( require ) {
      */
     getArray: function() {
       return this._array;
-    },
-
-    /**
-     * Replaces all items in the array
-     * @param {Array} items
-     * @public
-     */
-    setItems: function( items ) {
-
-      // TODO: do a better diff here for efficiency
-      this.clear();
-      this.addAll( items );
     }
   } );
 } );
