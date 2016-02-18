@@ -141,7 +141,7 @@ define( function( require ) {
 
     // @private Internal: called when an item is added.
     _fireItemAdded: function( item ) {
-      this.startedCallbacksForItemAddedEmitter.emit();
+      this.startedCallbacksForItemAddedEmitter.emit1( item );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -155,7 +155,7 @@ define( function( require ) {
     // Internal: called when an item is removed.
     _fireItemRemoved: function( item ) {
 
-      this.startedCallbacksForItemRemovedEmitter.emit();
+      this.startedCallbacksForItemRemovedEmitter.emit1( item );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
