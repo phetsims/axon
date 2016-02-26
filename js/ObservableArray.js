@@ -322,12 +322,12 @@ define( function( require ) {
 
     /**
      * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
-     * @param mapFunction
+     * @param predicate
      * @returns {axon.ObservableArray}
      * @public
      */
-    filter: function( mapFunction ) {
-      return new axon.ObservableArray( this._array.filter( mapFunction ) );
+    filter: function( predicate ) {
+      return new axon.ObservableArray( this._array.filter( predicate ) );
     },
 
     /**
