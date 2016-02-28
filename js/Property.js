@@ -308,6 +308,16 @@ define( function( require ) {
       // @public Ensures that the Property is eligible for GC
       dispose: function() {
         this.disposeProperty();
+      },
+
+      /**
+       * Returns true if there are any listeners.
+       * @returns {boolean}
+       * @public
+       */
+      hasListeners: function() {
+        assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
+        return this.changedEmitter.hasListeners();
       }
     },
 
