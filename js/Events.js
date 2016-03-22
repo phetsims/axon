@@ -2,6 +2,7 @@
 
 /**
  * Lightweight event & listener abstraction.
+ * @deprecated - use Emitter.js instead
  * @author Sam Reid
  */
 define( function( require ) {
