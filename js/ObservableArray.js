@@ -113,7 +113,7 @@ define( function( require ) {
      * @public
      */
     addItemRemovedListener: function( listener ) {
-      assert && assert( this._removedListeners.indexOf( listener ) === -1 ); // listener is not already registered
+      assert && assert( this._removedListeners.indexOf( listener ) === -1, 'Listener was already registered' ); // listener is not already registered
       this._removedListeners.push( listener );
     },
 
@@ -124,7 +124,7 @@ define( function( require ) {
      */
     removeItemRemovedListener: function( listener ) {
       var index = this._removedListeners.indexOf( listener );
-      assert && assert( index !== -1 ); // listener is registered
+      assert && assert( index !== -1, 'Listener is still registered after removal' ); // listener is registered
       this._removedListeners.splice( index, 1 );
     },
 
