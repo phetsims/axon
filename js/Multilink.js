@@ -58,6 +58,8 @@ define( function( require ) {
 
     // @public
     dispose: function() {
+      assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
+
       // Unlink from dependent properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
         var dependency = this.dependencies[ i ];
