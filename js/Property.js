@@ -311,6 +311,16 @@ define( function( require ) {
       },
 
       /**
+       * Checks whether a listener is registered with this Property
+       * @param {function} listener
+       * @returns {boolean}
+       * @public
+       */
+      hasListener: function( listener ) {
+        return this.changedEmitter.hasListener( listener );
+      },
+
+      /**
        * Returns true if there are any listeners.
        * @returns {boolean}
        * @public
