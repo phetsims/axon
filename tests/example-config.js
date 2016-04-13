@@ -10,6 +10,7 @@ require.config( {
     DOT: '../../dot/js',
     SCENERY: '../../scenery/js',
     SCENERY_PHET: '../../scenery-phet/js',
+    TANDEM: '../../tandem/js',
     KITE: '../../kite/js',
     PHET_CORE: '../../phet-core/js',
     PHETCOMMON: '../../phetcommon/js',
