@@ -173,6 +173,20 @@ define( function( require ) {
       },
 
       /**
+       * Adds an observer and notifies it immediately, and wires it up for removal when the disposeEmitter emits
+       * @param {Emitter} disposeEmitter
+       * @param {function} observer
+       */
+      linkWithDisposal: function( disposeEmitter, observer ) {
+        var property = this;
+        this.link( observer );
+        disposeEmitter.addListener( function() {
+          property.unlink( observer );
+          disposeEmitter.removeListener( this );
+        } );
+      },
+
+      /**
        * Add an observer to the Property, without calling it back right away.
        * This is used when you need to register a observer without an immediate callback.
        *
