@@ -206,14 +206,14 @@ define( function( require ) {
 
     /**
      * Removes the first occurrence of each item in the specified array.
-     * @param {Array} list a list of items to remove
+     * @param {Array} array a list of items to remove
      * @see ObservableArray.remove
      * @public
      */
-    removeAll: function( list ) {
-      for ( var i = 0; i < list.length; i++ ) {
-        var item = list[ i ];
-        this.remove( item );
+    removeAll: function( array ) {
+      assert && assert( _.isArray( array ), 'array should be an array' );
+      for ( var i = 0; i < array.length; i++ ) {
+        this.remove( array[ i ] );
       }
     },
 
@@ -313,21 +313,21 @@ define( function( require ) {
     /**
      * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
      * @param mapFunction
-     * @returns {axon.ObservableArray}
+     * @returns {ObservableArray}
      * @public
      */
     map: function( mapFunction ) {
-      return new axon.ObservableArray( this._array.map( mapFunction ) );
+      return new ObservableArray( this._array.map( mapFunction ) );
     },
 
     /**
      * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
      * @param predicate
-     * @returns {axon.ObservableArray}
+     * @returns {ObservableArray}
      * @public
      */
     filter: function( predicate ) {
-      return new axon.ObservableArray( this._array.filter( predicate ) );
+      return new ObservableArray( this._array.filter( predicate ) );
     },
 
     /**
