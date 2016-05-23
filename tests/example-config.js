@@ -13,6 +13,7 @@ require.config( {
     TANDEM: '../../tandem/js',
     KITE: '../../kite/js',
     PHET_CORE: '../../phet-core/js',
+    PHET_IO: '../../phet-io/js',
     PHETCOMMON: '../../phetcommon/js',
     REPOSITORY: '..',
     SUN: '../../sun/js',
