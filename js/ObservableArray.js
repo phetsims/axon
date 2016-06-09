@@ -352,6 +352,28 @@ define( function( require ) {
      */
     getArray: function() {
       return this._array;
+    },
+
+    /**
+     * Add/remove elements from any point in the array
+     * @param {number} start - the index to start adding/removing items
+     * @param {number} deleteCount - the number of items to delete
+     * @param {Object} [item1] - an item to add
+     * @param {Object} [item2] - an item to add
+     * @param {Object} [etc] - varargs items to add etc.
+     * @return {Object[]} the items that were deleted.
+     */
+    splice: function( start, deleteCount, item1, item2, etc ) {
+      var deleted = this._array.splice.apply( this._array, arguments );
+      var args = Array.prototype.slice.call( arguments );
+      for ( var i = 0; i < deleted.length; i++ ) {
+        this._fireItemRemoved( deleted[ i ] );
+      }
+
+      for ( var k = 2; k < args.length; k++ ) {
+        this._fireItemAdded( args[ k ] );
+      }
+      return deleted;
     }
   } );
 } );
