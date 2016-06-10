@@ -22,6 +22,7 @@ define( function( require ) {
    * @module TProperty
    */
   var TProperty = function( valueType, options ) {
+    assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
     return phetioInherit( TObject, 'TProperty(' + valueType.typeName + ')', function( property, phetioID ) {
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
