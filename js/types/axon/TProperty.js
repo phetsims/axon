@@ -31,7 +31,10 @@ define( function( require ) {
         function( newValue, oldValue ) {
           return {
             oldValue: valueType.toStateObject( oldValue ),
-            newValue: valueType.toStateObject( newValue )
+            newValue: valueType.toStateObject( newValue ),
+
+            // Pass through the value type units.  Undefined are filtered out
+            units: valueType.units
           };
         } );
     }, {
