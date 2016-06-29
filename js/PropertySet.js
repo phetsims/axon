@@ -75,6 +75,7 @@ define( function( require ) {
 
     var propertySet = this;
 
+    // TODO: Remove this subclassing.  PropertySet should not extend Events.  Emitter should be used instead
     Events.call( this );
 
     // @private Keep track of the keys so we know which to reset
