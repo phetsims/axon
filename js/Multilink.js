@@ -34,17 +34,14 @@ define( function( require ) {
     this.dependencyListeners = [];
 
     //When a dependency value changes, update the list of dependencies and call back to the callback
-    for ( var i = 0; i < dependencies.length; i++ ) {
-      var dependency = dependencies[ i ];
-      (function( dependency, i ) {
-        var listener = function( newValue ) {
-          multilink.dependencyValues[ i ] = newValue;
-          callback.apply( null, multilink.dependencyValues );
-        };
-        multilink.dependencyListeners.push( listener );
-        dependency.lazyLink( listener );
-      })( dependency, i );
-    }
+    dependencies.forEach( function( dependency, i ) {
+      var listener = function( value ) {
+        multilink.dependencyValues[ i ] = value;
+        callback.apply( null, multilink.dependencyValues );
+      };
+      multilink.dependencyListeners.push( listener );
+      dependency.lazyLink( listener );
+    } );
 
     //Send initial call back but only if we are non-lazy
     if ( !lazy ) {
@@ -62,8 +59,7 @@ define( function( require ) {
 
       // Unlink from dependent properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
-        var dependency = this.dependencies[ i ];
-        dependency.unlink( this.dependencyListeners[ i ] );
+        this.dependencies[ i ].unlink( this.dependencyListeners[ i ] );
       }
       this.dependencies = null;
       this.dependencyListeners = null;
