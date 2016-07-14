@@ -16,11 +16,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
-
-  // TODO: Factor out, or use the lodash one or a phet-core one
-  var endsWith = function( string, suffix ) {
-    return string.indexOf( suffix, string.length - suffix.length ) !== -1;
-  };
+  var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -29,7 +25,7 @@ define( function( require ) {
   var TProperty = function( valueType, options ) {
     assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
     return phetioInherit( TObject, 'TProperty(' + valueType.typeName + ')', function( property, phetioID ) {
-      assert && assert( phetioID.endsWith( 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
+      assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
