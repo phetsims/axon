@@ -347,15 +347,6 @@ define( function( require ) {
 
     //statics
     {
-      withDisposal: function( value, disposeEmitter ) {
-        var property = new Property( value );
-        disposeEmitter.addListener( function() {
-          property.dispose();
-          disposeEmitter.removeListener( this );
-        } );
-        return property;
-      },
-
       /**
        * Registers an observer with multiple properties, then notifies the observer immediately.
        * @param {Property[]} properties
