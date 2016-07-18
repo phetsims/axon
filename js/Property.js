@@ -15,6 +15,8 @@ define( function( require ) {
   var Events = require( 'AXON/Events' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
+  var TProperty = require( 'ifphetio!PHET_IO/types/axon/TProperty' );
+  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -45,7 +47,7 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
-    options.tandem && options.tandem.addInstance( this );
+    options.tandem && options.tandem.addInstance( this, TProperty( TNumber( 'volts' ) ) );
 
     // @private
     this.disposeProperty = function() {
