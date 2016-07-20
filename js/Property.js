@@ -51,7 +51,7 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
-    options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
+    TProperty && options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
 
     // @private
     this.disposeProperty = function() {
