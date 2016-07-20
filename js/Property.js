@@ -16,7 +16,6 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
   var TProperty = require( 'ifphetio!PHET_IO/types/axon/TProperty' );
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -32,7 +31,12 @@ define( function( require ) {
       assert && assert( false, 'Options should be an Object, not a Tandem' );
     }
 
-    options = _.extend( { tandem: null }, options );
+    options = _.extend( { tandem: null, type: null }, options );
+
+    if (phet.chipper.brand === 'phet-io' && options.tandem) {
+      assert && assert(!!options.type,
+        'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
+    }
 
     // @private Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
     this.events = new Events();
@@ -47,7 +51,7 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
-    options.tandem && options.tandem.addInstance( this, TProperty( TNumber( 'volts' ) ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
 
     // @private
     this.disposeProperty = function() {

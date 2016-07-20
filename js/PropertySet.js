@@ -63,7 +63,8 @@ define( function( require ) {
   function PropertySet( values, options ) {
 
     options = _.extend( {
-      tandemSet: {} // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
+      tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
+      typeSet: {}
     }, options );
 
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
@@ -82,7 +83,9 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[ value ], options.tandemSet[ value ] );
+      propertySet.addProperty( value, values[ value ],
+                              options.tandemSet[ value ],
+                              options.typeSet[ value ] );
     } );
   }
 
@@ -94,11 +97,15 @@ define( function( require ) {
      * Adds a new property to this PropertySet
      * @param {string} propertyName
      * @param {*} value the property's initial value
-     * @param {Tandem} [tandem]
+     * @param {Tandem} [tandem] Tandem instance
+     * @param {function} [type] PhET-iO type that Property is wrapping
      * @public
      */
-    addProperty: function( propertyName, value, tandem ) {
-      this[ propertyName + SUFFIX ] = new Property( value, { tandem: tandem } );
+    addProperty: function( propertyName, value, tandem, type ) {
+      this[ propertyName + SUFFIX ] = new Property( value, {
+        tandem: tandem,
+        type: type
+      } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
     },
