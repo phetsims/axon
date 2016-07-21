@@ -33,6 +33,8 @@ define( function( require ) {
 
     options = _.extend( { tandem: null, type: null }, options );
 
+    // When running as phet-io, if the tandem is specified, the type must be specified.
+    // This assertion helps in instrumenting code that has the tandem but not type
     if (phet.chipper.brand === 'phet-io' && options.tandem) {
       assert && assert(!!options.type,
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
@@ -51,6 +53,7 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
+    // If running as phet-io and a tandem is supplied, register with tandem.
     TProperty && options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
 
     // @private

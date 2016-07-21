@@ -64,7 +64,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
-      typeSet: {}
+      typeSet: {} // phet-io types (functions), one for each property
     }, options );
 
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
