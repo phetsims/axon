@@ -33,10 +33,13 @@ define( function( require ) {
 
     options = _.extend( { tandem: null, type: null }, options );
 
+    // @public - export the phet-io element type
+    this.elementType = options.type;
+
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    if (phet.chipper.brand === 'phet-io' && options.tandem) {
-      assert && assert(!!options.type,
+    if ( phet.chipper.brand === 'phet-io' && options.tandem ) {
+      assert && assert( !!options.type,
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
     }
 
