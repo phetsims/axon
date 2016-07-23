@@ -17,6 +17,7 @@ define( function( require ) {
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
   var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
+  var phetio = require( 'PHET_IO/phetio' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -83,7 +84,7 @@ define( function( require ) {
       events: [ 'changed' ],
       getAPI: function() {
         return {
-          valueType: phet.phetIo.phetio.getAPIForType( valueType ) // TODO: can we just import phetio?
+          valueType: phetio.getAPIForType( valueType )
         };
       },
 
