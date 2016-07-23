@@ -22,7 +22,7 @@ define( function( require ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, 'changed', function( oldValue, newValue ) {
+      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty, 'changed', function( oldValue, newValue ) {
         return {
           oldValue: valueType.toStateObject( oldValue ),
           newValue: valueType.toStateObject( newValue )

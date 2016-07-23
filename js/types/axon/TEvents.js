@@ -59,7 +59,7 @@ define( function( require ) {
 
                 optionsForArch[ argName ] = argValue;
               }
-              var messageIndex = phetioEvents.start( 'model', phetioID, eventName, optionsForArch );
+              var messageIndex = phetioEvents.start( 'model', phetioID, TEvents, eventName, optionsForArch );
               phetioEvents.end( messageIndex );
             } );
           })( eventName );
