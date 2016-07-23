@@ -24,7 +24,7 @@ define( function( require ) {
    */
   var TProperty = function( valueType, options ) {
     assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
-    return phetioInherit( TObject, 'TProperty(' + valueType.typeName + ')', function( property, phetioID ) {
+    return phetioInherit( TObject, 'TProperty', function( property, phetioID ) {
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
@@ -80,6 +80,11 @@ define( function( require ) {
                      'when the listeners are registered.',
       valueType: valueType,
       events: [ 'changed' ],
+      getAPI: function() {
+        return {
+          valueType: phet.phetIo.phetio.getAPIForType( valueType ) // TODO: can we just import phetio?
+        };
+      },
 
       fromStateObject: function( stateObject ) {
         return valueType.fromStateObject( stateObject );
