@@ -33,7 +33,10 @@ define( function( require ) {
       assert && assert( false, 'Options should be an Object, not a Tandem' );
     }
 
-    options = _.extend( { tandem: null, type: null }, options );
+    options = _.extend( {
+      tandem: null, // {Tandem | null}
+      type: null // {function | null} phet-io type wrapper like TString, TNumber, etc.
+    }, options );
 
     // @public - export the phet-io element type
     this.elementType = options.type;

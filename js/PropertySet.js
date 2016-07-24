@@ -67,12 +67,18 @@ define( function( require ) {
       typeSet: {} // phet-io types (functions), one for each property
     }, options );
 
+    // Catch cases where tandemSet is passed in, but null.
+    if ( options.hasOwnProperty( 'tandemSet' ) ) {
+      assert && assert( options.tandemSet,
+        'tandemSet was passed in, but null. Either pass in a non-null tandemSet or do not pass in a tandemSet.' );
+    }
+
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
     assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
-        var isBad = !values.hasOwnProperty( key );
-        if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
-        return isBad;
-      } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
+      var isBad = !values.hasOwnProperty( key );
+      if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
+      return isBad;
+    } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
 
     var propertySet = this;
 
@@ -84,8 +90,8 @@ define( function( require ) {
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[ value ],
-                              options.tandemSet[ value ],
-                              options.typeSet[ value ] );
+        options.tandemSet[ value ],
+        options.typeSet[ value ] );
     } );
   }
 
@@ -143,10 +149,11 @@ define( function( require ) {
       Object.defineProperty( this, propertyName, {
 
         // Getter proxies to Model#get()...
-        get: function() { return property.get();},
+        get: function() {
+          return property.get(); },
 
         // Setter proxies to Model#set(attributes)
-        set: function( value ) { property.set( value );},
+        set: function( value ) { property.set( value ); },
 
         // Make it configurable and enumerable so it's easy to override...
         configurable: true,
@@ -164,7 +171,8 @@ define( function( require ) {
 
       Object.defineProperty( this, propertyName, {
 
-        get: function() { return property.get();},
+        get: function() {
+          return property.get(); },
 
         // Make it configurable and enumerable so it's easy to override...
         configurable: true,
@@ -238,10 +246,9 @@ define( function( require ) {
     setValues: function( values ) {
       var propertySet = this;
       Object.getOwnPropertyNames( values ).forEach( function( propertyName ) {
-        if ( typeof(propertySet[ propertyName + SUFFIX ] === 'Property') ) {
+        if ( typeof( propertySet[ propertyName + SUFFIX ] === 'Property' ) ) {
           propertySet[ propertyName + SUFFIX ].set( values[ propertyName ] );
-        }
-        else {
+        } else {
           throw new Error( 'property not found: ' + propertyName );
         }
       } );
@@ -376,3 +383,4 @@ define( function( require ) {
     }
   } );
 } );
+
