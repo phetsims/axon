@@ -15,6 +15,8 @@ define( function( require ) {
   var Events = require( 'AXON/Events' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
+
+  // phet-io modules
   var TProperty = require( 'ifphetio!PHET_IO/types/axon/TProperty' );
 
   /**
