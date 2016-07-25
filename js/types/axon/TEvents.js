@@ -16,6 +16,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
+  var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
   // The supported events have this structure:
   // object: {event1:[{argName:argName,argType:argType},{}},...}
