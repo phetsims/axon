@@ -67,6 +67,7 @@ define( function( require ) {
         }
       }
     }, {
+
       addListener: {
         returnType: TVoid,
         parameterTypes: [ TString, TFunctionWrapper( TVoid, [ TObject ] ) ],
@@ -75,6 +76,7 @@ define( function( require ) {
         },
         documentation: 'Adds a listener to the specified event channel'
       },
+
       removeListener: {
         returnType: TVoid,
         parameterTypes: [ TString, TFunctionWrapper( TVoid, [ TObject ] ) ],

@@ -29,6 +29,7 @@ define( function( require ) {
         };
       } );
     }, {
+
       getValue: {
         returnType: valueType,
         parameterTypes: [],
@@ -37,6 +38,7 @@ define( function( require ) {
         },
         documentation: 'Gets the current value'
       },
+
       unlink: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
@@ -45,6 +47,7 @@ define( function( require ) {
         },
         documentation: 'Removes a listener that was added with link'
       },
+
       link: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],

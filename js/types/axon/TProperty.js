@@ -43,6 +43,7 @@ define( function( require ) {
           };
         } );
     }, {
+
       getValue: {
         returnType: valueType,
         parameterTypes: [],
@@ -51,6 +52,7 @@ define( function( require ) {
         },
         documentation: 'Gets the current value.'
       },
+
       setValue: {
         returnType: TVoid,
         parameterTypes: [ valueType ],
@@ -59,6 +61,7 @@ define( function( require ) {
         },
         documentation: 'Sets the value of the property, and triggers notifications if the value is different'
       },
+
       link: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
@@ -68,6 +71,7 @@ define( function( require ) {
         documentation: 'Add a listener which will be called when the value changes.  The listener also gets an ' +
                        'immediate callback with the current value.'
       },
+
       unlink: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
@@ -82,6 +86,7 @@ define( function( require ) {
                      'when the listeners are registered.',
       valueType: valueType,
       events: [ 'changed' ],
+
       getAPI: function() {
         return {
           valueType: phetio.getAPIForType( valueType )
@@ -95,6 +100,7 @@ define( function( require ) {
       toStateObject: function( instance ) {
         return valueType.toStateObject( instance.value );
       },
+
       options: options
     } );
   };
