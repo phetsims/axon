@@ -16,6 +16,9 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
 
+  // phet-io modules
+  var TDerivedProperty = require( 'ifphetio!PHET_IO/types/axon/TDerivedProperty' );
+
   function equalsFunction( a, b ) {
     return a === b;
   }
@@ -72,6 +75,13 @@ define( function( require ) {
         dependency.lazyLink( listener );
       })( dependency, i );
     }
+
+    // If running as phet-io and a tandem is supplied, register with tandem.
+    TDerivedProperty && options && options.tandem && options.tandem.addInstance( this, TDerivedProperty( options.type ) );
+
+    this.disposeDerivedProperty = function() {
+      TDerivedProperty && options.tandem && options.tandem.removeInstance( this );
+    };
   }
 
   axon.register( 'DerivedProperty', DerivedProperty );
@@ -82,7 +92,9 @@ define( function( require ) {
     dispose: function() {
 
       Property.prototype.dispose.call( this );
+      this.disposeDerivedProperty();
 
+      // TODO: Move this code to disposeDerivedProperty
       // Unlink from dependent properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
         var dependency = this.dependencies[ i ];
