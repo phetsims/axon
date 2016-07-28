@@ -51,6 +51,8 @@ define( function( require ) {
    */
   function DerivedProperty( dependencies, derivation, options ) {
 
+    options = options || {};
+
     this.dependencies = dependencies; // @private
 
     // @private Keep track of each dependency and only update the changed value, for speed
@@ -77,7 +79,7 @@ define( function( require ) {
     }
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options && options.tandem && options.tandem.addInstance( this, TDerivedProperty( options.type ) );
+    options.tandem && options.tandem.addInstance( this, TDerivedProperty( options.type ) );
 
     this.disposeDerivedProperty = function() {
       options.tandem && options.tandem.removeInstance( this );
