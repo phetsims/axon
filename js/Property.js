@@ -62,7 +62,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    TProperty && options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
 
     // @private
     this.disposeProperty = function() {
