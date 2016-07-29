@@ -29,7 +29,7 @@ define( function( require ) {
 
   // With this for the API file
   //'concentrationScreen.testEvents': TEvents( {
-  //    personBorn: [ { arg: 'name', type: TString }, { arg: 'length', type: TNumber } ],
+  //    personBorn: [ { arg: 'name', phetioValueType: TString }, { arg: 'length', phetioValueType: TNumber } ],
   //    purchasedSolute: [ { arg: 'solute', type: Solute } ],
   //    personAteLunch: []
   //  } )
