@@ -75,10 +75,10 @@ define( function( require ) {
 
     // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
     assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
-        var isBad = !values.hasOwnProperty( key );
-        if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
-        return isBad;
-      } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
+      var isBad = !values.hasOwnProperty( key );
+      if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
+      return isBad;
+    } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
 
     var propertySet = this;
 
@@ -110,7 +110,7 @@ define( function( require ) {
     addProperty: function( propertyName, value, tandem, type ) {
       this[ propertyName + SUFFIX ] = new Property( value, {
         tandem: tandem,
-        type: type
+        phetioValueType: type
       } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
@@ -202,6 +202,7 @@ define( function( require ) {
     toDerivedProperty: function( propertyNames, derivation, tandem, type ) {
       return new DerivedProperty( this.getProperties( propertyNames ), derivation, {
         tandem: tandem,
+        // phetioValueType: type // TODO: replace line below with this
         type: type
       } );
     },
@@ -255,8 +256,7 @@ define( function( require ) {
       Object.getOwnPropertyNames( values ).forEach( function( propertyName ) {
         if ( typeof( propertySet[ propertyName + SUFFIX ] === 'Property' ) ) {
           propertySet[ propertyName + SUFFIX ].set( values[ propertyName ] );
-        }
-        else {
+        } else {
           throw new Error( 'property not found: ' + propertyName );
         }
       } );

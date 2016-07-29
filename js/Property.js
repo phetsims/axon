@@ -35,16 +35,16 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: null, // {Tandem | null}
-      type: null // {function | null} phet-io type wrapper like TString, TNumber, etc.
+      phetioValueType: null // {function | null} phet-io type wrapper like TString, TNumber, etc.
     }, options );
 
     // @public - export the phet-io element type
-    this.elementType = options.type;
+    this.elementType = options.phetioValueType;
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
     if ( phet.chipper.brand === 'phet-io' && options.tandem ) {
-      assert && assert( !!options.type,
+      assert && assert( !!options.phetioValueType,
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
     }
 
@@ -62,7 +62,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TProperty( options.type ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType ) );
 
     // @private
     this.disposeProperty = function() {
