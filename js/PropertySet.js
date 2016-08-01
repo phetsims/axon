@@ -104,13 +104,13 @@ define( function( require ) {
      * @param {string} propertyName
      * @param {*} value the property's initial value
      * @param {Tandem} [tandem] Tandem instance
-     * @param {function} [type] PhET-iO type that Property is wrapping
+     * @param {function} [phetioValueType] PhET-iO type that Property is wrapping
      * @public
      */
-    addProperty: function( propertyName, value, tandem, type ) {
+    addProperty: function( propertyName, value, tandem, phetioValueType ) {
       this[ propertyName + SUFFIX ] = new Property( value, {
         tandem: tandem,
-        phetioValueType: type
+        phetioValueType: phetioValueType
       } );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
@@ -195,15 +195,14 @@ define( function( require ) {
      * @param {string[]} propertyNames
      * @param {function} derivation
      * @param {Tandem} [tandem]
-     * @param {function} [type] - phet-io wrapper constructor funcion
+     * @param {function} [phetioValueType] - phet-io wrapper constructor function
      * @returns {DerivedProperty}
      * @public
      */
-    toDerivedProperty: function( propertyNames, derivation, tandem, type ) {
+    toDerivedProperty: function( propertyNames, derivation, tandem, phetioValueType ) {
       return new DerivedProperty( this.getProperties( propertyNames ), derivation, {
         tandem: tandem,
-        // phetioValueType: type // TODO: replace line below with this
-        type: type
+        phetioValueType: phetioValueType
       } );
     },
 
@@ -213,11 +212,11 @@ define( function( require ) {
      * @param {string[]} dependencyNames names of the properties that it depends on
      * @param {function} derivation function that expects args in the same order as dependencies
      * @param {Tandem} [tandem]
-     * @param {function} type - phet-io type wrapper constructor function
+     * @param {function} phetioValueType - phet-io wrapper constructor function
      * @public
      */
-    addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem, type ) {
-      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, tandem, type );
+    addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem, phetioValueType ) {
+      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, tandem, phetioValueType );
       this.addGetter( propertyName );
     },
 
