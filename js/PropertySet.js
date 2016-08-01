@@ -64,7 +64,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
-      typeSet: {} // phet-io types (functions), one for each property
+      phetioValueTypeSet: {} // phet-io types (functions), one for each property
     }, options );
 
     // Catch cases where tandemSet is passed in, but null.
@@ -91,7 +91,7 @@ define( function( require ) {
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
       propertySet.addProperty( value, values[ value ],
         options.tandemSet[ value ],
-        options.typeSet[ value ] );
+        options.phetioValueTypeSet[ value ] );
     } );
   }
 
