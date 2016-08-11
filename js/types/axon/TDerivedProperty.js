@@ -19,7 +19,7 @@ define( function( require ) {
 
   var TDerivedProperty = function( valueType ) {
     assert && assert( !!valueType, 'TDerivedProperty needs valueType' );
-    return phetioInherit( TObject, 'TDerivedProperty', function( property, phetioID ) {
+    return phetioInherit( TObject, 'TDerivedProperty', function TDerivedPropertyImpl( property, phetioID ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 

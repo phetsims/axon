@@ -25,7 +25,7 @@ define( function( require ) {
    */
   var TProperty = function( valueType, options ) {
     assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
-    return phetioInherit( TObject, 'TProperty', function( property, phetioID ) {
+    return phetioInherit( TObject, 'TProperty', function TPropertyImpl( property, phetioID ) {
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );

@@ -17,7 +17,7 @@ define( function( require ) {
 
   var TObservableArray = function( elementType ) {
     assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
-    return phetioInherit( TObject, 'TObservableArray', function( observableArray, phetioID ) {
+    return phetioInherit( TObject, 'TObservableArray', function TObservableArrayImpl( observableArray, phetioID ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
