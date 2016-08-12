@@ -16,7 +16,7 @@ define( function( require ) {
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
   var TObservableArray = function( elementType ) {
-    assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
+    assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
     return phetioInherit( TObject, 'TObservableArray', function TObservableArrayImpl( observableArray, phetioID ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
