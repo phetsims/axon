@@ -17,11 +17,15 @@ define( function( require ) {
 
   var TObservableArray = function( elementType ) {
     assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
+
     return phetioInherit( TObject, 'TObservableArray', function TObservableArrayImpl( observableArray, phetioID ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
       var itemToStateObject = function( item ) {
+
+        assert && assert(!!elementType.toStateObject, elementType.typeName + '.toStateObject is undefined' );
+
         return { item: elementType.toStateObject( item ) };
       };
       toEventOnEmit( observableArray, 'CallbacksForItemAddedEmitter', 'model', phetioID, TObservableArray, 'itemAdded', itemToStateObject );
