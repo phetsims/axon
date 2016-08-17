@@ -28,8 +28,8 @@ define( function( require ) {
 
         return { item: elementType.toStateObject( item ) };
       };
-      toEventOnEmit( observableArray, 'CallbacksForItemAddedEmitter', 'model', phetioID, TObservableArray, 'itemAdded', itemToStateObject );
-      toEventOnEmit( observableArray, 'CallbacksForItemRemovedEmitter', 'model', phetioID, TObservableArray, 'itemRemoved', itemToStateObject );
+      toEventOnEmit( observableArray, 'CallbacksForItemAddedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemAdded', itemToStateObject );
+      toEventOnEmit( observableArray, 'CallbacksForItemRemovedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', itemToStateObject );
     }, {}, {
       documentation: 'An array that sends notifications when its values have changed.',
       elementType: elementType,
