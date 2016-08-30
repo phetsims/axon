@@ -14,18 +14,11 @@ define( function( require ) {
   var cleanArray = require( 'PHET_CORE/cleanArray' );
 
   /**
-   * @class Events
    * @constructor
    */
-  function Events( options ) {
-
+  function Events() {
     this._eventListeners = {}; // @private
     this._staticEventListeners = {}; // @private
-
-    options && options.tandem && options.tandem.addInstance( this );
-    this.disposeEvents = function() {
-      options && options.tandem && options.tandem.removeInstance( this );
-    };
   }
 
   axon.register( 'Events', Events );
@@ -34,7 +27,6 @@ define( function( require ) {
 
     // @public
     dispose: function() {
-      this.disposeEvents();
     },
 
     /////////////////////////////////////////////
