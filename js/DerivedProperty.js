@@ -59,7 +59,13 @@ define( function( require ) {
     this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
 
     var initialValue = derivation.apply( null, this.dependencyValues );
-    Property.call( this, initialValue, options );
+
+    // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
+    var superOptions = _.extend( {}, options );
+    if ( options.tandem ) {
+      superOptions.tandem = options.tandem.createSupertypeTandem();
+    }
+    Property.call( this, initialValue, superOptions );
 
     var derivedProperty = this;
 
