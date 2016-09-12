@@ -43,7 +43,7 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    if ( phet.chipper.brand === 'phet-io' && options.tandem ) {
+    if ( window.phet && phet.chipper && phet.chipper.brand === 'phet-io' && options.tandem ) {
       assert && assert( !!options.phetioValueType,
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
     }
