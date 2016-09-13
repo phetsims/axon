@@ -34,7 +34,7 @@ define( function( require ) {
   //    personAteLunch: []
   //  } )
   var TEvents = function( events ) {
-    return phetioInherit( TObject, 'TEvents', function TEventsImpl( instance, phetioID ) {
+    var TEventsImpl = function TEventsImpl( instance, phetioID ) {
       assertInstanceOf( instance, phet.axon.Events );
       TObject.call( this, instance, phetioID );
 
@@ -66,7 +66,8 @@ define( function( require ) {
           })( eventName );
         }
       }
-    }, {
+    };
+    return phetioInherit( TObject, 'TEvents', TEventsImpl, {
 
       addListener: {
         returnType: TVoid,

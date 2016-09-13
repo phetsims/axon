@@ -18,7 +18,7 @@ define( function( require ) {
   var TObservableArray = function( elementType ) {
     assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
 
-    return phetioInherit( TObject, 'TObservableArray', function TObservableArrayImpl( observableArray, phetioID ) {
+    var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
@@ -30,7 +30,8 @@ define( function( require ) {
       };
       toEventOnEmit( observableArray, 'CallbacksForItemAddedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemAdded', itemToStateObject );
       toEventOnEmit( observableArray, 'CallbacksForItemRemovedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', itemToStateObject );
-    }, {}, {
+    };
+    return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {}, {
       documentation: 'An array that sends notifications when its values have changed.',
       elementType: elementType,
       events: [ 'itemAdded', 'itemRemoved' ]
