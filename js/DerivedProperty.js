@@ -65,7 +65,7 @@ define( function( require ) {
       tandem: options.tandem && options.tandem.createSupertypeTandem()
     } ) );
 
-    var derivedProperty = this;
+    var self = this;
 
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
@@ -74,10 +74,10 @@ define( function( require ) {
       var dependency = dependencies[ i ];
       (function( dependency, i ) {
         var listener = function( newValue ) {
-          derivedProperty.dependencyValues[ i ] = newValue;
-          Property.prototype.set.call( derivedProperty, derivation.apply( null, derivedProperty.dependencyValues ) );
+          self.dependencyValues[ i ] = newValue;
+          Property.prototype.set.call( self, derivation.apply( null, self.dependencyValues ) );
         };
-        derivedProperty.dependencyListeners.push( listener );
+        self.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
       })( dependency, i );
     }

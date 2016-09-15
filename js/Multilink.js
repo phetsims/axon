@@ -28,7 +28,7 @@ define( function( require ) {
     // @private Keep track of each dependency and only update the changed value, for speed
     this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
 
-    var multilink = this;
+    var self = this;
 
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
@@ -36,10 +36,10 @@ define( function( require ) {
     //When a dependency value changes, update the list of dependencies and call back to the callback
     dependencies.forEach( function( dependency, i ) {
       var listener = function( value ) {
-        multilink.dependencyValues[ i ] = value;
-        callback.apply( null, multilink.dependencyValues );
+        self.dependencyValues[ i ] = value;
+        callback.apply( null, self.dependencyValues );
       };
-      multilink.dependencyListeners.push( listener );
+      self.dependencyListeners.push( listener );
       dependency.lazyLink( listener );
     } );
 

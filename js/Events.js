@@ -76,9 +76,9 @@ define( function( require ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
 
-      var events = this;
+      var self = this;
       var wrappedCallback = function() {
-        events.off( eventName, wrappedCallback );
+        self.off( eventName, wrappedCallback );
 
         //If no arguments being passed through, call back without processing arguments, for possible speed
         if ( arguments.length === 0 ) {

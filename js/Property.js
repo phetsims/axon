@@ -26,7 +26,7 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
-    var property = this;
+    var self = this;
 
     // Check duck type for incorrect Tandem argument
     if ( options && options.isTandem ) {
@@ -70,8 +70,8 @@ define( function( require ) {
       // Make sure there were no remaining observers.  If there are observers at disposal time, there may be a latent
       // memory leak, see #77
       assert && assert(
-        property.changedEmitter.listeners.length === 0,
-        'during disposal, expected 0 observers, actual = ' + property.changedEmitter.listeners.length
+        self.changedEmitter.listeners.length === 0,
+        'during disposal, expected 0 observers, actual = ' + self.changedEmitter.listeners.length
       );
       options.tandem && options.tandem.removeInstance( this );
     };
@@ -195,10 +195,10 @@ define( function( require ) {
        * @param {function} observer
        */
       linkWithDisposal: function( disposeEmitter, observer ) {
-        var property = this;
+        var self = this;
         this.link( observer );
         disposeEmitter.addListener( function() {
-          property.unlink( observer );
+          self.unlink( observer );
           disposeEmitter.removeListener( this );
         } );
       },
@@ -279,9 +279,9 @@ define( function( require ) {
        * @public
        */
       once: function( observer ) {
-        var property = this;
+        var self = this;
         var wrapper = function( newValue, oldValue ) {
-          property.unlink( wrapper );
+          self.unlink( wrapper );
           observer( newValue, oldValue );
         };
         this.lazyLink( wrapper );
@@ -326,9 +326,9 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
-        var property = this;
+        var self = this;
         var onValueObserver = function( v ) {
-          if ( property.areValuesEqual( v, value ) ) {
+          if ( self.areValuesEqual( v, value ) ) {
             observer();
           }
         };

@@ -80,7 +80,7 @@ define( function( require ) {
         return isBad;
       } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
 
-    var propertySet = this;
+    var self = this;
 
     // TODO: Remove this subclassing.  PropertySet should not extend Events.  Emitter should be used instead
     Events.call( this );
@@ -89,7 +89,7 @@ define( function( require ) {
     this.keys = [];
 
     Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      propertySet.addProperty( value, values[ value ],
+      self.addProperty( value, values[ value ],
         options.tandemSet[ value ],
         options.phetioValueTypeSet[ value ] );
     } );
@@ -184,9 +184,9 @@ define( function( require ) {
 
     // @public Resets all of the properties associated with this PropertySet
     reset: function() {
-      var propertySet = this;
+      var self = this;
       this.keys.forEach( function( key ) {
-        propertySet[ key + SUFFIX ].reset();
+        self[ key + SUFFIX ].reset();
       } );
     },
 
@@ -251,9 +251,9 @@ define( function( require ) {
      * @public
      */
     setValues: function( values ) {
-      var propertySet = this;
+      var self = this;
       Object.getOwnPropertyNames( values ).forEach( function( propertyName ) {
-        var property = propertySet[ propertyName + SUFFIX ];
+        var property = self[ propertyName + SUFFIX ];
         if ( property instanceof Property ) {
           property.set( values[ propertyName ] );
         }
@@ -349,10 +349,10 @@ define( function( require ) {
     // @public
     toString: function() {
       var text = 'PropertySet{';
-      var propertySet = this;
+      var self = this;
       for ( var i = 0; i < this.keys.length; i++ ) {
         var key = this.keys[ i ];
-        text = text + key + ':' + propertySet[ key ].toString();
+        text = text + key + ':' + self[ key ].toString();
         if ( i < this.keys.length - 1 ) {
           text = text + ',';
         }
@@ -365,9 +365,9 @@ define( function( require ) {
      * @public
      */
     unlinkAll: function() {
-      var propertySet = this;
+      var self = this;
       this.keys.forEach( function( key ) {
-        propertySet[ key + SUFFIX ].unlinkAll();
+        self[ key + SUFFIX ].unlinkAll();
       } );
     },
 
