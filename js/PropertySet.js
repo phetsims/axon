@@ -227,11 +227,11 @@ define( function( require ) {
      * @private
      */
     getProperties: function( propertyNames ) {
-      var propertySet = this;
+      var self = this;
       return propertyNames.map( function( propertyName ) {
         var propertyKey = propertyName + SUFFIX;
-        assert && assert( propertySet.hasOwnProperty( propertyKey ) );
-        return propertySet[ propertyKey ];
+        assert && assert( self.hasOwnProperty( propertyKey ) );
+        return self[ propertyKey ];
       } );
     },
 
