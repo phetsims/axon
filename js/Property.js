@@ -35,8 +35,36 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: null, // {Tandem | null}
-      phetioValueType: null // {function | null} phet-io type wrapper like TString, TNumber, etc.
+      phetioValueType: null, // {function | null} phet-io type wrapper like TString, TNumber, etc.
+
+      // {*[]|null} specific values that this Property is allowed to have.
+      // Mutually exclusive with options.validate
+      allowedValues: null,
+
+      // {function|null} single parameter is a value to validate, returns true if valid, false if invalid
+      // If null and allowedValues is provided, a value is valid if it is a member of allowedValues.
+      // If null and no allowedValues are provided, all values are considered valid.
+      validate: null
     }, options );
+
+    // value validation
+    assert && assert( !( options.allowedValues && options.validate ), 'allowedValues and validate are mutually exclusive' );
+    this.validate = options.validate; // @private
+    if ( !this.validate ) {
+      if ( options.allowedValues ) {
+
+        // validation is based on the set of allowedValues
+        this.validate = function( value ) {
+          return options.allowedValues.indexOf( value ) !== -1;
+        };
+      }
+      else {
+
+        // all values are considered valid
+        this.validate = function( value ) { return true; };
+      }
+    }
+    assert && assert( this.validate( value ), 'invalid initial value: ' + value );
 
     // @public - export the phet-io element type
     this.elementType = options.phetioValueType;
@@ -98,6 +126,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
+        assert && assert( this.validate( value ), 'invalid value: ' + value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyObservers( value );
         }
@@ -326,6 +355,7 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
+        assert && assert( this.validate( value ), 'invalid value: ' + value );
         var self = this;
         var onValueObserver = function( v ) {
           if ( self.areValuesEqual( v, value ) ) {
