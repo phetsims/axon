@@ -3,7 +3,7 @@
 /**
  * An observable property which notifies registered observers when the value changes.
  *
- * @author Sam Reid
+ * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
