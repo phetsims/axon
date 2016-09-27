@@ -5,7 +5,7 @@
  * implementation and (b) ensure it remains consistent. Note that the setters should not be called directly, so the
  * setters (set, reset and es5 setter) throw an error if used directly.
  *
- * @author Sam Reid
+ * @author Sam Reid (PhET Interactive Simulations)
  */
 
 define( function( require ) {

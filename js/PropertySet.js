@@ -37,9 +37,8 @@
  * p.kids.set(['alice','bob','charlie']);
  *
  * Note: If a subclass ever substitutes a property like this: person.ageProperty = new Property(person.age), then it would break the getter/setter
- * @author Sam Reid
+ * @author Sam Reid (PhET Interactive Simulations)
  */
-
 define( function( require ) {
   'use strict';
 

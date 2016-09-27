@@ -6,8 +6,8 @@
  * Because the array is observable, we must be careful about the possibility of concurrent-modification errors.
  * Any time we iterate over the array, we must iterate over a copy, because callback may be modifying the array.
  *
- * @author Sam Reid
- * @author Chris Malley
+ * @author Sam Reid (PhET Interactive Simulations)
+ * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
   'use strict';

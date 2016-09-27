@@ -6,7 +6,7 @@
  * compute a value.  Multilink should not be created through calling its constructor directly, but through the
  * Property.multilink and Property.lazyMultilink functions.
  *
- * @author Sam Reid
+ * @author Sam Reid (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';

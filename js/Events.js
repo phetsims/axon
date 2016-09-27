@@ -4,7 +4,7 @@
  * Lightweight event & listener abstraction.
  *
  * @deprecated - use Emitter.js instead
- * @author Sam Reid
+ * @author Sam Reid (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
