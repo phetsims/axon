@@ -2,13 +2,14 @@
 
 define( [
   'AXON/axon',
-  'AXON/Property',
+  'AXON/BooleanProperty',
   'AXON/DerivedProperty',
   'AXON/Emitter',
   'AXON/Events',
+  'AXON/Multilink',
   'AXON/ObservableArray',
-  'AXON/PropertySet',
-  'AXON/Multilink'
+  'AXON/Property',
+  'AXON/PropertySet'
 ], function( axon ) {
   'use strict';
   return axon;

@@ -5,6 +5,7 @@
   var ObservableArray = axon.ObservableArray;
   var log = axon.log;
   var PropertySet = axon.PropertySet;
+  var BooleanProperty = axon.BooleanProperty;
 
   test( 'Simple tests', function() {
 
@@ -387,5 +388,27 @@
 
     equal( prop.value, false );
     equal( notProp.value, true );
+  } );
+
+  test( 'BooleanProperty', function() {
+    try {
+      var b = new BooleanProperty( 'hello' );
+      equal( true, false, 'Should have errored out when giving boolean property a bad value' );
+    }
+    catch( err ) {
+      equal( true, true, 'Should have errored out when giving boolean property a bad value' );
+    }
+
+    var c = new BooleanProperty( true );
+    c.set( true );
+    c.set( false );
+    c.set( true );
+    try {
+      c.set( 123 );
+      equal( true, false, 'Should have errored out when giving boolean property a bad value' );
+    }
+    catch( err2 ) {
+      equal( true, true, 'Should have errored out when giving boolean property a bad value' );
+    }
   } );
 })();
