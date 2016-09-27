@@ -1,10 +1,19 @@
+// Copyright 2016, University of Colorado Boulder
+
 (function() {
+  'use strict';
+
+  // Patches for globals, to satisfy the linter
+  if ( window.axon ) {
+    var axon = window.axon;
+  }
+  if ( window.deepEqual ) {
+    var deepEqual = window.deepEqual;
+  }
   module( 'Axon: Simple Tests' );
   var Property = axon.Property;
   var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;
-  var log = axon.log;
-  var PropertySet = axon.PropertySet;
   var BooleanProperty = axon.BooleanProperty;
 
   test( 'Simple tests', function() {
@@ -175,10 +184,10 @@
     equal( name, 'Alice', 'function added with once should only be called once' );
 
     var x = 0;
-    var listener = function() {
+    var listener2 = function() {
       x = 999;
     };
-    var handle = person.once( 'say-hello', listener );
+    var handle = person.once( 'say-hello', listener2 );
     person.off( 'say-hello', handle );
     person.trigger( 'say-hello' );
     equal( x, 0, 'Function added with once should be removable' );
@@ -392,7 +401,7 @@
 
   test( 'BooleanProperty', function() {
     try {
-      var b = new BooleanProperty( 'hello' );
+      new BooleanProperty( 'hello' );
       equal( true, false, 'Should have errored out when giving boolean property a bad value' );
     }
     catch( err ) {
