@@ -400,24 +400,27 @@
   } );
 
   test( 'BooleanProperty', function() {
+
+    var testDescription = 'invalid initial value for BooleanProperty';
     try {
       new BooleanProperty( 'hello' );
-      equal( true, false, 'Should have errored out when giving boolean property a bad value' );
+      equal( true, false, testDescription );
     }
     catch( err ) {
-      equal( true, true, 'Should have errored out when giving boolean property a bad value' );
+      equal( true, true, testDescription );
     }
 
     var c = new BooleanProperty( true );
     c.set( true );
     c.set( false );
     c.set( true );
+    testDescription = 'set an invalid value for BooleanProperty';
     try {
       c.set( 123 );
-      equal( true, false, 'Should have errored out when giving boolean property a bad value' );
+      equal( true, false, testDescription );
     }
     catch( err2 ) {
-      equal( true, true, 'Should have errored out when giving boolean property a bad value' );
+      equal( true, true, testDescription );
     }
   } );
 
