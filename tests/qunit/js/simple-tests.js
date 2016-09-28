@@ -429,17 +429,17 @@
     var property;
     var testDescription;
 
-    testDescription = 'invalid initial value for Property with options.allowedValues';
+    testDescription = 'invalid initial value for Property with options.validValues';
     try {
-      property = new phet.axon.Property( 0, { allowedValues: [ 1, 2, 3 ] } );
+      property = new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
       equal( true, false, testDescription );
     }
     catch( err ) {
       equal( true, true, testDescription );
     }
-    property = new phet.axon.Property( 1, { allowedValues: [ 1, 2, 3 ] } );
+    property = new phet.axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
-    testDescription = 'set an invalid value for Property with options.allowedValues';
+    testDescription = 'set an invalid value for Property with options.validValues';
     try {
       property.set( 4 );
       equal( true, false, testDescription );

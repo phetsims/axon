@@ -32,7 +32,7 @@ define( function( require ) {
   function BooleanProperty( value, options ) {
     options = options || {};
     assert && assert( !options.validate, 'BooleanProperty supplies its own validate' );
-    assert && assert( !options.allowedValues, 'BooleanProperty does not use allowedValues' );
+    assert && assert( !options.validValues, 'BooleanProperty does not use validValues' );
     options = _.extend( {
       validate: IS_BOOLEAN
     }, options );
