@@ -420,4 +420,49 @@
       equal( true, true, 'Should have errored out when giving boolean property a bad value' );
     }
   } );
+
+  test( 'Property value validation', function() {
+
+    var property;
+    var testDescription;
+
+    testDescription = 'invalid initial value for Property with options.allowedValues';
+    try {
+      property = new phet.axon.Property( 0, { allowedValues: [ 1, 2, 3 ] } );
+      equal( true, false, testDescription );
+    }
+    catch( err ) {
+      equal( true, true, testDescription );
+    }
+    property = new phet.axon.Property( 1, { allowedValues: [ 1, 2, 3 ] } );
+    property.set( 3 );
+    testDescription = 'set an invalid value for Property with options.allowedValues';
+    try {
+      property.set( 4 );
+      equal( true, false, testDescription );
+    }
+    catch( err2 ) {
+      equal( true, true, testDescription );
+    }
+
+    testDescription = 'invalid initial value for Property with options.validate';
+    try {
+      property = new phet.axon.Property( 0, { validate: function( value ) { return ( value > 0 && value < 4 ); } } );
+      equal( true, false, testDescription );
+    }
+    catch( err3 ) {
+      equal( true, true, testDescription );
+    }
+
+    property = new phet.axon.Property( 1, { validate: function( value ) { return ( value > 0 && value < 4 ); } } );
+    property.set( 3 );
+    testDescription = 'set an invalid value for Property with options.validate';
+    try {
+      property.set( 4 );
+      equal( true, false, testDescription );
+    }
+    catch( err4 ) {
+      equal( true, true, testDescription );
+    }
+  } );
 })();
