@@ -30,12 +30,12 @@ define( function( require ) {
    * @constructor
    */
   function BooleanProperty( value, options ) {
+
     options = options || {};
-    assert && assert( !options.validate, 'BooleanProperty supplies its own validate' );
-    assert && assert( !options.validValues, 'BooleanProperty does not use validValues' );
-    options = _.extend( {
-      validate: IS_BOOLEAN
-    }, options );
+    assert && assert( !options.validValues, 'BooleanProperty cannot use validValues' );
+    assert && assert( !options.isValidValue, 'BooleanProperty implements its own isValidValue' );
+    options.isValidValue = IS_BOOLEAN;
+
     Property.call( this, value, options );
   }
 

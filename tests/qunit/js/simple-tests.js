@@ -448,18 +448,18 @@
       equal( true, true, testDescription );
     }
 
-    testDescription = 'invalid initial value for Property with options.validate';
+    testDescription = 'invalid initial value for Property with options.isValidValue';
     try {
-      property = new phet.axon.Property( 0, { validate: function( value ) { return ( value > 0 && value < 4 ); } } );
+      property = new phet.axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
       equal( true, false, testDescription );
     }
     catch( err3 ) {
       equal( true, true, testDescription );
     }
 
-    property = new phet.axon.Property( 1, { validate: function( value ) { return ( value > 0 && value < 4 ); } } );
+    property = new phet.axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     property.set( 3 );
-    testDescription = 'set an invalid value for Property with options.validate';
+    testDescription = 'set an invalid value for Property with options.isValidValue';
     try {
       property.set( 4 );
       equal( true, false, testDescription );

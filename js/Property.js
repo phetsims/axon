@@ -43,20 +43,20 @@ define( function( require ) {
       // {function|null} single parameter is a value to validate, returns true if valid, false if invalid
       // If null and validValues is provided, a value is valid if it is a member of validValues.
       // If null and no validValues are provided, all values are considered valid.
-      validate: null
+      isValidValue: null
     }, options );
 
     // value validation
-    assert && assert( !( options.validValues && options.validate ), 'validValues and validate are mutually exclusive' );
-    this.validate = options.validate; // @private
-    if ( !this.validate && options.validValues ) {
+    assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+    this.isValidValue = options.isValidValue; // @private
+    if ( !this.isValidValue && options.validValues ) {
 
         // validation is based on the set of validValues
-        this.validate = function( value ) {
+        this.isValidValue = function( value ) {
           return options.validValues.indexOf( value ) !== -1;
         };
     }
-    assert && this.validate && assert( this.validate( value ), 'invalid initial value: ' + value );
+    assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
 
     // @public - export the phet-io element type
     this.elementType = options.phetioValueType;
@@ -118,7 +118,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        assert && this.validate && assert( this.validate( value ), 'invalid value: ' + value );
+        assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid value: ' + value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyObservers( value );
         }
@@ -347,7 +347,7 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
-        assert && this.validate && assert( this.validate( value ), 'attempt to observe invalid value: ' + value );
+        assert && this.isValidValue && assert( this.isValidValue( value ), 'attempt to observe invalid value: ' + value );
         var self = this;
         var onValueObserver = function( v ) {
           if ( self.areValuesEqual( v, value ) ) {
