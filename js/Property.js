@@ -50,21 +50,14 @@ define( function( require ) {
     // value validation
     assert && assert( !( options.allowedValues && options.validate ), 'allowedValues and validate are mutually exclusive' );
     this.validate = options.validate; // @private
-    if ( !this.validate ) {
-      if ( options.allowedValues ) {
+    if ( !this.validate && options.allowedValues ) {
 
         // validation is based on the set of allowedValues
         this.validate = function( value ) {
           return options.allowedValues.indexOf( value ) !== -1;
         };
-      }
-      else {
-
-        // all values are considered valid
-        this.validate = function( value ) { return true; };
-      }
     }
-    assert && assert( this.validate( value ), 'invalid initial value: ' + value );
+    assert && this.validate && assert( this.validate( value ), 'invalid initial value: ' + value );
 
     // @public - export the phet-io element type
     this.elementType = options.phetioValueType;
@@ -126,7 +119,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        assert && assert( this.validate( value ), 'invalid value: ' + value );
+        assert && this.validate && assert( this.validate( value ), 'invalid value: ' + value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyObservers( value );
         }
@@ -355,7 +348,7 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
-        assert && assert( this.validate( value ), 'invalid value: ' + value );
+        assert && this.validate && assert( this.validate( value ), 'attempt to observe invalid value: ' + value );
         var self = this;
         var onValueObserver = function( v ) {
           if ( self.areValuesEqual( v, value ) ) {
