@@ -2,7 +2,7 @@
 
 /**
  * Convenience subclass of Property that constrains values to be true or false.
- * (note: truthy/falsy values are not accepted).
+ * Truthy/falsy values are considered invalid.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
