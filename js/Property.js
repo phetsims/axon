@@ -37,34 +37,26 @@ define( function( require ) {
       tandem: null, // {Tandem | null}
       phetioValueType: null, // {function | null} phet-io type wrapper like TString, TNumber, etc.
 
-      // {*[]|null} specific values that this Property is allowed to have.
-      // Mutually exclusive with options.validate
-      allowedValues: null,
+      // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
+      validValues: null,
 
       // {function|null} single parameter is a value to validate, returns true if valid, false if invalid
-      // If null and allowedValues is provided, a value is valid if it is a member of allowedValues.
-      // If null and no allowedValues are provided, all values are considered valid.
-      validate: null
+      // If null and validValues is provided, a value is valid if it is a member of validValues.
+      // If null and no validValues are provided, all values are considered valid.
+      isValidValue: null
     }, options );
 
     // value validation
-    assert && assert( !( options.allowedValues && options.validate ), 'allowedValues and validate are mutually exclusive' );
-    this.validate = options.validate; // @private
-    if ( !this.validate ) {
-      if ( options.allowedValues ) {
+    assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+    this.isValidValue = options.isValidValue; // @private
+    if ( !this.isValidValue && options.validValues ) {
 
-        // validation is based on the set of allowedValues
-        this.validate = function( value ) {
-          return options.allowedValues.indexOf( value ) !== -1;
+        // validation is based on the set of validValues
+        this.isValidValue = function( value ) {
+          return options.validValues.indexOf( value ) !== -1;
         };
-      }
-      else {
-
-        // all values are considered valid
-        this.validate = function( value ) { return true; };
-      }
     }
-    assert && assert( this.validate( value ), 'invalid initial value: ' + value );
+    assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
 
     // @public - export the phet-io element type
     this.elementType = options.phetioValueType;
@@ -126,7 +118,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        assert && assert( this.validate( value ), 'invalid value: ' + value );
+        assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid value: ' + value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyObservers( value );
         }
@@ -355,7 +347,7 @@ define( function( require ) {
        * @public
        */
       onValue: function( value, observer ) {
-        assert && assert( this.validate( value ), 'invalid value: ' + value );
+        assert && this.isValidValue && assert( this.isValidValue( value ), 'attempt to observe invalid value: ' + value );
         var self = this;
         var onValueObserver = function( v ) {
           if ( self.areValuesEqual( v, value ) ) {
