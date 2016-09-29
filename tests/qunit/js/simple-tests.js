@@ -401,71 +401,43 @@
 
   test( 'BooleanProperty', function() {
 
-    var testDescription = 'invalid initial value for BooleanProperty';
-    try {
-      new BooleanProperty( 'hello' );
-      equal( true, false, testDescription );
-    }
-    catch( err ) {
-      equal( true, true, testDescription );
-    }
+    var testDescription = '';
+    throws( function() {new BooleanProperty( 'hello' );}, testDescription );
 
     var c = new BooleanProperty( true );
     c.set( true );
     c.set( false );
     c.set( true );
     testDescription = 'set an invalid value for BooleanProperty';
-    try {
+    throws( function() {
       c.set( 123 );
-      equal( true, false, testDescription );
-    }
-    catch( err2 ) {
-      equal( true, true, testDescription );
-    }
+    }, testDescription );
   } );
 
   test( 'Property value validation', function() {
 
     var property;
-    var testDescription;
-
-    testDescription = 'invalid initial value for Property with options.validValues';
-    try {
-      property = new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
-      equal( true, false, testDescription );
-    }
-    catch( err ) {
-      equal( true, true, testDescription );
-    }
+    var testDescription = 'invalid initial value for Property with options.validValues';
+    throws( function() {
+      new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
+    }, testDescription );
     property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
     testDescription = 'set an invalid value for Property with options.validValues';
-    try {
+    throws( function() {
       property.set( 4 );
-      equal( true, false, testDescription );
-    }
-    catch( err2 ) {
-      equal( true, true, testDescription );
-    }
+    }, testDescription );
 
     testDescription = 'invalid initial value for Property with options.isValidValue';
-    try {
-      property = new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
-      equal( true, false, testDescription );
-    }
-    catch( err3 ) {
-      equal( true, true, testDescription );
-    }
+    throws( function() {
+      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } )
+    }, testDescription );
 
     property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     property.set( 3 );
     testDescription = 'set an invalid value for Property with options.isValidValue';
-    try {
+    throws( function() {
       property.set( 4 );
-      equal( true, false, testDescription );
-    }
-    catch( err4 ) {
-      equal( true, true, testDescription );
-    }
+    }, testDescription );
   } );
 })();
