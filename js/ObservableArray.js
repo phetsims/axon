@@ -299,9 +299,8 @@ define( function( require ) {
      * @public
      */
     clear: function() {
-      var copy = this._array.slice( 0 );
-      for ( var i = 0; i < copy.length; i++ ) {
-        this.remove( copy[ i ] );
+      while ( this.length > 0 ) {
+        this.pop();
       }
     },
 
