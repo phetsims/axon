@@ -400,44 +400,36 @@
   } );
 
   test( 'BooleanProperty', function() {
-
-    var testDescription = '';
-    throws( function() {new BooleanProperty( 'hello' );}, testDescription );
-
+    throws( function() {new BooleanProperty( 'hello' );}, 'invalid initial value for BooleanProperty' );
     var c = new BooleanProperty( true );
     c.set( true );
     c.set( false );
     c.set( true );
-    testDescription = 'set an invalid value for BooleanProperty';
     throws( function() {
       c.set( 123 );
-    }, testDescription );
+    }, 'set an invalid value for BooleanProperty' );
   } );
 
   test( 'Property value validation', function() {
 
     var property;
-    var testDescription = 'invalid initial value for Property with options.validValues';
     throws( function() {
       new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
-    }, testDescription );
+    }, 'invalid initial value for Property with options.validValues' );
     property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
-    testDescription = 'set an invalid value for Property with options.validValues';
     throws( function() {
       property.set( 4 );
-    }, testDescription );
+    }, 'set an invalid value for Property with options.validValues' );
 
-    testDescription = 'invalid initial value for Property with options.isValidValue';
     throws( function() {
-      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } )
-    }, testDescription );
+      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
+    }, 'invalid initial value for Property with options.isValidValue' );
 
     property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     property.set( 3 );
-    testDescription = 'set an invalid value for Property with options.isValidValue';
     throws( function() {
       property.set( 4 );
-    }, testDescription );
+    }, 'set an invalid value for Property with options.isValidValue' );
   } );
 })();
