@@ -57,28 +57,10 @@ define( function( require ) {
    * PropertySet main constructor
    * @param {Object} values - a hash: keys are the names of properties, values are initial property values. Eg { name: 'Curly', age: 40 }
    * @param {Object} [options]
+   * @param {Object} [properties] - alternative to values/options that specifies values and options together.
    * @constructor
    */
-  function PropertySet( values, options ) {
-
-    options = _.extend( {
-      tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
-      phetioValueTypeSet: {} // phet-io types (functions), one for each property
-    }, options );
-
-    // Catch cases where tandemSet is passed in, but null.
-    if ( options.hasOwnProperty( 'tandemSet' ) ) {
-      assert && assert( options.tandemSet,
-        'tandemSet was passed in, but null. Either pass in a non-null tandemSet or do not pass in a tandemSet.' );
-    }
-
-    // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
-    assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
-        var isBad = !values.hasOwnProperty( key );
-        if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
-        return isBad;
-      } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
-
+  function PropertySet( values, options, properties ) {
     var self = this;
 
     // TODO: Remove this subclassing.  PropertySet should not extend Events.  Emitter should be used instead
@@ -87,16 +69,65 @@ define( function( require ) {
     // @private Keep track of the keys so we know which to reset
     this.keys = [];
 
-    Object.getOwnPropertyNames( values ).forEach( function( value ) {
-      self.addProperty( value, values[ value ],
-        options.tandemSet[ value ],
-        options.phetioValueTypeSet[ value ] );
-    } );
+    assert && assert( values || properties, 'values or properties should be defined' );
+
+    // Eventually we would like all PropertySet call sites to use the `properties` argument, until then we are
+    // providing support for the original API as well.
+    // TODO: Deprecate `values` and `options` arguments and delete this block.
+    if ( values ) {
+
+      options = _.extend( {
+        tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
+        phetioValueTypeSet: {} // phet-io types (functions), one for each property
+      }, options );
+
+      // Catch cases where tandemSet is passed in, but null.
+      if ( options.hasOwnProperty( 'tandemSet' ) ) {
+        assert && assert( options.tandemSet,
+          'tandemSet was passed in, but null. Either pass in a non-null tandemSet or do not pass in a tandemSet.' );
+      }
+
+      // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
+      assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
+          var isBad = !values.hasOwnProperty( key );
+          if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
+          return isBad;
+        } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
+
+      Object.getOwnPropertyNames( values ).forEach( function( value ) {
+        self.addProperty( value, values[ value ],
+          options.tandemSet[ value ],
+          options.phetioValueTypeSet[ value ] );
+      } );
+    }
+    else if ( properties ) {
+      _.keys( properties ).forEach( function( propertyName ) {
+        var options = properties[ propertyName ];
+        var value = options.value;
+        var optionsClone = _.cloneDeep( options );
+        delete optionsClone.value;
+        self.addPropertyWithOptions( propertyName, value, optionsClone );
+      } );
+    }
   }
 
   axon.register( 'PropertySet', PropertySet );
 
   return inherit( Events, PropertySet, {
+
+    /**
+     * Add a Property with the specified options
+     *
+     * @param {string} propertyName - the name of the Property
+     * @param {Object} value - the value to initialize the Property with
+     * @param {Object} [options]
+     * @public
+     */
+    addPropertyWithOptions: function( propertyName, value, options ) {
+      this[ propertyName + SUFFIX ] = new Property( value, options );
+      this.addGetterAndSetter( propertyName );
+      this.keys.push( propertyName );
+    },
 
     /**
      * Adds a new property to this PropertySet
@@ -105,14 +136,13 @@ define( function( require ) {
      * @param {Tandem} [tandem] Tandem instance
      * @param {function} [phetioValueType] PhET-iO type that Property is wrapping
      * @public
+     * @deprecated - please use addPropertyWithOptions
      */
     addProperty: function( propertyName, value, tandem, phetioValueType ) {
-      this[ propertyName + SUFFIX ] = new Property( value, {
+      this.addPropertyWithOptions( propertyName, value, {
         tandem: tandem,
         phetioValueType: phetioValueType
       } );
-      this.addGetterAndSetter( propertyName );
-      this.keys.push( propertyName );
     },
 
     /**
@@ -193,16 +223,25 @@ define( function( require ) {
      * Creates a DerivedProperty from the given property property names and derivation.
      * @param {string[]} propertyNames
      * @param {function} derivation
-     * @param {Tandem} [tandem]
-     * @param {function} [phetioValueType] - phet-io wrapper constructor function
+     * @param {Object} [options] - passed to the DerivedProperty
      * @returns {DerivedProperty}
      * @public
      */
-    toDerivedProperty: function( propertyNames, derivation, tandem, phetioValueType ) {
-      return new DerivedProperty( this.getProperties( propertyNames ), derivation, {
-        tandem: tandem,
-        phetioValueType: phetioValueType
-      } );
+    toDerivedProperty: function( propertyNames, derivation, options ) {
+      return new DerivedProperty( this.getProperties( propertyNames ), derivation, options );
+    },
+
+    /**
+     * Adds a derived property to the property set.
+     * @param {string} propertyName name for the derived property
+     * @param {string[]} dependencyNames names of the properties that it depends on
+     * @param {function} derivation function that expects args in the same order as dependencies
+     * @param {Object} [options]
+     * @public
+     */
+    addDerivedPropertyWithOptions: function( propertyName, dependencyNames, derivation, options ) {
+      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, options );
+      this.addGetter( propertyName );
     },
 
     /**
@@ -213,10 +252,13 @@ define( function( require ) {
      * @param {Tandem} [tandem]
      * @param {function} phetioValueType - phet-io wrapper constructor function
      * @public
+     * @deprecated - please use addDerivedPropertyWithOptions
      */
     addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem, phetioValueType ) {
-      this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, tandem, phetioValueType );
-      this.addGetter( propertyName );
+      this.addDerivedPropertyWithOptions( propertyName, dependencyNames, derivation, {
+        tandem: tandem,
+        phetioValueType: phetioValueType
+      } );
     },
 
     /**

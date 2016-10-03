@@ -15,6 +15,7 @@
   var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;
   var BooleanProperty = axon.BooleanProperty;
+  var PropertySet = axon.PropertySet;
 
   test( 'Simple tests', function() {
 
@@ -431,5 +432,21 @@
     throws( function() {
       property.set( 4 );
     }, 'set an invalid value for Property with options.isValidValue' );
+  } );
+
+  test( 'Alternative PropertySet interface', function() {
+    var p = new PropertySet( null, null, {
+      name: {
+        value: 'Larry',
+        isValidValue: function() {}
+      },
+      age: {
+        value: 123,
+        validValues: [ 100, 123, 199 ]
+      }
+    } );
+
+    console.log( p.name );
+    equal( p.name, 'Larry', 'Name should match' );
   } );
 })();
