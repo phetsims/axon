@@ -437,8 +437,7 @@
   test( 'Alternative PropertySet interface', function() {
     var p = new PropertySet( null, null, {
       name: {
-        value: 'Larry',
-        isValidValue: function() {}
+        value: 'Larry'
       },
       age: {
         value: 123,
