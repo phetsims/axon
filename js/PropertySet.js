@@ -69,7 +69,7 @@ define( function( require ) {
     // @private Keep track of the keys so we know which to reset
     this.keys = [];
 
-    assert && assert( values || properties, 'values or properties should be defined' );
+    assert && assert( (values && !properties) || (!values && properties), 'values or properties (but not both) should be defined' );
 
     // Eventually we would like all PropertySet call sites to use the `properties` argument, until then we are
     // providing support for the original API as well.
