@@ -401,37 +401,45 @@
   } );
 
   test( 'BooleanProperty', function() {
-    throws( function() {new BooleanProperty( 'hello' );}, 'invalid initial value for BooleanProperty' );
+    window.assert && throws( function() {new BooleanProperty( 'hello' );}, 'invalid initial value for BooleanProperty' );
     var c = new BooleanProperty( true );
     c.set( true );
     c.set( false );
     c.set( true );
-    throws( function() {
+    window.assert && throws( function() {
       c.set( 123 );
     }, 'set an invalid value for BooleanProperty' );
+
+    if ( !window.assert ) {
+      expect( 0 );
+    }
   } );
 
   test( 'Property value validation', function() {
 
     var property;
-    throws( function() {
+    window.assert && throws( function() {
       new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
     }, 'invalid initial value for Property with options.validValues' );
     property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
-    throws( function() {
+    window.assert && throws( function() {
       property.set( 4 );
     }, 'set an invalid value for Property with options.validValues' );
 
-    throws( function() {
+    window.assert && throws( function() {
       new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     }, 'invalid initial value for Property with options.isValidValue' );
 
     property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     property.set( 3 );
-    throws( function() {
+    window.assert && throws( function() {
       property.set( 4 );
     }, 'set an invalid value for Property with options.isValidValue' );
+
+    if ( !window.assert ) {
+      expect( 0 );
+    }
   } );
 
   test( 'Alternative PropertySet interface', function() {
