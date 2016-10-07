@@ -104,9 +104,7 @@ define( function( require ) {
       _.keys( properties ).forEach( function( propertyName ) {
         var options = properties[ propertyName ];
         var value = options.value;
-        var optionsClone = _.cloneDeep( options );
-        delete optionsClone.value;
-        self.addPropertyWithOptions( propertyName, value, optionsClone );
+        self.addPropertyWithOptions( propertyName, value, options );
       } );
     }
   }
