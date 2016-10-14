@@ -50,5 +50,24 @@ define( function( require ) {
 
   axon.register( 'NumberProperty', NumberProperty );
 
-  return inherit( Property, NumberProperty );
+  return inherit( Property, NumberProperty, {
+
+    /**
+     * Adds the given value to this NumberProperty.
+     * @param {number} value - the value to add
+     * @public
+     */
+    add: function( value ) {
+      this.set( this.get() + value );
+    },
+
+    /**
+     * Subtracts the given value to this NumberProperty.
+     * @param {number} value - the value to subtract
+     * @public
+     */
+    subtract: function( value ) {
+      this.set( this.get() - value );
+    }
+  } );
 } );
