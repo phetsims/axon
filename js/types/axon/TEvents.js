@@ -33,7 +33,7 @@ define( function( require ) {
   //    purchasedSolute: [ { arg: 'solute', type: Solute } ],
   //    personAteLunch: []
   //  } )
-  var TEvents = function( events ) {
+  function TEvents( events ) {
     var TEventsImpl = function TEventsImpl( instance, phetioID ) {
       assertInstanceOf( instance, phet.axon.Events );
       TObject.call( this, instance, phetioID );
@@ -90,7 +90,7 @@ define( function( require ) {
       events: _.keys( events ),
       documentation: 'Event system, with multiple channels defined by string keys'
     } );
-  };
+  }
 
   phetioNamespace.register( 'TEvents', TEvents );
 

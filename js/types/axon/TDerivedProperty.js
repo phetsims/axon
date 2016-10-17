@@ -17,7 +17,7 @@ define( function( require ) {
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
-  var TDerivedProperty = function( valueType ) {
+  function TDerivedProperty( valueType ) {
     assert && assert( !!valueType, 'TDerivedProperty needs valueType' );
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
       TObject.call( this, property, phetioID );
@@ -73,7 +73,7 @@ define( function( require ) {
         return valueType.toStateObject( instance.value );
       }
     } );
-  };
+  }
 
   phetioNamespace.register( 'TDerivedProperty', TDerivedProperty );
 

@@ -23,7 +23,7 @@ define( function( require ) {
    * An observable property that triggers notifications when the value changes.
    * @module TProperty
    */
-  var TProperty = function( valueType, options ) {
+  function TProperty( valueType, options ) {
     assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
@@ -104,7 +104,7 @@ define( function( require ) {
 
       options: options
     } );
-  };
+  }
 
   phetioNamespace.register( 'TProperty', TProperty );
 

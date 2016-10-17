@@ -15,7 +15,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
-  var TObservableArray = function( elementType ) {
+  function TObservableArray( elementType ) {
     assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
 
     var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
@@ -24,7 +24,7 @@ define( function( require ) {
 
       var itemToStateObject = function( item ) {
 
-        assert && assert(!!elementType.toStateObject, elementType.typeName + '.toStateObject is undefined' );
+        assert && assert( !!elementType.toStateObject, elementType.typeName + '.toStateObject is undefined' );
 
         return { item: elementType.toStateObject( item ) };
       };
@@ -36,7 +36,7 @@ define( function( require ) {
       elementType: elementType,
       events: [ 'itemAdded', 'itemRemoved' ]
     } );
-  };
+  }
 
   phetioNamespace.register( 'TObservableArray', TObservableArray );
 
