@@ -1,6 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
+ * PhET-iO wrapper type for phet's ObservableArray type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -15,9 +16,20 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
+  /**
+   * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
+   * @param {TObject} elementType - wrapper type of the DerivedProperty
+   * @constructor
+   */
   function TObservableArray( elementType ) {
     assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
 
+    /**
+     * This type constructor is parameterized based on the instance of Events.
+     * @param observableArray
+     * @param {string} phetioID - the full unique tandem name for the instance
+     * @constructor
+     */
     var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );

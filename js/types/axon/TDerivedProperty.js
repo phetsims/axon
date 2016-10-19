@@ -1,6 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
+ * PhET-iO wrapper type for phet's DerivedProperty type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -15,10 +16,24 @@ define( function( require ) {
   var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
-  var TVoid = require( 'PHET_IO/types/TVoid' );
 
+  /**
+   * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedPropery wrapper type.
+   *
+   * @param {TObject} valueType - wrapper type of the DerivedProperty
+   * @constructor
+   */
+  var TVoid = require( 'PHET_IO/types/TVoid' );
   function TDerivedProperty( valueType ) {
     assert && assert( !!valueType, 'TDerivedProperty needs valueType' );
+
+    /**
+     * This type constructor is parameterized based on the valueType.
+     *
+     * @param property {DerivedProperty}
+     * @param {string} phetioID - the full unique tandem name for the instance
+     * @constructor
+     */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
@@ -65,10 +80,21 @@ define( function( require ) {
       valueType: valueType,
       events: [ 'changed' ],
 
+      /**
+       * Decodes a state into a DerivedProperty.
+       * @param {Object} stateObject
+       * @returns {Object}
+       */
       fromStateObject: function( stateObject ) {
         return valueType.fromStateObject( stateObject );
       },
 
+
+      /**
+       * Encodes a DerivedProperty instance to a state.
+       * @param {Object} instance
+       * @returns {Object}
+       */
       toStateObject: function( instance ) {
         return valueType.toStateObject( instance.value );
       }

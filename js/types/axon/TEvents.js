@@ -1,6 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
+ * PhET-iO wrapper type for phet's Events type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -18,22 +19,32 @@ define( function( require ) {
   var TVoid = require( 'PHET_IO/types/TVoid' );
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
-  // The supported events have this structure:
-  // object: {event1:[{argName:argName,argType:argType},{}},...}
-  // Here is code that tests it out:
-  //  var events = new TEvents();
-  //phet-io && phetio.addInstance( 'concentrationScreen.testEvents', events );
-  //
-  //events.trigger( 'personBorn', 'larry', 123 );
-  //events.trigger( 'purchasedSolute', Solute.DRINK_MIX );
-
-  // With this for the API file
-  //'concentrationScreen.testEvents': TEvents( {
-  //    personBorn: [ { arg: 'name', phetioValueType: TString }, { arg: 'length', phetioValueType: TNumber } ],
-  //    purchasedSolute: [ { arg: 'solute', type: Solute } ],
-  //    personAteLunch: []
-  //  } )
+  /**
+   * Parametric wrapper type constructor.  Given an events type, this function returns an appropriate events wrapper type.
+   *
+   * This is a good test to use:
+   *     var events = new TEvents();
+   *     phet-io && phetio.addInstance( 'concentrationScreen.testEvents', events );
+   *     events.trigger( 'personBorn', 'larry', 123 );
+   *     events.trigger( 'purchasedSolute', Solute.DRINK_MIX );
+   *
+   *     With this for the API file
+   *     'concentrationScreen.testEvents': TEvents( {
+   *      personBorn: [ { arg: 'name', phetioValueType: TString }, { arg: 'length', phetioValueType: TNumber } ],
+   *      purchasedSolute: [ { arg: 'solute', type: Solute } ],
+   *      personAteLunch: [] } )
+   *
+   * @param events {Object} - wrapper type of Events: {event1:[{argName:argName,argType:argType},{}},...}
+   * @constructor
+   */
   function TEvents( events ) {
+
+    /**
+     * This type constructor is parameterized based on the instance of Events.
+     * @param instance {Object} - Events
+     * @param {string} phetioID - the full unique tandem name for the instance
+     * @constructor
+     */
     var TEventsImpl = function TEventsImpl( instance, phetioID ) {
       assertInstanceOf( instance, phet.axon.Events );
       TObject.call( this, instance, phetioID );
