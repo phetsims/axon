@@ -18,7 +18,7 @@ define( function( require ) {
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
 
   /**
-   * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedPropery wrapper type.
+   * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
    *
    * @param {TObject} valueType - wrapper type of the DerivedProperty
    * @constructor
