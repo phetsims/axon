@@ -61,6 +61,10 @@ define( function( require ) {
    * @constructor
    */
   function PropertySet( values, options, properties ) {
+
+    assert && assert( !( values && properties ), 'values and properties are mutually exclusive' );
+    assert && assert( !( options && properties ), 'options and properties are mutually exclusive' );
+
     var self = this;
 
     // TODO: Remove this subclassing.  PropertySet should not extend Events.  Emitter should be used instead
@@ -69,36 +73,9 @@ define( function( require ) {
     // @private Keep track of the keys so we know which to reset
     this.keys = [];
 
-    assert && assert( (values && !properties) || (!values && properties), 'values or properties (but not both) should be defined' );
-
-    // Eventually we would like all PropertySet call sites to use the `properties` argument, until then we are
-    // providing support for the original API as well.
-    // TODO: Deprecate `values` and `options` arguments and delete this block.
     if ( values ) {
-
-      options = _.extend( {
-        tandemSet: {}, // a hash, keys are a subset of the keys in values, and the value associated with each key is a {Tandem} tandem
-        phetioValueTypeSet: {} // phet-io types (functions), one for each property
-      }, options );
-
-      // Catch cases where tandemSet is passed in, but null.
-      if ( options.hasOwnProperty( 'tandemSet' ) ) {
-        assert && assert( options.tandemSet,
-          'tandemSet was passed in, but null. Either pass in a non-null tandemSet or do not pass in a tandemSet.' );
-      }
-
-      // Verify that the tandemSet doesn't contain bogus keys. filter should return 0 tandemSet keys that are not in values.
-      assert && assert( _.filter( _.keys( options.tandemSet ), function( key ) {
-          var isBad = !values.hasOwnProperty( key );
-          if ( isBad ) { console.error( 'bad tandem key: ' + key ); }
-          return isBad;
-        } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
-
       Object.getOwnPropertyNames( values ).forEach( function( value ) {
-        self.addProperty( value, values[ value ], {
-          tandem: options.tandemSet[ value ],
-          phetioValueType: options.phetioValueTypeSet[ value ]
-        } );
+        self.addProperty( value, values[ value ], options );
       } );
     }
     else if ( properties ) {
