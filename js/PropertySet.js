@@ -56,14 +56,12 @@ define( function( require ) {
   /**
    * PropertySet main constructor
    * @param {Object} values - a hash: keys are the names of properties, values are initial property values. Eg { name: 'Curly', age: 40 }
-   * @param {Object} [options]
-   * @param {Object} [properties] - alternative to values/options that specifies values and options together.
+   * @param {Object} [properties] - alternative to values that allows you to specify both the value and option for each Property.
    * @constructor
    */
-  function PropertySet( values, options, properties ) {
+  function PropertySet( values, properties ) {
 
     assert && assert( !( values && properties ), 'values and properties are mutually exclusive' );
-    assert && assert( !( options && properties ), 'options and properties are mutually exclusive' );
 
     var self = this;
 
@@ -75,7 +73,7 @@ define( function( require ) {
 
     if ( values ) {
       Object.getOwnPropertyNames( values ).forEach( function( value ) {
-        self.addProperty( value, values[ value ], options );
+        self.addProperty( value, values[ value ]  );
       } );
     }
     else if ( properties ) {

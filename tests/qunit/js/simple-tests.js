@@ -443,7 +443,7 @@
   } );
 
   test( 'Alternative PropertySet interface', function() {
-    var p = new PropertySet( null, null, {
+    var p = new PropertySet( null, {
       name: {
         value: 'Larry'
       },
