@@ -56,7 +56,7 @@ define( function( require ) {
   /**
    * PropertySet main constructor
    * @param {Object} values - a hash: keys are the names of properties, values are initial property values. Eg { name: 'Curly', age: 40 }
-   * @param {Object} [properties] - alternative to values that allows you to specify both the value and option for each Property.
+   * @param {Object} [properties] - alternative to values that allows you to specify both the value and options for each Property.
    * @constructor
    */
   function PropertySet( values, properties ) {
