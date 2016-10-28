@@ -24,6 +24,7 @@ define( function( require ) {
    * @constructor
    */
   var TVoid = require( 'PHET_IO/types/TVoid' );
+
   function TDerivedProperty( valueType ) {
     assert && assert( !!valueType, 'TDerivedProperty needs valueType' );
 
@@ -38,7 +39,7 @@ define( function( require ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty( valueType ), 'changed', function( oldValue, newValue ) {
+      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty( valueType ), 'changed', function( newValue, oldValue ) {
         return {
           oldValue: valueType.toStateObject( oldValue ),
           newValue: valueType.toStateObject( newValue )
