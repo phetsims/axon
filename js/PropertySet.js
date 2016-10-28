@@ -61,7 +61,8 @@ define( function( require ) {
    */
   function PropertySet( values, properties ) {
 
-    assert && assert( !( values && properties ), 'values and properties are mutually exclusive' );
+    assert && assert( ( values && !properties ) || ( !values && properties ),
+      'values or properties (but not both) must be specified' );
 
     var self = this;
 
