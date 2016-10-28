@@ -95,16 +95,17 @@ define( function( require ) {
         } ).length === 0, 'Some tandem keys do not appear in the PropertySet' );
 
       Object.getOwnPropertyNames( values ).forEach( function( value ) {
-        self.addProperty( value, values[ value ],
-          options.tandemSet[ value ],
-          options.phetioValueTypeSet[ value ] );
+        self.addProperty( value, values[ value ], {
+          tandem: options.tandemSet[ value ],
+          phetioValueType: options.phetioValueTypeSet[ value ]
+        } );
       } );
     }
     else if ( properties ) {
       _.keys( properties ).forEach( function( propertyName ) {
         var options = properties[ propertyName ];
         var value = options.value;
-        self.addPropertyWithOptions( propertyName, value, options );
+        self.addProperty( propertyName, value, options );
       } );
     }
   }
@@ -121,26 +122,10 @@ define( function( require ) {
      * @param {Object} [options]
      * @public
      */
-    addPropertyWithOptions: function( propertyName, value, options ) {
+    addProperty: function( propertyName, value, options ) {
       this[ propertyName + SUFFIX ] = new Property( value, options );
       this.addGetterAndSetter( propertyName );
       this.keys.push( propertyName );
-    },
-
-    /**
-     * Adds a new property to this PropertySet
-     * @param {string} propertyName
-     * @param {*} value the property's initial value
-     * @param {Tandem} [tandem] Tandem instance
-     * @param {function} [phetioValueType] PhET-iO type that Property is wrapping
-     * @public
-     * @deprecated - please use addPropertyWithOptions
-     */
-    addProperty: function( propertyName, value, tandem, phetioValueType ) {
-      this.addPropertyWithOptions( propertyName, value, {
-        tandem: tandem,
-        phetioValueType: phetioValueType
-      } );
     },
 
     /**
@@ -237,26 +222,9 @@ define( function( require ) {
      * @param {Object} [options]
      * @public
      */
-    addDerivedPropertyWithOptions: function( propertyName, dependencyNames, derivation, options ) {
+    addDerivedProperty: function( propertyName, dependencyNames, derivation, options ) {
       this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, options );
       this.addGetter( propertyName );
-    },
-
-    /**
-     * Adds a derived property to the property set.
-     * @param {string} propertyName name for the derived property
-     * @param {string[]} dependencyNames names of the properties that it depends on
-     * @param {function} derivation function that expects args in the same order as dependencies
-     * @param {Tandem} [tandem]
-     * @param {function} phetioValueType - phet-io wrapper constructor function
-     * @public
-     * @deprecated - please use addDerivedPropertyWithOptions
-     */
-    addDerivedProperty: function( propertyName, dependencyNames, derivation, tandem, phetioValueType ) {
-      this.addDerivedPropertyWithOptions( propertyName, dependencyNames, derivation, {
-        tandem: tandem,
-        phetioValueType: phetioValueType
-      } );
     },
 
     /**
