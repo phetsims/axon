@@ -58,6 +58,7 @@ define( function( require ) {
    * @param {Object} values - a hash: keys are the names of properties, values are initial property values. Eg { name: 'Curly', age: 40 }
    * @param {Object} [properties] - alternative to values that allows you to specify both the value and options for each Property.
    * @constructor
+   * @deprecated use Property, see https://github.com/phetsims/axon/issues/102
    */
   function PropertySet( values, properties ) {
 
@@ -97,6 +98,7 @@ define( function( require ) {
      * @param {Object} value - the value to initialize the Property with
      * @param {Object} [options]
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     addProperty: function( propertyName, value, options ) {
       this[ propertyName + SUFFIX ] = new Property( value, options );
@@ -108,6 +110,7 @@ define( function( require ) {
      * Remove any property (whether a derived property or not) that was added to this PropertySet
      * @param {String} propertyName
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     removeProperty: function( propertyName ) {
 
@@ -130,6 +133,7 @@ define( function( require ) {
      * Adds a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
      * @param {string} propertyName
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     addGetterAndSetter: function( propertyName ) {
       var property = this[ propertyName + SUFFIX ];
@@ -154,6 +158,7 @@ define( function( require ) {
      * Adds an ES5 getter to a property.
      * @param {string} propertyName
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     addGetter: function( propertyName ) {
       var property = this[ propertyName + SUFFIX ];
@@ -170,7 +175,10 @@ define( function( require ) {
       } );
     },
 
-    // @public Resets all of the properties associated with this PropertySet
+    /**
+     * @public Resets all of the properties associated with this PropertySet
+     * @deprecated see https://github.com/phetsims/axon/issues/102
+     */
     reset: function() {
       var self = this;
       this.keys.forEach( function( key ) {
@@ -185,6 +193,7 @@ define( function( require ) {
      * @param {Object} [options] - passed to the DerivedProperty
      * @returns {DerivedProperty}
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     toDerivedProperty: function( propertyNames, derivation, options ) {
       return new DerivedProperty( this.getProperties( propertyNames ), derivation, options );
@@ -197,6 +206,7 @@ define( function( require ) {
      * @param {function} derivation function that expects args in the same order as dependencies
      * @param {Object} [options]
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     addDerivedProperty: function( propertyName, dependencyNames, derivation, options ) {
       this[ propertyName + SUFFIX ] = this.toDerivedProperty( dependencyNames, derivation, options );
@@ -232,6 +242,7 @@ define( function( require ) {
      *
      * @param {Object} values - see example above
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     setValues: function( values ) {
       var self = this;
@@ -250,6 +261,7 @@ define( function( require ) {
      * Get a JS object literal with all the current values of the properties in this property set, say for serialization.
      * @see set
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      * TODO: this works well to serialize numbers, strings, booleans.  How to handle complex state values such as Vector2 or nested Property?  Maybe that must be up to the client code.
      * TODO: This was named 'get' to mirror the 'set' method above, but I'm concerned this will make them difficult to find/replace and may confuse with real getters & setters.  Maybe setState/getState would be better?
      */
@@ -267,6 +279,7 @@ define( function( require ) {
      * @param {string} propertyName the name of the property to link to
      * @param {function }observer the callback to link to the property
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     link: function( propertyName, observer ) {
       this[ propertyName + SUFFIX ].link( observer );
@@ -277,6 +290,7 @@ define( function( require ) {
      * @param {string} propertyName the name of the property to link to
      * @param {function} observer the callback to link to the property
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     unlink: function( propertyName, observer ) {
       this[ propertyName + SUFFIX ].unlink( observer );
@@ -288,6 +302,7 @@ define( function( require ) {
      * @param {Object} object the object for which the attribute will be set
      * @param {string} attributeName the name of the attribute to set on the object
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     linkAttribute: function( propertyName, object, attributeName ) {
       return this.property( propertyName ).linkAttribute( object, attributeName );
@@ -299,6 +314,7 @@ define( function( require ) {
      * @param {string} propertyName - the name of the property that the observer will be removed from
      * @param {function} observer
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     unlinkAttribute: function( propertyName, observer ) {
       this.property( propertyName ).unlink( observer );
@@ -309,12 +325,16 @@ define( function( require ) {
      * @param {string[]} propertyNames
      * @param {function} observer no params, returns nothing
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     multilink: function( propertyNames, observer ) {
       return new Multilink( this.getProperties( propertyNames ), observer, false );
     },
 
-    // @public
+    /**
+     * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
+     */
     lazyMultilink: function( propertyNames, observer ) {
       return new Multilink( this.getProperties( propertyNames ), observer, true );
     },
@@ -324,12 +344,17 @@ define( function( require ) {
      * Same as calling dispose() on the multilink
      * @param {Multilink} multilink
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     unmultilink: function( multilink ) {
       multilink.dispose();
     },
 
-    // @public
+    /**
+     * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
+     * @returns {string}
+     */
     toString: function() {
       var text = 'PropertySet{';
       var self = this;
@@ -346,6 +371,7 @@ define( function( require ) {
     /**
      * Unlinks all observers from all Property instances.
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     unlinkAll: function() {
       var self = this;
@@ -367,6 +393,7 @@ define( function( require ) {
     /**
      * When the PropertySet is no longer used by the sim, it can be eliminated.  All Properties are disposed.
      * @public
+     * @deprecated see https://github.com/phetsims/axon/issues/102
      */
     dispose: function() {
       for ( var i = 0; i < this.keys.length; i++ ) {
