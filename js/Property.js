@@ -434,6 +434,7 @@ define( function( require ) {
        * @param {Object} object - The object that the property will be placed on
        * @param {string} propertyName - Name of the property
        * @param {*} initialValue - The initial value of the property
+       * @deprecated please use vanilla Property instances
        */
       addProperty: function( object, propertyName, initialValue ) {
         // defines the property
