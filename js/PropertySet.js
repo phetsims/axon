@@ -108,7 +108,7 @@ define( function( require ) {
 
     /**
      * Remove any property (whether a derived property or not) that was added to this PropertySet
-     * @param {String} propertyName
+     * @param {string} propertyName
      * @public
      * @deprecated see https://github.com/phetsims/axon/issues/102
      */
