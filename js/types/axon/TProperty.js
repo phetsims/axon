@@ -31,7 +31,7 @@ define( function( require ) {
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TProperty( valueType ), 'changed',
+      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TProperty( valueType, options ), 'changed',
         function( newValue, oldValue ) {
           return {
             oldValue: valueType.toStateObject( oldValue ),
