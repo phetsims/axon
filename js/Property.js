@@ -43,7 +43,10 @@ define( function( require ) {
       // {function|null} single parameter is a value to validate, returns true if valid, false if invalid
       // If null and validValues is provided, a value is valid if it is a member of validValues.
       // If null and no validValues are provided, all values are considered valid.
-      isValidValue: null
+      isValidValue: null,
+
+      // A place to add annotation or notes for a property
+      documentation: ''
     }, options );
 
     // value validation
@@ -82,7 +85,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, { documentation: options.documentation } ) );
 
     // @private
     this.disposeProperty = function() {
