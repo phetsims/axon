@@ -101,6 +101,10 @@ define( function( require ) {
         return valueType.toStateObject( instance.value );
       },
 
+      setValue: function( instance, value ) {
+        instance.set( value );
+      },
+
       options: options
     } );
   }
