@@ -93,14 +93,29 @@ define( function( require ) {
         };
       },
 
+      /**
+       * Decodes a state into a Property.
+       * @param {Object} stateObject
+       * @returns {Object}
+       */
       fromStateObject: function( stateObject ) {
         return valueType.fromStateObject( stateObject );
       },
 
+      /**
+       * Encodes a DerivedProperty instance to a state.
+       * @param {Object} instance
+       * @returns {Object} - a state object
+       */
       toStateObject: function( instance ) {
         return valueType.toStateObject( instance.value );
       },
 
+      /**
+       * Used to set the value when loading a state
+       * @param instance
+       * @param value
+       */
       setValue: function( instance, value ) {
         instance.set( value );
       },

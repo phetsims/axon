@@ -34,6 +34,10 @@ define( function( require ) {
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
+      /**
+       * @param item
+       * @returns {{item: Object}} - returns the stateObject of child item
+       */
       var itemToStateObject = function( item ) {
 
         assert && assert( !!elementType.toStateObject, elementType.typeName + '.toStateObject is undefined' );
