@@ -107,29 +107,6 @@ define( function( require ) {
     },
 
     /**
-     * Remove any property (whether a derived property or not) that was added to this PropertySet
-     * @param {string} propertyName
-     * @public
-     * @deprecated see https://github.com/phetsims/axon/issues/102
-     */
-    removeProperty: function( propertyName ) {
-
-      //Remove from the keys (only for non-derived properties)
-      var index = this.keys.indexOf( propertyName );
-      if ( index !== -1 ) {
-        this.keys.splice( index, 1 );
-      }
-
-      this[ propertyName + SUFFIX ].dispose();
-
-      //Unregister the Property instance from the PropertySet
-      delete this[ propertyName + SUFFIX ];
-
-      //Unregister the getter/setter, if they exist
-      delete this[ propertyName ];
-    },
-
-    /**
      * Adds a getter and setter using ES5 get/set syntax, similar to https://gist.github.com/dandean/1292057, same as in github/Atlas
      * @param {string} propertyName
      * @public
