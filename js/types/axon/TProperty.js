@@ -18,34 +18,38 @@ define( function( require ) {
   var TVoid = require( 'PHET_IO/types/TVoid' );
   var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   var phetio = require( 'PHET_IO/phetio' );
-
+  
   /**
    * An observable property that triggers notifications when the value changes.
+   * @param phetioValueType
+   * @param options
+   * @returns {*}
    * @module TProperty
+   * @constructor
    */
-  function TProperty( valueType, options ) {
-    assert && assert( valueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(valueType) );
+  function TProperty( phetioValueType, options ) {
+    assert && assert( phetioValueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(phetioValueType) );
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TProperty( valueType, options ), 'changed',
+      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TProperty( phetioValueType, options ), 'changed',
         function( newValue, oldValue ) {
           return {
-            oldValue: valueType.toStateObject( oldValue ),
-            newValue: valueType.toStateObject( newValue ),
+            oldValue: phetioValueType.toStateObject( oldValue ),
+            newValue: phetioValueType.toStateObject( newValue ),
 
             // Pass through the value type units.  Undefined are filtered out
-            units: valueType.units
+            units: phetioValueType.units
           };
         } );
     };
     return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
 
       getValue: {
-        returnType: valueType,
+        returnType: phetioValueType,
         parameterTypes: [],
         implementation: function() {
           return this.instance.get();
@@ -55,7 +59,7 @@ define( function( require ) {
 
       setValue: {
         returnType: TVoid,
-        parameterTypes: [ valueType ],
+        parameterTypes: [ phetioValueType ],
         implementation: function( value ) {
           this.instance.set( value );
         },
@@ -64,7 +68,7 @@ define( function( require ) {
 
       link: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -74,7 +78,7 @@ define( function( require ) {
 
       unlink: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.unlink( listener );
         },
@@ -84,12 +88,12 @@ define( function( require ) {
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
                      'traditional observer pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
-      valueType: valueType,
+      valueType: phetioValueType,
       events: [ 'changed' ],
 
       getAPI: function() {
         return {
-          valueType: phetio.getAPIForType( valueType )
+          valueType: phetio.getAPIForType( phetioValueType )
         };
       },
 
@@ -99,7 +103,7 @@ define( function( require ) {
        * @returns {Object}
        */
       fromStateObject: function( stateObject ) {
-        return valueType.fromStateObject( stateObject );
+        return phetioValueType.fromStateObject( stateObject );
       },
 
       /**
@@ -108,7 +112,7 @@ define( function( require ) {
        * @returns {Object} - a state object
        */
       toStateObject: function( instance ) {
-        return valueType.toStateObject( instance.value );
+        return phetioValueType.toStateObject( instance.value );
       },
 
       /**

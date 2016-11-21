@@ -16,20 +16,21 @@ define( function( require ) {
   var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
+  var TVoid = require( 'PHET_IO/types/TVoid' );
+
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
    *
-   * @param {TObject} valueType - wrapper type of the DerivedProperty
+   * @param {function} phetioValueType - phet-io type wrapper like TString, TNumber, etc.
+   * @returns {*}
    * @constructor
    */
-  var TVoid = require( 'PHET_IO/types/TVoid' );
-
-  function TDerivedProperty( valueType ) {
-    assert && assert( !!valueType, 'TDerivedProperty needs valueType' );
+  function TDerivedProperty( phetioValueType ) {
+    assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
 
     /**
-     * This type constructor is parameterized based on the valueType.
+     * This type constructor is parameterized based on the phetioValueType.
      *
      * @param property {DerivedProperty}
      * @param {string} phetioID - the full unique tandem name for the instance
@@ -39,17 +40,17 @@ define( function( require ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty( valueType ), 'changed', function( newValue, oldValue ) {
+      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty( phetioValueType ), 'changed', function( newValue, oldValue ) {
         return {
-          oldValue: valueType.toStateObject( oldValue ),
-          newValue: valueType.toStateObject( newValue )
+          oldValue: phetioValueType.toStateObject( oldValue ),
+          newValue: phetioValueType.toStateObject( newValue )
         };
       } );
     };
     return phetioInherit( TObject, 'TDerivedProperty', TDerivedPropertyImpl, {
 
       getValue: {
-        returnType: valueType,
+        returnType: phetioValueType,
         parameterTypes: [],
         implementation: function() {
           return this.instance.get();
@@ -59,7 +60,7 @@ define( function( require ) {
 
       unlink: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.unlink( listener );
         },
@@ -68,7 +69,7 @@ define( function( require ) {
 
       link: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ valueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -78,7 +79,7 @@ define( function( require ) {
     }, {
       documentation: 'Like TProperty, but not settable.  Instead it is derived from other TDerivedProperty or TProperty ' +
                      'instances',
-      valueType: valueType,
+      valueType: phetioValueType,
       events: [ 'changed' ],
 
       /**
@@ -87,7 +88,7 @@ define( function( require ) {
        * @returns {Object}
        */
       fromStateObject: function( stateObject ) {
-        return valueType.fromStateObject( stateObject );
+        return phetioValueType.fromStateObject( stateObject );
       },
 
 
@@ -97,7 +98,7 @@ define( function( require ) {
        * @returns {Object}
        */
       toStateObject: function( instance ) {
-        return valueType.toStateObject( instance.value );
+        return phetioValueType.toStateObject( instance.value );
       }
     } );
   }
