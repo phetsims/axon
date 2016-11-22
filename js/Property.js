@@ -426,32 +426,10 @@ define( function( require ) {
        * Removes the multilinked observer from this Property.
        * Same as calling dispose() on the handle (which happens to be a DerivedProperty instance)
        * @param {DerivedProperty} derivedProperty
+       * @static
        */
       unmultilink: function( derivedProperty ) {
         derivedProperty.dispose();
-      },
-
-      /**
-       * Set up a PropertySet-like property on any object (see https://github.com/phetsims/axon/issues/42).
-       *
-       * @param {Object} object - The object that the property will be placed on
-       * @param {string} propertyName - Name of the property
-       * @param {*} initialValue - The initial value of the property
-       * @deprecated please use vanilla Property instances
-       */
-      addProperty: function( object, propertyName, initialValue ) {
-        // defines the property
-        var property = object[ propertyName + 'Property' ] = new Property( initialValue );
-
-        // defines ES5 getter/setter
-        Object.defineProperty( object, propertyName, {
-          get: function() { return property.get(); },
-          set: function( value ) { property.set( value ); },
-
-          // Make it configurable and enumerable so it's easy to override...
-          configurable: true,
-          enumerable: true
-        } );
       }
     } );
 } );
