@@ -411,25 +411,30 @@ define( function( require ) {
       /**
        * Registers an observer with multiple properties, then notifies the observer immediately.
        * @param {Property[]} properties
-       * @param {function} observer no params, returns nothing
+       * @param {function} observer function that takes values from the properties and returns nothing
        * @static
        */
       multilink: function( properties, observer ) {
         return new Multilink( properties, observer, false );
       },
 
+      /**
+       * Registers an observer with multiple properties *without* an immediate callback with current values.
+       * @param {Property[]} properties
+       * @param {function} observer function that takes values from the properties and returns nothing
+       * @static
+       */
       lazyMultilink: function( properties, observer ) {
         return new Multilink( properties, observer, true );
       },
 
       /**
-       * Removes the multilinked observer from this Property.
-       * Same as calling dispose() on the handle (which happens to be a DerivedProperty instance)
-       * @param {DerivedProperty} derivedProperty
+       * Unlinks a listener added with multilink
+       * @param {Multilink} multilink
        * @static
        */
-      unmultilink: function( derivedProperty ) {
-        derivedProperty.dispose();
+      unmultilink: function( multilink ) {
+        multilink.dispose();
       }
     } );
 } );
