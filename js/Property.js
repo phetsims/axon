@@ -412,6 +412,7 @@ define( function( require ) {
        * Registers an observer with multiple properties, then notifies the observer immediately.
        * @param {Property[]} properties
        * @param {function} observer function that takes values from the properties and returns nothing
+       * @returns {Multilink}
        * @static
        */
       multilink: function( properties, observer ) {
@@ -422,6 +423,7 @@ define( function( require ) {
        * Registers an observer with multiple properties *without* an immediate callback with current values.
        * @param {Property[]} properties
        * @param {function} observer function that takes values from the properties and returns nothing
+       * @returns {Multilink}
        * @static
        */
       lazyMultilink: function( properties, observer ) {
@@ -429,7 +431,7 @@ define( function( require ) {
       },
 
       /**
-       * Unlinks a listener added with multilink
+       * Unlinks an observer that was added with multilink or lazyMultilink.
        * @param {Multilink} multilink
        * @static
        */
