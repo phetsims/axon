@@ -1,3 +1,5 @@
+// Copyright 2016, University of Colorado Boulder
+
 function runAxonTests( pathToTestBase ) {
   function loadTestFile( src ) {
     var script = document.createElement( 'script' );
