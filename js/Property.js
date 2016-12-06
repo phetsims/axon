@@ -445,6 +445,7 @@ define( function( require ) {
        * if they are triggered in the code at runtime.
        * @param {Object} object
        * @param {string} prop
+       * @deprecated this is for debugging only - do not leave calls to this function in production code
        */
       preventGetSet: function( object, prop ) {
         Object.defineProperty( object, prop, {
