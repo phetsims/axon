@@ -44,8 +44,8 @@ define( function( require ) {
 
         return { item: elementType.toStateObject( item ) };
       };
-      toEventOnEmit( observableArray, 'CallbacksForItemAddedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemAdded', itemToStateObject );
-      toEventOnEmit( observableArray, 'CallbacksForItemRemovedEmitter', 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', itemToStateObject );
+      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemAdded', itemToStateObject );
+      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', itemToStateObject );
     };
     return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {}, {
       documentation: 'An array that sends notifications when its values have changed.',
