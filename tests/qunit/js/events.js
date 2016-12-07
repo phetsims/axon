@@ -1,6 +1,8 @@
 // Copyright 2016, University of Colorado Boulder
 
 (function() {
+  'use strict';
+
   module( 'Axon: Events' );
 
   test( 'Basics', function() {
@@ -54,8 +56,6 @@
     var aCount = 0;
 
     function incrementA() { aCount++; }
-
-    function addIncrementAOnce() { events.once( 'a', incrementA ); }
 
     equal( events.hasStaticListener( 'a', incrementA ), false, 'No listener on unused event name' );
 
