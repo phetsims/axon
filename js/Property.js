@@ -46,7 +46,7 @@ define( function( require ) {
       isValidValue: null,
 
       // A place to add annotation or notes for a property
-      documentation: ''
+      phetioInstanceDocumentation: ''
     }, options );
 
     // value validation
@@ -85,7 +85,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, { documentation: options.documentation } ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, { phetioInstanceDocumentation: options.phetioInstanceDocumentation } ) );
 
     // @private
     this.disposeProperty = function() {
