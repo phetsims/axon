@@ -143,6 +143,24 @@ define( function( require ) {
     },
 
     /**
+     * Emits a single event with three arguments.  This is a copy-paste of emit() for performance reasons.
+     * @param {*} arg1
+     * @param {*} arg2
+     * @param {*} arg3
+     * @public
+     */
+    emit3: function( arg1, arg2, arg3 ) {
+      this.listenersToEmitTo.push( this.listeners );
+      var lastEntry = this.listenersToEmitTo.length - 1;
+
+      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg1, arg2, arg3 );
+      }
+
+      this.listenersToEmitTo.pop();
+    },
+
+    /**
      * Checks whether a listener is registered with this Emitter
      * @param {function} listener
      * @returns {boolean}
