@@ -12,7 +12,6 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-  var Events = require( 'AXON/Events' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
 
@@ -71,8 +70,9 @@ define( function( require ) {
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
     }
 
-    // @private Internal Events for sending startedCallbacksForChanged & endedCallbacksForChanged
-    this.events = new Events();
+    // Emitters for the PhET-iO data stream
+    this.startedCallbacksForChangedEmitter = new Emitter();
+    this.endedCallbacksForChangedEmitter = new Emitter();
 
     // @private - Store the internal value and the initial value
     this._value = value;
@@ -164,12 +164,11 @@ define( function( require ) {
         // Note the current value, since it will be sent to possibly multiple observers.
         var value = this.get();
 
-        // TODO: Should Property extend or compose Events?  Would extending Events broaden its interface too much?
-        this.events.trigger2( 'startedCallbacksForChanged', value, oldValue );
+        this.startedCallbacksForChangedEmitter.emit2( value, oldValue );
 
         this.changedEmitter.emit2( value, oldValue );
 
-        this.events.trigger0( 'endedCallbacksForChanged' );
+        this.endedCallbacksForChangedEmitter.emit();
       },
 
       /**
