@@ -22,7 +22,7 @@ define( function( require ) {
   var TObservableArray = require( 'ifphetio!PHET_IO/types/axon/TObservableArray' );
 
   /**
-   * @param {[]} array
+   * @param {Object[]} array
    * @param {Object} [options]
    * @constructor
    */
@@ -34,12 +34,14 @@ define( function( require ) {
       array = null;
     }
 
-    this._options = _.extend( {
+    options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: null,           // Tandem is supported here.  This line doesn't do anything different than leaving tandem as undefined
                               // but this entry serves as an indicator that tandem is supported here.
       phetioValueType: null
     }, options );
+
+    this.allowDuplicates = options.allowDuplicates;
 
     this._array = array || []; // @private internal, do not access directly
     this._addedListeners = []; // @private listeners called when an item is added
@@ -228,7 +230,7 @@ define( function( require ) {
      * @public
      */
     push: function( item ) {
-      if ( !this._options.allowDuplicates && this.contains( item ) ) {
+      if ( !this.allowDuplicates && this.contains( item ) ) {
         throw new Error( 'duplicates are not allowed' );
       }
       this._array.push( item );
