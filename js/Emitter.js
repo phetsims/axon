@@ -29,6 +29,14 @@ define( function( require ) {
   return inherit( Object, Emitter, {
 
     /**
+     * Dispose an Emitter that is no longer used.  Like Property.dispose, this method checks that there are no leaked
+     * listeners.
+     */
+    dispose: function() {
+      assert && assert( !this.hasListeners(), 'Listeners should have been removed before disposal' );
+    },
+
+    /**
      * Adds a listener
      * @param {function} listener
      * @public
