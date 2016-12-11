@@ -15,9 +15,8 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'PHET_IO/types/TObject' );
-  var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
+  var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
-
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
@@ -40,12 +39,18 @@ define( function( require ) {
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TDerivedProperty( phetioValueType ), 'changed', function( newValue, oldValue ) {
-        return {
-          oldValue: phetioValueType.toStateObject( oldValue ),
-          newValue: phetioValueType.toStateObject( newValue )
-        };
-      } );
+      toEventOnEmit(
+        property.startedCallbacksForChangedEmitter,
+        property.endedCallbacksForChangedEmitter,
+        phetioID,
+        TDerivedProperty( phetioValueType ),
+        'changed',
+        function( newValue, oldValue ) {
+          return {
+            oldValue: phetioValueType.toStateObject( oldValue ),
+            newValue: phetioValueType.toStateObject( newValue )
+          };
+        } );
     };
     return phetioInherit( TObject, 'TDerivedProperty', TDerivedPropertyImpl, {
 
