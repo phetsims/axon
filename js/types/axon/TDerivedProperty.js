@@ -42,6 +42,7 @@ define( function( require ) {
       toEventOnEmit(
         property.startedCallbacksForChangedEmitter,
         property.endedCallbacksForChangedEmitter,
+        'model',
         phetioID,
         TDerivedProperty( phetioValueType ),
         'changed',
