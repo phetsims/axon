@@ -17,6 +17,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
   var TObservableArray = require( 'ifphetio!PHET_IO/types/axon/TObservableArray' );
@@ -36,10 +37,11 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      tandem: null,           // Tandem is supported here.  This line doesn't do anything different than leaving tandem as undefined
-                              // but this entry serves as an indicator that tandem is supported here.
+      tandem: Tandem.createDefaultTandem( 'observableArray' ),
       phetioValueType: null
     }, options );
+
+    Tandem.validateOptions( options );
 
     this.allowDuplicates = options.allowDuplicates;
 
@@ -58,9 +60,9 @@ define( function( require ) {
     this.startedCallbacksForItemRemovedEmitter = new Emitter();
     this.endedCallbacksForItemRemovedEmitter = new Emitter();
 
-    options && options.tandem && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
+    options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {
-      options && options.tandem && options.tandem.removeInstance( this );
+      options.tandem.removeInstance( this );
     };
   }
 
