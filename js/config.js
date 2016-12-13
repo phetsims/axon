@@ -8,7 +8,6 @@ require.config( {
     PHET_CORE: '../../phet-core/js',
     ifphetio: '../../chipper/js/requirejs-plugins/ifphetio',
     TANDEM: '../../tandem/js',
-    PHETCOMMON: '../../phetcommon/js',
     text: '../../sherpa/lib/text-2.0.12',
     REPOSITORY: '..'
   },
