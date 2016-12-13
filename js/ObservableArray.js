@@ -41,7 +41,8 @@ define( function( require ) {
       phetioValueType: null
     }, options );
 
-    Tandem.validateOptions( options );
+    // TODO: Should we require tandems for all ObservableArrays?
+    // Tandem.validateOptions( options );
 
     this.allowDuplicates = options.allowDuplicates;
 
