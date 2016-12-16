@@ -17,7 +17,6 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
-  var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
   var TObservableArray = require( 'ifphetio!PHET_IO/types/axon/TObservableArray' );
