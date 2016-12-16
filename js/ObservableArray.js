@@ -37,7 +37,7 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      tandem: Tandem.createDefaultTandem( 'observableArray' ),
+      tandem: null,
       phetioValueType: null
     }, options );
 
@@ -61,9 +61,9 @@ define( function( require ) {
     this.startedCallbacksForItemRemovedEmitter = new Emitter();
     this.endedCallbacksForItemRemovedEmitter = new Emitter();
 
-    options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
+    options.tandem && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {
-      options.tandem.removeInstance( this );
+      options.tandem && options.tandem.removeInstance( this );
     };
   }
 
