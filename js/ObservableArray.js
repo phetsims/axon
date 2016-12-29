@@ -136,17 +136,6 @@ define( function( require ) {
       this._removedListeners.splice( index, 1 );
     },
 
-    /**
-     * Convenience function for adding both types of listeners in one shot.
-     * @param itemAddedListener
-     * @param itemRemovedListener
-     * @public
-     */
-    addListeners: function( itemAddedListener, itemRemovedListener ) {
-      this.addItemAddedListener( itemAddedListener );
-      this.addItemRemovedListener( itemRemovedListener );
-    },
-
     // @private Internal: called when an item is added.
     _fireItemAdded: function( item ) {
       this.startedCallbacksForItemAddedEmitter.emit1( item );
