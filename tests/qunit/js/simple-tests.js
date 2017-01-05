@@ -401,7 +401,7 @@
   } );
 
   test( 'BooleanProperty', function() {
-    window.assert && throws( function() {new BooleanProperty( 'hello' );}, 'invalid initial value for BooleanProperty' );
+    window.assert && throws( function() {new BooleanProperty( 'hello' );}, 'invalid initial value for BooleanProperty' ); // eslint-disable-line
     var c = new BooleanProperty( true );
     c.set( true );
     c.set( false );
@@ -419,7 +419,7 @@
 
     var property;
     window.assert && throws( function() {
-      new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } );
+      new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.validValues' );
     property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
@@ -428,7 +428,7 @@
     }, 'set an invalid value for Property with options.validValues' );
 
     window.assert && throws( function() {
-      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
+      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.isValidValue' );
 
     property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
