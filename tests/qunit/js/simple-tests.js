@@ -17,6 +17,8 @@
   var BooleanProperty = axon.BooleanProperty;
   var PropertySet = axon.PropertySet;
 
+  /* eslint-disable no-undef */
+
   test( 'Simple tests', function() {
 
     var person = new axon.PropertySet( { name: 'larry', age: '100' } );
@@ -456,4 +458,6 @@
     console.log( p.name );
     equal( p.name, 'Larry', 'Name should match' );
   } );
+
+  /* eslint-enable */
 })();

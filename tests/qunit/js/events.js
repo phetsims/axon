@@ -6,7 +6,7 @@
   module( 'Axon: Events' );
 
   test( 'Basics', function() {
-    var events = new axon.Events();
+    var events = new axon.Events(); // eslint-disable-line no-undef
 
     events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
@@ -49,7 +49,7 @@
   } );
 
   test( 'Static Basics', function() {
-    var events = new axon.Events();
+    var events = new axon.Events(); // eslint-disable-line no-undef
 
     events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
@@ -76,7 +76,7 @@
 
   test( 'Emitter Basics', function() {
     var stack = [];
-    var emitter = new axon.Emitter();
+    var emitter = new axon.Emitter(); // eslint-disable-line no-undef
     var a = function() {
       stack.push( 'a' );
       emitter.removeListener( b );
@@ -98,7 +98,7 @@
   test( 'Emitter Tricks', function() {
     var entries = [];
 
-    var emitter = new axon.Emitter();
+    var emitter = new axon.Emitter(); // eslint-disable-line no-undef
 
     var a = function( arg ) {
       entries.push( { listener: 'a', arg: arg } );
