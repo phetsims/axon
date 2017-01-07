@@ -1,6 +1,6 @@
 // Copyright 2016, University of Colorado Boulder
 
-function runAxonTests( pathToTestBase ) {
+function runAxonTests( pathToTestBase ) { // eslint-disable-line no-unused-vars
   'use strict';
 
   function loadTestFile( src ) {
