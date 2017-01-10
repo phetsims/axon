@@ -136,7 +136,7 @@ define( function( require ) {
       this._removedListeners.splice( index, 1 );
     },
 
-    // @private Internal: called when an item is added.
+    // @private called when an item is added.
     _fireItemAdded: function( item ) {
       this.startedCallbacksForItemAddedEmitter.emit1( item );
 
@@ -149,7 +149,7 @@ define( function( require ) {
       this.endedCallbacksForItemAddedEmitter.emit();
     },
 
-    // Internal: called when an item is removed.
+    // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
 
       this.startedCallbacksForItemRemovedEmitter.emit1( item );
