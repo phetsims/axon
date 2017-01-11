@@ -30,6 +30,7 @@ define( function( require ) {
   function TProperty( phetioValueType, options ) {
     assert && assert( phetioValueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(phetioValueType) );
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
+      assert && assert( property, 'Property should exist' );
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
@@ -118,6 +119,8 @@ define( function( require ) {
        * @returns {Object} - a state object
        */
       toStateObject: function( instance ) {
+        assert && assert( instance, 'instance should be defined' );
+        assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
         return phetioValueType.toStateObject( instance.value );
       },
 
