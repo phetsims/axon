@@ -29,12 +29,21 @@ define( function( require ) {
    */
   function TProperty( phetioValueType, options ) {
     assert && assert( phetioValueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(phetioValueType) );
+    options = _.extend( {
+
+      // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
+      // in the playback simulation.
+      phetioStateElement: true
+    }, options );
+
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
       assert && assert( property, 'Property should exist' );
       assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
+
+      this.phetioStateElement = options.phetioStateElement;
 
       toEventOnEmit(
         property.startedCallbacksForChangedEmitter,
@@ -92,6 +101,9 @@ define( function( require ) {
         documentation: 'Removes a listener'
       }
     }, {
+
+      phetioStateElement: options.phetioStateElement,
+
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
                      'traditional observer pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
