@@ -45,7 +45,11 @@ define( function( require ) {
       isValidValue: null,
 
       // A place to add annotation or notes for a property
-      phetioInstanceDocumentation: ''
+      phetioInstanceDocumentation: '',
+
+      // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
+      // in the playback simulation.
+      phetioStateElement: true
     }, options );
 
     // value validation
@@ -85,7 +89,10 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, { phetioInstanceDocumentation: options.phetioInstanceDocumentation } ) );
+    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, {
+      phetioInstanceDocumentation: options.phetioInstanceDocumentation,
+      phetioStateElement: options.phetioStateElement
+    } ) );
 
     // @private
     this.disposeProperty = function() {
