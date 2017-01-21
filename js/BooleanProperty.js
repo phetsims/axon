@@ -14,6 +14,9 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
 
+  // phet-io modules
+  var TBoolean = require( 'ifphetio!PHET_IO/types/TBoolean' );
+
   // constants
   /**
    * @param value
@@ -30,8 +33,10 @@ define( function( require ) {
    * @constructor
    */
   function BooleanProperty( value, options ) {
-
-    options = options || {};
+    assert && assert( !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
+    options = _.extend( {
+      phetioValueType: TBoolean
+    }, options );
     assert && assert( !options.validValues, 'BooleanProperty cannot use validValues' );
     assert && assert( !options.isValidValue, 'BooleanProperty implements its own isValidValue' );
     options.isValidValue = IS_BOOLEAN;
