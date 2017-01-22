@@ -33,7 +33,7 @@ define( function( require ) {
    * @constructor
    */
   function BooleanProperty( value, options ) {
-    assert && assert( !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
+    assert && assert( !options || !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
     options = _.extend( {
       phetioValueType: TBoolean
     }, options );
