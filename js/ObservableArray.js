@@ -327,6 +327,35 @@ define( function( require ) {
     },
 
     /**
+     * Count the number of itms in this ObservableArray that satisfy the given Predicate.
+     * @param {function} predicate
+     * @returns {number}
+     */
+    count: function( predicate ) {
+      var count = 0;
+      for ( var i = 0; i < this._array.length; i++ ) {
+        if ( predicate( this._array[ i ] ) ) {
+          count++;
+        }
+      }
+      return count;
+    },
+
+    /**
+     * If any item in the ObservableArray satisfies the predicate, return true.
+     * @param {function} predicate
+     * @returns {boolean}
+     */
+    anyElementMatchesPredicate: function( predicate ) {
+      for ( var i = 0; i < this._array.length; i++ ) {
+        if ( predicate( this._array[ i ] ) ) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
      * Same as foldLeft.  In underscore this is called _.reduce aka _.foldl or _.inject
      * @param value
