@@ -41,7 +41,6 @@ define( function( require ) {
     }, options );
 
     // TODO: Should we require tandems for all ObservableArrays?
-    // Tandem.validateOptions( options );
 
     this.allowDuplicates = options.allowDuplicates;
 
