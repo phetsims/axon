@@ -28,6 +28,8 @@ define( function( require ) {
    */
   function ObservableArray( array, options ) {
 
+    var self = this;
+
     // Special case that the user supplied options but no array
     if ( array instanceof Object && !(array instanceof Array) ) {
       options = array;
@@ -61,7 +63,7 @@ define( function( require ) {
 
     options.tandem && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {
-      options.tandem && options.tandem.removeInstance( this );
+      options.tandem && options.tandem.removeInstance( self );
     };
   }
 

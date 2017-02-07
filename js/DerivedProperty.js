@@ -86,7 +86,7 @@ define( function( require ) {
     options.tandem && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ) );
 
     this.disposeDerivedProperty = function() {
-      options.tandem && options.tandem.removeInstance( this );
+      options.tandem && options.tandem.removeInstance( self );
     };
   }
 
