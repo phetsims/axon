@@ -354,6 +354,7 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
+      //TODO This should be calling Events.prototype.dispose.call(this), but we decided not to touch it, see https://github.com/phetsims/scenery/issues/601
       for ( var i = 0; i < this.keys.length; i++ ) {
         this[ this.keys[ i ] + SUFFIX ].dispose();
       }
