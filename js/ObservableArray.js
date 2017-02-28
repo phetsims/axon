@@ -44,7 +44,7 @@ define( function( require ) {
 
     // TODO: Should we require tandems for all ObservableArrays?
 
-    this.allowDuplicates = options.allowDuplicates;
+    this.allowDuplicates = options.allowDuplicates; // @private
 
     this._array = array || []; // @private internal, do not access directly
     this._addedListeners = []; // @private listeners called when an item is added
@@ -328,9 +328,10 @@ define( function( require ) {
     },
 
     /**
-     * Count the number of itms in this ObservableArray that satisfy the given Predicate.
+     * Count the number of items in this ObservableArray that satisfy the given Predicate.
      * @param {function} predicate
      * @returns {number}
+     * @public
      */
     count: function( predicate ) {
       var count = 0;
@@ -346,6 +347,7 @@ define( function( require ) {
      * If any item in the ObservableArray satisfies the predicate, return true.
      * @param {function} predicate
      * @returns {boolean}
+     * @public
      */
     anyElementMatchesPredicate: function( predicate ) {
       for ( var i = 0; i < this._array.length; i++ ) {
@@ -358,7 +360,7 @@ define( function( require ) {
 
     /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
-     * Same as foldLeft.  In underscore this is called _.reduce aka _.foldl or _.inject
+     * Same as foldLeft.  In underscore this is called _.reduce aka _.fold or _.inject
      * @param value
      * @param combiner
      * @returns {*}
@@ -388,6 +390,7 @@ define( function( require ) {
      * @param {Object} [item2] - an item to add
      * @param {Object} [etc] - varargs items to add etc.
      * @return {Object[]} the items that were deleted.
+     * @public
      */
     splice: function( start, deleteCount, item1, item2, etc ) {
       var deleted = this._array.splice.apply( this._array, arguments );
