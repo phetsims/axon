@@ -159,7 +159,8 @@ define( function( require ) {
 
           // Both defined
           if ( a && b ) {
-
+            assert && assert( !!a.equals, 'no equals function for 1st arg' );
+            assert && assert( !!b.equals, 'no equals function for 2nd arg' );
             assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
             return a.equals( b );
           }
