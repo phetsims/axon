@@ -51,14 +51,19 @@ define( function( require ) {
       // in the playback simulation.
       phetioStateElement: true,
 
-      // Specifies whether to use the values' `equals` method or `===`
+      // useDeepEquality: true => Use the `equals` method on the values
+      // useDeepEquality: false => Use === for equality test
       useDeepEquality: false
     }, options );
 
     // value validation
     assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
 
+    // @public (read-only) whether to use the values' equals method or === equality
+    // useDeepEquality: true => Use the `equals` method on the values
+    // useDeepEquality: false => Use === for equality test
     this.useDeepEquality = options.useDeepEquality;
+
     this.isValidValue = options.isValidValue; // @private
     if ( !this.isValidValue && options.validValues ) {
 
