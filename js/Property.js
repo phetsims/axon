@@ -152,8 +152,13 @@ define( function( require ) {
 
       /**
        * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
-       * wrapped value changes, and whether onValue is triggered.  A different implementation can be provided by
-       * subclasses or instances to change the equals definition. See #10 and #73
+       * wrapped value changes, and whether onValue is triggered.
+       *
+       * useDeepEquality: true => Use the `equals` method on the values
+       * useDeepEquality: false => Use === for equality test
+       *
+       * Alternatively different implementation can be provided by subclasses or instances to change the equals
+       * definition. See #10 and #73 and #115
        * @param {Object} a - should have the same type as Property element type
        * @param {Object} b - should have the same type as Property element type
        * @returns {boolean}
