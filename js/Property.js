@@ -49,11 +49,16 @@ define( function( require ) {
 
       // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
       // in the playback simulation.
-      phetioStateElement: true
+      phetioStateElement: true,
+
+      // Specifies whether to use the values' `equals` method or `===`
+      useDeepEquality: false
     }, options );
 
     // value validation
     assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+
+    this.useDeepEquality = options.useDeepEquality;
     this.isValidValue = options.isValidValue; // @private
     if ( !this.isValidValue && options.validValues ) {
 
@@ -150,7 +155,25 @@ define( function( require ) {
        * @public
        */
       areValuesEqual: function( a, b ) {
-        return a === b;
+        if ( this.useDeepEquality ) {
+
+          // Both defined
+          if ( a && b ) {
+
+            assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
+            return a.equals( b );
+          }
+          else {
+
+            // handle comparing null to undefined, or defined values to null, etc.
+            return a === b;
+          }
+        }
+        else {
+
+          // Use triple equal equality check (reference equality for objects, value equality for primitives)
+          return a === b;
+        }
       },
 
       // @public
