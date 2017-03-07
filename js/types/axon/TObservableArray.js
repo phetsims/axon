@@ -36,16 +36,21 @@ define( function( require ) {
 
       /**
        * @param item
-       * @returns {{item: Object}} - returns the stateObject of child item
+       * @returns {Object} - returns the stateObject of child item
        */
-      var itemToStateObject = function( item ) {
+      var formatForDataStream = function( item ) {
 
-        assert && assert( !!elementType.toStateObject, elementType.typeName + '.toStateObject is undefined' );
+        // Supply phetioID if it is available
+        var result = { phetioID: item.phetioID };
 
-        return { item: elementType.toStateObject( item ) };
+        // Supply state if it is available
+        if ( elementType.toStateObject ) {
+          result.state = elementType.toStateObject( item );
+        }
+        return result;
       };
-      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemAdded', itemToStateObject );
-      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', itemToStateObject );
+      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemAdded', formatForDataStream );
+      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', formatForDataStream );
     };
     return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {}, {
       documentation: 'An array that sends notifications when its values have changed.',
