@@ -31,7 +31,7 @@ define( function( require ) {
   function TProperty( phetioValueType, options ) {
 
     // Only active for PhET-iO, prevent false positive errors when running in other brands
-    if ( phet.chipper.brand !== 'phet-io' ) {
+    if ( !window.phet || !phet.chipper || phet.chipper.brand !== 'phet-io' ) {
       return;
     }
     assert && assert( phetioValueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(phetioValueType) );
