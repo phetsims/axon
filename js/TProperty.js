@@ -9,14 +9,15 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var axon = require( 'AXON/axon' );
+
+  // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var axon = require( 'AXON/axon' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
-  var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
 
   /**
@@ -43,7 +44,7 @@ define( function( require ) {
 
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
       assert && assert( property, 'Property should exist' );
-      assert && assert( StringUtils.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
+      assert && assert( _.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
