@@ -28,6 +28,9 @@ define( function( require ) {
    * @constructor
    */
   function TDerivedProperty( phetioValueType ) {
+    if ( phet.chipper.brand !== 'phet-io' ) {
+      return;
+    }
     assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
 
     /**
