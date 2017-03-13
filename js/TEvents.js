@@ -10,14 +10,14 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
-  var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
-  var TObject = require( 'PHET_IO/types/TObject' );
-  var TString = require( 'PHET_IO/types/TString' );
-  var TVoid = require( 'PHET_IO/types/TVoid' );
-  var phetioEvents = require( 'PHET_IO/phetioEvents' );
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var axon = require( 'AXON/axon' );
+  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
+  var TString = require( 'ifphetio!PHET_IO/types/TString' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
 
   /**
    * Parametric wrapper type constructor.  Given an events type, this function returns an appropriate events wrapper type.
@@ -103,7 +103,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'TEvents', TEvents );
+  axon.register( 'TEvents', TEvents );
 
   return TEvents;
 } );

@@ -15,9 +15,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-
-  // phet-io modules
-  var TDerivedProperty = require( 'ifphetio!PHET_IO/types/axon/TDerivedProperty' );
+  var TDerivedProperty = require( 'AXON/TDerivedProperty' );
 
   function equalsFunction( a, b ) {
     return a === b;

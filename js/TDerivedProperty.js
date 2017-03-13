@@ -10,13 +10,15 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
-  var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
-  var TObject = require( 'PHET_IO/types/TObject' );
-  var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
-  var TVoid = require( 'PHET_IO/types/TVoid' );
+  var axon = require( 'AXON/axon' );
+
+  // phet-io modules
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
+  var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
@@ -109,7 +111,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'TDerivedProperty', TDerivedProperty );
+  axon.register( 'TDerivedProperty', TDerivedProperty );
 
   return TDerivedProperty;
 } );
