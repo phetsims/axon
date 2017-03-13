@@ -14,7 +14,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
-  var TProperty = require( 'AXON/TProperty' );
+  var TProperty = require( 'ifphetio!AXON/TProperty' );
 
   /**
    * @param {*} value - the initial value of the property
