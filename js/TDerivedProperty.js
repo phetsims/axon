@@ -41,6 +41,9 @@ define( function( require ) {
      * @constructor
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
+
+      // This breaks the hierarchy of DerivedProperty (which extends Property) because we do not want the phet-io api to
+      // show that you can 'set' a DerivedProperty just to get an error back.
       TObject.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
 
