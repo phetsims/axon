@@ -18,11 +18,11 @@ define( function( require ) {
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
-   * @param {TObject} elementType - wrapper type of the DerivedProperty
+   * @param {TObject} elementType - wrapper type of the DerivedProperty. If loaded by phet (not phet-io)
+   *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
   function TObservableArray( elementType ) {
-    assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
 
     /**
      * This type constructor is parameterized based on the instance of Events.
@@ -31,6 +31,8 @@ define( function( require ) {
      * @constructor
      */
     var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
+      assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
+
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
 

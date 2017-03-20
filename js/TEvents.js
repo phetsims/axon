@@ -34,7 +34,8 @@ define( function( require ) {
    *      purchasedSolute: [ { arg: 'solute', type: Solute } ],
    *      personAteLunch: [] } )
    *
-   * @param events {Object} - wrapper type of Events: {event1:[{argName:argName,argType:argType},{}},...}
+   * @param events {Object} - wrapper type of Events: {event1:[{argName:argName,argType:argType},{}},...}. If loaded by
+   *                          phet (not phet-io) argTypes will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
   function TEvents( events ) {

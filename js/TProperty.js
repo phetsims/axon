@@ -22,7 +22,8 @@ define( function( require ) {
 
   /**
    * An observable property that triggers notifications when the value changes.
-   * @param phetioValueType
+   * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
+   *                                     'ifphetio!' plugin.
    * @param options
    * @returns {*}
    * @module TProperty
@@ -30,11 +31,6 @@ define( function( require ) {
    */
   function TProperty( phetioValueType, options ) {
 
-    // Only active for PhET-iO, prevent false positive errors when running in other brands
-    if ( !window.phet || !phet.chipper || phet.chipper.brand !== 'phet-io' ) {
-      return;
-    }
-    assert && assert( phetioValueType.typeName, 'TProperty can only wrap types, but you passed a ' + typeof(phetioValueType) );
     options = _.extend( {
 
       // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
@@ -43,6 +39,7 @@ define( function( require ) {
     }, options );
 
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
+      assert && assert( !!phetioValueType, 'TProperty needs phetioValueType' );
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 

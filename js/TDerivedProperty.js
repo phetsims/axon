@@ -23,15 +23,12 @@ define( function( require ) {
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
    *
-   * @param {function} phetioValueType - phet-io type wrapper like TString, TNumber, etc.
+   * @param {function} phetioValueType - phet-io type wrapper like TString, TNumber, etc. If loaded by phet (not phet-io)
+   *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @returns {*}
    * @constructor
    */
   function TDerivedProperty( phetioValueType ) {
-    if ( phet.chipper.brand !== 'phet-io' ) {
-      return;
-    }
-    assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
 
     /**
      * This type constructor is parameterized based on the phetioValueType.
@@ -41,6 +38,7 @@ define( function( require ) {
      * @constructor
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
+      assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
 
       // This breaks the hierarchy of DerivedProperty (which extends Property) because we do not want the phet-io api to
       // show that you can 'set' a DerivedProperty just to get an error back.
