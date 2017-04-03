@@ -15,10 +15,8 @@ define( function( require ) {
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var TProperty = require( 'AXON/TProperty' );
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
@@ -30,63 +28,31 @@ define( function( require ) {
    */
   function TDerivedProperty( phetioValueType ) {
 
+    // The parent type is also parameterized, so we have to instantiate it before we can extend it.
+    var TPropertyImpl = new TProperty( phetioValueType );
+
     /**
      * This type constructor is parameterized based on the phetioValueType.
      *
-     * @param property {DerivedProperty}
+     * @param {DerivedProperty} property
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
 
-      // This breaks the hierarchy of DerivedProperty (which extends Property) because we do not want the phet-io api to
-      // show that you can 'set' a DerivedProperty just to get an error back.
-      TObject.call( this, property, phetioID );
+      TPropertyImpl.call( this, property, phetioID );
       assertInstanceOf( property, phet.axon.DerivedProperty );
-
-      toEventOnEmit(
-        property.startedCallbacksForChangedEmitter,
-        property.endedCallbacksForChangedEmitter,
-        'model',
-        phetioID,
-        TDerivedProperty( phetioValueType ),
-        'changed',
-        function( newValue, oldValue ) {
-          return {
-            oldValue: phetioValueType.toStateObject( oldValue ),
-            newValue: phetioValueType.toStateObject( newValue )
-          };
-        } );
     };
-    return phetioInherit( TObject, 'TDerivedProperty', TDerivedPropertyImpl, {
+    return phetioInherit( TPropertyImpl, 'TDerivedProperty', TDerivedPropertyImpl, {
 
-      getValue: {
-        returnType: phetioValueType,
-        parameterTypes: [],
-        implementation: function() {
-          return this.instance.get();
-        },
-        documentation: 'Gets the current value'
-      },
-
-      unlink: {
+      setValue: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
-        implementation: function( listener ) {
-          this.instance.unlink( listener );
+        parameterTypes: [ phetioValueType ],
+        implementation: function( value ) {
+          return this.instance.set( value );
         },
-        documentation: 'Removes a listener that was added with link'
-      },
-
-      link: {
-        returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
-        implementation: function( listener ) {
-          this.instance.link( listener );
-        },
-        documentation: 'Adds a listener which will receive notifications when the value changes and an immediate callback' +
-                       ' with the current value upon linking.'
+        documentation: 'Errors out when you try to set a derived property.'
       }
     }, {
       documentation: 'Like TProperty, but not settable.  Instead it is derived from other TDerivedProperty or TProperty ' +

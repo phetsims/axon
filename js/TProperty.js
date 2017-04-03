@@ -53,7 +53,7 @@ define( function( require ) {
         property.endedCallbacksForChangedEmitter,
         'model',
         phetioID,
-        TProperty( phetioValueType, options ),
+        this.constructor,
         'changed',
         function( newValue, oldValue ) {
           return {
