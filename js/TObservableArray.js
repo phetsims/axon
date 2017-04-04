@@ -51,8 +51,8 @@ define( function( require ) {
         }
         return result;
       };
-      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemAdded', formatForDataStream );
-      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, TObservableArray( elementType ), 'itemRemoved', formatForDataStream );
+      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, this.constructor, 'itemAdded', formatForDataStream );
+      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, this.constructor, 'itemRemoved', formatForDataStream );
     };
     return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {}, {
       documentation: 'An array that sends notifications when its values have changed.',
