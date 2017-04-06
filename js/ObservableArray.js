@@ -387,7 +387,7 @@ define( function( require ) {
      * @param {Object} [item1] - an item to add
      * @param {Object} [item2] - an item to add
      * @param {Object} [etc] - varargs items to add etc.
-     * @return {Object[]} the items that were deleted.
+     * @returns {Object[]} the items that were deleted.
      * @public
      */
     splice: function( start, deleteCount, item1, item2, etc ) {

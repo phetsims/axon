@@ -121,7 +121,7 @@ define( function( require ) {
 
       /**
        * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
-       * @return {*}
+       * @returns {*}
        * @public
        */
       get: function() {
