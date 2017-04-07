@@ -10,11 +10,16 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var axon = require( 'AXON/axon' );
+
+  // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var axon = require( 'AXON/axon' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
+  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
@@ -54,11 +59,54 @@ define( function( require ) {
       toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, this.constructor, 'itemAdded', formatForDataStream );
       toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, this.constructor, 'itemRemoved', formatForDataStream );
     };
-    return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {}, {
-      documentation: 'An array that sends notifications when its values have changed.',
-      elementType: elementType,
-      events: [ 'itemAdded', 'itemRemoved' ]
-    } );
+    return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {
+
+        /**
+         * Adds a listener to the observable array.
+         * @param listener
+         * @public
+         */
+        addItemAddedListener: {
+          returnType: TVoid,
+          parameterTypes: [ TFunctionWrapper( TVoid, [ elementType ] ) ],
+          implementation: function( listener ) {
+            this.instance.addItemAddedListener( listener );
+          },
+          documentation: 'Add a listener that is called when an item is added to the observable array.'
+        },
+
+        /**
+         * Removes a listener that was added via addItemAddedListener.
+         * @param listener
+         * @public
+         */
+        addItemRemovedListener: {
+          returnType: TVoid,
+          parameterTypes: [ TFunctionWrapper( TVoid, [ elementType ] ) ],
+          implementation: function( listener ) {
+            this.instance.addItemRemovedListener( listener );
+          },
+          documentation: 'Add a listener that is called when an item is removed from the observable array.'
+        },
+
+        /**
+         * Get the number of electrons currently in the array.
+         */
+        getLength:{
+          returnType: TNumber,
+          parameterTypes: [],
+          implementation: function(){
+            return this.instance.length;
+          },
+          documentation: 'Get the number of elements in the observable array'
+        }
+      },
+
+      {
+        documentation: 'An array that sends notifications when its values have changed.',
+        elementType: elementType,
+        events: [ 'itemAdded', 'itemRemoved' ]
+      } );
   }
 
   axon.register( 'TObservableArray', TObservableArray );
