@@ -95,6 +95,15 @@ define( function( require ) {
                        'immediate callback with the current value.'
       },
 
+      lazyLink: {
+        returnType: TVoid,
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
+        implementation: function( listener ) {
+          this.instance.lazyLink( listener );
+        },
+        documentation: 'Add a listener which will be called when the value changes, but not for the initial value.'
+      },
+
       unlink: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
