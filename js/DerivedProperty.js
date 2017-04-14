@@ -29,14 +29,6 @@ define( function( require ) {
     return value || property.value;
   }
 
-  function addWithProperty( value, property ) {
-    return value + property.value;
-  }
-
-  function multiplyWithProperty( value, property ) {
-    return value * property.value;
-  }
-
   /**
    * @param {Property[]} dependencies - properties that this property's value is derived from
    * @param {function} derivation - function that derives this property's value, expects args in the same order as dependencies
