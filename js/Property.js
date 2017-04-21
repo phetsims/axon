@@ -105,6 +105,14 @@ define( function( require ) {
     // @private
     this.disposeProperty = function() {
 
+      // Remove any transient listeners that cannot be removed synchronously, see https://github.com/phetsims/phet-io/issues/991
+      var listeners = self.changedEmitter.listeners.slice(); // Shallow copy array since we'll be modifying the original
+      for ( var i = 0; i < listeners.length; i++ ) {
+        if ( listeners[ i ].PHET_IO_FUNCTION ) {
+          self.unlink( listeners[ i ] );
+        }
+      }
+
       // Make sure there were no remaining observers.  If there are observers at disposal time, there may be a latent
       // memory leak, see #77
       assert && assert(
