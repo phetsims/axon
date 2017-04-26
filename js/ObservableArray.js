@@ -20,7 +20,7 @@ define( function( require ) {
   var TObservableArray = require( 'AXON/TObservableArray' );
 
   /**
-   * @param {Object[]} array
+   * @param {Object[]} [array]
    * @param {Object} [options]
    * @constructor
    */
