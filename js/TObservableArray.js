@@ -92,10 +92,10 @@ define( function( require ) {
         /**
          * Get the number of electrons currently in the array.
          */
-        getLength:{
-          returnType: TNumber(),
+        getLength: {
+          returnType: TNumber( { type: 'Integer' } ),
           parameterTypes: [],
-          implementation: function(){
+          implementation: function() {
             return this.instance.length;
           },
           documentation: 'Get the number of elements in the observable array'
