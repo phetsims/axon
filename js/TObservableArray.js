@@ -93,7 +93,7 @@ define( function( require ) {
          * Get the number of electrons currently in the array.
          */
         getLength:{
-          returnType: TNumber,
+          returnType: TNumber(),
           parameterTypes: [],
           implementation: function(){
             return this.instance.length;
