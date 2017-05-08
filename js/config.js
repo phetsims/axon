@@ -5,7 +5,9 @@ require.config( {
 
   paths: {
     AXON: '.',
-    BRAND: '../../' + phet.chipper.brand + '/js',
+
+    // Needs to be compatible in the sim, and also with scenery unit tests.
+    BRAND: '../../brand/' + (window.phet && phet.chipper && phet.chipper.brand ? phet.chipper.brand : 'adapted-from-phet') + '/js',
     PHET_CORE: '../../phet-core/js',
     ifphetio: '../../chipper/js/requirejs-plugins/ifphetio',
     TANDEM: '../../tandem/js',
