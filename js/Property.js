@@ -15,6 +15,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
   var TProperty = require( 'AXON/TProperty' );
+  var Brand = require( 'BRAND/Brand' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -77,7 +78,7 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    if ( window.phet && phet.chipper && phet.chipper.brand === 'phet-io' && options.tandem ) {
+    if ( Brand.phetioEnabled && options.tandem ) {
       assert && assert( !!options.phetioValueType,
         'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
     }

@@ -5,6 +5,7 @@ require.config( {
 
   paths: {
     AXON: '.',
+    BRAND: '../../' + phet.chipper.brand + '/js',
     PHET_CORE: '../../phet-core/js',
     ifphetio: '../../chipper/js/requirejs-plugins/ifphetio',
     TANDEM: '../../tandem/js',
