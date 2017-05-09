@@ -15,7 +15,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
   var TProperty = require( 'AXON/TProperty' );
-  var Brand = require( 'BRAND/Brand' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -78,10 +78,8 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    if ( Brand.phetioEnabled && options.tandem ) {
-      assert && assert( !!options.phetioValueType,
-        'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
-    }
+    Tandem.validationEnabled() && options.tandem && assert && assert( !!options.phetioValueType,
+      'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // @public (read-only) Emitters that indicate the start/end of processing callbacks for a change.  Also used for PhET-iO data stream
     this.startedCallbacksForChangedEmitter = new Emitter();
