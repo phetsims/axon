@@ -32,7 +32,7 @@ define( function( require ) {
     }
 
     options = _.extend( {
-      tandem: null, // {Tandem | null}
+      tandem: Tandem.tandemOptional(),
       phetioValueType: null, // {function | null} phet-io type wrapper like TString, TNumber, etc.
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
@@ -78,7 +78,7 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && options.tandem && assert && assert( !!options.phetioValueType,
+    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioValueType,
       'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // @public (read-only) Emitters that indicate the start/end of processing callbacks for a change.  Also used for PhET-iO data stream
@@ -96,7 +96,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TProperty( options.phetioValueType, {
+    options.tandem.supplied && options.tandem.addInstance( this, TProperty( options.phetioValueType, {
       phetioInstanceDocumentation: options.phetioInstanceDocumentation,
       phetioStateElement: options.phetioStateElement
     } ) );

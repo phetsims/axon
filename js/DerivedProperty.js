@@ -16,6 +16,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var TDerivedProperty = require( 'AXON/TDerivedProperty' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   function equalsFunction( a, b ) {
     return a === b;
@@ -37,7 +38,9 @@ define( function( require ) {
    */
   function DerivedProperty( dependencies, derivation, options ) {
 
-    options = options || {};
+    options = _.extend( {
+      tandem: Tandem.tandemOptional()
+    }, options );
 
     this.dependencies = dependencies; // @private
 
@@ -69,7 +72,7 @@ define( function( require ) {
     }
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ) );
+    options.tandem.supplied && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ) );
 
     this.disposeDerivedProperty = function() {
       options.tandem && options.tandem.removeInstance( self );
