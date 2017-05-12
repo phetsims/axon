@@ -18,6 +18,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
   var TObservableArray = require( 'AXON/TObservableArray' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {Object[]} [array]
@@ -36,7 +37,7 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      tandem: null,
+      tandem: Tandem.tandemOptional(),
       phetioValueType: null
     }, options );
 
@@ -59,9 +60,9 @@ define( function( require ) {
     this.startedCallbacksForItemRemovedEmitter = new Emitter();
     this.endedCallbacksForItemRemovedEmitter = new Emitter();
 
-    options.tandem && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
+    options.tandem.supplied && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {
-      options.tandem && options.tandem.removeInstance( self );
+      options.tandem.supplied && options.tandem.removeInstance( self );
     };
   }
 
