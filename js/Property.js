@@ -118,7 +118,7 @@ define( function( require ) {
         self.changedEmitter.listeners.length === 0,
         'during disposal, expected 0 observers, actual = ' + self.changedEmitter.listeners.length
       );
-      options.tandem && options.tandem.removeInstance( self );
+      options.tandem.supplied && options.tandem.removeInstance( self );
     };
   }
 
