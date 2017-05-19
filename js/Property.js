@@ -14,8 +14,8 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
   var Multilink = require( 'AXON/Multilink' );
-  var TProperty = require( 'AXON/TProperty' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TProperty = require( 'AXON/TProperty' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -104,20 +104,10 @@ define( function( require ) {
     // @private
     this.disposeProperty = function() {
 
-      // Remove any transient listeners that cannot be removed synchronously, see https://github.com/phetsims/phet-io/issues/991
-      var listeners = self.changedEmitter.listeners.slice(); // Shallow copy array since we'll be modifying the original
-      for ( var i = 0; i < listeners.length; i++ ) {
-        if ( listeners[ i ].PHET_IO_FUNCTION ) {
-          self.unlink( listeners[ i ] );
-        }
-      }
+      // remove any listeners that are still attached to this property
+      self.changedEmitter.listeners.length = 0;
 
-      // Make sure there were no remaining observers.  If there are observers at disposal time, there may be a latent
-      // memory leak, see #77
-      assert && assert(
-        self.changedEmitter.listeners.length === 0,
-        'during disposal, expected 0 observers, actual = ' + self.changedEmitter.listeners.length
-      );
+      // remove tandem instance
       options.tandem.supplied && options.tandem.removeInstance( self );
     };
   }
