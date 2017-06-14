@@ -374,7 +374,7 @@ define( function( require ) {
 
     /**
      * Return the underlying array
-     * @returns {*|Array}
+     * @returns {Array}
      * @public
      */
     getArray: function() {
