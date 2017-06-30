@@ -110,7 +110,7 @@ define( function( require ) {
       self.changedEmitter.listeners.length = 0;
 
       // remove tandem instance
-      options.tandem.removeInstance( self );https://github.com/phetsims/axon/issues/122
+      options.tandem.removeInstance( self );
     };
   }
 
