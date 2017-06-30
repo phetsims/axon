@@ -16,6 +16,7 @@ define( function( require ) {
   var Multilink = require( 'AXON/Multilink' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TProperty = require( 'AXON/TProperty' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -95,8 +96,9 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
-    // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem.supplied && options.tandem.addInstance( this, TProperty( options.phetioValueType, {
+    // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
+    // unsupplied. This causes downstream errors in TProperty.
+    options.tandem.addInstance( this, TProperty( options.phetioValueType || TVoid, {
       phetioInstanceDocumentation: options.phetioInstanceDocumentation,
       phetioStateElement: options.phetioStateElement
     } ) );
@@ -108,7 +110,7 @@ define( function( require ) {
       self.changedEmitter.listeners.length = 0;
 
       // remove tandem instance
-      options.tandem.supplied && options.tandem.removeInstance( self );
+      options.tandem.removeInstance( self );https://github.com/phetsims/axon/issues/122
     };
   }
 
