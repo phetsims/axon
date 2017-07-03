@@ -4,17 +4,17 @@
  * Creates a Property that does synchronization of values with a swappable Property that itself can change.
  * Handles the case where you need a Property that can switch between acting like multiple other properties.
  *
- * With no other options specified, the value of this property is:
+ * With no other options specified, the value of this Property is:
  * - null, if valuePropertyProperty.value === null
  * - valuePropertyProperty.value.value otherwise
  *
- * The value of this property (generalized, with the options available) is:
+ * The value of this Property (generalized, with the options available) is:
  * - derive( defaultValue ), if valuePropertyProperty.value === null
  * - map( derive( valuePropertyProperty.value ).value ) otherwise
  *
  * Generally, this DynamicProperty uses one-way synchronization (it only listens to the source), but if the
- * 'bidirectional' option is true, it will use two-way synchronization (changes to this property will change the active
- * source). Thus when this property changes value (when bidirectional is true), it will set:
+ * 'bidirectional' option is true, it will use two-way synchronization (changes to this Property will change the active
+ * source). Thus when this Property changes value (when bidirectional is true), it will set:
  * - derive( valuePropertyProperty.value ).value = inverseMap( this.value ), if valuePropertyProperty.value !== null
  *
  *******************************
@@ -34,16 +34,16 @@
  *   backgroundFill.value; // Color.BLUE - It's the secondProperty's value
  *
  *   secondProperty.value = Color.MAGENTA;
- *   backgroundFill.value; // Color.MAGENTA - Yes, it's listening to the other property now.
+ *   backgroundFill.value; // Color.MAGENTA - Yes, it's listening to the other Property now.
  *
- * Also supports falling back to null if our main property is set to null:
+ * Also supports falling back to null if our main Property is set to null:
  *   currentProperty.value = null;
  *   backgroundFill.value; // null
  *
  *******************************
  * 'derive' option
  *******************************
- * Additionally, DynamicProperty supports the ability to derive the property value from our main property's value.
+ * Additionally, DynamicProperty supports the ability to derive the Property value from our main Property's value.
  * For example, say you have multiple scenes each with the type:
  *   scene: {
  *     backgroundColorProperty: {Property.<Color>}
@@ -63,7 +63,7 @@
  *******************************
  * 'bidirectional' option
  *******************************
- * If you would like for direct changes to this property to change the original source (bidirectional synchronization),
+ * If you would like for direct changes to this Property to change the original source (bidirectional synchronization),
  * then pass bidirectional:true:
  *   var firstProperty = new Property( 5 );
  *   var secondProperty = new Property( 10 );
@@ -71,11 +71,11 @@
  *   var dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } );
  *   dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
  *   firstProperty.value; // 2
- *   numberPropertyProperty.value = secondProperty; // change which property is active
- *   dynamicProperty.value; // 10, from the new property
+ *   numberPropertyProperty.value = secondProperty; // change which Property is active
+ *   dynamicProperty.value; // 10, from the new Property
  *   dynamicProperty.value = 0;
  *   secondProperty.value; // 0, set above.
- *   firstProperty.value; // still 2 from above, since our dynamic property switched to the other property
+ *   firstProperty.value; // still 2 from above, since our dynamic Property switched to the other Property
  *
  *******************************
  * 'map' and 'inverseMap' options
@@ -91,7 +91,7 @@
  *     map: function( number ) { return '' + number; },
  *     inverseMap: function( string ) { return Number.parseFloat( string ); }
  *   } );
- * so that changes to the dynamic property will result in a change in the numberPropertyProperty's value.
+ * so that changes to the dynamic Property will result in a change in the numberPropertyProperty's value.
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
@@ -115,20 +115,20 @@ define( function( require ) {
   function DynamicProperty( valuePropertyProperty, options ) {
 
     options = _.extend( {
-      // {boolean} - If set to true then changes to this property (if valuePropertyProperty.value is non-null at the
+      // {boolean} - If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the
       //             time) will also be made to derive( valuePropertyProperty.value ).
       bidirectional: false,
 
       // {*} - If valuePropertyProperty.value === null, this dynamicProperty will act instead like
       //       derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map
-      //       function is provided, it will be applied to this defaultValue to determine our property's value.
+      //       function is provided, it will be applied to this defaultValue to determine our Property's value.
       defaultValue: null,
 
       // {function|string} - Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level
       //                     documentation for usage. Uses the Lodash path specification (if it's a string).
       derive: _.identity,
 
-      // {function|string} - Maps our input property value to/from this property's value. See top-level documentation
+      // {function|string} - Maps our input Property value to/from this Property's value. See top-level documentation
       //                     for usage. Uses the Lodash path specification (if it's a string).
       map: _.identity,
       inverseMap: _.identity
@@ -151,7 +151,7 @@ define( function( require ) {
     this.map = typeof options.map === 'string' ? _.property( options.map ) : options.map;
     this.inverseMap = typeof options.inverseMap === 'string' ? _.property( options.inverseMap ) : options.inverseMap;
 
-    // Use the property's initial value
+    // Use the Property's initial value
     var initialValue;
     if ( this.valuePropertyProperty.value === null ) {
       initialValue = this.map( this.defaultValue );
@@ -169,7 +169,7 @@ define( function( require ) {
     // @private {function}
     this.propertyListener = this.onPropertyChange.bind( this );
 
-    // Rehook our listener to whatever is the active property.
+    // Rehook our listener to whatever is the active Property.
     valuePropertyProperty.link( this.propertyListener );
 
     // If we aren't bidirectional, we should never add this listener.
@@ -228,7 +228,7 @@ define( function( require ) {
     },
 
     /**
-     * Disposes this property
+     * Disposes this Property
      * @public
      */
     dispose: function() {
@@ -242,7 +242,7 @@ define( function( require ) {
     },
 
     /**
-     * Prevent setting this property manually
+     * Prevent setting this Property manually
      * @public
      * @override
      *
