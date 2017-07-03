@@ -16,4 +16,5 @@ function runAxonTests( pathToTestBase ) { // eslint-disable-line no-unused-vars
 
   loadTestFile( 'js/simple-tests.js' );
   loadTestFile( 'js/events.js' );
+  loadTestFile( 'js/dynamic-property.js' );
 }
