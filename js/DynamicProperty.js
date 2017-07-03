@@ -2,7 +2,7 @@
 
 /**
  * Creates a Property that does synchronization of values with a swappable Property that itself can change.
- * Handles the case where you need a Property that can switch between acting like multiple other properties.
+ * Handles the case where you need a Property that can switch between acting like multiple other Properties.
  *
  * With no other options specified, the value of this Property is:
  * - null, if valuePropertyProperty.value === null
