@@ -2,7 +2,7 @@
 
 /**
  * An observable array of items.
- * <p>
+ *
  * Because the array is observable, we must be careful about the possibility of concurrent-modification errors.
  * Any time we iterate over the array, we must iterate over a copy, because callback may be modifying the array.
  *
