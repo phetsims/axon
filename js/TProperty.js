@@ -86,7 +86,7 @@ define( function( require ) {
 
       link: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -96,7 +96,7 @@ define( function( require ) {
 
       lazyLink: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
+        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
