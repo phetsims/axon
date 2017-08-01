@@ -116,7 +116,7 @@ define( function( require ) {
       phetioStateElement: options.phetioStateElement,
 
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
-                     'traditional observer pattern in that listeners also receive a callback with the current value ' +
+                     'traditional listener pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
       valueType: phetioValueType,
       events: [ 'changed' ],

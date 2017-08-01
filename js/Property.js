@@ -1,7 +1,7 @@
 // Copyright 2013-2016, University of Colorado Boulder
 
 /**
- * An observable property which notifies registered observers when the value changes.
+ * An observable property which notifies listeners when the value changes.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
@@ -128,7 +128,7 @@ define( function( require ) {
       },
 
       /**
-       * Sets the value and notifies registered observers.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
+       * Sets the value and notifies listeners.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
        * If the value hasn't changed, this is a no-op.
        *
        * @param {*} value
@@ -137,7 +137,7 @@ define( function( require ) {
       set: function( value ) {
         assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid value: ' + value );
         if ( !this.equalsValue( value ) ) {
-          this._setAndNotifyObservers( value );
+          this._setAndNotifyListeners( value );
         }
         return this;
       },
@@ -190,16 +190,16 @@ define( function( require ) {
       },
 
       // @private
-      _setAndNotifyObservers: function( value ) {
+      _setAndNotifyListeners: function( value ) {
         var oldValue = this.get();
         this._value = value;
-        this._notifyObservers( oldValue );
+        this._notifyListeners( oldValue );
       },
 
       // @private
-      _notifyObservers: function( oldValue ) {
+      _notifyListeners: function( oldValue ) {
 
-        // Note the current value, since it will be sent to possibly multiple observers.
+        // Note the current value, since it will be sent to possibly multiple listeners.
         var value = this.get();
 
         this.startedCallbacksForChangedEmitter.emit2( value, oldValue );
@@ -212,12 +212,12 @@ define( function( require ) {
       /**
        * Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
        * This is different from the normal axon strategy, but may be necessary to prevent memory allocations.
-       * This method is unsafe for removing observers because it assumes the observer list not modified, to save another allocation
+       * This method is unsafe for removing listeners because it assumes the listener list not modified, to save another allocation
        * Only provides the new reference as a callback (no oldvalue)
        * See https://github.com/phetsims/axon/issues/6
        * @public
        */
-      notifyObserversStatic: function() {
+      notifyListenersStatic: function() {
         this.changedEmitter.emit1( this.get() );
       },
 
@@ -236,47 +236,44 @@ define( function( require ) {
       set value( newValue ) { this.set( newValue ); },
 
       /**
-       * Adds an observer and notifies it immediately.
-       * If observer is already registered, this is a no-op.
-       * The initial notification provides the current value for newValue and null for oldValue.
+       * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
+       * notification provides the current value for newValue and null for oldValue.
        *
-       * @param {function} observer a function of the form observer(newValue,oldValue)
+       * @param {function} listener a function of the form listener(newValue,oldValue)
        * @public
        */
-      link: function( observer ) {
-        if ( !this.changedEmitter.hasListener( observer ) ) {
-          this.changedEmitter.addListener( observer );
-          observer( this.get(), null ); // null should be used when an object is expected but unavailable
+      link: function( listener ) {
+        if ( !this.changedEmitter.hasListener( listener ) ) {
+          this.changedEmitter.addListener( listener );
+          listener( this.get(), null ); // null should be used when an object is expected but unavailable
         }
       },
 
       /**
-       * Add an observer to the Property, without calling it back right away.
-       * This is used when you need to register a observer without an immediate callback.
+       * Add an listener to the Property, without calling it back right away.
+       * This is used when you need to register a listener without an immediate callback.
        *
-       * @param {function} observer - a function with a single argument, which is the value of the property at the time the function is called.
+       * @param {function} listener - a function with a single argument, which is the value of the property at the time the function is called.
        * @public
        */
-      lazyLink: function( observer ) {
-        this.changedEmitter.addListener( observer );
+      lazyLink: function( listener ) {
+        this.changedEmitter.addListener( listener );
       },
 
       /**
-       * Removes an observer.
-       * If observer is not registered, this is a no-op.
+       * Removes a listener. If listener is not registered, this is a no-op.
        *
-       * @param {function} observer
+       * @param {function} listener
        * @public
        */
-      unlink: function( observer ) {
-        if ( this.changedEmitter.hasListener( observer ) ) {
-          this.changedEmitter.removeListener( observer );
+      unlink: function( listener ) {
+        if ( this.changedEmitter.hasListener( listener ) ) {
+          this.changedEmitter.removeListener( listener );
         }
       },
 
       /**
-       * Removes all observers.
-       * If no observers are registered, this is a no-op.
+       * Removes all listeners. If no listeners are registered, this is a no-op.
        */
       unlinkAll: function() {
         this.changedEmitter.removeAllListeners();
@@ -297,14 +294,14 @@ define( function( require ) {
       },
 
       /**
-       * Unlink an observer added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-       * unlinkAttribute: here, you must pass the observer handle returned by linkAttribute rather than object and attributeName
+       * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
+       * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
        *
-       * @param observer
+       * @param {function} listener
        * @public
        */
-      unlinkAttribute: function( observer ) {
-        this.unlink( observer );
+      unlinkAttribute: function( listener ) {
+        this.unlink( listener );
       },
 
       // @public Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
@@ -314,22 +311,22 @@ define( function( require ) {
       valueOf: function() {return this.toString();},
 
       /**
-       * Add an observer so that it will only fire once (and not on registration)
+       * Add a listener so that it will only fire once (and not on registration)
        *
        * I can see two ways to implement this:
-       * (a) add a field to the observer so after notifications it can be checked and possibly removed. Disadvantage: will make everything slower even if not using 'once'
-       * (b) wrap the observer in a new function which will call the observer and then remove itself.  Disadvantage: cannot remove an observer added using 'once'
-       * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' observer must be removed before it is called once
+       * (a) add a field to the listener so after notifications it can be checked and possibly removed. Disadvantage: will make everything slower even if not using 'once'
+       * (b) wrap the listener in a new function which will call the listener and then remove itself.  Disadvantage: cannot remove an listener added using 'once'
+       * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' listener must be removed before it is called once
        *
-       * @param observer the observer which should be called back only for one property change (and not on registration)
+       * @param {function} listener the listener which should be called back only for one property change (and not on registration)
        * @returns {function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
        * @public
        */
-      once: function( observer ) {
+      once: function( listener ) {
         var self = this;
         var wrapper = function( newValue, oldValue ) {
           self.unlink( wrapper );
-          observer( newValue, oldValue );
+          listener( newValue, oldValue );
         };
         this.lazyLink( wrapper );
         return wrapper;
@@ -338,13 +335,13 @@ define( function( require ) {
       /**
        * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
        * @param name debug name to be printed on the console
-       * @returns {function} the handle to the linked observer in case it needs to be removed later
+       * @returns {function} the handle to the linked listener in case it needs to be removed later
        * @public
        */
       debug: function( name ) {
-        var observer = function( value ) { console.log( name, value ); };
-        this.link( observer );
-        return observer;
+        var listener = function( value ) { console.log( name, value ); };
+        this.link( listener );
+        return listener;
       },
 
       /**
@@ -365,23 +362,23 @@ define( function( require ) {
       },
 
       /**
-       * Adds an observer that is fired when the property takes the specified value.  If the property has the value already,
-       * the observer is called back immediately.  A reference to the observer is returned so that it can be removed.
+       * Adds a listener that is fired when the property takes the specified value.  If the property has the value already,
+       * the listener is called back immediately.  A reference to the listener is returned so that it can be removed.
        *
-       * @param value the value to match
-       * @param observer the observer that is called when this Property
+       * @param {Object} value - the value to match
+       * @param {function} listener - the listener that is called when this Property
        * @public
        */
-      onValue: function( value, observer ) {
+      onValue: function( value, listener ) {
         assert && this.isValidValue && assert( this.isValidValue( value ), 'attempt to observe invalid value: ' + value );
         var self = this;
-        var onValueObserver = function( v ) {
+        var onValueListener = function( v ) {
           if ( self.areValuesEqual( v, value ) ) {
-            observer();
+            listener();
           }
         };
-        this.link( onValueObserver );
-        return onValueObserver;
+        this.link( onValueListener );
+        return onValueListener;
       },
 
       // @public Ensures that the Property is eligible for GC
@@ -432,29 +429,29 @@ define( function( require ) {
     //statics
     {
       /**
-       * Registers an observer with multiple properties, then notifies the observer immediately.
+       * Registers a listener with multiple properties, then notifies the listener immediately.
        * @param {Property[]} properties
-       * @param {function} observer function that takes values from the properties and returns nothing
+       * @param {function} listener function that takes values from the properties and returns nothing
        * @returns {Multilink}
        * @static
        */
-      multilink: function( properties, observer ) {
-        return new Multilink( properties, observer, false );
+      multilink: function( properties, listener ) {
+        return new Multilink( properties, listener, false );
       },
 
       /**
-       * Registers an observer with multiple properties *without* an immediate callback with current values.
+       * Registers an listener with multiple properties *without* an immediate callback with current values.
        * @param {Property[]} properties
-       * @param {function} observer function that takes values from the properties and returns nothing
+       * @param {function} listener function that takes values from the properties and returns nothing
        * @returns {Multilink}
        * @static
        */
-      lazyMultilink: function( properties, observer ) {
-        return new Multilink( properties, observer, true );
+      lazyMultilink: function( properties, listener ) {
+        return new Multilink( properties, listener, true );
       },
 
       /**
-       * Unlinks an observer that was added with multilink or lazyMultilink.
+       * Unlinks an listener that was added with multilink or lazyMultilink.
        * @param {Multilink} multilink
        * @static
        */
