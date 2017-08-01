@@ -20,6 +20,7 @@ define( function( require ) {
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var phetio = require( 'ifphetio!PHET_IO/phetio' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
@@ -103,6 +104,34 @@ define( function( require ) {
       },
 
       {
+
+        toStateObject: function( observableArray ) {
+          if ( !observableArray ) {
+            return observableArray;
+          }
+          return {
+            phetioID: observableArray.phetioID,
+            array: observableArray.getArray().map( function( item ) { return item.phetioID; } )
+          };
+        },
+
+        fromStateObject: function( stateObject ) {
+
+          var tempArray = [];
+          stateObject.array.forEach( function( elementTypePhetioID ) {
+            tempArray.push( phetio.getWrapper( elementTypePhetioID ).instance );
+          } );
+
+
+          return tempArray;
+        },
+
+        setValue: function( instance, value){
+          // TODO: is this is a no no? Does PhET-iO have this sort of power, see https://github.com/phetsims/phet-io/issues/1054
+          instance._array = value;
+
+        },
+
         documentation: 'An array that sends notifications when its values have changed.',
         elementType: elementType,
         events: [ 'itemAdded', 'itemRemoved' ]
