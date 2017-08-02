@@ -402,6 +402,20 @@ define( function( require ) {
         this._fireItemAdded( args[ k ] );
       }
       return deleted;
+    },
+
+    /**
+     * Changes the ordering of elements in the array.  Requires a Random source so that shuffles can be reproducible.
+     * No items are added or removed, and this method does not send out any notifications.
+     * @param {Random} random - from dot
+     */
+    shuffle: function( random ) {
+      assert && assert( random, 'random must be supplied' );
+
+      // preserve the same _array reference in case any clients got a reference to it with getArray()
+      var shuffled = random.shuffle( this._array );
+      this._array.length = 0;
+      Array.prototype.push.apply( this._array, shuffled );
     }
   } );
 } );
