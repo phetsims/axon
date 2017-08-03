@@ -137,14 +137,14 @@ define( function( require ) {
   }, {
 
     /**
-     * Creates a derived boolean property whose value is true iff firstProperty's value is equal to secondPropert's
+     * Creates a derived boolean property whose value is true iff firstProperty's value is equal to secondProperty's
      * value.
      * @public
      *
      * @param {Property.<*>} firstProperty
      * @param {Property.<*>} secondProperty
      * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {Property.<boolean>}
+     * @returns {DerivedProperty.<boolean>}
      */
     valueEquals: function( firstProperty, secondProperty, options ) {
       return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
@@ -156,7 +156,7 @@ define( function( require ) {
      *
      * @param {Array.<Property.<boolean>>} properties
      * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {Property.<boolean>}
+     * @returns {DerivedProperty.<boolean>}
      */
     and: function( properties, options ) {
       return new DerivedProperty( properties, _.reduce.bind( null, properties, conjunctionWithProperty, true ), options ); // TODO: fix
@@ -168,7 +168,7 @@ define( function( require ) {
      *
      * @param {Array.<Property.<boolean>>} properties
      * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {Property.<boolean>}
+     * @returns {DerivedProperty.<boolean>}
      */
     or: function( properties, options ) {
       return new DerivedProperty( properties, _.reduce.bind( null, properties, disjunctionWithProperty, false ), options );
