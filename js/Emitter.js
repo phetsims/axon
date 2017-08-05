@@ -9,19 +9,63 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var inherit = require( 'PHET_CORE/inherit' );
   var axon = require( 'AXON/axon' );
+  var TEmitter = require( 'AXON/TEmitter' );
+  var inherit = require( 'PHET_CORE/inherit' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    *
    * @constructor
    */
-  function Emitter() {
+  function Emitter( options ) {
+
+    // @private {Function[]} - the listeners to emit to
     this.listeners = [];
 
-    // @private - during emit() keep track of which listeners should receive events
-    //            in order to manage removal of listeners during emit()
+    // @private - during emit() keep track of which listeners should receive events in order to manage removal of
+    //          - listeners during emit()
     this.listenersToEmitTo = [];
+
+    options = _.extend( {
+
+      // Top level application emitters indicate when they start processing callbacks.
+      indicateCallbacks: true,
+      phetioArgumentTypes: [], // {TType[]} - for serializing/displaying the values during emit
+      tandem: Tandem.tandemOptional(),
+      phetioEmitData: true // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
+                           // emits would spam the console, but the wrapper may still want to listen for the emits
+    }, options );
+
+    var self = this;
+
+    // @private - indicates whether data should appear on the data stream.
+    this.phetioEmitData = options.phetioEmitData;
+
+    // @private (phet-io)
+    if ( options.indicateCallbacks ) {
+      this.callbacksStartedEmitter = new Emitter( {
+        indicateCallbacks: false,
+        phetioArgumentTypes: options.phetioArgumentTypes
+      } );
+      this.callbacksEndedEmitter = new Emitter( {
+        indicateCallbacks: false,
+        phetioArgumentTypes: []
+      } );
+    }
+
+    // Tandem registration
+    options.tandem.addInstance( this, TEmitter( options.phetioArgumentTypes ) );
+
+    // @private
+    this.disposeEmitter = function() {
+
+      // See https://github.com/phetsims/axon/issues/124
+      self.listeners.length = 0;
+
+      // Tandem de-registration
+      options.tandem.removeInstance( self );
+    };
   }
 
   axon.register( 'Emitter', Emitter );
@@ -33,7 +77,7 @@ define( function( require ) {
      * listeners.
      */
     dispose: function() {
-      assert && assert( !this.hasListeners(), 'Listeners should have been removed before disposal' );
+      this.disposeEmitter();
     },
 
     /**
@@ -107,6 +151,7 @@ define( function( require ) {
      * @public
      */
     emit: function() {
+      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit();
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -115,6 +160,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
+      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
     },
 
     /**
@@ -123,6 +169,7 @@ define( function( require ) {
      * @public
      */
     emit1: function( arg1 ) {
+      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit1( arg1 );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -131,6 +178,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
+      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
     },
 
     /**
@@ -140,6 +188,7 @@ define( function( require ) {
      * @public
      */
     emit2: function( arg1, arg2 ) {
+      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit2( arg1, arg2 );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -148,6 +197,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
+      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
     },
 
     /**
@@ -158,6 +208,7 @@ define( function( require ) {
      * @public
      */
     emit3: function( arg1, arg2, arg3 ) {
+      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit3( arg1, arg2, arg3 );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -166,6 +217,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
+      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
     },
 
     /**
