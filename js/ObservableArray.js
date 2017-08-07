@@ -55,10 +55,10 @@ define( function( require ) {
     this.initialArray = array ? array.slice() : [];
 
     // @private Event stream for signifying begin/end of callbacks
-    this.startedCallbacksForItemAddedEmitter = new Emitter();
-    this.endedCallbacksForItemAddedEmitter = new Emitter();
-    this.startedCallbacksForItemRemovedEmitter = new Emitter();
-    this.endedCallbacksForItemRemovedEmitter = new Emitter();
+    this.startedCallbacksForItemAddedEmitter = new Emitter( { indicateCallbacks: false } );
+    this.endedCallbacksForItemAddedEmitter = new Emitter( { indicateCallbacks: false } );
+    this.startedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
+    this.endedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
 
     options.tandem.supplied && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {

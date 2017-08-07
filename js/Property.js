@@ -83,8 +83,8 @@ define( function( require ) {
       'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // @public (read-only) Emitters that indicate the start/end of processing callbacks for a change.  Also used for PhET-iO data stream
-    this.startedCallbacksForChangedEmitter = new Emitter();
-    this.endedCallbacksForChangedEmitter = new Emitter();
+    this.startedCallbacksForChangedEmitter = new Emitter( { indicateCallbacks: false } );
+    this.endedCallbacksForChangedEmitter = new Emitter( { indicateCallbacks: false } );
 
     // @private - Store the internal value and the initial value
     this._value = value;

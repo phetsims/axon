@@ -43,16 +43,16 @@ define( function( require ) {
     this.phetioEmitData = options.phetioEmitData;
 
     // @private (phet-io)
-    if ( options.indicateCallbacks ) {
-      this.callbacksStartedEmitter = new Emitter( {
-        indicateCallbacks: false,
-        phetioArgumentTypes: options.phetioArgumentTypes
-      } );
-      this.callbacksEndedEmitter = new Emitter( {
-        indicateCallbacks: false,
-        phetioArgumentTypes: []
-      } );
-    }
+    this.callbacksStartedEmitter = options.indicateCallbacks ? new Emitter( {
+      indicateCallbacks: false,
+      phetioArgumentTypes: options.phetioArgumentTypes
+    } ) : null;
+
+    // @private (phet-io)
+    this.callbacksEndedEmitter = options.indicateCallbacks ? new Emitter( {
+      indicateCallbacks: false,
+      phetioArgumentTypes: []
+    } ) : null;
 
     // Tandem registration
     options.tandem.addInstance( this, TEmitter( options.phetioArgumentTypes ) );
