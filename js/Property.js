@@ -142,7 +142,12 @@ define( function( require ) {
         return this;
       },
 
-      // @public returns true iff the specified value equals the value of this property
+      /**
+       * Returns true if and only if the specified value equals the value of this property
+       * @param {Object} value
+       * @returns {boolean}
+       * @private
+       */
       equalsValue: function( value ) {
         return this.areValuesEqual( value, this._value );
       },
@@ -159,27 +164,19 @@ define( function( require ) {
        * @param {Object} a - should have the same type as Property element type
        * @param {Object} b - should have the same type as Property element type
        * @returns {boolean}
-       * @public
+       * @protected
        */
       areValuesEqual: function( a, b ) {
-        if ( this.useDeepEquality ) {
+        if ( this.useDeepEquality && a && b && a.constructor === b.constructor ) {
 
-          // Both defined
-          if ( a && b ) {
-            assert && assert( !!a.equals, 'no equals function for 1st arg' );
-            assert && assert( !!b.equals, 'no equals function for 2nd arg' );
-            assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
-            return a.equals( b );
-          }
-          else {
-
-            // handle comparing null to undefined, or defined values to null, etc.
-            return a === b;
-          }
+          assert && assert( !!a.equals, 'no equals function for 1st arg' );
+          assert && assert( !!b.equals, 'no equals function for 2nd arg' );
+          assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
+          return a.equals( b );
         }
         else {
 
-          // Use triple equal equality check (reference equality for objects, value equality for primitives)
+          // Reference equality for objects, value equality for primitives
           return a === b;
         }
       },
