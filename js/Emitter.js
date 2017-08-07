@@ -29,7 +29,9 @@ define( function( require ) {
 
     options = _.extend( {
 
-      // Top level application emitters indicate when they start processing callbacks.
+      // Typically, Emitters created by a simulation indicate when they begin and end processing callbacks to deliver
+      // nested data to the phet-io data stream. This is moderated by special "callback" emitters (which do not need
+      // to send data to phet-io).
       indicateCallbacks: true,
       phetioArgumentTypes: [], // {TType[]} - for serializing/displaying the values during emit
       tandem: Tandem.tandemOptional(),
