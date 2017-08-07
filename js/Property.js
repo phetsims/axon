@@ -164,7 +164,7 @@ define( function( require ) {
        * @param {Object} a - should have the same type as Property element type
        * @param {Object} b - should have the same type as Property element type
        * @returns {boolean}
-       * @protected
+       * @private
        */
       areValuesEqual: function( a, b ) {
         if ( this.useDeepEquality && a && b && a.constructor === b.constructor ) {
