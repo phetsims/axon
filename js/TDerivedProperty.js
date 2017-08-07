@@ -57,7 +57,6 @@ define( function( require ) {
       documentation: 'Like TProperty, but not settable.  Instead it is derived from other TDerivedProperty or TProperty ' +
                      'instances',
       valueType: phetioValueType,
-      events: [ 'changed' ],
 
       /**
        * Decodes a state into a DerivedProperty.
