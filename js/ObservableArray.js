@@ -343,18 +343,12 @@ define( function( require ) {
     },
 
     /**
-     * If any item in the ObservableArray satisfies the predicate, return true.
+     * Find the first element that matches the given predicate.
      * @param {function} predicate
-     * @returns {boolean}
-     * @public
+     * @param {number} [fromIndex] - optional start index for the search
      */
-    anyElementMatchesPredicate: function( predicate ) {
-      for ( var i = 0; i < this._array.length; i++ ) {
-        if ( predicate( this._array[ i ] ) ) {
-          return true;
-        }
-      }
-      return false;
+    find: function( predicate, fromIndex ) {
+      return _.find( this._array, predicate, fromIndex );
     },
 
     /**
