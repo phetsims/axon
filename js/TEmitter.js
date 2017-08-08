@@ -33,24 +33,18 @@ define( function( require ) {
       TObject.call( this, emitter, phetioID );
       assertInstanceOf( emitter, phet.axon.Emitter );
 
-      var messageIndex = null;
-
       // Allow certain Emitters to suppress their data output, such as the frameCompletedEmitter
       if ( emitter.phetioEmitData ) {
         emitter.callbacksStartedEmitter.addListener( function() {
           assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-          var p = [];
-          for ( var i = 0; i < arguments.length; i++ ) {
-            var a = arguments[ i ];
-            p.push( a );
-          }
-          var parameters = { arguments: p };
-          messageIndex = phetioEvents.start( 'model', phetioID, TEmitter( phetioArgumentTypes ), 'emitted', parameters );
-        } );
+          var parameters = { arguments: Array.prototype.slice.call( arguments ) };
+          var messageIndex = phetioEvents.start( 'model', phetioID, TEmitter( phetioArgumentTypes ), 'emitted', parameters );
 
-        emitter.callbacksEndedEmitter.addListener( function() {
-          assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-          messageIndex && phetioEvents.end( messageIndex );
+          emitter.callbacksEndedEmitter.addListener( function listener() {
+            assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
+            emitter.callbacksEndedEmitter.removeListener( listener );
+            phetioEvents.end( messageIndex );
+          } );
         } );
       }
     };
