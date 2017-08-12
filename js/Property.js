@@ -342,15 +342,6 @@ define( function( require ) {
       },
 
       /**
-       * Returns a function that can be used to toggle the property (using !)
-       * @returns {function}
-       * @public
-       */
-      get toggleFunction() {
-        return this.toggle.bind( this );
-      },
-
-      /**
        * Modifies the value of this Property with the ! operator.  Works for booleans and non-booleans.
        * @public
        */
