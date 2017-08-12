@@ -89,6 +89,8 @@ define( function( require ) {
      */
     addListener: function( listener ) {
 
+      assert && assert( this.listeners.indexOf( listener ) === -1, 'Cannot add the same listener twice' );
+
       // If callbacks are in progress, make a copy of the current list of listeners--the newly added listener
       // will be available for the next emit() but not the one in progress.  This is to match behavior with removeListener
       this.defendCallbacks();
