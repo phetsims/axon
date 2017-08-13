@@ -38,7 +38,8 @@ define( function( require ) {
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: Tandem.tandemOptional(),
-      phetioValueType: null
+      phetioValueType: null,
+      phetioIncludeInState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
     // TODO: Should we require tandems for all ObservableArrays?
@@ -60,6 +61,8 @@ define( function( require ) {
     this.startedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
     this.endedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
 
+    // public (phet-io) (read-only)
+    this.phetioIncludeInState = options.phetioIncludeInState;
     options.tandem.supplied && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
     this.disposeObservableArray = function() {
       options.tandem.supplied && options.tandem.removeInstance( self );
