@@ -64,7 +64,10 @@ define( function( require ) {
           };
         } );
     };
-    return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
+
+    // Add the valueType to the typeName
+    var typeName = 'TProperty.<' + phetioValueType.typeName + '>';
+    return phetioInherit( TObject, typeName, TPropertyImpl, {
 
       getValue: {
         returnType: phetioValueType,
