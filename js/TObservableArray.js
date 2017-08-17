@@ -110,7 +110,6 @@ define( function( require ) {
             return observableArray;
           }
           return {
-            phetioID: observableArray.phetioID,
             array: observableArray.getArray().map( function( item ) { return item.phetioID; } )
           };
         },
