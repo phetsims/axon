@@ -264,9 +264,7 @@ define( function( require ) {
        * @public
        */
       unlink: function( listener ) {
-        if ( this.changedEmitter.hasListener( listener ) ) {
-          this.changedEmitter.removeListener( listener );
-        }
+        this.changedEmitter.removeListener( listener );
       },
 
       /**
