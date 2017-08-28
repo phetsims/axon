@@ -20,6 +20,9 @@ define( function( require ) {
   var TObservableArray = require( 'AXON/TObservableArray' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // phet-io modules
+  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
+
   /**
    * @param {Object[]} [array]
    * @param {Object} [options]
@@ -50,7 +53,11 @@ define( function( require ) {
     this._addedListeners = []; // @private listeners called when an item is added
     this._removedListeners = []; // @private listeners called when an item is removed
 
-    this.lengthProperty = new Property( this._array.length ); // @public (read-only) observe this, but don't set it
+    // @public (read-only) observe this, but don't set it
+    this.lengthProperty = new Property( this._array.length, {
+      tandem: options.tandem && options.tandem.createTandem( 'lengthProperty' ),
+      phetioValueType: TNumber( { type: 'Integer' } )
+    } );
 
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
