@@ -65,9 +65,7 @@ define( function( require ) {
         } );
     };
 
-    // Add the valueType to the typeName
-    var typeName = 'TProperty.<' + phetioValueType.typeName + '>';
-    return phetioInherit( TObject, typeName, TPropertyImpl, {
+    return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
 
       getValue: {
         returnType: phetioValueType,
@@ -122,6 +120,10 @@ define( function( require ) {
                      'traditional listener pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
       valueType: phetioValueType,
+
+      // Used to generate the unique parametric typename for each TProperty
+      parameterTypes: [ phetioValueType ],
+
       events: [ 'changed' ],
 
       getAPI: function() {

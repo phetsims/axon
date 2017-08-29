@@ -56,6 +56,10 @@ define( function( require ) {
     }, {
       documentation: 'Like TProperty, but not settable.  Instead it is derived from other TDerivedProperty or TProperty ' +
                      'instances',
+
+      // Used to generate the unique parametric typename for each TProperty
+      parameterTypes: [ phetioValueType ],
+
       valueType: phetioValueType,
 
       /**
