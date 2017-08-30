@@ -362,6 +362,15 @@ define( function( require ) {
     },
 
     /**
+     * Returns true if some element in this ObservableArray matches the predicate.
+     * @param {function} predicate - the function to test elements
+     * @returns {boolean}
+     */
+    some: function( predicate ) {
+      return _.some( this._array, predicate );
+    },
+
+    /**
      * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
      * Same as foldLeft.  In underscore this is called _.reduce aka _.fold or _.inject
      * @param value
