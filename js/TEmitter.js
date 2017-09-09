@@ -38,7 +38,7 @@ define( function( require ) {
         emitter.callbacksStartedEmitter.addListener( function() {
           assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
           var parameters = { arguments: Array.prototype.slice.call( arguments ) };
-          var messageIndex = phetioEvents.start( 'model', phetioID, TEmitter( phetioArgumentTypes ), 'emitted', parameters );
+          var messageIndex = phetioEvents.start( emitter.phetioMessageType, phetioID, TEmitter( phetioArgumentTypes ), 'emitted', parameters );
 
           emitter.callbacksEndedEmitter.addListener( function listener() {
             assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );

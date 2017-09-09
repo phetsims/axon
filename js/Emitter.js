@@ -35,9 +35,15 @@ define( function( require ) {
       indicateCallbacks: true,
       phetioArgumentTypes: [], // {TType[]} - for serializing/displaying the values during emit
       tandem: Tandem.tandemOptional(),
-      phetioEmitData: true // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
-                           // emits would spam the console, but the wrapper may still want to listen for the emits
+      phetioEmitData: true, // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
+      // emits would spam the console, but the wrapper may still want to listen for the emits
+      phetioMessageType: 'model' // 'model' | 'user'
     }, options );
+
+    assert && assert( options.phetioMessageType === 'model' || options.phetioMessageType === 'user' );
+
+    // @public (read-only) {string} - indicate the type of event
+    this.phetioMessageType = options.phetioMessageType;
 
     var self = this;
 
