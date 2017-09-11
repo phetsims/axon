@@ -23,7 +23,7 @@ define( function( require ) {
     return ( typeof value === 'number' );
   };
 
-  // valid values for options.units // TODO: Should this be an enum?
+  // valid values for options.units // TODO: Should this be an enum?  @zepumph says probably
   var VALID_UNITS = [
     'amperes',
     'milliamperes',
