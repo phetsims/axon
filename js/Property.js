@@ -96,6 +96,13 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
+    // TODO: this pattern is very sloppy and will not scale up well
+    this.phetioInstanceMetadata = _.extend( this.phetioInstanceMetadata, {
+
+      // TODO: rename to validValues here and createInstanceProxyDiv
+      values: options.validValues
+    } );
+
     // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
     // unsupplied. This causes downstream errors in TProperty.
     options.tandem.addInstance( this, TProperty( options.phetioValueType || TVoid, {

@@ -107,6 +107,13 @@ define( function( require ) {
       options.isValidValue = IS_NUMBER;
     }
 
+    // TODO: this seems like duplication--can it be avoided or standardized?
+    this.phetioInstanceMetadata = {
+      range: options.range,
+      units: this.units,
+      valueType: options.valueType
+    };
+
     Property.call( this, value, options );
   }
 
