@@ -108,6 +108,7 @@ define( function( require ) {
     }
 
     // TODO: this seems like duplication--can it be avoided or standardized?
+    // TODO: Do not use this, we are trying to replace it with something better soon.
     this.phetioInstanceMetadata = {
       range: options.range,
       units: this.units,

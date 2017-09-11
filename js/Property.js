@@ -97,6 +97,7 @@ define( function( require ) {
     this.changedEmitter = new Emitter();
 
     // TODO: this pattern is very sloppy and will not scale up well
+    // TODO: Do not use this, we are trying to replace it with something better soon.
     this.phetioInstanceMetadata = _.extend( this.phetioInstanceMetadata, {
 
       // TODO: rename to validValues here and createInstanceProxyDiv
