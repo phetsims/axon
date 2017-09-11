@@ -13,15 +13,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
+  var NumberProperty = require( 'AXON/NumberProperty' );
   var TObservableArray = require( 'AXON/TObservableArray' );
+  var inherit = require( 'PHET_CORE/inherit' );
   var Tandem = require( 'TANDEM/Tandem' );
-
-  // phet-io modules
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
   /**
    * @param {Object[]} [array]
@@ -54,9 +51,9 @@ define( function( require ) {
     this._removedListeners = []; // @private listeners called when an item is removed
 
     // @public (read-only) observe this, but don't set it
-    this.lengthProperty = new Property( this._array.length, {
+    this.lengthProperty = new NumberProperty( this._array.length, {
       tandem: options.tandem && options.tandem.createTandem( 'lengthProperty' ),
-      phetioValueType: TNumber( { type: 'Integer' } )
+      valueType: 'Integer'
     } );
 
     // @private Store the initial array, if any, for resetting, see #4

@@ -9,9 +9,10 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var inherit = require( 'PHET_CORE/inherit' );
-  var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
+  var Property = require( 'AXON/Property' );
+  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
+  var inherit = require( 'PHET_CORE/inherit' );
 
   // constants
   /**
@@ -22,6 +23,58 @@ define( function( require ) {
     return ( typeof value === 'number' );
   };
 
+  // valid values for options.units // TODO: Should this be an enum?
+  var VALID_UNITS = [
+    'amperes',
+    'milliamperes',
+    'becquerels',
+    'centimeters',
+    'centimeters-squared',
+    'coulombs',
+    'degrees Celsius',
+    'farads',
+    'kilograms',
+    'grams',
+    'gray',
+    'henrys',
+    'henries',
+    'hertz',
+    'joules',
+    'katals',
+    'kelvins',
+    'liters',
+    'liters/second',
+    'lumens',
+    'lux',
+    'meters',
+    'meters/second',
+    'meters/second/second',
+    'moles',
+    'moles/liter',
+    'nanometers',
+    'newtons',
+    'newtons/meters',
+    'newtons-second/meters',
+    'ohms',
+    'ohm-centimeters',
+    'pascals',
+    'percent',
+    'radians',
+    'radians/second',
+    'seconds',
+    'siemens',
+    'sieverts',
+    'steradians',
+    'tesla',
+    'view-coordinates/second',
+    'volts',
+    'watts',
+    'webers'
+  ];
+
+  // values for options.type
+  var VALID_TYPE_VALUES = [ 'FloatingPoint', 'Integer' ];
+
   /**
    * @param {number} value - initial value
    * @param {Object} [options]
@@ -30,11 +83,20 @@ define( function( require ) {
   function NumberProperty( value, options ) {
 
     options = _.extend( {
-      range: null // {null|Range|{min:number, max:number}} range of the value
+      range: null, // {null|Range|{min:number, max:number}} range of the value
+      phetioValueType: TNumber,
+      valueType: 'FloatingPoint', // 'FloatingPoint' | 'Integer'
+      units: null
     }, options );
 
     assert && assert( !options.validValues, 'NumberProperty cannot use validValues' );
     assert && assert( !options.isValidValue, 'NumberProperty implements its own isValidValue' );
+
+    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'Invalid units: ' + options.units );
+    assert && assert( _.includes( VALID_TYPE_VALUES, options.valueType ), 'invalid type: ' + options.valueType );
+
+    // @public (read-only) {string} units from above
+    this.units = options.units;
 
     if ( options.range ) {
       options.isValidValue = function( value ) {
