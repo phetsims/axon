@@ -51,10 +51,7 @@ define( function( require ) {
     this._removedListeners = []; // @private listeners called when an item is removed
 
     // @public (read-only) observe this, but don't set it
-    this.lengthProperty = new NumberProperty( this._array.length, {
-      tandem: options.tandem && options.tandem.createTandem( 'lengthProperty' ),
-      valueType: 'Integer'
-    } );
+    this.lengthProperty = new NumberProperty( this._array.length );
 
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
