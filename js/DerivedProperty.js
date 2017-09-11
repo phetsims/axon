@@ -12,11 +12,11 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
-  var TDerivedProperty = require( 'AXON/TDerivedProperty' );
+  var Property = require( 'AXON/Property' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TDerivedProperty = require( 'AXON/TDerivedProperty' );
 
   function equalsFunction( a, b ) {
     return a === b;

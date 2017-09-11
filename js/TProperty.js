@@ -13,12 +13,12 @@ define( function( require ) {
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
 
   /**
    * An observable property that triggers notifications when the value changes.

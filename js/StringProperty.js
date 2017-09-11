@@ -10,9 +10,9 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
-  var axon = require( 'AXON/axon' );
 
   // phet-io modules
   var TString = require( 'ifphetio!PHET_IO/types/TString' );

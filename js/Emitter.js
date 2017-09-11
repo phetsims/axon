@@ -10,9 +10,9 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var TEmitter = require( 'AXON/TEmitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TEmitter = require( 'AXON/TEmitter' );
 
   /**
    *

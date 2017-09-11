@@ -15,10 +15,10 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var Emitter = require( 'AXON/Emitter' );
-  var NumberProperty = require( 'AXON/NumberProperty' );
-  var TObservableArray = require( 'AXON/TObservableArray' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var NumberProperty = require( 'AXON/NumberProperty' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TObservableArray = require( 'AXON/TObservableArray' );
 
   /**
    * @param {Object[]} [array]

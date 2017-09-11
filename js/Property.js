@@ -11,8 +11,8 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
+  var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TProperty = require( 'AXON/TProperty' );

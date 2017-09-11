@@ -44,12 +44,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var Property = require( 'AXON/Property' );
-  var DerivedProperty = require( 'AXON/DerivedProperty' );
-  var Multilink = require( 'AXON/Multilink' );
-  var Events = require( 'AXON/Events' );
   var axon = require( 'AXON/axon' );
+  var DerivedProperty = require( 'AXON/DerivedProperty' );
+  var Events = require( 'AXON/Events' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var Multilink = require( 'AXON/Multilink' );
+  var Property = require( 'AXON/Property' );
 
   // constants
   var SUFFIX = 'Property';

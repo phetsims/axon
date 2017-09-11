@@ -15,8 +15,8 @@ define( function( require ) {
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
   var TProperty = require( 'AXON/TProperty' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.

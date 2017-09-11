@@ -10,9 +10,9 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
-  var inherit = require( 'PHET_CORE/inherit' );
 
   // constants
   /**

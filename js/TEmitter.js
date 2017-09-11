@@ -10,12 +10,12 @@ define( function( require ) {
 
   // modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var axon = require( 'AXON/axon' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
    * Wrapper type for Emitter
