@@ -159,10 +159,10 @@ define( function( require ) {
       /**
        * Used to set the value when loading a state
        * @param instance
-       * @param value
+       * @param stateObject
        */
-      setValue: function( instance, value ) {
-        instance.set( value );
+      setValue: function( instance, stateObject ) {
+        instance.set( stateObject.value );
       },
 
       options: options
