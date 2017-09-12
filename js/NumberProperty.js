@@ -102,18 +102,16 @@ define( function( require ) {
       options.isValidValue = function( value ) {
         return IS_NUMBER( value ) && ( value >= options.range.min ) && ( value <= options.range.max );
       };
+
+      // @public (read-only) {Range|{min,max}}
+      this.range = options.range;
     }
     else {
       options.isValidValue = IS_NUMBER;
     }
 
-    // TODO: this seems like duplication--can it be avoided or standardized?
-    // TODO: Do not use this, we are trying to replace it with something better soon.
-    this.phetioInstanceMetadata = {
-      range: options.range,
-      units: this.units,
-      valueType: options.valueType
-    };
+    // @public (read-only) {string}
+    this.valueType = options.valueType;
 
     Property.call( this, value, options );
   }

@@ -138,7 +138,7 @@ define( function( require ) {
        * @returns {Object}
        */
       fromStateObject: function( stateObject ) {
-        return phetioValueType.fromStateObject( stateObject );
+        return { value: phetioValueType.fromStateObject( stateObject.value ) };
       },
 
       /**
@@ -149,7 +149,11 @@ define( function( require ) {
       toStateObject: function( instance ) {
         assert && assert( instance, 'instance should be defined' );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
-        return phetioValueType.toStateObject( instance.value );
+        return {
+          value: phetioValueType.toStateObject( instance.value ),
+          units: instance.units,
+          range: instance.range
+        };
       },
 
       /**
