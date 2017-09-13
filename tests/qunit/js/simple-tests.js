@@ -15,7 +15,6 @@
   var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;
   var BooleanProperty = axon.BooleanProperty;
-  var PropertySet = axon.PropertySet;
 
   /* eslint-disable no-undef */
 
