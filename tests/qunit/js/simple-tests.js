@@ -379,20 +379,5 @@
     }
   } );
 
-  test( 'Alternative PropertySet interface', function() {
-    var p = new PropertySet( null, {
-      name: {
-        value: 'Larry'
-      },
-      age: {
-        value: 123,
-        validValues: [ 100, 123, 199 ]
-      }
-    } );
-
-    console.log( p.name );
-    equal( p.name, 'Larry', 'Name should match' );
-  } );
-
   /* eslint-enable */
 })();
