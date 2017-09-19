@@ -11,8 +11,8 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
+  var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TProperty = require( 'AXON/TProperty' );
@@ -441,31 +441,6 @@ define( function( require ) {
        */
       unmultilink: function( multilink ) {
         multilink.dispose();
-      },
-
-      /**
-       * When porting simulations away from PropertySet, it is useful to have a way to guarantee that all ES5
-       * getters and setters have been refactored.  This method can help you identify ES5 get/set calls that still exist
-       * if they are triggered in the code at runtime.
-       * @param {Object} object
-       * @param {string} prop
-       * @deprecated this is for debugging only - do not leave calls to this function in production code
-       */
-      preventGetSet: function( object, prop ) {
-        Object.defineProperty( object, prop, {
-
-          get: function() {
-            assert && assert( false, 'getter prevented for prop: ' + prop );
-          },
-
-          set: function( value ) {
-            assert && assert( false, 'setter prevented for prop: ' + prop );
-          },
-
-          // Make it configurable and enumerable so it's easy to override.
-          configurable: true,
-          enumerable: true
-        } );
       }
     } );
 } );

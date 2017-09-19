@@ -9,8 +9,7 @@ define( [
   'AXON/Events',
   'AXON/Multilink',
   'AXON/ObservableArray',
-  'AXON/Property',
-  'AXON/PropertySet'
+  'AXON/Property'
 ], function( axon ) {
   'use strict';
   return axon;

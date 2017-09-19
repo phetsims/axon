@@ -14,13 +14,13 @@ define( function( require ) {
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
-  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
@@ -94,7 +94,7 @@ define( function( require ) {
          * Get the number of electrons currently in the array.
          */
         getLength: {
-          returnType: TNumber( { type: 'Integer' } ),
+          returnType: TNumber,
           parameterTypes: [],
           implementation: function() {
             return this.instance.length;
@@ -126,9 +126,8 @@ define( function( require ) {
         },
 
         setValue: function( instance, value){
-          // TODO: is this is a no no? Does PhET-iO have this sort of power, see https://github.com/phetsims/phet-io/issues/1054
-          instance._array = value;
-
+          instance.clear();
+          instance.addAll( value );
         },
 
         documentation: 'An array that sends notifications when its values have changed.',

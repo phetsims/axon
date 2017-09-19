@@ -13,12 +13,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var Property = require( 'AXON/Property' );
   var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
-  var TObservableArray = require( 'AXON/TObservableArray' );
+  var inherit = require( 'PHET_CORE/inherit' );
+  var NumberProperty = require( 'AXON/NumberProperty' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TObservableArray = require( 'AXON/TObservableArray' );
 
   /**
    * @param {Object[]} [array]
@@ -50,7 +50,8 @@ define( function( require ) {
     this._addedListeners = []; // @private listeners called when an item is added
     this._removedListeners = []; // @private listeners called when an item is removed
 
-    this.lengthProperty = new Property( this._array.length ); // @public (read-only) observe this, but don't set it
+    // @public (read-only) observe this, but don't set it
+    this.lengthProperty = new NumberProperty( this._array.length );
 
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
@@ -352,6 +353,15 @@ define( function( require ) {
      */
     find: function( predicate, fromIndex ) {
       return _.find( this._array, predicate, fromIndex );
+    },
+
+    /**
+     * Returns true if some element in this ObservableArray matches the predicate.
+     * @param {function} predicate - the function to test elements
+     * @returns {boolean}
+     */
+    some: function( predicate ) {
+      return _.some( this._array, predicate );
     },
 
     /**

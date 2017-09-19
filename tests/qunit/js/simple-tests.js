@@ -15,36 +15,8 @@
   var DerivedProperty = axon.DerivedProperty;
   var ObservableArray = axon.ObservableArray;
   var BooleanProperty = axon.BooleanProperty;
-  var PropertySet = axon.PropertySet;
 
   /* eslint-disable no-undef */
-
-  test( 'Simple tests', function() {
-
-    var person = new axon.PropertySet( { name: 'larry', age: '100' } );
-    equal( person.name, 'larry', 'name should be larry and accessible through es5 get' );
-
-    person.name = 'susan';
-    equal( person.name, 'susan', 'name should be susan after es5 set' );
-
-    var ageLinkCalls = 0;
-    person.ageProperty.link( function( age ) {ageLinkCalls++;} );
-    person.age = person.age + 1;
-    person.age = person.age + 2;
-    person.age = person.age + 3;
-    equal( ageLinkCalls, 4, 'should have received one call for each set, plus one on link' );
-
-    person.reset();
-    equal( person.name, 'larry', 'should have reset to the initial name' );
-
-    var myValue = '';
-    person.multilink( [ 'name', 'age' ], function( name, age ) {
-      myValue = name + '/' + age;
-    } );
-    person.name = '123';
-    person.age = 456;
-    equal( myValue, '123/456', 'multilink should get both values' );
-  } );
 
   test( 'Test once', function() {
     var count = 0;
@@ -140,7 +112,7 @@
   } );
 
   test( 'Test events', function() {
-    var person = new axon.PropertySet( { name: 'larry', age: '100' } );
+    var person = new axon.Events( { name: 'larry', age: '100' } );
     var count = 0;
     var listener = function( person ) {
       count = count + 1;
@@ -175,7 +147,7 @@
     equal( planetName, 'pluto', 'argument should pass through event' );
     equal( planetRadius, 12345, 'argument should pass through event' );
 
-    var name = person.name;
+    var name = 'hello';
     person.once( 'name-changed', function( newName ) {
       name = newName;
     } );
@@ -287,21 +259,6 @@
     equal( state.age, 8, 'state shouldnt have changed after unlink' );
   } );
 
-  /**
-   * Make sure linking attributes and unlinking attributes works on PropertySet
-   */
-  test( 'PropertySet.linkAttribute', function() {
-    var propertySet = new axon.PropertySet( { time: 7 } );
-    var state = { age: 99 };
-    var listener = propertySet.linkAttribute( 'time', state, 'age' );
-    equal( state.age, 7, 'link should synchronize values' );
-    propertySet.time = 8;
-    equal( state.age, 8, 'link should update values' );
-    propertySet.unlinkAttribute( 'time', listener );
-    propertySet.time = 9;
-    equal( state.age, 8, 'state shouldnt have changed after unlink' );
-  } );
-
   test( 'DerivedProperty.valueEquals', function() {
     var propA = new axon.Property( 'a' );
     var propB = new axon.Property( 'b' );
@@ -377,21 +334,6 @@
     if ( !window.assert ) {
       expect( 0 );
     }
-  } );
-
-  test( 'Alternative PropertySet interface', function() {
-    var p = new PropertySet( null, {
-      name: {
-        value: 'Larry'
-      },
-      age: {
-        value: 123,
-        validValues: [ 100, 123, 199 ]
-      }
-    } );
-
-    console.log( p.name );
-    equal( p.name, 'Larry', 'Name should match' );
   } );
 
   /* eslint-enable */

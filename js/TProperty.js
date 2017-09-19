@@ -13,12 +13,12 @@ define( function( require ) {
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -65,9 +65,7 @@ define( function( require ) {
         } );
     };
 
-    // Add the valueType to the typeName
-    var typeName = 'TProperty.<' + phetioValueType.typeName + '>';
-    return phetioInherit( TObject, typeName, TPropertyImpl, {
+    return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
 
       getValue: {
         returnType: phetioValueType,
@@ -122,6 +120,10 @@ define( function( require ) {
                      'traditional listener pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
       valueType: phetioValueType,
+
+      // Used to generate the unique parametric typename for each TProperty
+      parameterTypes: [ phetioValueType ],
+
       events: [ 'changed' ],
 
       getAPI: function() {
@@ -136,7 +138,7 @@ define( function( require ) {
        * @returns {Object}
        */
       fromStateObject: function( stateObject ) {
-        return phetioValueType.fromStateObject( stateObject );
+        return { value: phetioValueType.fromStateObject( stateObject.value ) };
       },
 
       /**
@@ -147,16 +149,20 @@ define( function( require ) {
       toStateObject: function( instance ) {
         assert && assert( instance, 'instance should be defined' );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
-        return phetioValueType.toStateObject( instance.value );
+        return {
+          value: phetioValueType.toStateObject( instance.value ),
+          units: instance.units,
+          range: instance.range
+        };
       },
 
       /**
        * Used to set the value when loading a state
        * @param instance
-       * @param value
+       * @param stateObject
        */
-      setValue: function( instance, value ) {
-        instance.set( value );
+      setValue: function( instance, stateObject ) {
+        instance.set( stateObject.value );
       },
 
       options: options
