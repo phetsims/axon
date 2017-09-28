@@ -198,7 +198,7 @@ define( function( require ) {
       // @private
       _notifyListeners: function( oldValue ) {
 
-        var id = phetioEvents.start( 'model', this.tandem.id, this.ttype, 'changed', {
+        var id = this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'changed', {
           oldValue: oldValue,
           newValue: this.get(),
           units: this.phetioValueType && this.phetioValueType.units
@@ -206,7 +206,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.phetioValueType && phetioEvents.end( id );
+        this.tandem.isLegalAndUsable() && phetioEvents.end( id );
       },
 
       /**
