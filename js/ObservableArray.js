@@ -38,7 +38,7 @@ define( function( require ) {
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: Tandem.tandemOptional(),
-      phetioValueType: { toStateObject: function() {} }, // a TType or this substitute
+      phetioValueType: null, // {TType|null}
       phetioIncludeInState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
@@ -60,7 +60,7 @@ define( function( require ) {
     this.phetioIncludeInState = options.phetioIncludeInState;
 
     // @private
-    this.ttype = TObservableArray( options.phetioValueType );
+    this.ttype = TObservableArray( options.phetioValueType || {} );
 
     options.tandem.supplied && options.tandem.addInstance( this, this.ttype );
     this.disposeObservableArray = function() {
@@ -146,7 +146,7 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      var id = phetioEvents.start( 'model', this.tandem.id, this.ttype, 'itemAdded', this.phetioValueType.toStateObject( item ) );
+      var id = this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'itemAdded', this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( item ) );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -154,12 +154,12 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      phetioEvents.end( id );
+      this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      var id = phetioEvents.start( 'model', this.tandem.id, TObservableArray, 'itemRemoved', this.phetioValueType.toStateObject( item ) );
+      var id = this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'itemRemoved', this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( item ) );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -167,7 +167,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      phetioEvents.end( id );
+      this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**

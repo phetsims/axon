@@ -11,7 +11,6 @@ define( function( require ) {
   // modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var axon = require( 'AXON/axon' );
-  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
@@ -32,21 +31,6 @@ define( function( require ) {
 
       TObject.call( this, emitter, phetioID );
       assertInstanceOf( emitter, phet.axon.Emitter );
-
-      // Allow certain Emitters to suppress their data output, such as the frameCompletedEmitter
-      if ( emitter.phetioEmitData ) {
-        emitter.callbacksStartedEmitter.addListener( function() {
-          assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-          var parameters = { arguments: Array.prototype.slice.call( arguments ) };
-          var messageIndex = phetioEvents.start( emitter.phetioMessageType, phetioID, TEmitter( phetioArgumentTypes ), 'emitted', parameters );
-
-          emitter.callbacksEndedEmitter.addListener( function listener() {
-            assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-            emitter.callbacksEndedEmitter.removeListener( listener );
-            phetioEvents.end( messageIndex );
-          } );
-        } );
-      }
     };
 
     return phetioInherit( TObject, 'TEmitter', TEmitterImpl, {

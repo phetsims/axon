@@ -11,6 +11,7 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TEmitter = require( 'AXON/TEmitter' );
 
@@ -45,25 +46,23 @@ define( function( require ) {
     // @public (read-only) {string} - indicate the type of event
     this.phetioMessageType = options.phetioMessageType;
 
+    // @private
+    this.indicateCallbacks = options.indicateCallbacks;// TODO: Delete me
+
     var self = this;
+
+    // @private
+    this.tandem = options.tandem;
+
+    // @private
+    this.phetioArgumentTypes = options.phetioArgumentTypes;
 
     // @private - indicates whether data should appear on the data stream.
     this.phetioEmitData = options.phetioEmitData;
 
-    // @private (phet-io)
-    this.callbacksStartedEmitter = options.indicateCallbacks ? new Emitter( {
-      indicateCallbacks: false,
-      phetioArgumentTypes: options.phetioArgumentTypes
-    } ) : null;
-
-    // @private (phet-io)
-    this.callbacksEndedEmitter = options.indicateCallbacks ? new Emitter( {
-      indicateCallbacks: false,
-      phetioArgumentTypes: []
-    } ) : null;
-
     // Tandem registration
-    options.tandem.addInstance( this, TEmitter( options.phetioArgumentTypes ) );
+    this.ttype = TEmitter( options.phetioArgumentTypes );
+    options.tandem.addInstance( this, this.ttype );
 
     // @private
     this.disposeEmitter = function() {
@@ -161,7 +160,8 @@ define( function( require ) {
      * @public
      */
     emit: function() {
-      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit();
+
+      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted' );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -170,64 +170,79 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
+      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**
      * Emits a single event with one argument.  This is a copy-paste of emit() for performance reasons.
-     * @param {*} arg1
+     * @param {*} arg0
      * @public
      */
-    emit1: function( arg1 ) {
-      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit1( arg1 );
+    emit1: function( arg0 ) {
+
+      // TODO: name the args for the data stream
+      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+        args: [ this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ) ]
+      } );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
       for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg1 );
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg0 );
       }
 
       this.listenersToEmitTo.pop();
-      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
+      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**
      * Emits a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
+     * @param {*} arg0
      * @param {*} arg1
-     * @param {*} arg2
      * @public
      */
-    emit2: function( arg1, arg2 ) {
-      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit2( arg1, arg2 );
+    emit2: function( arg0, arg1 ) {
+      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+        args: [
+          this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ),
+          this.phetioArgumentTypes[ 1 ].toStateObject( arg1 )
+        ]
+      } );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
       for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg1, arg2 );
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg0, arg1 );
       }
 
       this.listenersToEmitTo.pop();
-      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
+      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**
      * Emits a single event with three arguments.  This is a copy-paste of emit() for performance reasons.
+     * @param {*} arg0
      * @param {*} arg1
      * @param {*} arg2
-     * @param {*} arg3
      * @public
      */
-    emit3: function( arg1, arg2, arg3 ) {
-      this.callbacksStartedEmitter && this.callbacksStartedEmitter.emit3( arg1, arg2, arg3 );
+    emit3: function( arg0, arg1, arg2 ) {
+      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+        args: [
+          this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ),
+          this.phetioArgumentTypes[ 1 ].toStateObject( arg1 ),
+          this.phetioArgumentTypes[ 2 ].toStateObject( arg2 )
+        ]
+      } );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
       for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg1, arg2, arg3 );
+        this.listenersToEmitTo[ lastEntry ][ i ]( arg0, arg1, arg2 );
       }
 
       this.listenersToEmitTo.pop();
-      this.callbacksEndedEmitter && this.callbacksEndedEmitter.emit();
+      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**
