@@ -19,7 +19,6 @@ define( function( require ) {
   var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var toEventOnEmit = require( 'ifphetio!PHET_IO/toEventOnEmit' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
