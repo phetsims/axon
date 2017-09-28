@@ -14,9 +14,9 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var NumberProperty = require( 'AXON/NumberProperty' );
+  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TObservableArray = require( 'AXON/TObservableArray' );
 
@@ -38,7 +38,7 @@ define( function( require ) {
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: Tandem.tandemOptional(),
-      phetioValueType: null,
+      phetioValueType: { toStateObject: function() {} }, // a TType or this substitute
       phetioIncludeInState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
@@ -56,18 +56,22 @@ define( function( require ) {
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    // @private Event stream for signifying begin/end of callbacks
-    this.startedCallbacksForItemAddedEmitter = new Emitter( { indicateCallbacks: false } );
-    this.endedCallbacksForItemAddedEmitter = new Emitter( { indicateCallbacks: false } );
-    this.startedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
-    this.endedCallbacksForItemRemovedEmitter = new Emitter( { indicateCallbacks: false } );
-
     // public (phet-io) (read-only)
     this.phetioIncludeInState = options.phetioIncludeInState;
-    options.tandem.supplied && options.tandem.addInstance( this, TObservableArray( options.phetioValueType ) );
+
+    // @private
+    this.ttype = TObservableArray( options.phetioValueType );
+
+    options.tandem.supplied && options.tandem.addInstance( this, this.ttype );
     this.disposeObservableArray = function() {
       options.tandem.supplied && options.tandem.removeInstance( self );
     };
+
+    // @private
+    this.tandem = options.tandem;
+
+    // @private
+    this.phetioValueType = options.phetioValueType;
   }
 
   axon.register( 'ObservableArray', ObservableArray );
@@ -142,7 +146,7 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      this.startedCallbacksForItemAddedEmitter.emit1( item );
+      var id = phetioEvents.start( 'model', this.tandem.id, this.ttype, 'itemAdded', this.phetioValueType.toStateObject( item ) );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -150,13 +154,12 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.endedCallbacksForItemAddedEmitter.emit();
+      phetioEvents.end( id );
     },
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-
-      this.startedCallbacksForItemRemovedEmitter.emit1( item );
+      var id = phetioEvents.start( 'model', this.tandem.id, TObservableArray, 'itemRemoved', this.phetioValueType.toStateObject( item ) );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -164,7 +167,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.endedCallbacksForItemRemovedEmitter.emit();
+      phetioEvents.end( id );
     },
 
     /**

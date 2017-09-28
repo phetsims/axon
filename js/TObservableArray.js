@@ -37,28 +37,10 @@ define( function( require ) {
      * @constructor
      */
     var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
-      assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
+      assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
 
       TObject.call( this, observableArray, phetioID );
       assertInstanceOf( observableArray, phet.axon.ObservableArray );
-
-      /**
-       * @param item
-       * @returns {Object} - returns the stateObject of child item
-       */
-      var formatForDataStream = function( item ) {
-
-        // Supply phetioID if it is available
-        var result = { phetioID: item.phetioID };
-
-        // Supply state if it is available
-        if ( elementType.toStateObject ) {
-          result.state = elementType.toStateObject( item );
-        }
-        return result;
-      };
-      toEventOnEmit( observableArray.startedCallbacksForItemAddedEmitter, observableArray.endedCallbacksForItemAddedEmitter, 'model', phetioID, this.constructor, 'itemAdded', formatForDataStream );
-      toEventOnEmit( observableArray.startedCallbacksForItemRemovedEmitter, observableArray.endedCallbacksForItemRemovedEmitter, 'model', phetioID, this.constructor, 'itemRemoved', formatForDataStream );
     };
     return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {
 
@@ -125,7 +107,7 @@ define( function( require ) {
           return tempArray;
         },
 
-        setValue: function( instance, value){
+        setValue: function( instance, value ) {
           instance.clear();
           instance.addAll( value );
         },
