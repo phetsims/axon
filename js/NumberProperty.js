@@ -20,7 +20,7 @@ define( function( require ) {
    * @returns {boolean}
    */
   var IS_NUMBER = function( value ) {
-    return ( typeof value === 'number' );
+    return (typeof value === 'number');
   };
 
   // valid values for options.units // TODO: Should this be an enum?  @zepumph says probably
@@ -100,7 +100,7 @@ define( function( require ) {
 
     if ( options.range ) {
       options.isValidValue = function( value ) {
-        return IS_NUMBER( value ) && ( value >= options.range.min ) && ( value <= options.range.max );
+        return IS_NUMBER( value ) && (value >= options.range.min) && (value <= options.range.max);
       };
 
       // @public (read-only) {Range|{min,max}}
