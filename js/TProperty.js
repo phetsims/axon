@@ -46,23 +46,6 @@ define( function( require ) {
       TObject.call( this, property, phetioID );
 
       this.phetioStateElement = options.phetioStateElement;
-
-      toEventOnEmit(
-        property.startedCallbacksForChangedEmitter,
-        property.endedCallbacksForChangedEmitter,
-        'model',
-        phetioID,
-        this.constructor,
-        'changed',
-        function( newValue, oldValue ) {
-          return {
-            oldValue: phetioValueType.toStateObject( oldValue ),
-            newValue: phetioValueType.toStateObject( newValue ),
-
-            // Pass through the value type units.  Undefined are filtered out
-            units: phetioValueType.units
-          };
-        } );
     };
 
     return phetioInherit( TObject, 'TProperty', TPropertyImpl, {

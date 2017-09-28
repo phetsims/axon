@@ -14,6 +14,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
+  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
   var TProperty = require( 'AXON/TProperty' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
@@ -57,7 +58,7 @@ define( function( require ) {
     }, options );
 
     // value validation
-    assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+    assert && assert( !(options.validValues && options.isValidValue), 'validValues and isValidValue are mutually exclusive' );
 
     // @public (read-only) whether to use the values' equals method or === equality
     // useDeepEquality: true => Use the `equals` method on the values
@@ -82,15 +83,14 @@ define( function( require ) {
     Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioValueType,
       'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
-    // @public (read-only) Emitters that indicate the start/end of processing callbacks for a change.  Also used for PhET-iO data stream
-    this.startedCallbacksForChangedEmitter = new Emitter( { indicateCallbacks: false } );
-    this.endedCallbacksForChangedEmitter = new Emitter( { indicateCallbacks: false } );
-
     // @private - Store the internal value and the initial value
     this._value = value;
 
     // @private - Initial value
     this._initialValue = value;
+
+    // @private
+    this.tandem = options.tandem;
 
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
@@ -98,10 +98,12 @@ define( function( require ) {
 
     // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
     // unsupplied. This causes downstream errors in TProperty.
-    options.tandem.addInstance( this, TProperty( options.phetioValueType || TVoid, {
+    // @private
+    this.ttype = TProperty( options.phetioValueType || TVoid, {
       phetioInstanceDocumentation: options.phetioInstanceDocumentation,
       phetioStateElement: options.phetioStateElement
-    } ) );
+    } );
+    options.tandem.addInstance( this, this.ttype );
 
     // @private
     this.disposeProperty = function() {
@@ -196,14 +198,15 @@ define( function( require ) {
       // @private
       _notifyListeners: function( oldValue ) {
 
-        // Note the current value, since it will be sent to possibly multiple listeners.
-        var value = this.get();
+        var id = phetioEvents.start( 'model', this.tandem.id, this.ttype, 'changed', {
+          oldValue: oldValue,
+          newValue: this.get(),
+          units: this.phetioValueType && this.phetioValueType.units
+        } );
 
-        this.startedCallbacksForChangedEmitter.emit2( value, oldValue );
+        this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.changedEmitter.emit2( value, oldValue );
-
-        this.endedCallbacksForChangedEmitter.emit();
+        this.phetioValueType && phetioEvents.end( id );
       },
 
       /**
