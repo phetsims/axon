@@ -57,12 +57,12 @@ define( function( require ) {
     // @private
     this.phetioArgumentTypes = options.phetioArgumentTypes;
 
-    // @private - indicates whether data should appear on the data stream.
-    this.phetioEmitData = options.phetioEmitData;
-
     // Tandem registration
     this.ttype = TEmitter( options.phetioArgumentTypes );
     options.tandem.addInstance( this, this.ttype );
+
+    // @private - only emit data in phet-io brand and when tandem is provided and when supposed to emit data
+    this.emitToPhETIO = options.phetioEmitData && this.tandem.isLegalAndUsable() && window.phet.phetio;
 
     // @private
     this.disposeEmitter = function() {
@@ -161,7 +161,7 @@ define( function( require ) {
      */
     emit: function() {
 
-      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted' );
+      var id = this.emitToPhETIO && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted' );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -170,7 +170,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.emitToPhETIO && phetioEvents.end( id );
     },
 
     /**
@@ -181,7 +181,8 @@ define( function( require ) {
     emit1: function( arg0 ) {
 
       // TODO: name the args for the data stream
-      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+
+      var id = this.emitToPhETIO && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
         args: [ this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ) ]
       } );
       this.listenersToEmitTo.push( this.listeners );
@@ -192,7 +193,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.emitToPhETIO && phetioEvents.end( id );
     },
 
     /**
@@ -202,7 +203,7 @@ define( function( require ) {
      * @public
      */
     emit2: function( arg0, arg1 ) {
-      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+      var id = this.emitToPhETIO && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
         args: [
           this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ),
           this.phetioArgumentTypes[ 1 ].toStateObject( arg1 )
@@ -216,7 +217,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.emitToPhETIO && phetioEvents.end( id );
     },
 
     /**
@@ -227,7 +228,7 @@ define( function( require ) {
      * @public
      */
     emit3: function( arg0, arg1, arg2 ) {
-      var id = this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
+      var id = this.emitToPhETIO && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'emitted', {
         args: [
           this.phetioArgumentTypes[ 0 ].toStateObject( arg0 ),
           this.phetioArgumentTypes[ 1 ].toStateObject( arg1 ),
@@ -242,7 +243,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioEmitData && this.tandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.emitToPhETIO && phetioEvents.end( id );
     },
 
     /**
