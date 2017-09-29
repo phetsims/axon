@@ -107,7 +107,7 @@ define( function( require ) {
     this.disposeProperty = function() {
 
       // remove any listeners that are still attached to this property
-      self.changedEmitter.listeners.length = 0;
+      self.unlinkAll();
 
       // remove tandem instance
       options.tandem.removeInstance( self );
