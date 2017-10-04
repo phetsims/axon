@@ -242,6 +242,19 @@ define( function( require ) {
     },
 
     /**
+     * Resets the current property.
+     * @public
+     */
+    reset: function() {
+      assert && assert( this.bidirectional,
+        'Cannot reset a non-bidirectional DynamicProperty' );
+
+      if ( this.valuePropertyProperty.value !== null ) {
+        this.valuePropertyProperty.value.reset();
+      }
+    },
+
+    /**
      * Prevent setting this Property manually
      * @public
      * @override
@@ -251,7 +264,8 @@ define( function( require ) {
      * @param {*} value
      */
     set: function( value ) {
-      assert && assert( this.bidirectional, 'Cannot set values directly to a DynamicProperty, tried to set: ' + value );
+      assert && assert( this.bidirectional,
+        'Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ' + value );
 
       this.isExternallyChanging = true;
 
