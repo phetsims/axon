@@ -243,10 +243,8 @@ define( function( require ) {
        * @public
        */
       link: function( listener ) {
-        if ( !this.changedEmitter.hasListener( listener ) ) {
-          this.changedEmitter.addListener( listener );
-          listener( this.get(), null ); // null should be used when an object is expected but unavailable
-        }
+        this.changedEmitter.addListener( listener );
+        listener( this.get(), null ); // null should be used when an object is expected but unavailable
       },
 
       /**
@@ -267,9 +265,7 @@ define( function( require ) {
        * @public
        */
       unlink: function( listener ) {
-        if ( this.changedEmitter.hasListener( listener ) ) {
-          this.changedEmitter.removeListener( listener );
-        }
+        this.changedEmitter.removeListener( listener );
       },
 
       /**
