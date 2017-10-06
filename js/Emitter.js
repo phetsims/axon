@@ -62,7 +62,7 @@ define( function( require ) {
     options.tandem.addInstance( this, this.ttype );
 
     // @private - only emit data in phet-io brand and when tandem is provided and when supposed to emit data
-    this.emitToPhETIO = options.phetioEmitData && this.tandem.isLegalAndUsable() && window.phet.phetio;
+    this.emitToPhETIO = options.phetioEmitData && this.tandem.isLegalAndUsable();
 
     // @private
     this.disposeEmitter = function() {
