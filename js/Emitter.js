@@ -111,7 +111,7 @@ define( function( require ) {
     removeListener: function( listener ) {
 
       var index = this.listeners.indexOf( listener );
-      assert && assert( index >= 0, 'tried to removeListener on something that wasnt a listener' );
+      assert && assert( index >= 0, 'tried to removeListener on something that wasn\'t a listener' );
 
       // If callbacks are in progress, make a copy of the current list of listeners--the removed listener
       // will remain in the list and receive a callback for this emit call, see #72
