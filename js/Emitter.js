@@ -29,11 +29,6 @@ define( function( require ) {
     this.listenersToEmitTo = [];
 
     options = _.extend( {
-
-      // Typically, Emitters created by a simulation indicate when they begin and end processing callbacks to deliver
-      // nested data to the phet-io data stream. This is moderated by special "callback" emitters (which do not need
-      // to send data to phet-io).
-      indicateCallbacks: true,
       phetioArgumentTypes: [], // {Object[]} - for serializing/displaying the values during emit. Key = arg name, value = TType
       tandem: Tandem.tandemOptional(),
       phetioEmitData: true, // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
@@ -45,9 +40,6 @@ define( function( require ) {
 
     // @public (read-only) {string} - indicate the type of event
     this.phetioMessageType = options.phetioMessageType;
-
-    // @private
-    this.indicateCallbacks = options.indicateCallbacks;// TODO: Delete me
 
     var self = this;
 
