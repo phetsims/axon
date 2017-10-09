@@ -199,8 +199,8 @@ define( function( require ) {
       _notifyListeners: function( oldValue ) {
 
         var id = this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'changed', {
-          oldValue: oldValue,
-          newValue: this.get(),
+          oldValue: this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( oldValue ),
+          newValue: this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( this.get() ),
           units: this.phetioValueType && this.phetioValueType.units
         } );
 
