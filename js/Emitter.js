@@ -31,8 +31,11 @@ define( function( require ) {
     options = _.extend( {
       phetioArgumentTypes: [], // {Object[]} - for serializing/displaying the values during emit. Key = arg name, value = TType
       tandem: Tandem.tandemOptional(),
-      phetioEmitData: true, // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
+
+      // Can be overriden to suppress data from the phet-io data stream.  For example, clock tick
       // emits would spam the console, but the wrapper may still want to listen for the emits
+      // TODO: this may not be needed once phetioEvents is fully implemented.
+      phetioEvents: true
     }, options );
 
     var self = this;
