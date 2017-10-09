@@ -33,7 +33,8 @@ define( function( require ) {
 
       // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
       // in the playback simulation.
-      phetioStateElement: true
+      // TODO: This may not be needed once phetioState is implemented globally
+      phetioState: true
     }, options );
 
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
@@ -44,7 +45,7 @@ define( function( require ) {
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
 
-      this.phetioStateElement = options.phetioStateElement;
+      this.phetioState = options.phetioState;
     };
 
     return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
@@ -96,7 +97,7 @@ define( function( require ) {
       }
     }, {
 
-      phetioStateElement: options.phetioStateElement,
+      phetioState: options.phetioState,
 
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
                      'traditional listener pattern in that listeners also receive a callback with the current value ' +

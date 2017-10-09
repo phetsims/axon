@@ -50,7 +50,7 @@ define( function( require ) {
 
       // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
       // in the playback simulation.
-      phetioStateElement: true,
+      phetioState: true,
 
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
@@ -101,7 +101,7 @@ define( function( require ) {
     // @private
     this.ttype = TProperty( options.phetioValueType || TVoid, {
       phetioInstanceDocumentation: options.phetioInstanceDocumentation,
-      phetioStateElement: options.phetioStateElement
+      phetioState: options.phetioState
     } );
     options.tandem.addInstance( this, this.ttype );
 
