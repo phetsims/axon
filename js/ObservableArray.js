@@ -39,7 +39,7 @@ define( function( require ) {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: Tandem.tandemOptional(),
       phetioValueType: null, // {TType|null}
-      phetioIncludeInState: false // keep ObservableArray out of the state unless they opt in.
+      phetioState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
     // TODO: Should we require tandems for all ObservableArrays?
@@ -57,7 +57,7 @@ define( function( require ) {
     this.initialArray = array ? array.slice() : [];
 
     // public (phet-io) (read-only)
-    this.phetioIncludeInState = options.phetioIncludeInState;
+    this.phetioState = options.phetioState;
 
     // @private
     this.ttype = TObservableArray( options.phetioValueType || {} );
