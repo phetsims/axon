@@ -26,11 +26,6 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
-    // Check duck type for incorrect Tandem argument
-    if ( options && options.isTandem ) {
-      assert && assert( false, 'Options should be an Object, not a Tandem' );
-    }
-
     options = _.extend( {
       tandem: Tandem.tandemOptional(),
       phetioValueType: null, // {function | null} phet-io type wrapper like TString, TNumber, etc.
