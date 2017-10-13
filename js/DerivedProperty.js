@@ -72,7 +72,7 @@ define( function( require ) {
     }
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem.supplied && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ) );
+    options.tandem.supplied && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ), options );
 
     this.disposeDerivedProperty = function() {
       options.tandem && options.tandem.removeInstance( self );

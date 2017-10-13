@@ -48,7 +48,7 @@ define( function( require ) {
 
     // Tandem registration
     this.ttype = TEmitter( options.phetioArgumentTypes );
-    options.tandem.addInstance( this, this.ttype );
+    options.tandem.addInstance( this, this.ttype, options );
 
     // @private - only emit data in phet-io brand and when tandem is provided and when supposed to emit data
     this.emitToPhETIO = options.phetioEmitData && this.tandem.isLegalAndUsable();

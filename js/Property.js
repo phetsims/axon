@@ -96,7 +96,7 @@ define( function( require ) {
       phetioInstanceDocumentation: options.phetioInstanceDocumentation,
       phetioState: options.phetioState
     } );
-    options.tandem.addInstance( this, this.ttype );
+    options.tandem.addInstance( this, this.ttype, options );
   }
 
   axon.register( 'Property', Property );

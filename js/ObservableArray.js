@@ -62,7 +62,7 @@ define( function( require ) {
     // @private
     this.ttype = TObservableArray( options.phetioValueType || {} );
 
-    options.tandem.supplied && options.tandem.addInstance( this, this.ttype );
+    options.tandem.supplied && options.tandem.addInstance( this, this.ttype, options );
     this.disposeObservableArray = function() {
       options.tandem.supplied && options.tandem.removeInstance( self );
     };
