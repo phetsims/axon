@@ -26,8 +26,6 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
-    var self = this;
-
     // Check duck type for incorrect Tandem argument
     if ( options && options.isTandem ) {
       assert && assert( false, 'Options should be an Object, not a Tandem' );
@@ -104,16 +102,6 @@ define( function( require ) {
       phetioState: options.phetioState
     } );
     options.tandem.addInstance( this, this.ttype );
-
-    // @private
-    this.disposeProperty = function() {
-
-      // remove any listeners that are still attached to this property
-      self.unlinkAll();
-
-      // remove tandem instance
-      options.tandem.removeInstance( self );
-    };
   }
 
   axon.register( 'Property', Property );
@@ -370,7 +358,12 @@ define( function( require ) {
 
       // @public Ensures that the Property is eligible for GC
       dispose: function() {
-        this.disposeProperty();
+
+        // remove any listeners that are still attached to this property
+        this.unlinkAll();
+
+        // remove tandem instance
+        this.tandem.removeInstance( self );
       },
 
       /**
