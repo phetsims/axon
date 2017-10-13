@@ -126,9 +126,8 @@ define( function( require ) {
         },
 
         setValue: function( instance, value){
-          // TODO: is this is a no no? Does PhET-iO have this sort of power, see https://github.com/phetsims/phet-io/issues/1054
-          instance._array = value;
-
+          instance.clear();
+          instance.addAll();
         },
 
         documentation: 'An array that sends notifications when its values have changed.',
