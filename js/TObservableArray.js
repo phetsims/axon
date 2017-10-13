@@ -127,7 +127,7 @@ define( function( require ) {
 
         setValue: function( instance, value){
           instance.clear();
-          instance.addAll();
+          instance.addAll( value );
         },
 
         documentation: 'An array that sends notifications when its values have changed.',
