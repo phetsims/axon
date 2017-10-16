@@ -358,7 +358,7 @@ define( function( require ) {
         this.unlinkAll();
 
         // remove tandem instance
-        this.tandem.removeInstance( self );
+        this.tandem.removeInstance( this );
       },
 
       /**
