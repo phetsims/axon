@@ -73,10 +73,6 @@ define( function( require ) {
 
     // If running as phet-io and a tandem is supplied, register with tandem.
     options.tandem.supplied && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ), options );
-
-    this.disposeDerivedProperty = function() {
-      options.tandem && options.tandem.removeInstance( self );
-    };
   }
 
   axon.register( 'DerivedProperty', DerivedProperty );
@@ -86,10 +82,6 @@ define( function( require ) {
     // @public
     dispose: function() {
 
-      Property.prototype.dispose.call( this );
-      this.disposeDerivedProperty();
-
-      // TODO: Move this code to disposeDerivedProperty
       // Unlink from dependent properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
         var dependency = this.dependencies[ i ];
@@ -98,6 +90,9 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
       this.dependencyValues = null;
+
+      // calls tandem.removeInstance
+      Property.prototype.dispose.call( this );
     },
 
     /**
