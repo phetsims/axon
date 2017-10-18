@@ -54,6 +54,8 @@ define( function( require ) {
       tandem: options.tandem && options.tandem.createSupertypeTandem()
     } ) );
 
+    this.tandem = options.tandem; // @private - set after parent to override this.tandem from Property.js
+
     var self = this;
 
     // @private Keep track of listeners so they can be detached
@@ -90,6 +92,8 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
       this.dependencyValues = null;
+
+      this.tandem.removeInstance( this );
 
       // calls tandem.removeInstance
       Property.prototype.dispose.call( this );
