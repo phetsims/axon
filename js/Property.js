@@ -337,6 +337,7 @@ define( function( require ) {
        *
        * @param {Object} value - the value to match
        * @param {function} listener - the listener that is called when this Property
+       * @returns {function} a listener that wraps the provided listener
        * @public
        */
       onValue: function( value, listener ) {
