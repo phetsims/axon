@@ -89,7 +89,7 @@ define( function( require ) {
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
 
-    // @public (read-only, scenery) indicate whether the Property has been disposed
+    // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
 
     // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
