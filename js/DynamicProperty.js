@@ -250,7 +250,7 @@ define( function( require ) {
         'Cannot reset a non-bidirectional DynamicProperty' );
 
       if ( this.valuePropertyProperty.value !== null ) {
-        this.valuePropertyProperty.value.reset();
+        this.derive( this.valuePropertyProperty.value ).reset();
       }
     },
 
