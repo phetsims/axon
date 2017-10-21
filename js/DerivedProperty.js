@@ -44,10 +44,7 @@ define( function( require ) {
 
     this.dependencies = dependencies; // @private
 
-    // @private Keep track of each dependency and only update the changed value, for speed
-    this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
-
-    var initialValue = derivation.apply( null, this.dependencyValues );
+    var initialValue = derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     Property.call( this, initialValue, _.extend( {}, options, {
@@ -63,10 +60,9 @@ define( function( require ) {
 
     for ( var i = 0; i < dependencies.length; i++ ) {
       var dependency = dependencies[ i ];
-      (function( dependency, i ) {
-        var listener = function( newValue ) {
-          self.dependencyValues[ i ] = newValue;
-          Property.prototype.set.call( self, derivation.apply( null, self.dependencyValues ) );
+      (function( dependency ) {
+        var listener = function() {
+          Property.prototype.set.call( self, derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) ) );
         };
         self.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
@@ -91,7 +87,6 @@ define( function( require ) {
       }
       this.dependencies = null;
       this.dependencyListeners = null;
-      this.dependencyValues = null;
 
       this.tandem.removeInstance( this );
 
