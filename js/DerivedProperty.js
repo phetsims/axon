@@ -51,7 +51,7 @@ define( function( require ) {
       tandem: options.tandem && options.tandem.createSupertypeTandem()
     } ) );
 
-    this.tandem = options.tandem; // @private - set after parent to override this.tandem from Property.js
+    this.derivedPropertyTandem = options.tandem; // @private - set after parent to override this.tandem from Property.js
 
     var self = this;
 
@@ -88,9 +88,8 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
 
-      this.tandem.removeInstance( this );
+      this.derivedPropertyTandem.removeInstance( this );
 
-      // calls tandem.removeInstance
       Property.prototype.dispose.call( this );
     },
 
