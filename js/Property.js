@@ -334,27 +334,6 @@ define( function( require ) {
         this.value = !this.value;
       },
 
-      /**
-       * Adds a listener that is fired when the property takes the specified value.  If the property has the value already,
-       * the listener is called back immediately.  A reference to the listener is returned so that it can be removed.
-       *
-       * @param {Object} value - the value to match
-       * @param {function} listener - the listener that is called when this Property
-       * @returns {function} a listener that wraps the provided listener
-       * @public
-       */
-      onValue: function( value, listener ) {
-        assert && this.isValidValue && assert( this.isValidValue( value ), 'attempt to observe invalid value: ' + value );
-        var self = this;
-        var onValueListener = function( v ) {
-          if ( self.areValuesEqual( v, value ) ) {
-            listener();
-          }
-        };
-        this.link( onValueListener );
-        return onValueListener;
-      },
-
       // @public Ensures that the Property is eligible for GC
       dispose: function() {
 
