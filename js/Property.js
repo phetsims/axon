@@ -83,7 +83,7 @@ define( function( require ) {
     this._initialValue = value;
 
     // @private
-    this.tandem = options.tandem;
+    this.propertyTandem = options.tandem;
 
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
@@ -184,7 +184,7 @@ define( function( require ) {
       // @private
       _notifyListeners: function( oldValue ) {
 
-        var id = this.tandem.isLegalAndUsable() && phetioEvents.start( 'model', this.tandem.id, this.ttype, 'changed', {
+        var id = this.propertyTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.propertyTandem.id, this.ttype, 'changed', {
           oldValue: this.phetioValueType.toStateObject( oldValue ),
           newValue: this.phetioValueType.toStateObject( this.get() ),
           units: this.phetioValueType && this.phetioValueType.units
@@ -192,7 +192,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.tandem.isLegalAndUsable() && phetioEvents.end( id );
+        this.propertyTandem.isLegalAndUsable() && phetioEvents.end( id );
       },
 
       /**
@@ -344,7 +344,7 @@ define( function( require ) {
         this.unlinkAll();
 
         // remove tandem instance
-        this.tandem.removeInstance( this );
+        this.propertyTandem.removeInstance( this );
       },
 
       /**
