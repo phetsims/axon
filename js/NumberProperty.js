@@ -96,7 +96,7 @@ define( function( require ) {
     var numberPropertyTandem = options.tandem;
     options.tandem = numberPropertyTandem.createSupertypeTandem();
 
-    assert && assert( !options.validValues, 'NumberProperty cannot use validValues' );
+    assert && assert( !(options.validValues && options.range), 'validValues and range are mutually exclusive' );
     assert && assert( !options.isValidValue, 'NumberProperty implements its own isValidValue' );
 
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'Invalid units: ' + options.units );
@@ -104,6 +104,8 @@ define( function( require ) {
 
     // @public (read-only)
     this.units = options.units;
+
+    // @public (read-only) {Range|{min,max}}
     this.range = options.range;
     this.valueType = options.valueType;
 
@@ -111,9 +113,10 @@ define( function( require ) {
       options.isValidValue = function( value ) {
         return IS_NUMBER( value ) && (value >= options.range.min) && (value <= options.range.max);
       };
+    }
+    else if ( options.validValues ) {
 
-      // @public (read-only) {Range|{min,max}}
-      this.range = options.range;
+      // pass through to Property
     }
     else {
       options.isValidValue = IS_NUMBER;
