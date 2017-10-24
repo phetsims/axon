@@ -85,6 +85,9 @@ define( function( require ) {
     // @private
     this.propertyTandem = options.tandem;
 
+    // @public (phet-io) {Object[] | undefined}
+    this.validValues = options.validValues;
+
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
