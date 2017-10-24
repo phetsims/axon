@@ -53,7 +53,7 @@ define( function( require ) {
     // value validation
     assert && assert( !(options.validValues && options.isValidValue), 'validValues and isValidValue are mutually exclusive' );
 
-    // @public (read-only) whether to use the values' equals method or === equality
+    // @private (read-only) whether to use the values' equals method or === equality
     // useDeepEquality: true => Use the `equals` method on the values
     // useDeepEquality: false => Use === for equality test
     this.useDeepEquality = options.useDeepEquality;
