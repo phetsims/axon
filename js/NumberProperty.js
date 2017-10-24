@@ -89,7 +89,7 @@ define( function( require ) {
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       phetioValueType: TNumber,
-      valueType: 'FloatingPoint', // 'FloatingPoint' | 'Integer'
+      valueType: 'FloatingPoint', // {string} 'FloatingPoint' | 'Integer'
       units: null, // {string} units from above
       tandem: Tandem.tandemOptional()
     }, options );
@@ -102,11 +102,9 @@ define( function( require ) {
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'Invalid units: ' + options.units );
     assert && assert( _.includes( VALID_TYPE_VALUES, options.valueType ), 'invalid type: ' + options.valueType );
 
-    // @public (read-only)
+    // @public (read-only) - used by PhET-iO in TNumberProperty as metadata passed to the wrapper.
     this.units = options.units;
-
-    // @public (read-only) {Range|{min,max}}
-    this.range = options.range;
+    this.range = options.range; // {Range|{min,max}}
     this.valueType = options.valueType;
 
     if ( options.range ) {
@@ -121,9 +119,6 @@ define( function( require ) {
     else {
       options.isValidValue = IS_NUMBER;
     }
-
-    // @public (read-only) {string}
-    this.valueType = options.valueType;
 
     Property.call( this, value, options );
     numberPropertyTandem.addInstance( this, TNumberProperty, options );
