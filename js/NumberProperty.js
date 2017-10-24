@@ -12,6 +12,10 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
+  var Tandem = require( 'TANDEM/Tandem' );
+  var TNumberProperty = require( 'AXON/TNumberProperty' );
+
+  // phet-io modules
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
   // constants
@@ -86,8 +90,11 @@ define( function( require ) {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       phetioValueType: TNumber,
       valueType: 'FloatingPoint', // 'FloatingPoint' | 'Integer'
-      units: null
+      units: null, // {string} units from above
+      tandem: Tandem.tandemOptional()
     }, options );
+    var numberPropertyTandem = options.tandem;
+    options.tandem = numberPropertyTandem.createSupertypeTandem();
 
     assert && assert( !options.validValues, 'NumberProperty cannot use validValues' );
     assert && assert( !options.isValidValue, 'NumberProperty implements its own isValidValue' );
@@ -95,8 +102,10 @@ define( function( require ) {
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'Invalid units: ' + options.units );
     assert && assert( _.includes( VALID_TYPE_VALUES, options.valueType ), 'invalid type: ' + options.valueType );
 
-    // @public (read-only) {string} units from above
+    // @public (read-only)
     this.units = options.units;
+    this.range = options.range;
+    this.valueType = options.valueType;
 
     if ( options.range ) {
       options.isValidValue = function( value ) {
@@ -114,6 +123,7 @@ define( function( require ) {
     this.valueType = options.valueType;
 
     Property.call( this, value, options );
+    numberPropertyTandem.addInstance( this, TNumberProperty, options );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
