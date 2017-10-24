@@ -1,7 +1,7 @@
-// Copyright 2016, University of Colorado Boulder
+// Copyright 2016-2017, University of Colorado Boulder
 
 /**
- * Property whose value must be a number, with optional range validation.
+ * Property whose value must be a number.
  *
  * @author Chris Malley (PixelZoom, Inc.)
  */
@@ -67,7 +67,7 @@ define( function( require ) {
     'webers'
   ];
 
-  // values for options.type
+  // valid values for options.valueType
   var VALID_VALUE_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
@@ -80,15 +80,17 @@ define( function( require ) {
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       phetioValueType: TNumber,
-      valueType: 'FloatingPoint', // {string} 'FloatingPoint' | 'Integer'
-      units: null, // {string} units from above
+      valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
+      units: null, // {string|null} see VALID_UNITS
       tandem: Tandem.tandemOptional()
     }, options );
+
     var numberPropertyTandem = options.tandem;
     options.tandem = numberPropertyTandem.createSupertypeTandem();
 
-    assert && assert( !(options.validValues && options.range), 'validValues and range are mutually exclusive' );
-    assert && assert( !options.isValidValue, 'NumberProperty implements its own isValidValue' );
+    assert && assert(
+      _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) { return value; } ).length <= 1,
+      'validValues, isValidValue and range are mutually-exclusive options' );
 
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
     assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid type: ' + options.valueType );
@@ -99,19 +101,35 @@ define( function( require ) {
     this.valueType = options.valueType;
 
     if ( options.range ) {
+
+      // Add a validation function that includes the range check.
       options.isValidValue = function( value ) {
-        return isNumber( value ) && (value >= options.range.min) && (value <= options.range.max);
+        return isNumber( value ) && ( value >= options.range.min ) && ( value <= options.range.max );
       };
     }
     else if ( options.validValues ) {
 
-      // pass through to Property
+      // Verify that the values are all numbers.
+      assert && assert( _.every( options.validValues, function( value ) { return isNumber( value ); },
+        'validValues must contain numbers' ) );
+    }
+    else if ( options.isValidValue ) {
+
+      // Wrap the provided function so that we can verify that the value is a number.
+      // This prevents the client from having to check (or remember to check) that the value is a number.
+      var isValidValue = options.isValidValue;
+      options.isValidValue = function( value ) {
+        return isNumber( value ) && isValidValue( value );
+      };
     }
     else {
+
+      // fallback to verifying that the value is a string
       options.isValidValue = isNumber;
     }
 
     Property.call( this, value, options );
+
     numberPropertyTandem.addInstance( this, TNumberProperty, options );
   }
 
