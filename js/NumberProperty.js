@@ -15,9 +15,6 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
   var TNumberProperty = require( 'AXON/TNumberProperty' );
 
-  // phet-io modules
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
-
   // constants
   /**
    * @param {*} value
