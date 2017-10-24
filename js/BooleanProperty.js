@@ -1,7 +1,7 @@
-// Copyright 2016, University of Colorado Boulder
+// Copyright 2016-2017, University of Colorado Boulder
 
 /**
- * Convenience subclass of Property that constrains values to be true or false.
+ * Convenience subtype of Property that constrains values to be true or false.
  * Truthy/falsy values are considered invalid.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -17,34 +17,35 @@ define( function( require ) {
   // phet-io modules
   var TBoolean = require( 'ifphetio!PHET_IO/types/TBoolean' );
 
-  // constants
   /**
-   * @param value
-   * @returns {boolean}
-   */
-  var IS_BOOLEAN = function( value ) {
-    return typeof value === 'boolean';
-  };
-
-  /**
-   * Convenience constructor that constrains values to be true/false.
    * @param {boolean} value - initial value
    * @param {Object} [options]
    * @constructor
    */
   function BooleanProperty( value, options ) {
-    assert && assert( !options || !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
-    options = _.extend( {
-      phetioValueType: TBoolean
-    }, options );
-    assert && assert( !options.validValues, 'BooleanProperty cannot use validValues' );
-    assert && assert( !options.isValidValue, 'BooleanProperty implements its own isValidValue' );
-    options.isValidValue = IS_BOOLEAN;
+
+    options = options || {};
+
+    assert && assert( !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
+    options.phetioValueType = TBoolean;
+
+    assert && assert( !options.isValidValue, 'isValidValue is provided by BooleanProperty' );
+    options.isValidValue = isBoolean;
+
+    assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
 
     Property.call( this, value, options );
   }
 
   axon.register( 'BooleanProperty', BooleanProperty );
+
+  /**
+   * @param value
+   * @returns {boolean}
+   */
+  function isBoolean( value ) {
+    return ( typeof value === 'boolean' );
+  }
 
   return inherit( Property, BooleanProperty );
 } );
