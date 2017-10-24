@@ -77,7 +77,7 @@ define( function( require ) {
   ];
 
   // values for options.type
-  var VALID_TYPE_VALUES = [ 'FloatingPoint', 'Integer' ];
+  var VALID_VALUE_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
    * @param {number} value - initial value
@@ -99,12 +99,12 @@ define( function( require ) {
     assert && assert( !(options.validValues && options.range), 'validValues and range are mutually exclusive' );
     assert && assert( !options.isValidValue, 'NumberProperty implements its own isValidValue' );
 
-    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'Invalid units: ' + options.units );
-    assert && assert( _.includes( VALID_TYPE_VALUES, options.valueType ), 'invalid type: ' + options.valueType );
+    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
+    assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid type: ' + options.valueType );
 
     // @public (read-only) - used by PhET-iO in TNumberProperty as metadata passed to the wrapper.
     this.units = options.units;
-    this.range = options.range; // {Range|{min,max}}
+    this.range = options.range;
     this.valueType = options.valueType;
 
     if ( options.range ) {
