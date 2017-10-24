@@ -1,4 +1,4 @@
-// Copyright 2013-2016, University of Colorado Boulder
+// Copyright 2013-2017, University of Colorado Boulder
 
 /**
  * An observable property which notifies listeners when the value changes.
@@ -74,7 +74,7 @@ define( function( require ) {
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
     Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioValueType,
-      'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
+      'Value type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // @private - Store the internal value and the initial value
     this._value = value;
@@ -85,7 +85,7 @@ define( function( require ) {
     // @private
     this.propertyTandem = options.tandem;
 
-    // @public (phet-io) {Object[] | undefined}
+    // @public (phet-io)
     this.validValues = options.validValues;
 
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
