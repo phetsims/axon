@@ -1,10 +1,10 @@
-// Copyright 2016, University of Colorado Boulder
+// Copyright 2016-2017, University of Colorado Boulder
 
 /**
- * Convenience subclass of Property that constrains values to be a string.
- * Truthy/falsy values are considered invalid.
+ * Convenience subtype of Property that constrains values to be a string.
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
   'use strict';
@@ -17,33 +17,50 @@ define( function( require ) {
   // phet-io modules
   var TString = require( 'ifphetio!PHET_IO/types/TString' );
 
-  // constants
   /**
-   * @param value
-   * @returns {boolean}
-   */
-  var IS_STRING = function( value ) {
-    return typeof value === 'string';
-  };
-
-  /**
-   * Convenience constructor that constrains values to be a string.
    * @param {string} value - initial value
    * @param {Object} [options]
    * @constructor
    */
   function StringProperty( value, options ) {
-    assert && assert( !options || !options.phetioValueType, 'phetioValueType is provided by StringProperty' );
-    options = _.extend( {
-      phetioValueType: TString,
-      isValidValue: IS_STRING // Default to using a type test, but allow it to be overriden with a more specific test
-    }, options );
-    assert && assert( !options.validValues, 'StringProperty cannot use validValues' );
+
+    options = options || {};
+
+    assert && assert( !options.phetioValueType, 'phetioValueType is set by StringProperty' );
+    options.phetioValueType = TString;
+
+    if ( options.validValues ) {
+      assert && assert( _.every( options.validValues, function( value ) { return isString( value ); } ),
+        'validValues must be strings' );
+    }
+
+    if ( options.isValidValue ) {
+
+      // Wrap the provided function so that we can verify that the value is a string.
+      // This prevents the client from having to check (or remember to check) that the value is a string.
+      var isValidValue = options.isValidValue;
+      options.isValidValue = function( value ) {
+        return isString( value ) && isValidValue( value );
+      };
+    }
+    else if ( !options.validValues ) {
+
+      // fallback to verifying that the value is a string
+      options.isValidValue = isString;
+    }
 
     Property.call( this, value, options );
   }
 
   axon.register( 'StringProperty', StringProperty );
+
+  /**
+   * @param {*} value
+   * @returns {boolean}
+   */
+  function isString( value ) {
+    return ( typeof value === 'string' );
+  }
 
   return inherit( Property, StringProperty );
 } );
