@@ -18,7 +18,6 @@ define( function( require ) {
   // phet-io modules
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
-  // TODO: Should this be an enum?  @zepumph says probably. See https://github.com/phetsims/axon/issues/158
   // valid values for options.units
   var VALID_UNITS = [
     'amperes',
