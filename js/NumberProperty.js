@@ -18,15 +18,6 @@ define( function( require ) {
   // phet-io modules
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 
-  // constants
-  /**
-   * @param {*} value
-   * @returns {boolean}
-   */
-  var IS_NUMBER = function( value ) {
-    return (typeof value === 'number');
-  };
-
   // valid values for options.units // TODO: Should this be an enum?  @zepumph says probably
   var VALID_UNITS = [
     'amperes',
@@ -109,7 +100,7 @@ define( function( require ) {
 
     if ( options.range ) {
       options.isValidValue = function( value ) {
-        return IS_NUMBER( value ) && (value >= options.range.min) && (value <= options.range.max);
+        return isNumber( value ) && (value >= options.range.min) && (value <= options.range.max);
       };
     }
     else if ( options.validValues ) {
@@ -117,7 +108,7 @@ define( function( require ) {
       // pass through to Property
     }
     else {
-      options.isValidValue = IS_NUMBER;
+      options.isValidValue = isNumber;
     }
 
     Property.call( this, value, options );
@@ -125,6 +116,14 @@ define( function( require ) {
   }
 
   axon.register( 'NumberProperty', NumberProperty );
+
+  /**
+   * @param {*} value
+   * @returns {boolean}
+   */
+  function isNumber( value ) {
+    return ( typeof value === 'number' );
+  }
 
   return inherit( Property, NumberProperty );
 } );
