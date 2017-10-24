@@ -40,7 +40,7 @@ define( function( require ) {
   axon.register( 'BooleanProperty', BooleanProperty );
 
   /**
-   * @param value
+   * @param {*} value
    * @returns {boolean}
    */
   function isBoolean( value ) {
