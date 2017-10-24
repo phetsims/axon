@@ -85,7 +85,7 @@ define( function( require ) {
     // @private
     this.propertyTandem = options.tandem;
 
-    // @public (phet-io) {Object[]|null}
+    // @public (phet-io)
     this.validValues = options.validValues;
 
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
