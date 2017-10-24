@@ -74,7 +74,7 @@ define( function( require ) {
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
     Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioValueType,
-      'Type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
+      'Value type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // @private - Store the internal value and the initial value
     this._value = value;
