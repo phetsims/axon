@@ -85,6 +85,7 @@ define( function( require ) {
 
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
+      phetioValueType: TNumber,
       valueType: 'FloatingPoint', // {string} 'FloatingPoint' | 'Integer'
       units: null, // {string} units from above
       tandem: Tandem.tandemOptional()
