@@ -18,19 +18,6 @@
 
   /* eslint-disable no-undef */
 
-  test( 'Test once', function() {
-    var count = 0;
-    var p = new axon.Property( 1 );
-    p.once( function( newVal, oldVal ) {
-      count++;
-    } );
-
-    p.value = 2;
-    p.value = 3;
-    p.value = 4;
-    equal( count, 1, 'Listener added with once is only called back one time' );
-  } );
-
   test( 'Test observable array', function() {
     var array = new ObservableArray( [ 'a', 'b', 'c' ] );
     var dChecker = function( item ) {

@@ -296,28 +296,6 @@ define( function( require ) {
       valueOf: function() {return this.toString();},
 
       /**
-       * Add a listener so that it will only fire once (and not on registration)
-       *
-       * I can see two ways to implement this:
-       * (a) add a field to the listener so after notifications it can be checked and possibly removed. Disadvantage: will make everything slower even if not using 'once'
-       * (b) wrap the listener in a new function which will call the listener and then remove itself.  Disadvantage: cannot remove an listener added using 'once'
-       * To avoid possible performance problems, use a wrapper function, and return it as a handle in case the 'once' listener must be removed before it is called once
-       *
-       * @param {function} listener the listener which should be called back only for one property change (and not on registration)
-       * @returns {function} the wrapper handle in case the wrapped function needs to be removed with 'unlink' before it is called once
-       * @public
-       */
-      once: function( listener ) {
-        var self = this;
-        var wrapper = function( newValue, oldValue ) {
-          self.unlink( wrapper );
-          listener( newValue, oldValue );
-        };
-        this.lazyLink( wrapper );
-        return wrapper;
-      },
-
-      /**
        * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
        * @param name debug name to be printed on the console
        * @returns {function} the handle to the linked listener in case it needs to be removed later
