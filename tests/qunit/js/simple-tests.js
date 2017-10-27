@@ -133,26 +133,6 @@
 
     equal( planetName, 'pluto', 'argument should pass through event' );
     equal( planetRadius, 12345, 'argument should pass through event' );
-
-    var name = 'hello';
-    person.once( 'name-changed', function( newName ) {
-      name = newName;
-    } );
-
-    person.trigger( 'name-changed', 'Alice' );
-    person.trigger( 'name-changed', 'Bob' );
-    person.trigger( 'name-changed', 'Charlie' );
-
-    equal( name, 'Alice', 'function added with once should only be called once' );
-
-    var x = 0;
-    var listener2 = function() {
-      x = 999;
-    };
-    var handle = person.once( 'say-hello', listener2 );
-    person.off( 'say-hello', handle );
-    person.trigger( 'say-hello' );
-    equal( x, 0, 'Function added with once should be removable' );
   } );
 
   test( 'Test unlink', function() {
@@ -264,6 +244,7 @@
     var or = axon.DerivedProperty.or( [ propA, propB, propC ] );
 
     equal( and.value, false );
+    equal( or.value, true );
     equal( or.value, true );
 
     propB.value = true;

@@ -66,37 +66,6 @@ define( function( require ) {
     },
 
     /**
-     * Adds a function which will only be called back once, after which it is removed as a listener.
-     * If you need to remove a function added with 'once' you will have to remove its handle, which is returned by the function.
-     * @param {string} eventName the name for the event channel
-     * @param {function} callback function to be called back once (if at all)
-     * @public
-     */
-    once: function( eventName, callback ) {
-      assert && assert( typeof eventName === 'string', 'eventName should be a string' );
-      assert && assert( typeof callback === 'function', 'callback should be a function' );
-
-      var self = this;
-      var wrappedCallback = function() {
-        self.off( eventName, wrappedCallback );
-
-        //If no arguments being passed through, call back without processing arguments, for possible speed
-        if ( arguments.length === 0 ) {
-          callback();
-        }
-        else {
-
-          //General case of passing events through to the wrapped callback function
-          callback.apply( this, Array.prototype.slice.call( arguments, 0 ) );
-        }
-      };
-      this.on( eventName, wrappedCallback );
-
-      //Return the handle in case it needs to be removed.
-      return wrappedCallback;
-    },
-
-    /**
      * Remove a listener added with on() from the specified event type.  Does nothing if the listener did not exist.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
