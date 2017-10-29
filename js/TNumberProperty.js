@@ -76,4 +76,3 @@ define( function( require ) {
 
   return TNumberProperty;
 } );
-
