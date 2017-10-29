@@ -51,7 +51,6 @@ define( function( require ) {
       fromParentStateObject.valueType = stateObject.valueType;
       fromParentStateObject.units = stateObject.units;
       fromParentStateObject.range = stateObject.range;
-      fromParentStateObject.validValues = stateObject.validValues;
       return fromParentStateObject;
     },
 
@@ -67,8 +66,14 @@ define( function( require ) {
       parentStateObject.valueType = instance.valueType;
       parentStateObject.units = instance.units;
       parentStateObject.range = instance.range;
-      parentStateObject.validValues = instance.validValues;
       return parentStateObject;
+    },
+
+    setValue: function( instance, fromStateObject ) {
+      TProperty.setValue( instance, fromStateObject );
+      instance.units = fromStateObject.units;
+      instance.range = fromStateObject.range;
+      instance.valueType = fromStateObject.valueType;
     },
 
     documentation: 'Numeric property model'

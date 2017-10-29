@@ -121,7 +121,12 @@ define( function( require ) {
        * @returns {Object}
        */
       fromStateObject: function( stateObject ) {
-        return { value: phetioValueType.fromStateObject( stateObject.value ) };
+        return {
+          value: phetioValueType.fromStateObject( stateObject.value ),
+          validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
+            return phetioValueType.fromStateObject( v );
+          } )
+        };
       },
 
       /**
@@ -134,8 +139,9 @@ define( function( require ) {
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
         return {
           value: phetioValueType.toStateObject( instance.value ),
-          units: instance.units,
-          range: instance.range
+          validValues: instance.validValues && instance.validValues.map( function( v ) {
+            return phetioValueType.toStateObject( v );
+          } )
         };
       },
 
@@ -146,6 +152,7 @@ define( function( require ) {
        */
       setValue: function( instance, stateObject ) {
         instance.set( stateObject.value );
+        instance.validValues = stateObject.validValues;
       },
 
       options: options
