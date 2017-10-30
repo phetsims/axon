@@ -242,11 +242,11 @@
     var propC = new axon.Property( false );
     var propD = new axon.Property( 0 ); // dependency with an invalid (non-boolean) type
 
-    // test 'and' with non-boolean Property
+    // fail: 'and' with non-boolean Property
     window.assert && throws( function() { return axon.DerivedProperty.and( [ propA, propD ] ); },
       'DerivedProperty.and requires booleans Property values' );
 
-    // test 'or' with non-boolean Property
+    // fail: 'or' with non-boolean Property
     window.assert && throws( function() { return axon.DerivedProperty.or( [ propA, propD ] ); },
       'DerivedProperty.or requires booleans Property values' );
 
@@ -269,7 +269,7 @@
     equal( and.value, true );
     equal( or.value, true );
 
-    // test setting a dependency to a non-boolean value
+    // fail: setting a dependency to a non-boolean value
     window.assert && throws( function() { propA.value = 0; },
       'DerivedProperty dependency must have boolean value' );
   } );
