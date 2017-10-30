@@ -69,10 +69,12 @@ define( function( require ) {
   }
 
   function andFunction( value, property ) {
+    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
     return value && property.value;
   }
 
   function orFunction( value, property ) {
+    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
     return value || property.value;
   }
 
