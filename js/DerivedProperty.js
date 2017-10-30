@@ -18,18 +18,6 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
   var TDerivedProperty = require( 'AXON/TDerivedProperty' );
 
-  function equalsFunction( a, b ) {
-    return a === b;
-  }
-
-  function conjunctionWithProperty( value, property ) {
-    return value && property.value;
-  }
-
-  function disjunctionWithProperty( value, property ) {
-    return value || property.value;
-  }
-
   /**
    * @param {Property[]} dependencies - Properties that this Property's value is derived from
    * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
@@ -75,6 +63,18 @@ define( function( require ) {
   }
 
   axon.register( 'DerivedProperty', DerivedProperty );
+
+  function equalsFunction( a, b ) {
+    return a === b;
+  }
+
+  function andFunction( value, property ) {
+    return value && property.value;
+  }
+
+  function orFunction( value, property ) {
+    return value || property.value;
+  }
 
   return inherit( Property, DerivedProperty, {
 
@@ -153,7 +153,8 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     and: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, conjunctionWithProperty, true ), options ); // TODO: fix
+      //TODO: fix, see https://github.com/phetsims/axon/issues/160
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
     },
 
     /**
@@ -165,7 +166,7 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     or: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, disjunctionWithProperty, false ), options );
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
     }
   } );
 } );
