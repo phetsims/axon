@@ -30,8 +30,7 @@ define( function( require ) {
     options.phetioValueType = TString;
 
     if ( options.validValues ) {
-      assert && assert( _.every( options.validValues, function( value ) { return isString( value ); } ),
-        'validValues must be strings' );
+      assert && assert( _.every( options.validValues, isString ), 'validValues must be strings' );
     }
 
     if ( options.isValidValue ) {
