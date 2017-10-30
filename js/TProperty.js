@@ -130,7 +130,7 @@ define( function( require ) {
       },
 
       /**
-       * Encodes a DerivedProperty instance to a state.
+       * Encodes a Property instance to a state.
        * @param {Object} instance
        * @returns {Object} - a state object
        */
