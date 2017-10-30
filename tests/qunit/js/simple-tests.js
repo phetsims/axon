@@ -250,7 +250,7 @@
     window.assert && throws( function() { return axon.DerivedProperty.or( [ propA, propD ] ); },
       'DerivedProperty.or requires booleans Property values' );
 
-    // correct instantiations of 'and' and 'or'
+    // correct usages of 'and' and 'or'
     var and = axon.DerivedProperty.and( [ propA, propB, propC ] );
     var or = axon.DerivedProperty.or( [ propA, propB, propC ] );
 
