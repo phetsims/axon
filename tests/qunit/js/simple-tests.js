@@ -334,11 +334,10 @@
 
     // mutually exclusive options
     window.assert && throws( function() {
-      var p = new axon.StringProperty( 'foo', {
+      p = new axon.StringProperty( 'foo', {
         validValues: [ 'foo', 'bar' ],
         isValidValue: function( value ) { return value[ 0 ] === 'f'; }
       } );
-      p.value = 'foo'; // appease the linter
     }, 'should throw Assertion failed: validValues and isValidValue are mutually exclusive' );
   } );
 
