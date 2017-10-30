@@ -236,30 +236,42 @@
   } );
 
   test( 'DerivedProperty and/or', function() {
-    var propA = new axon.Property( true );
+    
+    var propA = new axon.Property( false );
     var propB = new axon.Property( false );
-    var propC = new axon.Property( true );
+    var propC = new axon.Property( false );
+    var propD = new axon.Property( 0 );
 
+    // test 'and' with non-boolean Property
+    window.assert && throws( function() { return axon.DerivedProperty.and( [ propA, propD ] ); },
+      'DerivedProperty.and requires booleans Property values' );
+
+    // test 'or' with non-boolean Property
+    window.assert && throws( function() { return axon.DerivedProperty.or( [ propA, propD ] ); },
+      'DerivedProperty.or requires booleans Property values' );
+
+    // correct instantiations of 'and' and 'or'
     var and = axon.DerivedProperty.and( [ propA, propB, propC ] );
     var or = axon.DerivedProperty.or( [ propA, propB, propC ] );
 
     equal( and.value, false );
-    equal( or.value, true );
+    equal( or.value, false );
+
+    propA.value = true;
+    equal( and.value, false );
     equal( or.value, true );
 
     propB.value = true;
+    equal( and.value, false );
+    equal( or.value, true );
+
+    propC.value = true;
     equal( and.value, true );
     equal( or.value, true );
 
-    propA.value = false;
-    propB.value = false;
-    propC.value = false;
-
-    equal( and.value, false );
-    equal( or.value, false );
-
-    equal( axon.DerivedProperty.and( [] ).value, true );
-    equal( axon.DerivedProperty.or( [] ).value, false );
+    // test setting a dependency to a non-boolean value
+    window.assert && throws( function() { propA.value = 0; },
+      'DerivedProperty dependency must have boolean value' );
   } );
 
   test( 'BooleanProperty', function() {
