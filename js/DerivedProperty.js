@@ -1,7 +1,7 @@
 // Copyright 2013-2016, University of Colorado Boulder
 
 /**
- * A DerivedProperty is computed based on other properties.  This implementation inherits from Property to (a) simplify
+ * A DerivedProperty is computed based on other Properties.  This implementation inherits from Property to (a) simplify
  * implementation and (b) ensure it remains consistent. Note that the setters should not be called directly, so the
  * setters (set, reset and es5 setter) throw an error if used directly.
  *
@@ -31,8 +31,8 @@ define( function( require ) {
   }
 
   /**
-   * @param {Property[]} dependencies - properties that this property's value is derived from
-   * @param {function} derivation - function that derives this property's value, expects args in the same order as dependencies
+   * @param {Property[]} dependencies - Properties that this Property's value is derived from
+   * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param {Object} [options] - see Property
    * @constructor
    */
@@ -81,7 +81,7 @@ define( function( require ) {
     // @public
     dispose: function() {
 
-      // Unlink from dependent properties
+      // Unlink from dependent Properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
         var dependency = this.dependencies[ i ];
         dependency.unlink( this.dependencyListeners[ i ] );
@@ -101,7 +101,7 @@ define( function( require ) {
      * @override
      * @public
      */
-    set: function( value ) { throw new Error( 'Cannot set values directly to a derived property, tried to set: ' + value ); },
+    set: function( value ) { throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value ); },
 
     /**
      * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
@@ -111,7 +111,7 @@ define( function( require ) {
      * @override
      * @public
      */
-    set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a derived property, tried to set: ' + newValue ); },
+    set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a DerivedProperty, tried to set: ' + newValue ); },
 
     /**
      * Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
@@ -127,11 +127,11 @@ define( function( require ) {
      * @override
      * @public
      */
-    reset: function() { throw new Error( 'Cannot reset a derived property directly' ); }
+    reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); }
   }, {
 
     /**
-     * Creates a derived boolean property whose value is true iff firstProperty's value is equal to secondProperty's
+     * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
      * value.
      * @public
      *
@@ -145,7 +145,7 @@ define( function( require ) {
     },
 
     /**
-     * Creates a derived boolean property whose value is true iff every input property value is true.
+     * Creates a derived boolean Property whose value is true iff every input Property value is true.
      * @public
      *
      * @param {Array.<Property.<boolean>>} properties
@@ -157,7 +157,7 @@ define( function( require ) {
     },
 
     /**
-     * Creates a derived boolean property whose value is true iff any input property value is true.
+     * Creates a derived boolean Property whose value is true iff any input Property value is true.
      * @public
      *
      * @param {Array.<Property.<boolean>>} properties
