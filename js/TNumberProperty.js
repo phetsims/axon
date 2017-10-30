@@ -70,7 +70,7 @@ define( function( require ) {
     },
 
     setValue: function( instance, fromStateObject ) {
-      TProperty.setValue( instance, fromStateObject );
+      TPropertyImpl.setValue( instance, fromStateObject );
       instance.units = fromStateObject.units;
       instance.range = fromStateObject.range;
       instance.valueType = fromStateObject.valueType;
