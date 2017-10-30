@@ -396,7 +396,7 @@
         range: { min: 0, max: 10 },
         isValidValue: function( value ) { return value >= 0; },
         validValues: [ 0, 1, 2 ]
-      }, 'Assertion failed: validValues, isValidValue and range are mutually-exclusive options' );
+      }, 'should throw Assertion failed: validValues, isValidValue and range are mutually-exclusive options' );
     } );
   } );
 
