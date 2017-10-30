@@ -368,7 +368,7 @@
     }, 'should throw Assertion failed: invalid initial value: bar' );
 
     // range
-    p = new phet.axon.NumberProperty( 0, {
+    p = new axon.NumberProperty( 0, {
       range: { min: 0, max: 10 }
     } );
     p.value = 5;
@@ -380,7 +380,7 @@
     }, 'should throw Assertion failed: invalid value: -1' );
 
     // validValues
-    p = new phet.axon.NumberProperty( 0, {
+    p = new axon.NumberProperty( 0, {
       validValues: [ 0, 1, 2 ]
     } );
     p.value = 1;
@@ -390,7 +390,7 @@
     }, 'should throw Assertion failed: invalid value: 3' );
 
     // isValidValue
-    p = new phet.axon.NumberProperty( 0, {
+    p = new axon.NumberProperty( 0, {
       isValidValue: function( value ) { return value >= 0; }
     } );
     p.value = 1;
@@ -404,7 +404,7 @@
 
     // mutually-exclusive options
     window.assert && throws( function() {
-      p = new phet.axon.NumberProperty( 0, {
+      p = new axon.NumberProperty( 0, {
         range: { min: 0, max: 10 },
         isValidValue: function( value ) { return value >= 0; },
         validValues: [ 0, 1, 2 ]
