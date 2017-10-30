@@ -281,7 +281,7 @@
 
     var property;
     window.assert && throws( function() {
-      new phet.axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
+      new axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.validValues' );
     property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
@@ -315,7 +315,7 @@
     }, 'should throw Assertion failed: invalid value: 0' );
 
     // validValues
-    p = new phet.axon.StringProperty( 'foo', {
+    p = new axon.StringProperty( 'foo', {
       validValues: [ 'foo', 'bar' ]
     } );
     p.value = 'bar';
@@ -324,7 +324,7 @@
     }, 'should throw Assertion failed: invalid value: bad' );
 
     // isValidValue
-    p = new phet.axon.StringProperty( 'foo', {
+    p = new axon.StringProperty( 'foo', {
       isValidValue: function( value ) { return value[ 0 ] === 'f'; } // beings with 'f'
     } );
     p.value = 'five';
@@ -334,7 +334,7 @@
 
     // mutually exclusive options
     window.assert && throws( function() {
-      var p = new phet.axon.StringProperty( 'foo', {
+      var p = new axon.StringProperty( 'foo', {
         validValues: [ 'foo', 'bar' ],
         isValidValue: function( value ) { return value[ 0 ] === 'f'; }
       } );
