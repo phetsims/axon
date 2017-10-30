@@ -68,11 +68,11 @@ define( function( require ) {
     return a === b;
   }
 
-  function conjunctionWithProperty( value, property ) {
+  function andFunction( value, property ) {
     return value && property.value;
   }
 
-  function disjunctionWithProperty( value, property ) {
+  function orFunction( value, property ) {
     return value || property.value;
   }
 
@@ -153,7 +153,7 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     and: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, conjunctionWithProperty, true ), options ); // TODO: fix
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options ); // TODO: fix
     },
 
     /**
@@ -165,7 +165,7 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     or: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, disjunctionWithProperty, false ), options );
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
     }
   } );
 } );
