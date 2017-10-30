@@ -304,5 +304,42 @@
     }
   } );
 
+  test( 'Test StringProperty', function() {
+
+    var p = new axon.StringProperty( 'foo' );
+    p.value = 'bar';
+
+    // default validation
+    window.assert && throws( function() {
+      p.value = 0;
+    }, 'should throw Assertion failed: invalid value: 0' );
+
+    // validValues
+    p = new phet.axon.StringProperty( 'foo', {
+      validValues: [ 'foo', 'bar' ]
+    } );
+    p.value = 'bar';
+    window.assert && throws( function() {
+      p.value = 'bad';
+    }, 'should throw Assertion failed: invalid value: bad' );
+
+    // isValidValue
+    p = new phet.axon.StringProperty( 'foo', {
+      isValidValue: function( value ) { return value[ 0 ] === 'f'; } // beings with 'f'
+    } );
+    p.value = 'five';
+    window.assert && throws( function() {
+      p.value = 'bad';
+    }, 'should throw Assertion failed: invalid value: bad' );
+
+    // mutually exclusive options
+    window.assert && throws( function() {
+      var p = new phet.axon.StringProperty( 'foo', {
+        validValues: [ 'foo', 'bar' ],
+        isValidValue: function( value ) { return value[ 0 ] === 'f'; }
+      } );
+    }, 'should throw Assertion failed: validValues and isValidValue are mutually exclusive' );
+  } );
+
   /* eslint-enable */
 })();
