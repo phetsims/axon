@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "grunt": "~1.0.0"
+  },
+  "phet": {
+    "requirejsNamespace": "AXON"
   }
 }
