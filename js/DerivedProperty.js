@@ -155,7 +155,6 @@ define( function( require ) {
      * @returns {DerivedProperty.<boolean>}
      */
     and: function( properties, options ) {
-      //TODO: fix, see https://github.com/phetsims/axon/issues/160
       return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
     },
 
