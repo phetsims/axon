@@ -68,7 +68,7 @@ define( function( require ) {
     }
     assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
 
-    // @public - export the phet-io element type
+    // @public (read-only)
     this.phetioValueType = options.phetioValueType;
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
