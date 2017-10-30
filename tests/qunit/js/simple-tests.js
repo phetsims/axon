@@ -240,7 +240,7 @@
     var propA = new axon.Property( false );
     var propB = new axon.Property( false );
     var propC = new axon.Property( false );
-    var propD = new axon.Property( 0 );
+    var propD = new axon.Property( 0 ); // dependency with an invalid (non-boolean) type
 
     // test 'and' with non-boolean Property
     window.assert && throws( function() { return axon.DerivedProperty.and( [ propA, propD ] ); },
