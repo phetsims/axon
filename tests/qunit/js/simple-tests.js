@@ -351,6 +351,10 @@
         isValidValue: function( value ) { return value[ 0 ] === 'f'; }
       } );
     }, 'should throw Assertion failed: validValues and isValidValue are mutually exclusive' );
+
+    if ( !window.assert ) {
+      expect( 0 );
+    }
   } );
 
   test( 'Test NumberProperty', function() {
@@ -410,6 +414,10 @@
         validValues: [ 0, 1, 2 ]
       }, 'should throw Assertion failed: validValues, isValidValue and range are mutually-exclusive options' );
     } );
+
+    if ( !window.assert ) {
+      expect( 0 );
+    }
   } );
 
   /* eslint-enable */
