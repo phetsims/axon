@@ -85,8 +85,8 @@ define( function( require ) {
       tandem: Tandem.tandemOptional()
     }, options );
 
-    var numberPropertyTandem = options.tandem;
-    options.tandem = numberPropertyTandem.createSupertypeTandem();
+    this.numberPropertyTandem = options.tandem; // @private
+    options.tandem = this.numberPropertyTandem.createSupertypeTandem();
 
     assert && assert(
       _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) { return value; } ).length <= 1,
@@ -130,7 +130,7 @@ define( function( require ) {
 
     Property.call( this, value, options );
 
-    numberPropertyTandem.addInstance( this, TNumberProperty, options );
+    this.numberPropertyTandem.addInstance( this, TNumberProperty, options );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
@@ -143,5 +143,14 @@ define( function( require ) {
     return ( typeof value === 'number' );
   }
 
-  return inherit( Property, NumberProperty );
+  return inherit( Property, NumberProperty, {
+
+    /**
+     * @public
+     */
+    dispose: function() {
+      this.numberPropertyTandem.removeInstance( this );
+      Property.prototype.dispose.call( this );
+    }
+  } );
 } );
