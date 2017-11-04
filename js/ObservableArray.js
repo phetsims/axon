@@ -82,7 +82,7 @@ define( function( require ) {
     // @public
     dispose: function() {
       this.lengthProperty.dispose();
-      this.observableArrayTandem.supplied && this.observableArrayTandem.removeInstance( self );
+      this.observableArrayTandem.supplied && this.observableArrayTandem.removeInstance( this );
     },
 
     /**
