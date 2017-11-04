@@ -66,16 +66,13 @@ define( function( require ) {
     // @private
     this.ttype = TObservableArray( options.phetioValueType || {} );
 
-    options.tandem.supplied && options.tandem.addInstance( this, this.ttype, options );
-    this.disposeObservableArray = function() {
-      options.tandem.supplied && options.tandem.removeInstance( self );
-    };
-
     // @private
     this.observableArrayTandem = options.tandem;
 
     // @private
     this.phetioValueType = options.phetioValueType;
+
+    this.observableArrayTandem.supplied && this.observableArrayTandem.addInstance( this, this.ttype, options );
   }
 
   axon.register( 'ObservableArray', ObservableArray );
@@ -84,7 +81,8 @@ define( function( require ) {
 
     // @public
     dispose: function() {
-      this.disposeObservableArray();
+      this.lengthProperty.dispose();
+      this.observableArrayTandem.supplied && this.observableArrayTandem.removeInstance( self );
     },
 
     /**
