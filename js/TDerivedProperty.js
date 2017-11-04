@@ -39,9 +39,9 @@ define( function( require ) {
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
+      assertInstanceOf( property, phet.axon.DerivedProperty );
 
       TPropertyImpl.call( this, property, phetioID );
-      assertInstanceOf( property, phet.axon.DerivedProperty );
     };
     return phetioInherit( TPropertyImpl, 'TDerivedProperty', TDerivedPropertyImpl, {
 
