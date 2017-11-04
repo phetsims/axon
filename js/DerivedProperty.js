@@ -36,7 +36,7 @@ define( function( require ) {
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     Property.call( this, initialValue, _.extend( {}, options, {
-      tandem: options.tandem && options.tandem.createSupertypeTandem()
+      tandem: options.tandem.createSupertypeTandem()
     } ) );
 
     // @private - for disposal
@@ -59,7 +59,7 @@ define( function( require ) {
     }
 
     // If running as phet-io and a tandem is supplied, register with tandem.
-    options.tandem.supplied && options.tandem.addInstance( this, TDerivedProperty( options.phetioValueType ), options );
+    this.derivedPropertyTandem.isLegalAndUsable() && this.derivedPropertyTandem.addInstance( this, TDerivedProperty( options.phetioValueType ), options );
   }
 
   axon.register( 'DerivedProperty', DerivedProperty );
@@ -91,7 +91,7 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
 
-      this.derivedPropertyTandem.removeInstance( this );
+      this.derivedPropertyTandem.isLegalAndUsable() && this.derivedPropertyTandem.removeInstance( this );
 
       Property.prototype.dispose.call( this );
     },
