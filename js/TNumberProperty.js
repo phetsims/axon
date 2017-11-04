@@ -27,7 +27,7 @@ define( function( require ) {
    * @constructor
    */
   function TNumberProperty( property, phetioID ) {
-    assertInstanceOf( property, phet.axon.NumberProperty );
+    assert && assertInstanceOf( property, phet.axon.NumberProperty );
     TPropertyImpl.call( this, property, phetioID );
   }
 

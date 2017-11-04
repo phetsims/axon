@@ -37,7 +37,7 @@ define( function( require ) {
      */
     var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
       assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
-      assertInstanceOf( observableArray, phet.axon.ObservableArray );
+      assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
       TObject.call( this, observableArray, phetioID );
     };

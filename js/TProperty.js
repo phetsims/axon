@@ -42,7 +42,7 @@ define( function( require ) {
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
 
-      assertInstanceOf( property, phet.axon.Property );
+      assert && assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
 
       this.phetioState = options.phetioState;

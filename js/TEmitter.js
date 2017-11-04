@@ -28,7 +28,7 @@ define( function( require ) {
 
     var TEmitterImpl = function TEmitterImpl( emitter, phetioID ) {
       assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
-      assertInstanceOf( emitter, phet.axon.Emitter );
+      assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
       TObject.call( this, emitter, phetioID );
     };

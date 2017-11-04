@@ -39,7 +39,7 @@ define( function( require ) {
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
-      assertInstanceOf( property, phet.axon.DerivedProperty );
+      assert && assertInstanceOf( property, phet.axon.DerivedProperty );
 
       TPropertyImpl.call( this, property, phetioID );
     };
