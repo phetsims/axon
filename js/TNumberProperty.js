@@ -14,7 +14,7 @@ define( function( require ) {
   var TProperty = require( 'AXON/TProperty' );
 
   // phet-io modules
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
 

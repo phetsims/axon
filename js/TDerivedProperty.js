@@ -13,7 +13,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
 
   // phet-io modules
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var TProperty = require( 'AXON/TProperty' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
