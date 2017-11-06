@@ -268,6 +268,15 @@ define( function( require ) {
     hasListeners: function() {
       assert && assert( arguments.length === 0, 'Emitter.hasListeners should be called without arguments' );
       return this.listeners.length > 0;
+    },
+
+    /**
+     * Returns the number of listeners.
+     * @returns {number}
+     * @public
+     */
+    getListenerCount: function() {
+      return this.listeners.length;
     }
   } );
 } );
