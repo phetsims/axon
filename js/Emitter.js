@@ -34,8 +34,6 @@ define( function( require ) {
       // see also phetio options in phetio.addInstance
     }, options );
 
-    var self = this;
-
     // @private
     this.emitterTandem = options.tandem;
 
@@ -45,16 +43,6 @@ define( function( require ) {
     // Tandem registration
     this.ttype = TEmitter( options.phetioArgumentTypes );
     options.tandem.addInstance( this, this.ttype, options );
-
-    // @private
-    this.disposeEmitter = function() {
-
-      // See https://github.com/phetsims/axon/issues/124
-      self.listeners.length = 0;
-
-      // Tandem de-registration
-      options.tandem.removeInstance( self );
-    };
   }
 
   axon.register( 'Emitter', Emitter );
@@ -66,7 +54,12 @@ define( function( require ) {
      * listeners.
      */
     dispose: function() {
-      this.disposeEmitter();
+
+      // See https://github.com/phetsims/axon/issues/124
+      this.listeners.length = 0;
+
+      // Tandem de-registration
+      this.emitterTandem.removeInstance( this );
     },
 
     /**
