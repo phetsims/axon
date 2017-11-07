@@ -52,7 +52,7 @@ define( function( require ) {
     this.lengthProperty = new NumberProperty( this._array.length, {
       valueType: 'Integer',
       tandem: options.tandem.createTandem( 'lengthProperty' ),
-      phetioSettable: false
+      phetioReadOnly: true
     } );
 
     // @private Store the initial array, if any, for resetting, see #4
