@@ -41,10 +41,6 @@ define( function( require ) {
       // A place to add annotation or notes for a property
       phetioInstanceDocumentation: '',
 
-      // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
-      // in the playback simulation.
-      phetioState: true,
-
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
       useDeepEquality: false
@@ -99,8 +95,7 @@ define( function( require ) {
     // unsupplied. This causes downstream errors in TProperty.
     // @private
     this.ttype = TProperty( options.phetioValueType || TVoid, {
-      phetioInstanceDocumentation: options.phetioInstanceDocumentation,
-      phetioState: options.phetioState
+      phetioInstanceDocumentation: options.phetioInstanceDocumentation
     } );
     options.tandem.addInstance( this, this.ttype, options );
   }

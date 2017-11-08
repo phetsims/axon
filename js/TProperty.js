@@ -29,14 +29,6 @@ define( function( require ) {
    */
   function TProperty( phetioValueType, options ) {
 
-    options = _.extend( {
-
-      // Properties can opt-out of appearing in the phetio.getState() and phetio.setState() where the values are redundant or easily recomputed
-      // in the playback simulation.
-      // TODO: This may not be needed once phetioState is implemented globally
-      phetioState: true
-    }, options );
-
     var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'TProperty needs phetioValueType' );
       assert && assert( property, 'Property should exist' );
@@ -44,8 +36,6 @@ define( function( require ) {
 
       assert && assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
-
-      this.phetioState = options.phetioState;
     };
 
     return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
@@ -96,9 +86,6 @@ define( function( require ) {
         documentation: 'Removes a listener'
       }
     }, {
-
-      phetioState: options.phetioState,
-
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
                      'traditional listener pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
