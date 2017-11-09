@@ -15,9 +15,6 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
   var TNumberProperty = require( 'AXON/TNumberProperty' );
 
-  // phet-io modules
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
-
   // valid values for options.units
   var VALID_UNITS = [
     'amperes',
@@ -85,7 +82,7 @@ define( function( require ) {
     }, options );
 
     assert && assert( !options.phetioValueType, 'phetioValueType cannot be supplied for NumberProperty' );
-    options.phetioValueType = TNumber;
+    options.phetioValueType = TNumberProperty.valueType;
 
     this.numberPropertyTandem = options.tandem; // @private
     options.tandem = this.numberPropertyTandem.createSupertypeTandem();
