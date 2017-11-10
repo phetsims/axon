@@ -38,9 +38,6 @@ define( function( require ) {
       // If null and no validValues are provided, all values are considered valid.
       isValidValue: null,
 
-      // A place to add annotation or notes for a property
-      phetioInstanceDocumentation: '',
-
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
       useDeepEquality: false
