@@ -124,12 +124,17 @@ define( function( require ) {
       toStateObject: function( instance ) {
         assert && assert( instance, 'instance should be defined' );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
-        return {
-          value: phetioValueType.toStateObject( instance.value ),
-          validValues: instance.validValues && instance.validValues.map( function( v ) {
-            return phetioValueType.toStateObject( v );
-          } )
+        var stateObject = {
+          value: phetioValueType.toStateObject( instance.value )
         };
+
+        // Only include validValues if specified, so they only show up in instance proxies when supplied.
+        if ( instance.validValues ) {
+          stateObject.validValues = instance.validValues.map( function( v ) {
+            return phetioValueType.toStateObject( v );
+          } );
+        }
+        return stateObject;
       },
 
       /**
