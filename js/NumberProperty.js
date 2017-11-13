@@ -84,7 +84,8 @@ define( function( require ) {
     assert && assert( !options.phetioValueType, 'phetioValueType cannot be supplied for NumberProperty' );
     options.phetioValueType = TNumberProperty.valueType;
 
-    this.numberPropertyTandem = options.tandem; // @private
+    // @private
+    this.numberPropertyTandem = options.tandem;
     options.tandem = this.numberPropertyTandem.createSupertypeTandem();
 
     assert && assert(
