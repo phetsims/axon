@@ -39,7 +39,6 @@ define( function( require ) {
     };
 
     return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
-
       getValue: {
         returnType: phetioValueType,
         parameterTypes: [],
@@ -89,7 +88,7 @@ define( function( require ) {
       documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
                      'traditional listener pattern in that listeners also receive a callback with the current value ' +
                      'when the listeners are registered.',
-      valueType: phetioValueType,
+      elementType: phetioValueType,
 
       // Used to generate the unique parametric typename for each TProperty
       parameterTypes: [ phetioValueType ],
@@ -98,7 +97,7 @@ define( function( require ) {
 
       getAPI: function() {
         return {
-          valueType: phetio.getAPIForType( phetioValueType )
+          elementType: phetio.getAPIForType( phetioValueType )
         };
       },
 

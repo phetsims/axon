@@ -16,7 +16,6 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TDerivedProperty = require( 'AXON/TDerivedProperty' );
 
   /**
    * @param {Property[]} dependencies - Properties that this Property's value is derived from
@@ -27,17 +26,20 @@ define( function( require ) {
   function DerivedProperty( dependencies, derivation, options ) {
 
     options = _.extend( {
-      tandem: Tandem.tandemOptional()
+      tandem: Tandem.tandemOptional(),
+      phetioType: null // must be supplied by instantiations and must be of type TDerivedProperty
     }, options );
+
+    if ( window.phet && window.phet.phetio ) {
+      assert && assert( options.phetioType === null || options.phetioType.typeName.indexOf( 'TDerivedProperty' ) === 0, 'phetioType should be TDerivedProperty' );
+    }
 
     this.dependencies = dependencies; // @private
 
     var initialValue = derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
-    Property.call( this, initialValue, _.extend( {}, options, {
-      tandem: options.tandem.createSupertypeTandem()
-    } ) );
+    Property.call( this, initialValue, options );
 
     // @private - for disposal
     this.derivedPropertyTandem = options.tandem;
@@ -57,9 +59,6 @@ define( function( require ) {
         dependency.lazyLink( listener );
       })( dependency, i );
     }
-
-    // If running as phet-io and a tandem is supplied, register with tandem.
-    this.derivedPropertyTandem.isLegalAndUsable() && this.derivedPropertyTandem.addInstance( this, TDerivedProperty( options.phetioValueType ), options );
   }
 
   axon.register( 'DerivedProperty', DerivedProperty );

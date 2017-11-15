@@ -42,7 +42,8 @@ define( function( require ) {
 
     // Tandem registration
     this.ttype = TEmitter( options.phetioArgumentTypes );
-    options.tandem.addInstance( this, this.ttype, options );
+    options.phetioType = this.ttype;
+    options.tandem.addInstance( this, options );
   }
 
   axon.register( 'Emitter', Emitter );

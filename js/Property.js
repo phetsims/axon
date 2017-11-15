@@ -16,8 +16,6 @@ define( function( require ) {
   var Multilink = require( 'AXON/Multilink' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TProperty = require( 'AXON/TProperty' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
    * @param {*} value - the initial value of the property
@@ -28,7 +26,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: Tandem.tandemOptional(),
-      phetioValueType: null, // {function | null} phet-io type wrapper like TString, TNumber, etc.
+      phetioType: null, // must be specified by the client, like TProperty(TString)
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
       validValues: null,
@@ -61,13 +59,15 @@ define( function( require ) {
     }
     assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
 
-    // @public (read-only)
-    this.phetioValueType = options.phetioValueType;
+    // When running as phet-io, if the tandem is specified, the type must be specified.
+    // This assertion helps in instrumenting code that has the tandem but not type
+    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioType,
+      'Value type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioValueType,
-      'Value type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
+    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioType.elementType,
+      'phetioType.elementType must be specified. Tandem.id: ' + options.tandem.id );
 
     // @private - Store the internal value and the initial value
     this._value = value;
@@ -91,10 +91,8 @@ define( function( require ) {
     // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
     // unsupplied. This causes downstream errors in TProperty.
     // @private
-    this.ttype = TProperty( options.phetioValueType || TVoid, {
-      phetioInstanceDocumentation: options.phetioInstanceDocumentation
-    } );
-    options.tandem.addInstance( this, this.ttype, options );
+    this.phetioType = options.phetioType;
+    options.tandem.addInstance( this, options );
   }
 
   axon.register( 'Property', Property );
@@ -179,10 +177,10 @@ define( function( require ) {
       // @private
       _notifyListeners: function( oldValue ) {
 
-        var id = this.propertyTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.propertyTandem.id, this.ttype, 'changed', {
-          oldValue: this.phetioValueType.toStateObject( oldValue ),
-          newValue: this.phetioValueType.toStateObject( this.get() ),
-          units: this.phetioValueType && this.phetioValueType.units
+        var id = this.propertyTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.propertyTandem.id, this.phetioType, 'changed', {
+          oldValue: this.phetioType.elementType.toStateObject( oldValue ),
+          newValue: this.phetioType.elementType.toStateObject( this.get() ),
+          units: this.phetioType && this.phetioType.units
         } );
 
         this.changedEmitter.emit2( this.get(), oldValue );
