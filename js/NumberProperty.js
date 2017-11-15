@@ -92,6 +92,9 @@ define( function( require ) {
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
     assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid type: ' + options.valueType );
 
+    assert && assert( isValidForValueType( value, options.valueType ),
+      'initial value ' + value + ' must be of type: ' + options.valueType );
+
     // @public (read-only) - used by PhET-iO in TNumberProperty as metadata passed to the wrapper.
     this.units = options.units;
     this.range = options.range;
@@ -101,14 +104,14 @@ define( function( require ) {
 
       // Add a validation function that includes the range check.
       options.isValidValue = function( value ) {
-        return isNumber( value ) && ( value >= options.range.min ) && ( value <= options.range.max );
+        return isValidForValueType( value, options.valueType ) && ( value >= options.range.min ) && ( value <= options.range.max );
       };
     }
     else if ( options.validValues ) {
 
       // Verify that the values are all numbers.
-      assert && assert( _.every( options.validValues, function( value ) { return isNumber( value ); },
-        'validValues must contain numbers' ) );
+      assert && assert( _.every( options.validValues, function( value ) { return isValidForValueType( value, options.valueType ); } ),
+        'validValues must contain numbers of the right valueType' );
     }
     else if ( options.isValidValue ) {
 
@@ -116,13 +119,15 @@ define( function( require ) {
       // This prevents the client from having to check (or remember to check) that the value is a number.
       var isValidValue = options.isValidValue;
       options.isValidValue = function( value ) {
-        return isNumber( value ) && isValidValue( value );
+        return isValidForValueType( value, options.valueType ) && isValidValue( value );
       };
     }
     else {
 
       // fallback to verifying that the value is a string
-      options.isValidValue = isNumber;
+      options.isValidValue = function( value ) {
+        return isValidForValueType( value, options.valueType );
+      };
     }
 
     Property.call( this, value, options );
@@ -136,6 +141,16 @@ define( function( require ) {
    */
   function isNumber( value ) {
     return ( typeof value === 'number' );
+  }
+
+  /**
+   * If valueType is Integer, then the value must be an integer.
+   * @param value
+   * @param valueType
+   * @returns {boolean}
+   */
+  function isValidForValueType( value, valueType ) {
+    return isNumber( value ) && !( valueType === 'Integer' && !Number.isInteger( value ) );
   }
 
   return inherit( Property, NumberProperty, {

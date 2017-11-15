@@ -236,7 +236,7 @@
   } );
 
   test( 'DerivedProperty and/or', function() {
-    
+
     var propA = new axon.Property( false );
     var propB = new axon.Property( false );
     var propC = new axon.Property( false );
@@ -382,6 +382,49 @@
     window.assert && throws( function() {
       p.value = -1;
     }, 'should throw Assertion failed: invalid value: -1' );
+
+    // valueType
+    p = new axon.NumberProperty( 0 );
+    equal( p.valueType, 'FloatingPoint', 'default valueType should be FloatingPoint' );
+
+    p = new axon.NumberProperty( 0, { valueType: 'Integer' } );
+    equal( p.valueType, 'Integer', 'valueType should be integer when set as such.' );
+
+    window.assert && throws( function() {
+      p = new axon.NumberProperty( 0, { valueType: 'GarbaldyGOOK' } );
+    }, 'should throw Assertion failed: invalid type: GarbaldyGOOK' );
+
+    p = new axon.NumberProperty( 0, { valueType: 'Integer' } );
+
+    window.assert && throws( function() {
+      p.value = 3.4;
+    }, 'should throw Assertion failed: invalid value: 3.4' );
+
+    p.value = 3;
+    equal( p.value, 3 );
+
+    p = new axon.NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'Integer' } );
+    window.assert && throws( function() {
+      p.value = 3.4;
+    }, 'should throw Assertion failed: invalid value: 3.4' );
+
+    p = new axon.NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    window.assert && throws( function() {
+      p = new axon.NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'Integer' } );
+    }, 'should throw Assertion failed: initial value 3.4 must be of type: Integer' );
+
+    p = new axon.NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    p.value = 3.4;
+    equal( p.value, 3.4 );
+
+    p = new axon.NumberProperty( 0, { validValues: [ 0, 1, 2, 3, 4, 5 ], valueType: 'Integer' } );
+    window.assert && throws( function() {
+      p = new axon.NumberProperty( 0, { validValues: [ 0, 1, 2, 3.4, 5 ], valueType: 'Integer' } );
+    }, 'should throw Assertion failed: validValues must contain numbers of the right valueType' );
+
+    p = new axon.NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    p.value = 3.4;
+    equal( p.value, 3.4 );
 
     // validValues
     p = new axon.NumberProperty( 0, {
