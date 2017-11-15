@@ -37,13 +37,13 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
+    var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
       assert && assertInstanceOf( property, phet.axon.DerivedProperty );
 
       PropertyIOImpl.call( this, property, phetioID );
     };
-    return phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', TDerivedPropertyImpl, {
+    return phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', DerivedPropertyIOImpl, {
 
       setValue: {
         returnType: VoidIO,
