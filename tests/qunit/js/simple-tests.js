@@ -408,6 +408,11 @@
       p.value = 3.4;
     }, 'should throw Assertion failed: invalid value: 3.4' );
 
+    p = new axon.NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    window.assert && throws( function() {
+      p = new axon.NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'Integer' } );
+    }, 'should throw Assertion failed: initial value 3.4 must be of type: Integer' );
+
     p = new axon.NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
     p.value = 3.4;
     equal( p.value, 3.4 );

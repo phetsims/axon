@@ -95,6 +95,9 @@ define( function( require ) {
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
     assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid type: ' + options.valueType );
 
+    assert && assert( isValidForValueType( value, options.valueType ),
+      'initial value ' + value + ' must be of type: ' + options.valueType );
+
     // @public (read-only) - used by PhET-iO in TNumberProperty as metadata passed to the wrapper.
     this.units = options.units;
     this.range = options.range;
