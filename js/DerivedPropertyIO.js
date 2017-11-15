@@ -28,7 +28,7 @@ define( function( require ) {
   function DerivedPropertyIO( phetioValueType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-    var TPropertyImpl = new PropertyIO( phetioValueType );
+    var PropertyIOImpl = new PropertyIO( phetioValueType );
 
     /**
      * This type constructor is parameterized based on the phetioValueType.
@@ -41,9 +41,9 @@ define( function( require ) {
       assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
       assert && assertInstanceOf( property, phet.axon.DerivedProperty );
 
-      TPropertyImpl.call( this, property, phetioID );
+      PropertyIOImpl.call( this, property, phetioID );
     };
-    return phetioInherit( TPropertyImpl, 'DerivedPropertyIO', TDerivedPropertyImpl, {
+    return phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', TDerivedPropertyImpl, {
 
       setValue: {
         returnType: VoidIO,

@@ -21,19 +21,19 @@ define( function( require ) {
    * Emitter for 0, 1 or 2 args, or maybe 3.
    * @param {function[]} phetioArgumentTypes - If loaded by phet (not phet-io), the array will be of functions
    *                                          returned by the 'ifphetio!' plugin.
-   * @returns {TEmitterImpl}
+   * @returns {EmitterIOImpl}
    * @constructor
    */
   function EmitterIO( phetioArgumentTypes ) {
 
-    var TEmitterImpl = function TEmitterImpl( emitter, phetioID ) {
+    var EmitterIOImpl = function TEmitterImpl( emitter, phetioID ) {
       assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
       assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
       ObjectIO.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( ObjectIO, 'EmitterIO', TEmitterImpl, {
+    return phetioInherit( ObjectIO, 'EmitterIO', EmitterIOImpl, {
       addListener: {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, phetioArgumentTypes ) ],

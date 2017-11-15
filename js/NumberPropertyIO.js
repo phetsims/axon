@@ -20,7 +20,7 @@ define( function( require ) {
 
   // constants
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
-  var TPropertyImpl = PropertyIO( VALUE_TYPE );
+  var PropertyIOImpl = PropertyIO( VALUE_TYPE );
 
   /**
    * NumberProperty wrapper type.
@@ -28,12 +28,12 @@ define( function( require ) {
    */
   function NumberPropertyIO( property, phetioID ) {
     assert && assertInstanceOf( property, phet.axon.NumberProperty );
-    TPropertyImpl.call( this, property, phetioID );
+    PropertyIOImpl.call( this, property, phetioID );
   }
 
   axon.register( 'NumberPropertyIO', NumberPropertyIO );
 
-  phetioInherit( TPropertyImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
+  phetioInherit( PropertyIOImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
 
     // Export the value type from the parent so clients can read it from this type
     elementType: NumberIO,
@@ -50,7 +50,7 @@ define( function( require ) {
      * @returns {Object}
      */
     fromStateObject: function( stateObject ) {
-      var fromParentStateObject = TPropertyImpl.fromStateObject( stateObject );
+      var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.valueType = stateObject.valueType;
       fromParentStateObject.units = stateObject.units;
       fromParentStateObject.range = stateObject.range;
@@ -65,7 +65,7 @@ define( function( require ) {
     toStateObject: function( instance ) {
       assert && assert( instance, 'instance should be defined' );
 
-      var parentStateObject = TPropertyImpl.toStateObject( instance );
+      var parentStateObject = PropertyIOImpl.toStateObject( instance );
       parentStateObject.valueType = instance.valueType;
       parentStateObject.units = instance.units;
       parentStateObject.range = instance.range;
@@ -73,7 +73,7 @@ define( function( require ) {
     },
 
     setValue: function( instance, fromStateObject ) {
-      TPropertyImpl.setValue( instance, fromStateObject );
+      PropertyIOImpl.setValue( instance, fromStateObject );
       instance.units = fromStateObject.units;
       instance.range = fromStateObject.range;
       instance.valueType = fromStateObject.valueType;
