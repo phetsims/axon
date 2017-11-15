@@ -27,11 +27,11 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: Tandem.tandemOptional(),
-      phetioType: null // must be supplied by instantiations and must be of type TDerivedProperty
+      phetioType: null // must be supplied by instantiations and must be of type DerivedPropertyIO
     }, options );
 
     if ( window.phet && window.phet.phetio ) {
-      assert && assert( options.phetioType === null || options.phetioType.typeName.indexOf( 'TDerivedProperty' ) === 0, 'phetioType should be TDerivedProperty' );
+      assert && assert( options.phetioType === null || options.phetioType.typeName.indexOf( 'DerivedPropertyIO' ) === 0, 'phetioType should be DerivedPropertyIO' );
     }
 
     this.dependencies = dependencies; // @private

@@ -25,7 +25,7 @@ define( function( require ) {
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
-  function TDerivedProperty( phetioValueType ) {
+  function DerivedPropertyIO( phetioValueType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
     var TPropertyImpl = new PropertyIO( phetioValueType );
@@ -38,12 +38,12 @@ define( function( require ) {
      * @constructor
      */
     var TDerivedPropertyImpl = function TDerivedPropertyImpl( property, phetioID ) {
-      assert && assert( !!phetioValueType, 'TDerivedProperty needs phetioValueType' );
+      assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
       assert && assertInstanceOf( property, phet.axon.DerivedProperty );
 
       TPropertyImpl.call( this, property, phetioID );
     };
-    return phetioInherit( TPropertyImpl, 'TDerivedProperty', TDerivedPropertyImpl, {
+    return phetioInherit( TPropertyImpl, 'DerivedPropertyIO', TDerivedPropertyImpl, {
 
       setValue: {
         returnType: TVoid,
@@ -54,7 +54,7 @@ define( function( require ) {
         documentation: 'Errors out when you try to set a derived property.'
       }
     }, {
-      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other TDerivedProperty or PropertyIO ' +
+      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
 
       // Used to generate the unique parametric typename for each PropertyIO
@@ -83,8 +83,8 @@ define( function( require ) {
     } );
   }
 
-  axon.register( 'TDerivedProperty', TDerivedProperty );
+  axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 
-  return TDerivedProperty;
+  return DerivedPropertyIO;
 } );
 
