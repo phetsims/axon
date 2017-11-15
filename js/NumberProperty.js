@@ -13,7 +13,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TNumberProperty = require( 'AXON/TNumberProperty' );
+  var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
 
   // valid values for options.units
   var VALID_UNITS = [
@@ -79,7 +79,7 @@ define( function( require ) {
       valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       units: null, // {string|null} see VALID_UNITS
       tandem: Tandem.tandemOptional(),
-      phetioType: TNumberProperty
+      phetioType: NumberPropertyIO
     }, options );
 
     // @private
@@ -95,7 +95,7 @@ define( function( require ) {
     assert && assert( isValidForValueType( value, options.valueType ),
       'initial value ' + value + ' must be of type: ' + options.valueType );
 
-    // @public (read-only) - used by PhET-iO in TNumberProperty as metadata passed to the wrapper.
+    // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.units = options.units;
     this.range = options.range;
     this.valueType = options.valueType;

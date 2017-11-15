@@ -16,27 +16,27 @@ define( function( require ) {
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
+  var NumberIO = require( 'ifphetio!PHET_IO/types/NumberIO' );
 
   // constants
-  var VALUE_TYPE = TNumber; // It's a NumberProperty.
+  var VALUE_TYPE = NumberIO; // It's a NumberProperty.
   var TPropertyImpl = PropertyIO( VALUE_TYPE );
 
   /**
    * NumberProperty wrapper type.
    * @constructor
    */
-  function TNumberProperty( property, phetioID ) {
+  function NumberPropertyIO( property, phetioID ) {
     assert && assertInstanceOf( property, phet.axon.NumberProperty );
     TPropertyImpl.call( this, property, phetioID );
   }
 
-  axon.register( 'TNumberProperty', TNumberProperty );
+  axon.register( 'NumberPropertyIO', NumberPropertyIO );
 
-  phetioInherit( TPropertyImpl, 'TNumberProperty', TNumberProperty, {}, {
+  phetioInherit( TPropertyImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
 
     // Export the value type from the parent so clients can read it from this type
-    elementType: TNumber,
+    elementType: NumberIO,
 
     getAPI: function() {
       return {
@@ -82,5 +82,5 @@ define( function( require ) {
     documentation: 'Numeric property model'
   } );
 
-  return TNumberProperty;
+  return NumberPropertyIO;
 } );

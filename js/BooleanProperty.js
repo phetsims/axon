@@ -16,7 +16,7 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
 
   // phet-io modules
-  var TBoolean = require( 'ifphetio!PHET_IO/types/TBoolean' );
+  var BooleanIO = require( 'ifphetio!PHET_IO/types/BooleanIO' );
 
   /**
    * @param {boolean} value - initial value
@@ -26,7 +26,7 @@ define( function( require ) {
   function BooleanProperty( value, options ) {
 
     options = _.extend( {
-      phetioType: PropertyIO( TBoolean )
+      phetioType: PropertyIO( BooleanIO )
     }, options );
 
     assert && assert( !options.isValidValue, 'isValidValue is provided by BooleanProperty' );

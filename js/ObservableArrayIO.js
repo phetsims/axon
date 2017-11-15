@@ -16,8 +16,8 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
-  var TNumber = require( 'ifphetio!PHET_IO/types/TNumber' );
+  var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
+  var NumberIO = require( 'ifphetio!PHET_IO/types/NumberIO' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
@@ -27,7 +27,7 @@ define( function( require ) {
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
-  function TObservableArray( elementType ) {
+  function ObservableArrayIO( elementType ) {
 
     /**
      * This type constructor is parameterized based on the instance of Events.
@@ -35,13 +35,13 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var TObservableArrayImpl = function TObservableArrayImpl( observableArray, phetioID ) {
+    var ObservableArrayIOImpl = function TObservableArrayImpl( observableArray, phetioID ) {
       assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
       assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
       TObject.call( this, observableArray, phetioID );
     };
-    return phetioInherit( TObject, 'TObservableArray', TObservableArrayImpl, {
+    return phetioInherit( TObject, 'ObservableArrayIO', ObservableArrayIOImpl, {
 
         /**
          * Adds a listener to the observable array.
@@ -50,7 +50,7 @@ define( function( require ) {
          */
         addItemAddedListener: {
           returnType: TVoid,
-          parameterTypes: [ TFunctionWrapper( TVoid, [ elementType ] ) ],
+          parameterTypes: [ FunctionIO( TVoid, [ elementType ] ) ],
           implementation: function( listener ) {
             this.instance.addItemAddedListener( listener );
           },
@@ -64,7 +64,7 @@ define( function( require ) {
          */
         addItemRemovedListener: {
           returnType: TVoid,
-          parameterTypes: [ TFunctionWrapper( TVoid, [ elementType ] ) ],
+          parameterTypes: [ FunctionIO( TVoid, [ elementType ] ) ],
           implementation: function( listener ) {
             this.instance.addItemRemovedListener( listener );
           },
@@ -75,7 +75,7 @@ define( function( require ) {
          * Get the number of electrons currently in the array.
          */
         getLength: {
-          returnType: TNumber,
+          returnType: NumberIO,
           parameterTypes: [],
           implementation: function() {
             return this.instance.length;
@@ -117,8 +117,8 @@ define( function( require ) {
       } );
   }
 
-  axon.register( 'TObservableArray', TObservableArray );
+  axon.register( 'ObservableArrayIO', ObservableArrayIO );
 
-  return TObservableArray;
+  return ObservableArrayIO;
 } );
 

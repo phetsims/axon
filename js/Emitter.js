@@ -13,7 +13,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TEmitter = require( 'AXON/TEmitter' );
+  var EmitterIO = require( 'AXON/EmitterIO' );
 
   /**
    *
@@ -41,7 +41,7 @@ define( function( require ) {
     this.phetioArgumentTypes = options.phetioArgumentTypes;
 
     // Tandem registration
-    this.ttype = TEmitter( options.phetioArgumentTypes );
+    this.ttype = EmitterIO( options.phetioArgumentTypes );
     options.phetioType = this.ttype;
     options.tandem.addInstance( this, options );
   }

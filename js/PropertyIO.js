@@ -15,7 +15,7 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
@@ -59,7 +59,7 @@ define( function( require ) {
 
       link: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType, phetioValueType ] ) ],
+        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -69,7 +69,7 @@ define( function( require ) {
 
       lazyLink: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType, phetioValueType ] ) ],
+        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
@@ -78,7 +78,7 @@ define( function( require ) {
 
       unlink: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, [ phetioValueType ] ) ],
+        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.unlink( listener );
         },

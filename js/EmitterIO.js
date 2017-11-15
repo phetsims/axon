@@ -12,7 +12,7 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var axon = require( 'AXON/axon' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
+  var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
@@ -24,7 +24,7 @@ define( function( require ) {
    * @returns {TEmitterImpl}
    * @constructor
    */
-  function TEmitter( phetioArgumentTypes ) {
+  function EmitterIO( phetioArgumentTypes ) {
 
     var TEmitterImpl = function TEmitterImpl( emitter, phetioID ) {
       assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
@@ -33,10 +33,10 @@ define( function( require ) {
       TObject.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( TObject, 'TEmitter', TEmitterImpl, {
+    return phetioInherit( TObject, 'EmitterIO', TEmitterImpl, {
       addListener: {
         returnType: TVoid,
-        parameterTypes: [ TFunctionWrapper( TVoid, phetioArgumentTypes ) ],
+        parameterTypes: [ FunctionIO( TVoid, phetioArgumentTypes ) ],
         implementation: function( listener ) {
           this.instance.addListener( listener );
         },
@@ -48,8 +48,8 @@ define( function( require ) {
     } );
   }
 
-  axon.register( 'TEmitter', TEmitter );
+  axon.register( 'EmitterIO', EmitterIO );
 
-  return TEmitter;
+  return EmitterIO;
 } );
 
