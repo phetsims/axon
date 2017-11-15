@@ -18,7 +18,6 @@ define( function( require ) {
   var NumberProperty = require( 'AXON/NumberProperty' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TObservableArray = require( 'AXON/TObservableArray' );
 
   /**
    * @param {Object[]} [array]
@@ -36,7 +35,7 @@ define( function( require ) {
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       tandem: Tandem.tandemOptional(),
-      phetioValueType: null, // {TType|null}
+      phetioType: null, // must be specified by instances
       phetioState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
@@ -62,15 +61,12 @@ define( function( require ) {
     this.phetioState = options.phetioState;
 
     // @private
-    this.ttype = TObservableArray( options.phetioValueType || {} );
+    this.phetioType = options.phetioType;
 
     // @private
     this.observableArrayTandem = options.tandem;
 
-    // @private
-    this.phetioValueType = options.phetioValueType;
-
-    this.observableArrayTandem.supplied && this.observableArrayTandem.addInstance( this, this.ttype, options );
+    this.observableArrayTandem.supplied && this.observableArrayTandem.addInstance( this, options );
   }
 
   axon.register( 'ObservableArray', ObservableArray );
@@ -146,7 +142,7 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.ttype, 'itemAdded', this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( item ) );
+      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.phetioType, 'itemAdded', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -159,7 +155,7 @@ define( function( require ) {
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.ttype, 'itemRemoved', this.phetioValueType.toStateObject && this.phetioValueType.toStateObject( item ) );
+      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.phetioType, 'itemRemoved', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing

@@ -78,15 +78,12 @@ define( function( require ) {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       units: null, // {string|null} see VALID_UNITS
-      tandem: Tandem.tandemOptional()
+      tandem: Tandem.tandemOptional(),
+      phetioType: TNumberProperty
     }, options );
-
-    assert && assert( !options.phetioValueType, 'phetioValueType cannot be supplied for NumberProperty' );
-    options.phetioValueType = TNumberProperty.valueType;
 
     // @private
     this.numberPropertyTandem = options.tandem;
-    options.tandem = this.numberPropertyTandem.createSupertypeTandem();
 
     assert && assert(
       _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) { return value; } ).length <= 1,
@@ -129,8 +126,6 @@ define( function( require ) {
     }
 
     Property.call( this, value, options );
-
-    this.numberPropertyTandem.addInstance( this, TNumberProperty, options );
   }
 
   axon.register( 'NumberProperty', NumberProperty );

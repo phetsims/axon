@@ -24,10 +24,9 @@ define( function( require ) {
    */
   function BooleanProperty( value, options ) {
 
-    options = options || {};
-
-    assert && assert( !options.phetioValueType, 'phetioValueType is provided by BooleanProperty' );
-    options.phetioValueType = TBoolean;
+    options = _.extend( {
+      phetioType: TBoolean
+    } );
 
     assert && assert( !options.isValidValue, 'isValidValue is provided by BooleanProperty' );
     options.isValidValue = isBoolean;

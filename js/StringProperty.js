@@ -24,10 +24,9 @@ define( function( require ) {
    */
   function StringProperty( value, options ) {
 
-    options = options || {};
-
-    assert && assert( !options.phetioValueType, 'phetioValueType is set by StringProperty' );
-    options.phetioValueType = TString;
+    options = _.extend( {
+      phetioType: TString
+    }, options );
 
     if ( options.validValues ) {
       assert && assert( _.every( options.validValues, isString ), 'validValues must be strings' );

@@ -60,7 +60,7 @@ define( function( require ) {
       // Used to generate the unique parametric typename for each TProperty
       parameterTypes: [ phetioValueType ],
 
-      valueType: phetioValueType,
+      elementType: phetioValueType,
 
       /**
        * Decodes a state into a DerivedProperty.

@@ -36,11 +36,11 @@ define( function( require ) {
   phetioInherit( TPropertyImpl, 'TNumberProperty', TNumberProperty, {}, {
 
     // Export the value type from the parent so clients can read it from this type
-    valueType: TNumber,
+    elementType: TNumber,
 
     getAPI: function() {
       return {
-        valueType: phet.phetIo.phetio.getAPIForType( VALUE_TYPE )
+        elementType: phet.phetIo.phetio.getAPIForType( VALUE_TYPE )
       };
     },
 
