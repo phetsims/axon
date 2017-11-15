@@ -13,6 +13,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
+  var TProperty = require( 'AXON/TProperty' );
 
   // phet-io modules
   var TBoolean = require( 'ifphetio!PHET_IO/types/TBoolean' );
@@ -25,8 +26,8 @@ define( function( require ) {
   function BooleanProperty( value, options ) {
 
     options = _.extend( {
-      phetioType: TBoolean
-    } );
+      phetioType: TProperty( TBoolean )
+    }, options );
 
     assert && assert( !options.isValidValue, 'isValidValue is provided by BooleanProperty' );
     options.isValidValue = isBoolean;
