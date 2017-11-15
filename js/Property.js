@@ -26,7 +26,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: Tandem.tandemOptional(),
-      phetioType: null, // must be specified by the client, like TProperty(TString)
+      phetioType: null, // must be specified by the client, like PropertyIO(TString)
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
       validValues: null,
@@ -89,7 +89,7 @@ define( function( require ) {
     this.isDisposed = false;
 
     // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
-    // unsupplied. This causes downstream errors in TProperty.
+    // unsupplied. This causes downstream errors in PropertyIO.
     // @private
     this.phetioType = options.phetioType;
     options.tandem.addInstance( this, options );

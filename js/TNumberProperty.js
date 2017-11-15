@@ -11,7 +11,7 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var TProperty = require( 'AXON/TProperty' );
+  var PropertyIO = require( 'AXON/PropertyIO' );
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
@@ -20,7 +20,7 @@ define( function( require ) {
 
   // constants
   var VALUE_TYPE = TNumber; // It's a NumberProperty.
-  var TPropertyImpl = TProperty( VALUE_TYPE );
+  var TPropertyImpl = PropertyIO( VALUE_TYPE );
 
   /**
    * NumberProperty wrapper type.

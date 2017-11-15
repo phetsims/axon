@@ -24,21 +24,21 @@ define( function( require ) {
    * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
    *                                     'ifphetio!' plugin.
    * @param options
-   * @module TProperty
+   * @module PropertyIO
    * @constructor
    */
-  function TProperty( phetioValueType, options ) {
+  function PropertyIO( phetioValueType, options ) {
 
-    var TPropertyImpl = function TPropertyImpl( property, phetioID ) {
-      assert && assert( !!phetioValueType, 'TProperty needs phetioValueType' );
+    var PropertyIOImpl = function PropertyIOImpl( property, phetioID ) {
+      assert && assert( !!phetioValueType, 'PropertyIO needs phetioValueType' );
       assert && assert( property, 'Property should exist' );
-      assert && assert( _.endsWith( phetioID, 'Property' ), 'TProperty instances should end with the "Property" suffix, for ' + phetioID );
+      assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
       assert && assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
     };
 
-    return phetioInherit( TObject, 'TProperty', TPropertyImpl, {
+    return phetioInherit( TObject, 'PropertyIO', PropertyIOImpl, {
       getValue: {
         returnType: phetioValueType,
         parameterTypes: [],
@@ -90,7 +90,7 @@ define( function( require ) {
                      'when the listeners are registered.',
       elementType: phetioValueType,
 
-      // Used to generate the unique parametric typename for each TProperty
+      // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
 
       events: [ 'changed' ],
@@ -150,8 +150,7 @@ define( function( require ) {
     } );
   }
 
-  axon.register( 'TProperty', TProperty );
+  axon.register( 'PropertyIO', PropertyIO );
 
-  return TProperty;
+  return PropertyIO;
 } );
-

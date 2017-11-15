@@ -15,7 +15,7 @@ define( function( require ) {
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var TProperty = require( 'AXON/TProperty' );
+  var PropertyIO = require( 'AXON/PropertyIO' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
 
   /**
@@ -28,7 +28,7 @@ define( function( require ) {
   function TDerivedProperty( phetioValueType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-    var TPropertyImpl = new TProperty( phetioValueType );
+    var TPropertyImpl = new PropertyIO( phetioValueType );
 
     /**
      * This type constructor is parameterized based on the phetioValueType.
@@ -54,10 +54,10 @@ define( function( require ) {
         documentation: 'Errors out when you try to set a derived property.'
       }
     }, {
-      documentation: 'Like TProperty, but not settable.  Instead it is derived from other TDerivedProperty or TProperty ' +
+      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other TDerivedProperty or PropertyIO ' +
                      'instances',
 
-      // Used to generate the unique parametric typename for each TProperty
+      // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
 
       elementType: phetioValueType,
