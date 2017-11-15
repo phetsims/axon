@@ -18,12 +18,12 @@ define( function( require ) {
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
   var NumberIO = require( 'ifphetio!PHET_IO/types/NumberIO' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
-   * @param {TObject} elementType - wrapper type of the DerivedProperty. If loaded by phet (not phet-io)
+   * @param {ObjectIO} elementType - wrapper type of the DerivedProperty. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
@@ -39,9 +39,9 @@ define( function( require ) {
       assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
       assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
-      TObject.call( this, observableArray, phetioID );
+      ObjectIO.call( this, observableArray, phetioID );
     };
-    return phetioInherit( TObject, 'ObservableArrayIO', ObservableArrayIOImpl, {
+    return phetioInherit( ObjectIO, 'ObservableArrayIO', ObservableArrayIOImpl, {
 
         /**
          * Adds a listener to the observable array.
@@ -49,8 +49,8 @@ define( function( require ) {
          * @public
          */
         addItemAddedListener: {
-          returnType: TVoid,
-          parameterTypes: [ FunctionIO( TVoid, [ elementType ] ) ],
+          returnType: VoidIO,
+          parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
           implementation: function( listener ) {
             this.instance.addItemAddedListener( listener );
           },
@@ -63,8 +63,8 @@ define( function( require ) {
          * @public
          */
         addItemRemovedListener: {
-          returnType: TVoid,
-          parameterTypes: [ FunctionIO( TVoid, [ elementType ] ) ],
+          returnType: VoidIO,
+          parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
           implementation: function( listener ) {
             this.instance.addItemRemovedListener( listener );
           },

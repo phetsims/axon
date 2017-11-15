@@ -16,12 +16,12 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var PropertyIO = require( 'AXON/PropertyIO' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
    * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
    *
-   * @param {function} phetioValueType - phet-io type wrapper like TString, NumberIO, etc. If loaded by phet (not phet-io)
+   * @param {function} phetioValueType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
@@ -46,7 +46,7 @@ define( function( require ) {
     return phetioInherit( TPropertyImpl, 'DerivedPropertyIO', TDerivedPropertyImpl, {
 
       setValue: {
-        returnType: TVoid,
+        returnType: VoidIO,
         parameterTypes: [ phetioValueType ],
         implementation: function( value ) {
           return this.instance.set( value );

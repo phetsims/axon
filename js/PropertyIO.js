@@ -16,8 +16,8 @@ define( function( require ) {
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -35,10 +35,10 @@ define( function( require ) {
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
       assert && assertInstanceOf( property, phet.axon.Property );
-      TObject.call( this, property, phetioID );
+      ObjectIO.call( this, property, phetioID );
     };
 
-    return phetioInherit( TObject, 'PropertyIO', PropertyIOImpl, {
+    return phetioInherit( ObjectIO, 'PropertyIO', PropertyIOImpl, {
       getValue: {
         returnType: phetioValueType,
         parameterTypes: [],
@@ -49,7 +49,7 @@ define( function( require ) {
       },
 
       setValue: {
-        returnType: TVoid,
+        returnType: VoidIO,
         parameterTypes: [ phetioValueType ],
         implementation: function( value ) {
           this.instance.set( value );
@@ -58,8 +58,8 @@ define( function( require ) {
       },
 
       link: {
-        returnType: TVoid,
-        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType, phetioValueType ] ) ],
+        returnType: VoidIO,
+        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -68,8 +68,8 @@ define( function( require ) {
       },
 
       lazyLink: {
-        returnType: TVoid,
-        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType, phetioValueType ] ) ],
+        returnType: VoidIO,
+        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
@@ -77,8 +77,8 @@ define( function( require ) {
       },
 
       unlink: {
-        returnType: TVoid,
-        parameterTypes: [ FunctionIO( TVoid, [ phetioValueType ] ) ],
+        returnType: VoidIO,
+        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType ] ) ],
         implementation: function( listener ) {
           this.instance.unlink( listener );
         },

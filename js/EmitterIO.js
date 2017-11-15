@@ -13,8 +13,8 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
    * Wrapper type for Emitter
@@ -30,13 +30,13 @@ define( function( require ) {
       assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
       assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
-      TObject.call( this, emitter, phetioID );
+      ObjectIO.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( TObject, 'EmitterIO', TEmitterImpl, {
+    return phetioInherit( ObjectIO, 'EmitterIO', TEmitterImpl, {
       addListener: {
-        returnType: TVoid,
-        parameterTypes: [ FunctionIO( TVoid, phetioArgumentTypes ) ],
+        returnType: VoidIO,
+        parameterTypes: [ FunctionIO( VoidIO, phetioArgumentTypes ) ],
         implementation: function( listener ) {
           this.instance.addListener( listener );
         },

@@ -15,7 +15,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
 
   // phet-io modules
-  var TString = require( 'ifphetio!PHET_IO/types/TString' );
+  var StringIO = require( 'ifphetio!PHET_IO/types/StringIO' );
 
   /**
    * @param {string} value - initial value
@@ -25,7 +25,7 @@ define( function( require ) {
   function StringProperty( value, options ) {
 
     options = _.extend( {
-      phetioType: TString
+      phetioType: StringIO
     }, options );
 
     if ( options.validValues ) {

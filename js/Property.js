@@ -26,7 +26,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: Tandem.tandemOptional(),
-      phetioType: null, // must be specified by the client, like PropertyIO(TString)
+      phetioType: null, // must be specified by the client, like PropertyIO(StringIO)
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
       validValues: null,
@@ -88,7 +88,7 @@ define( function( require ) {
     // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
 
-    // Register with tandem. TVoid is needed when not running in phet-io mode, because the phetioValueType is often
+    // Register with tandem. VoidIO is needed when not running in phet-io mode, because the phetioValueType is often
     // unsupplied. This causes downstream errors in PropertyIO.
     // @private
     this.phetioType = options.phetioType;
