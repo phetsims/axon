@@ -142,7 +142,7 @@ define( function( require ) {
    * @returns {boolean}
    */
   function isValidForValueType( value, valueType ) {
-    return ( typeof value === 'number' ) && !( valueType === 'Integer' && !Number.isInteger( value ) );
+    return ( typeof value === 'number' ) && !( valueType === 'Integer' && value % 1 !== 0);
   }
 
   return inherit( Property, NumberProperty, {
