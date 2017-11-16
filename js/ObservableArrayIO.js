@@ -35,7 +35,7 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var ObservableArrayIOImpl = function TObservableArrayImpl( observableArray, phetioID ) {
+    var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
       assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
       assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 

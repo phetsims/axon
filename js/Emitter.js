@@ -29,7 +29,7 @@ define( function( require ) {
     this.listenersToEmitTo = [];
 
     options = _.extend( {
-      phetioArgumentTypes: [], // {Object[]} - for serializing/displaying the values during emit. Key = arg name, value = TType
+      phetioArgumentTypes: [], // {Object[]} - for serializing/displaying the values during emit. Key = arg name, value = IO Type
       tandem: Tandem.tandemOptional()
       // see also phetio options in phetio.addInstance
     }, options );
