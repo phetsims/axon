@@ -136,21 +136,13 @@ define( function( require ) {
   axon.register( 'NumberProperty', NumberProperty );
 
   /**
-   * @param {*} value
-   * @returns {boolean}
-   */
-  function isNumber( value ) {
-    return ( typeof value === 'number' );
-  }
-
-  /**
    * If valueType is Integer, then the value must be an integer.
    * @param value
    * @param valueType
    * @returns {boolean}
    */
   function isValidForValueType( value, valueType ) {
-    return isNumber( value ) && !( valueType === 'Integer' && !Number.isInteger( value ) );
+    return ( typeof value === 'number' ) && !( valueType === 'Integer' && !Number.isInteger( value ) );
   }
 
   return inherit( Property, NumberProperty, {
