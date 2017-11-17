@@ -41,9 +41,6 @@ define( function( require ) {
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     Property.call( this, initialValue, options );
 
-    // @private - for disposal
-    this.derivedPropertyTandem = options.tandem;
-
     var self = this;
 
     // @private Keep track of listeners so they can be detached
@@ -89,8 +86,6 @@ define( function( require ) {
       }
       this.dependencies = null;
       this.dependencyListeners = null;
-
-      this.derivedPropertyTandem.isLegalAndUsable() && this.derivedPropertyTandem.removeInstance( this );
 
       Property.prototype.dispose.call( this );
     },
