@@ -44,7 +44,7 @@ define( function( require ) {
    * @returns {boolean}
    */
   function isBoolean( value ) {
-    return ( typeof value === 'boolean' );
+    return (typeof value === 'boolean');
   }
 
   return inherit( Property, BooleanProperty );
