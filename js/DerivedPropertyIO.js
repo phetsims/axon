@@ -74,11 +74,14 @@ define( function( require ) {
 
       /**
        * Encodes a DerivedProperty instance to a state.
-       * @param {Object} instance
+       * @param {Object} derivedProperty
        * @returns {Object}
        */
-      toStateObject: function( instance ) {
-        return phetioValueType.toStateObject( instance.value );
+      toStateObject: function( derivedProperty ) {
+        assert && assertInstanceOf( derivedProperty, phet.axon.DerivedProperty );
+
+        // TODO: this doesn't match the PropertyIO structure which has {value}
+        return phetioValueType.toStateObject( derivedProperty.value );
       }
     } );
   }

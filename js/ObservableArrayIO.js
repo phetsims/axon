@@ -87,6 +87,7 @@ define( function( require ) {
       {
 
         toStateObject: function( observableArray ) {
+          assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
           if ( !observableArray ) {
             return observableArray;
           }
@@ -106,9 +107,10 @@ define( function( require ) {
           return tempArray;
         },
 
-        setValue: function( instance, value ) {
-          instance.clear();
-          instance.addAll( value );
+        setValue: function( observableArray, value ) {
+          assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
+          observableArray.clear();
+          observableArray.addAll( value );
         },
 
         documentation: 'An array that sends notifications when its values have changed.',

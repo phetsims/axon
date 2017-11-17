@@ -59,24 +59,26 @@ define( function( require ) {
 
     /**
      * Encodes a NumberProperty instance to a state.
-     * @param {Object} instance
+     * @param {Object} numberProperty
      * @returns {Object} - a state object
      */
-    toStateObject: function( instance ) {
-      assert && assert( instance, 'instance should be defined' );
+    toStateObject: function( numberProperty ) {
+      assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
 
-      var parentStateObject = PropertyIOImpl.toStateObject( instance );
-      parentStateObject.valueType = instance.valueType;
-      parentStateObject.units = instance.units;
-      parentStateObject.range = instance.range;
+      var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
+      parentStateObject.valueType = numberProperty.valueType;
+      parentStateObject.units = numberProperty.units;
+      parentStateObject.range = numberProperty.range;
       return parentStateObject;
     },
 
-    setValue: function( instance, fromStateObject ) {
-      PropertyIOImpl.setValue( instance, fromStateObject );
-      instance.units = fromStateObject.units;
-      instance.range = fromStateObject.range;
-      instance.valueType = fromStateObject.valueType;
+    setValue: function( numberProperty, fromStateObject ) {
+      assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
+
+      PropertyIOImpl.setValue( numberProperty, fromStateObject );
+      numberProperty.units = fromStateObject.units;
+      numberProperty.range = fromStateObject.range;
+      numberProperty.valueType = fromStateObject.valueType;
     },
 
     documentation: 'Numeric property model'

@@ -117,19 +117,19 @@ define( function( require ) {
 
       /**
        * Encodes a Property instance to a state.
-       * @param {Object} instance
+       * @param {Object} property
        * @returns {Object} - a state object
        */
-      toStateObject: function( instance ) {
-        assert && assert( instance, 'instance should be defined' );
+      toStateObject: function( property ) {
+        assert && assertInstanceOf( property, phet.axon.Property );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
         var stateObject = {
-          value: phetioValueType.toStateObject( instance.value )
+          value: phetioValueType.toStateObject( property.value )
         };
 
         // Only include validValues if specified, so they only show up in instance proxies when supplied.
-        if ( instance.validValues ) {
-          stateObject.validValues = instance.validValues.map( function( v ) {
+        if ( property.validValues ) {
+          stateObject.validValues = property.validValues.map( function( v ) {
             return phetioValueType.toStateObject( v );
           } );
         }
@@ -138,12 +138,13 @@ define( function( require ) {
 
       /**
        * Used to set the value when loading a state
-       * @param instance
+       * @param property
        * @param stateObject
        */
-      setValue: function( instance, stateObject ) {
-        instance.set( stateObject.value );
-        instance.validValues = stateObject.validValues;
+      setValue: function( property, stateObject ) {
+        assert && assertInstanceOf( property, phet.axon.Property );
+        property.set( stateObject.value );
+        property.validValues = stateObject.validValues;
       },
 
       options: options
