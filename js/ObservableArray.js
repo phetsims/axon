@@ -39,8 +39,6 @@ define( function( require ) {
       phetioState: false // keep ObservableArray out of the state unless they opt in.
     }, options );
 
-    // TODO: Should we require tandems for all ObservableArrays? https://github.com/phetsims/axon/issues/164
-
     this.allowDuplicates = options.allowDuplicates; // @private
 
     this._array = array || []; // @private internal, do not access directly
