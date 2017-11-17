@@ -309,13 +309,14 @@ define( function( require ) {
       dispose: function() {
 
         assert && assert( !this.isDisposed, 'cannot be disposed twice' );
+
+        // remove tandem instance
+        this.propertyTandem.removeInstance( this );
+
         this.isDisposed = true;
 
         // remove any listeners that are still attached to this property
         this.unlinkAll();
-
-        // remove tandem instance
-        this.propertyTandem.removeInstance( this );
       },
 
       /**

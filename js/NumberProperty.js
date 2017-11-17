@@ -82,9 +82,6 @@ define( function( require ) {
       phetioType: NumberPropertyIO
     }, options );
 
-    // @private
-    this.numberPropertyTandem = options.tandem;
-
     assert && assert(
       _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) { return value; } ).length <= 1,
       'validValues, isValidValue and range are mutually-exclusive options' );
@@ -145,14 +142,5 @@ define( function( require ) {
     return ( typeof value === 'number' ) && !( valueType === 'Integer' && value % 1 !== 0);
   }
 
-  return inherit( Property, NumberProperty, {
-
-    /**
-     * @public
-     */
-    dispose: function() {
-      this.numberPropertyTandem.removeInstance( this );
-      Property.prototype.dispose.call( this );
-    }
-  } );
+  return inherit( Property, NumberProperty );
 } );
