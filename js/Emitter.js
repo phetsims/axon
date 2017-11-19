@@ -30,7 +30,7 @@ define( function( require ) {
 
     options = _.extend( {
       phetioArgumentTypes: [], // {Object[]} - for serializing/displaying the values during emit. Key = arg name, value = IO Type
-      tandem: Tandem.tandemOptional()
+      tandem: Tandem.optional
       // see also phetio options in phetio.addInstance
     }, options );
 

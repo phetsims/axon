@@ -34,7 +34,7 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      tandem: Tandem.tandemOptional(),
+      tandem: Tandem.optional,
       phetioType: null, // must be specified by instances
       phetioState: false // keep ObservableArray out of the state unless they opt in.
     }, options );

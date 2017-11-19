@@ -25,7 +25,7 @@ define( function( require ) {
   function Property( value, options ) {
 
     options = _.extend( {
-      tandem: Tandem.tandemOptional(),
+      tandem: Tandem.optional,
       phetioType: null, // must be specified by the client, like PropertyIO(StringIO)
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue

@@ -26,7 +26,7 @@ define( function( require ) {
   function DerivedProperty( dependencies, derivation, options ) {
 
     options = _.extend( {
-      tandem: Tandem.tandemOptional(),
+      tandem: Tandem.optional,
       phetioType: null // must be supplied by instantiations and must be of type DerivedPropertyIO
     }, options );
 
