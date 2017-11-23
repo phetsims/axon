@@ -27,6 +27,7 @@ define( function( require ) {
 
     options = _.extend( {
       tandem: Tandem.optional,
+      phetioState: false, // derived properties don't need to be loaded to load the state
       phetioType: null // must be supplied by instantiations and must be of type DerivedPropertyIO
     }, options );
 
