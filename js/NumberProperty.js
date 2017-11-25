@@ -12,7 +12,6 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
-  var Tandem = require( 'TANDEM/Tandem' );
   var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
 
   // valid values for options.units
