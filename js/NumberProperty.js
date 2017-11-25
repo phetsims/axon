@@ -77,8 +77,6 @@ define( function( require ) {
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
-      units: null, // {string|null} see VALID_UNITS
-      tandem: Tandem.optional,
       phetioType: NumberPropertyIO
     }, options );
 
