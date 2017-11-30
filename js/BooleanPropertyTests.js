@@ -21,7 +21,7 @@ define( function( require ) {
       QUnit.module( 'BooleanProperty' );
       QUnit.test( 'BooleanProperty', function( assert ) {
         window.assert && assert.throws( function() {
-          new BooleanProperty( 'hello' );
+          new BooleanProperty( 'hello' ); //eslint-disable-line
         }, 'invalid initial value for BooleanProperty' ); // eslint-disable-line
         var c = new BooleanProperty( true );
         c.set( true );
