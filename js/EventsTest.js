@@ -41,6 +41,41 @@ define( function( require ) {
         assert.equal( aCount, 2, 'off() works' );
 
         assert.equal( events.hasListener( 'a', incrementA ), false, 'Should not have increment listener after off()' );
+
+        var person = new Events( { name: 'larry', age: '100' } );
+        var count = 0;
+        var listener = function( person ) {
+          count = count + 1;
+        };
+        person.on( 'reset-all', listener );
+
+        person.trigger( 'reset-all' );
+        person.trigger( 'reset-all' );
+        person.trigger( 'reset-all' );
+
+        assert.equal( count, 3, 'Trigger calls on' );
+
+        //Unregister the listener
+        person.off( 'reset-all', listener );
+
+        //Triggering more events shouldn't call back because we have removed the listener
+        person.trigger( 'reset-all' );
+        person.trigger( 'reset-all' );
+        person.trigger( 'reset-all' );
+
+        assert.equal( count, 3, 'Triggering more events should not call back because we have removed the listener' );
+
+        var planetName = '?';
+        var planetRadius = '?';
+        person.on( 'planet-discovered', function( name, radius ) {
+          planetName = name;
+          planetRadius = radius;
+        } );
+
+        person.trigger( 'planet-discovered', 'pluto', 12345 );
+
+        assert.equal( planetName, 'pluto', 'argument should pass through event' );
+        assert.equal( planetRadius, 12345, 'argument should pass through event' );
       } );
 
       QUnit.test( 'Static Basics', function( assert ) {
@@ -69,6 +104,7 @@ define( function( require ) {
 
       } );
 
+      // TODO: move to EmitterTests.js
       QUnit.test( 'Emitter Basics', function( assert ) {
         var stack = [];
         var emitter = new Emitter(); // eslint-disable-line no-undef

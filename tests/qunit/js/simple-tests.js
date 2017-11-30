@@ -98,43 +98,6 @@
 
   } );
 
-  test( 'Test events', function() {
-    var person = new axon.Events( { name: 'larry', age: '100' } );
-    var count = 0;
-    var listener = function( person ) {
-      count = count + 1;
-    };
-    person.on( 'reset-all', listener );
-
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-
-    equal( count, 3, 'Trigger calls on' );
-
-    //Unregister the listener
-    person.off( 'reset-all', listener );
-
-    //Triggering more events shouldn't call back because we have removed the listener
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-
-    equal( count, 3, 'Triggering more events should not call back because we have removed the listener' );
-
-    var planetName = '?';
-    var planetRadius = '?';
-    person.on( 'planet-discovered', function( name, radius ) {
-      planetName = name;
-      planetRadius = radius;
-    } );
-
-    person.trigger( 'planet-discovered', 'pluto', 12345 );
-
-    equal( planetName, 'pluto', 'argument should pass through event' );
-    equal( planetRadius, 12345, 'argument should pass through event' );
-  } );
-
   test( 'Test unlink', function() {
     var p = new Property( 1 );
     var a = function( a ) {};
@@ -302,10 +265,10 @@
     }, 'set an invalid value for Property with options.validValues' );
 
     window.assert && throws( function() {
-      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } ); // eslint-disable-line
+      new axon.Property( 0, { isValidValue: function( value ) { return (value > 0 && value < 4); } } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.isValidValue' );
 
-    property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
+    property = new axon.Property( 1, { isValidValue: function( value ) { return (value > 0 && value < 4); } } );
     property.set( 3 );
     window.assert && throws( function() {
       property.set( 4 );
@@ -356,7 +319,6 @@
       expect( 0 );
     }
   } );
-
 
 
   /* eslint-enable */
