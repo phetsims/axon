@@ -7,30 +7,12 @@
   if ( window.axon ) {
     var axon = window.axon;
   }
-  if ( window.deepEqual ) {
-    var deepEqual = window.deepEqual;
-  }
   module( 'Axon: Simple Tests' );
   var Property = axon.Property;
   var DerivedProperty = axon.DerivedProperty;
   var BooleanProperty = axon.BooleanProperty;
 
   /* eslint-disable no-undef */
-
-  test( 'Test unlink', function() {
-    var p = new Property( 1 );
-    var a = function( a ) {};
-    var b = function( b ) {};
-    var c = function( c ) {};
-    p.link( a );
-    p.link( b );
-    p.link( c );
-    equal( p.changedEmitter.listeners.length, 3, 'should have 3 observers now' );
-    p.unlink( b );
-    equal( p.changedEmitter.listeners[ 0 ], a, 'should have removed b' );
-    equal( p.changedEmitter.listeners[ 1 ], c, 'should have removed b' );
-    equal( p.changedEmitter.listeners.length, 2, 'should have removed an item' );
-  } );
 
   test( 'Test stale values in DerivedProperty', function() {
     var a = new Property( 1 );
@@ -40,29 +22,6 @@
     equal( c.value, 9 );
   } );
 
-  test( 'Test Property.multilink', function() {
-    var a = new Property( 1 );
-    var b = new Property( 2 );
-    var callbacks = 0;
-    Property.multilink( [ a, b ], function( a, b ) {
-      callbacks++;
-      equal( a, 1, 'first value should pass through' );
-      equal( b, 2, 'second value should pass through' );
-    } );
-    equal( callbacks, 1, 'should have called back to a multilink' );
-  } );
-
-  test( 'Test Property.lazyMultilink', function() {
-    var a = new Property( 1 );
-    var b = new Property( 2 );
-    var callbacks = 0;
-    Property.lazyMultilink( [ a, b ], function( a, b ) {
-      callbacks++;
-      equal( a, 1 );
-      equal( b, 2 );
-    } );
-    equal( callbacks, 0, 'shouldnt call back to a lazy multilink' );
-  } );
 
   test( 'Test DerivedProperty.unlink', function() {
 
@@ -92,21 +51,6 @@
 
   } );
 
-
-  /**
-   * Make sure linking attributes and unlinking attributes works on Property
-   */
-  test( 'Property.linkAttribute', function() {
-    var property = new axon.Property( 7 );
-    var state = { age: 99 };
-    var listener = property.linkAttribute( state, 'age' );
-    equal( state.age, 7, 'link should synchronize values' );
-    property.value = 8;
-    equal( state.age, 8, 'link should update values' );
-    property.unlinkAttribute( listener );
-    property.value = 9;
-    equal( state.age, 8, 'state shouldnt have changed after unlink' );
-  } );
 
   test( 'DerivedProperty.valueEquals', function() {
     var propA = new axon.Property( 'a' );
@@ -165,33 +109,6 @@
     window.assert && throws( function() {
       c.set( 123 );
     }, 'set an invalid value for BooleanProperty' );
-
-    if ( !window.assert ) {
-      expect( 0 );
-    }
-  } );
-
-  test( 'Property value validation', function() {
-
-    var property;
-    window.assert && throws( function() {
-      new axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
-    }, 'invalid initial value for Property with options.validValues' );
-    property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
-    property.set( 3 );
-    window.assert && throws( function() {
-      property.set( 4 );
-    }, 'set an invalid value for Property with options.validValues' );
-
-    window.assert && throws( function() {
-      new axon.Property( 0, { isValidValue: function( value ) { return (value > 0 && value < 4); } } ); // eslint-disable-line
-    }, 'invalid initial value for Property with options.isValidValue' );
-
-    property = new axon.Property( 1, { isValidValue: function( value ) { return (value > 0 && value < 4); } } );
-    property.set( 3 );
-    window.assert && throws( function() {
-      property.set( 4 );
-    }, 'set an invalid value for Property with options.isValidValue' );
 
     if ( !window.assert ) {
       expect( 0 );
