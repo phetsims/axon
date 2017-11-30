@@ -16,6 +16,7 @@ define( function( require ) {
   var DynamicPropertyTests = require( 'AXON/DynamicPropertyTests' );
   var EventsTests = require( 'AXON/EventsTests' );
   var NumberPropertyTests = require( 'AXON/NumberPropertyTests' );
+  var ObservableArrayTests = require( 'AXON/ObservableArrayTests' );
 
   QUnit.test( 'axon', function( assert ) {
     assert.ok( true, 'initial test' );
@@ -41,4 +42,5 @@ define( function( require ) {
   DynamicPropertyTests.runTests();
   EventsTests.runTests();
   NumberPropertyTests.runTests();
+  ObservableArrayTests.runTests();
 } );
