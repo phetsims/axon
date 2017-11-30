@@ -13,6 +13,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var DynamicPropertyTest = require( 'AXON/DynamicPropertyTest' );
 
   QUnit.test( 'axon', function( assert ) {
     assert.ok( true, 'initial test' );
@@ -34,4 +35,6 @@ define( function( require ) {
       assert.ok( property, 'property should exist' );
     } );
   }
+
+  DynamicPropertyTest.runTests();
 } );
