@@ -13,7 +13,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var NumberProperty = require( 'AXON/NumberProperty' );
 
-  var NumberPropertyTest = {
+  var NumberPropertyTests = {
     runTests: function() {
 
       QUnit.module( 'NumberProperty' );
@@ -125,7 +125,7 @@ define( function( require ) {
     }
   };
 
-  axon.register( 'NumberPropertyTest', NumberPropertyTest );
+  axon.register( 'NumberPropertyTests', NumberPropertyTests );
 
-  return inherit( Object, NumberPropertyTest );
+  return inherit( Object, NumberPropertyTests );
 } );

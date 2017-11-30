@@ -13,7 +13,7 @@ define( function( require ) {
   var DynamicProperty = require( 'AXON/DynamicProperty' );
   var Property = require( 'AXON/Property' );
 
-  var DynamicPropertyTest = {
+  var DynamicPropertyTests = {
     runTests: function() {
 
 
@@ -139,7 +139,7 @@ define( function( require ) {
     }
   };
 
-  axon.register( 'DynamicPropertyTest', DynamicPropertyTest );
+  axon.register( 'DynamicPropertyTests', DynamicPropertyTests );
 
-  return DynamicPropertyTest;
+  return DynamicPropertyTests;
 } );

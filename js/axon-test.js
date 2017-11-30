@@ -13,9 +13,9 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var DynamicPropertyTest = require( 'AXON/DynamicPropertyTest' );
-  var EventsTest = require( 'AXON/EventsTest' );
-  var NumberPropertyTest = require( 'AXON/NumberPropertyTest' );
+  var DynamicPropertyTests = require( 'AXON/DynamicPropertyTests' );
+  var EventsTests = require( 'AXON/EventsTests' );
+  var NumberPropertyTests = require( 'AXON/NumberPropertyTests' );
 
   QUnit.test( 'axon', function( assert ) {
     assert.ok( true, 'initial test' );
@@ -38,7 +38,7 @@ define( function( require ) {
     } );
   }
 
-  DynamicPropertyTest.runTests();
-  EventsTest.runTests();
-  NumberPropertyTest.runTests();
+  DynamicPropertyTests.runTests();
+  EventsTests.runTests();
+  NumberPropertyTests.runTests();
 } );

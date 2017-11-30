@@ -14,7 +14,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var Events = require( 'AXON/Events' );
 
-  var EventsTest = {
+  var EventsTests = {
     runTests: function() {
       QUnit.module( 'Axon: Events' );
 
@@ -198,7 +198,7 @@ define( function( require ) {
     }
   };
 
-  axon.register( 'EventsTest', EventsTest );
+  axon.register( 'EventsTests', EventsTests );
 
-  return EventsTest;
+  return EventsTests;
 } );
