@@ -51,4 +51,7 @@ define( function( require ) {
   DerivedPropertyTests.runTests();
   BooleanPropertyTests.runTests();
   StringPropertyTests.runTests();
+
+  // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
+  QUnit.start();
 } );
