@@ -16,8 +16,7 @@ define( function( require ) {
   var DynamicPropertyTests = {
     runTests: function() {
 
-
-      QUnit.module( 'Axon: DynamicProperty' );
+      QUnit.module( 'DynamicProperty' );
 
       QUnit.test( 'Basics', function( assert ) {
         var aProperty = new Property( 5 ); // eslint-disable-line no-undef

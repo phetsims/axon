@@ -18,6 +18,9 @@ define( function( require ) {
   var NumberPropertyTests = require( 'AXON/NumberPropertyTests' );
   var ObservableArrayTests = require( 'AXON/ObservableArrayTests' );
   var PropertyTests = require( 'AXON/PropertyTests' );
+  var BooleanPropertyTests = require( 'AXON/BooleanPropertyTests' );
+  var DerivedPropertyTests = require( 'AXON/DerivedPropertyTests' );
+  var StringPropertyTests = require( 'AXON/StringPropertyTests' );
 
   QUnit.test( 'axon', function( assert ) {
     assert.ok( true, 'initial test' );
@@ -45,4 +48,7 @@ define( function( require ) {
   NumberPropertyTests.runTests();
   ObservableArrayTests.runTests();
   PropertyTests.runTests();
+  DerivedPropertyTests.runTests();
+  BooleanPropertyTests.runTests();
+  StringPropertyTests.runTests();
 } );

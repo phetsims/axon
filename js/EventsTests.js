@@ -16,7 +16,7 @@ define( function( require ) {
 
   var EventsTests = {
     runTests: function() {
-      QUnit.module( 'Axon: Events' );
+      QUnit.module( 'Events' );
 
       QUnit.test( 'Basics', function( assert ) {
         var events = new Events(); // eslint-disable-line no-undef
