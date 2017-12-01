@@ -9,8 +9,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
   var ObservableArray = require( 'AXON/ObservableArray' );
 
   QUnit.module( 'Observable Array' );

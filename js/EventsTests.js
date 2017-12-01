@@ -9,7 +9,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
   var Emitter = require( 'AXON/Emitter' );
   var Events = require( 'AXON/Events' );
 
