@@ -14,6 +14,7 @@
 <!-- body is only made black for the loading phase so that the splash screen is black -->
 <body>
 <div id="qunit"></div>
+<div id="qunit-fixture"></div>
 <!-- a11y - aria-live attribute is used to send alerts and status updates to screen readers, otherwise invisible -->
 <div id='aria-live-elements'
      style="position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; clip: rect(0px 0px 0px 0px); pointer-events: none;">
@@ -24,7 +25,7 @@
 </div>
 
 <script type="text/javascript">
-  (function() {
+  ( function() {
 
     // Identify the brand (assume generated brand if not provided with query parameters)
     var brandMatch = location.search.match( /brand=([^&]+)/ );
@@ -44,7 +45,7 @@
       '../sherpa/lib/game-up-camera-1.0.0.js',
       '../sherpa/lib/base64-js-1.2.0.js',
       '../sherpa/lib/TextEncoderLite-3c9f6f0.js',
-      '../sherpa/lib/qunit-2.4.1.js',
+      '../sherpa/lib/qunit-2.4.1.js', 
       '../aqua/js/qunit-connector.js'
     ];
 

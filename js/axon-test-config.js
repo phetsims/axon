@@ -10,7 +10,7 @@
 
 require.config( {
 
-  deps: [ 'axon-test' ],
+  deps: [ 'axon-tests' ],
 
   paths: {
 
