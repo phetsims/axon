@@ -38,9 +38,7 @@ define( function( require ) {
 
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
-      useDeepEquality: false,
-
-      phetioState: true
+      useDeepEquality: false
     }, options );
 
     // value validation
