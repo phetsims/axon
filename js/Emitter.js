@@ -16,7 +16,7 @@ define( function( require ) {
   var EmitterIO = require( 'AXON/EmitterIO' );
 
   /**
-   *
+   * @param {Object} [options]
    * @constructor
    */
   function Emitter( options ) {
