@@ -48,9 +48,6 @@ define( function( require ) {
       } );
     }, 'should throw Assertion failed: validValues and isValidValue are mutually exclusive' );
 
-    if ( !window.assert ) {
-      assert.expect( 0 );
-    }
+    assert.ok( true, 'so we have at least 1 test in this set' );
   } );
-
 } );

@@ -113,9 +113,9 @@ define( function( require ) {
       }, 'should throw Assertion failed: validValues, isValidValue and range are mutually-exclusive options' );
     } );
 
-    if ( !window.assert ) {
-      assert.expect( 5 ); // TODO: this is a hack to suppress the "expected 0 tests but 5 were run" error.
-    }
+    // if ( !window.assert ) {
+    //   assert.expect( 5 ); // TODO: this is a hack to suppress the "expected 0 tests but 5 were run" error.
+    // }
   } );
 
 } );

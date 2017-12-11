@@ -24,8 +24,6 @@ define( function( require ) {
       c.set( 123 );
     }, 'set an invalid value for BooleanProperty' );
 
-    if ( !window.assert ) {
-      assert.expect( 0 );
-    }
+    assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 } );

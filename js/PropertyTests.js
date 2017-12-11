@@ -93,9 +93,7 @@ define( function( require ) {
       property.set( 4 );
     }, 'set an invalid value for Property with options.isValidValue' );
 
-    if ( !window.assert ) {
-      assert.expect( 0 );
-    }
+    assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 
   // Tests that can only run in phet-io mode
