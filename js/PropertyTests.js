@@ -99,10 +99,16 @@ define( function( require ) {
   // Tests that can only run in phet-io mode
   if ( window.phet.phetio ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
+      var done = assert.async();
       var tandem = Tandem.rootTandem.createTandem( 'testTandem' );
       tandem.addInstance = function( instance, options ) {
-        var stateObject = ObjectIO.toStateObject( instance );
-        assert.equal( stateObject.value, 0, 'toStateObject should match' );
+
+        // Run in the next frame after the object finished getting constructed
+        setTimeout( function() {
+          var stateObject = ObjectIO.toStateObject( instance );
+          assert.equal( stateObject.value, 0, 'toStateObject should match' );
+          done();
+        }, 0 );
       };
       new Property( 0, { // eslint-disable-line
         phetioType: PropertyIO( ObjectIO ),
