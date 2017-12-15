@@ -55,7 +55,7 @@ define( function( require ) {
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    PhetioObject.call( this );
+    PhetioObject.call( this, options );
   }
 
   axon.register( 'ObservableArray', ObservableArray );
