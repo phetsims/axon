@@ -12,7 +12,6 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var EmitterIO = require( 'AXON/EmitterIO' );
   var inherit = require( 'PHET_CORE/inherit' );
-  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
 
   /**
@@ -134,7 +133,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
@@ -157,7 +156,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
@@ -181,7 +180,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
@@ -207,7 +206,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
@@ -235,7 +234,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
