@@ -16,7 +16,8 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var NumberProperty = require( 'AXON/NumberProperty' );
-  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
+  var ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
+  var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
   /**
@@ -27,16 +28,15 @@ define( function( require ) {
   function ObservableArray( array, options ) {
 
     // Special case that the user supplied options but no array
-    if ( array instanceof Object && !(array instanceof Array) ) {
+    if ( array instanceof Object && !( array instanceof Array ) ) {
       options = array;
       array = null;
     }
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      tandem: Tandem.optional,
-      phetioType: null, // must be specified by instances
-      phetioState: false // keep ObservableArray out of the state unless they opt in.
+      phetioType: ObservableArrayIO,
+      tandem: Tandem.optional
     }, options );
 
     this.allowDuplicates = options.allowDuplicates; // @private
@@ -55,26 +55,17 @@ define( function( require ) {
     // @private Store the initial array, if any, for resetting, see #4
     this.initialArray = array ? array.slice() : [];
 
-    // public (phet-io) (read-only)
-    this.phetioState = options.phetioState;
-
-    // @private
-    this.phetioType = options.phetioType;
-
-    // @private
-    this.observableArrayTandem = options.tandem;
-
-    this.observableArrayTandem.supplied && this.observableArrayTandem.addInstance( this, options );
+    PhetioObject.call( this );
   }
 
   axon.register( 'ObservableArray', ObservableArray );
 
-  return inherit( Object, ObservableArray, {
+  return inherit( PhetioObject, ObservableArray, {
 
     // @public
     dispose: function() {
       this.lengthProperty.dispose();
-      this.observableArrayTandem.supplied && this.observableArrayTandem.removeInstance( this );
+      PhetioObject.prototype.dispose.call( this );
     },
 
     /**
@@ -140,7 +131,8 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.phetioType, 'itemAdded', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
+      var id = this.phetioObjectTandem.isLegalAndUsable() &&
+               this.startEvent( 'model', 'itemAdded', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -148,12 +140,13 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.observableArrayTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      var id = this.observableArrayTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.observableArrayTandem.id, this.phetioType, 'itemRemoved', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
+      var id = this.phetioObjectTandem.isLegalAndUsable() &&
+               this.startEvent( 'model', 'itemRemoved', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -161,7 +154,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.observableArrayTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
     },
 
     /**
