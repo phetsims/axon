@@ -14,7 +14,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
-  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
+  var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
   /**
@@ -25,8 +25,8 @@ define( function( require ) {
   function Property( value, options ) {
 
     options = _.extend( {
+
       tandem: Tandem.optional,
-      phetioType: null, // must be specified by the client, like PropertyIO(StringIO)
 
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
       validValues: null,
@@ -42,7 +42,9 @@ define( function( require ) {
     }, options );
 
     // value validation
-    assert && assert( !(options.validValues && options.isValidValue), 'validValues and isValidValue are mutually exclusive' );
+    assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+
+    PhetioObject.call( this, options );
 
     // @private (read-only) whether to use the values' equals method or === equality
     // useDeepEquality: true => Use the `equals` method on the values
@@ -61,22 +63,19 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioType,
-      'Value type passed to Property must be specified. Tandem.id: ' + options.tandem.id );
+    Tandem.validationEnabled() && this.phetioObjectTandem.isLegalAndUsable() && assert && assert( !!options.phetioType,
+      'Value type passed to Property must be specified. Tandem.id: ' + this.phetioObjectTandem.id );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && options.tandem.isLegalAndUsable() && assert && assert( !!options.phetioType.elementType,
-      'phetioType.elementType must be specified. Tandem.id: ' + options.tandem.id );
+    Tandem.validationEnabled() && this.phetioObjectTandem.isLegalAndUsable() && assert && assert( !!options.phetioType.elementType,
+      'phetioType.elementType must be specified. Tandem.id: ' + this.phetioObjectTandem.id );
 
     // @private - Store the internal value and the initial value
     this._value = value;
 
     // @private - Initial value
     this._initialValue = value;
-
-    // @private
-    this.propertyTandem = options.tandem;
 
     // @public (phet-io)
     this.validValues = options.validValues;
@@ -87,17 +86,11 @@ define( function( require ) {
 
     // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
-
-    // Register with tandem. VoidIO is needed when not running in phet-io mode, because the phetioValueType is often
-    // unsupplied. This causes downstream errors in PropertyIO.
-    // @private
-    this.phetioType = options.phetioType;
-    options.tandem.addInstance( this, options );
   }
 
   axon.register( 'Property', Property );
 
-  return inherit( Object, Property, {
+  return inherit( PhetioObject, Property, {
 
       /**
        * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
@@ -177,7 +170,8 @@ define( function( require ) {
       // @private
       _notifyListeners: function( oldValue ) {
 
-        var id = this.propertyTandem.isLegalAndUsable() && phetioEvents.start( 'model', this.propertyTandem.id, this.phetioType, 'changed', {
+        // We must short circuit based on tandem here as a guard against the toStateObject calls
+        var id = this.phetioObjectTandem.isLegalAndUsable() && this.startEvent( 'model', 'changed', {
           oldValue: this.phetioType.elementType.toStateObject( oldValue ),
           newValue: this.phetioType.elementType.toStateObject( this.get() ),
           units: this.phetioType && this.phetioType.units
@@ -185,7 +179,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.propertyTandem.isLegalAndUsable() && phetioEvents.end( id );
+        this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
       },
 
       /**
@@ -310,13 +304,12 @@ define( function( require ) {
 
         assert && assert( !this.isDisposed, 'cannot be disposed twice' );
 
-        // remove tandem instance
-        this.propertyTandem.removeInstance( this );
-
-        this.isDisposed = true;
+        this.isDisposed = true; // TODO: move this to PhetioObject?
 
         // remove any listeners that are still attached to this property
         this.unlinkAll();
+
+        PhetioObject.prototype.dispose.call( this );
       },
 
       /**
