@@ -44,7 +44,8 @@ define( function( require ) {
       }
     }, {
       documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
-      events: [ 'emitted' ]
+      events: [ 'emitted' ],
+      parameterTypes: phetioArgumentTypes
     } );
   }
 
