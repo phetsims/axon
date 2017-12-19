@@ -84,7 +84,7 @@ define( function( require ) {
       'validValues, isValidValue and range are mutually-exclusive options' );
 
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
-    assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid type: ' + options.valueType );
+    assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid valueType: ' + options.valueType );
 
     assert && assert( isValidForValueType( value, options.valueType ),
       'initial value ' + value + ' must be of type: ' + options.valueType );
