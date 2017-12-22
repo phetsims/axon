@@ -63,12 +63,12 @@ define( function( require ) {
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && this.phetioObjectTandem.isLegalAndUsable() && assert && assert( !!options.phetioType,
+    Tandem.validationEnabled() && this.phetioObjectTandem.isSuppliedAndEnabled() && assert && assert( !!options.phetioType,
       'Value type passed to Property must be specified. Tandem.id: ' + this.phetioObjectTandem.id );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
-    Tandem.validationEnabled() && this.phetioObjectTandem.isLegalAndUsable() && assert && assert( !!options.phetioType.elementType,
+    Tandem.validationEnabled() && this.phetioObjectTandem.isSuppliedAndEnabled() && assert && assert( !!options.phetioType.elementType,
       'phetioType.elementType must be specified. Tandem.id: ' + this.phetioObjectTandem.id );
 
     // @private - Store the internal value and the initial value
@@ -171,7 +171,7 @@ define( function( require ) {
       _notifyListeners: function( oldValue ) {
 
         // We must short circuit based on tandem here as a guard against the toStateObject calls
-        var id = this.phetioObjectTandem.isLegalAndUsable() && this.startEvent( 'model', 'changed', {
+        var id = this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'changed', {
           oldValue: this.phetioType.elementType.toStateObject( oldValue ),
           newValue: this.phetioType.elementType.toStateObject( this.get() ),
           units: this.phetioType && this.phetioType.units
@@ -179,7 +179,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
+        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( id );
       },
 
       /**

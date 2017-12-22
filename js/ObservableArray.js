@@ -131,7 +131,7 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      var id = this.phetioObjectTandem.isLegalAndUsable() &&
+      var id = this.phetioObjectTandem.isSuppliedAndEnabled() &&
                this.startEvent( 'model', 'itemAdded', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was added to the list
@@ -140,12 +140,12 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
+      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( id );
     },
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      var id = this.phetioObjectTandem.isLegalAndUsable() &&
+      var id = this.phetioObjectTandem.isSuppliedAndEnabled() &&
                this.startEvent( 'model', 'itemRemoved', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
 
       //Signify that an item was removed from the list
@@ -154,7 +154,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.phetioObjectTandem.isLegalAndUsable() && this.endEvent( id );
+      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( id );
     },
 
     /**
