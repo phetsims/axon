@@ -24,6 +24,9 @@ define( function( require ) {
 
   /**
    * NumberProperty wrapper type.
+   * 
+   * @param {NumberProperty} property
+   * @param {string} phetioID
    * @constructor
    */
   function NumberPropertyIO( property, phetioID ) {
