@@ -171,7 +171,7 @@ define( function( require ) {
       _notifyListeners: function( oldValue ) {
 
         // We must short circuit based on tandem here as a guard against the toStateObject calls
-        var id = this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'changed', {
+        this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'changed', {
           oldValue: this.phetioType.elementType.toStateObject( oldValue ),
           newValue: this.phetioType.elementType.toStateObject( this.get() ),
           units: this.phetioType && this.phetioType.units
@@ -179,7 +179,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( id );
+        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
       },
 
       /**

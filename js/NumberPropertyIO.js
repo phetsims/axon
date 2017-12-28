@@ -24,14 +24,13 @@ define( function( require ) {
 
   /**
    * NumberProperty wrapper type.
-   * 
-   * @param {NumberProperty} property
+   * @param {NumberProperty} numberProperty
    * @param {string} phetioID
    * @constructor
    */
-  function NumberPropertyIO( property, phetioID ) {
-    assert && assertInstanceOf( property, phet.axon.NumberProperty );
-    PropertyIOImpl.call( this, property, phetioID );
+  function NumberPropertyIO( numberProperty, phetioID ) {
+    assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
+    PropertyIOImpl.call( this, numberProperty, phetioID );
   }
 
   axon.register( 'NumberPropertyIO', NumberPropertyIO );
