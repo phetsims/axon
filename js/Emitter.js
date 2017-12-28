@@ -216,7 +216,7 @@ define( function( require ) {
      * @public
      */
     emit4: function( arg0, arg1, arg2, arg3 ) {
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', this.emitterTandem.id, this.ttype, 'emitted', {
+      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 ),
