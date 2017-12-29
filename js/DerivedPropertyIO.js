@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * PhET-iO wrapper type for phet's DerivedProperty type.
+ * IO type for DerivedProperty.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -19,7 +19,7 @@ define( function( require ) {
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
-   * Parametric wrapper type constructor.  Given an value type, this function returns an appropriate DerivedProperty wrapper type.
+   * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.
    *
    * @param {function} phetioValueType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.

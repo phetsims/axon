@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * PhET-iO wrapper type for phet's ObservableArray type.
+ * IO type for ObservableArray.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -22,8 +22,8 @@ define( function( require ) {
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
-   * Parametric wrapper type constructor.  Given an element type, this function returns an ObservbleArray wrapper type.
-   * @param {ObjectIO} elementType - wrapper type of the DerivedProperty. If loaded by phet (not phet-io)
+   * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
+   * @param {ObjectIO} elementType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */

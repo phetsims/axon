@@ -17,7 +17,7 @@ define( function( require ) {
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**
-   * Wrapper type for Emitter
+   * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
    * @param {function[]} phetioArgumentTypes - If loaded by phet (not phet-io), the array will be of functions
    *                                          returned by the 'ifphetio!' plugin.

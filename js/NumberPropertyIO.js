@@ -1,7 +1,7 @@
 // Copyright 2017, University of Colorado Boulder
 
 /**
- * PhET-iO wrapper type for phet's NumberProperty type.
+ * IO type for NumberProperty.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -23,7 +23,7 @@ define( function( require ) {
   var PropertyIOImpl = PropertyIO( VALUE_TYPE );
 
   /**
-   * NumberProperty wrapper type.
+   * IO type for NumberProperty.
    * @param {NumberProperty} numberProperty
    * @param {string} phetioID
    * @constructor
