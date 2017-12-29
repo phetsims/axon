@@ -31,7 +31,7 @@ define( function( require ) {
 
     /**
      * This type constructor is parameterized based on the instance of Events.
-     * @param observableArray
+     * @param {ObservableArray} observableArray
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
