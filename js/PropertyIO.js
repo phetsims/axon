@@ -29,6 +29,11 @@ define( function( require ) {
    */
   function PropertyIO( phetioValueType, options ) {
 
+    /**
+     * @param {Property} property
+     * @param {string} phetioID
+     * @constructor
+     */
     var PropertyIOImpl = function PropertyIOImpl( property, phetioID ) {
       assert && assert( !!phetioValueType, 'PropertyIO needs phetioValueType' );
       assert && assert( property, 'Property should exist' );

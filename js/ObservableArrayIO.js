@@ -30,13 +30,13 @@ define( function( require ) {
   function ObservableArrayIO( elementType ) {
 
     /**
-     * This type constructor is parameterized based on the instance of Events.
+     * This type constructor is parameterized based on the elementType
      * @param {ObservableArray} observableArray
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
     var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
-      assert && assert( typeof(elementType) === 'function', 'element type should be defined' );
+      assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
       assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
       ObjectIO.call( this, observableArray, phetioID );

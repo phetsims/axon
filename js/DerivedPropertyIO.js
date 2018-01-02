@@ -33,15 +33,15 @@ define( function( require ) {
     /**
      * This type constructor is parameterized based on the phetioValueType.
      *
-     * @param {DerivedProperty} property
+     * @param {DerivedProperty} derivedProperty
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( property, phetioID ) {
+    var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
       assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
-      assert && assertInstanceOf( property, phet.axon.DerivedProperty );
+      assert && assertInstanceOf( derivedProperty, phet.axon.DerivedProperty );
 
-      PropertyIOImpl.call( this, property, phetioID );
+      PropertyIOImpl.call( this, derivedProperty, phetioID );
     };
     return phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', DerivedPropertyIOImpl, {
 

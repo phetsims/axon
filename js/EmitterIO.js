@@ -26,6 +26,11 @@ define( function( require ) {
    */
   function EmitterIO( phetioArgumentTypes ) {
 
+    /**
+     * @param {Emitter} emitter
+     * @param {string phetioID
+     * @constructor
+     */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
       assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
       assert && assertInstanceOf( emitter, phet.axon.Emitter );
