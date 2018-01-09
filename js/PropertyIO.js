@@ -145,12 +145,12 @@ define( function( require ) {
       /**
        * Used to set the value when loading a state
        * @param property
-       * @param stateObject
+       * @param fromStateObject
        */
-      setValue: function( property, stateObject ) {
+      setValue: function( property, fromStateObject ) {
         assert && assertInstanceOf( property, phet.axon.Property );
-        property.set( stateObject.value );
-        property.validValues = stateObject.validValues;
+        property.set( fromStateObject.value );
+        property.validValues = fromStateObject.validValues;
       },
 
       options: options
