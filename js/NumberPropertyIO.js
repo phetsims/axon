@@ -47,19 +47,6 @@ define( function( require ) {
     },
 
     /**
-     * Decodes a state into a NumberProperty.
-     * @param {Object} stateObject
-     * @returns {Object}
-     */
-    fromStateObject: function( stateObject ) {
-      var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
-      fromParentStateObject.valueType = stateObject.valueType;
-      fromParentStateObject.units = stateObject.units;
-      fromParentStateObject.range = stateObject.range;
-      return fromParentStateObject;
-    },
-
-    /**
      * Encodes a NumberProperty instance to a state.
      * @param {Object} numberProperty
      * @returns {Object} - a state object
@@ -72,6 +59,19 @@ define( function( require ) {
       parentStateObject.units = numberProperty.units;
       parentStateObject.range = numberProperty.range;
       return parentStateObject;
+    },
+
+    /**
+     * Decodes a state into a NumberProperty.
+     * @param {Object} stateObject
+     * @returns {Object}
+     */
+    fromStateObject: function( stateObject ) {
+      var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
+      fromParentStateObject.valueType = stateObject.valueType;
+      fromParentStateObject.units = stateObject.units;
+      fromParentStateObject.range = stateObject.range;
+      return fromParentStateObject;
     },
 
     setValue: function( numberProperty, fromStateObject ) {

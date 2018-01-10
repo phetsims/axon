@@ -108,20 +108,6 @@ define( function( require ) {
       },
 
       /**
-       * Decodes a state into a Property.
-       * @param {Object} stateObject
-       * @returns {Object}
-       */
-      fromStateObject: function( stateObject ) {
-        return {
-          value: phetioValueType.fromStateObject( stateObject.value ),
-          validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
-            return phetioValueType.fromStateObject( v );
-          } )
-        };
-      },
-
-      /**
        * Encodes a Property instance to a state.
        * @param {Object} property
        * @returns {Object} - a state object
@@ -140,6 +126,20 @@ define( function( require ) {
           } );
         }
         return stateObject;
+      },
+
+      /**
+       * Decodes a state into a Property.
+       * @param {Object} stateObject
+       * @returns {Object}
+       */
+      fromStateObject: function( stateObject ) {
+        return {
+          value: phetioValueType.fromStateObject( stateObject.value ),
+          validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
+            return phetioValueType.fromStateObject( v );
+          } )
+        };
       },
 
       /**

@@ -63,16 +63,6 @@ define( function( require ) {
       elementType: phetioValueType,
 
       /**
-       * Decodes a state into a DerivedProperty.
-       * @param {Object} stateObject
-       * @returns {Object}
-       */
-      fromStateObject: function( stateObject ) {
-        return phetioValueType.fromStateObject( stateObject );
-      },
-
-
-      /**
        * Encodes a DerivedProperty instance to a state.
        * @param {Object} derivedProperty
        * @returns {Object}
@@ -82,6 +72,15 @@ define( function( require ) {
 
         // TODO: this doesn't match the PropertyIO structure which has {value}
         return phetioValueType.toStateObject( derivedProperty.value );
+      },
+
+      /**
+       * Decodes a state into a DerivedProperty.
+       * @param {Object} stateObject
+       * @returns {Object}
+       */
+      fromStateObject: function( stateObject ) {
+        return phetioValueType.fromStateObject( stateObject );
       }
     } );
   }
