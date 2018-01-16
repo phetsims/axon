@@ -14,7 +14,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
 
-  // valid values for options.units
+  // valid values for options.units (or it can be null)
   var VALID_UNITS = [
     'amperes',
     'milliamperes',
@@ -76,7 +76,8 @@ define( function( require ) {
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
-      phetioType: NumberPropertyIO
+      phetioType: NumberPropertyIO,
+      units: null, // {string|null} units for the number, see VALID_UNITS
     }, options );
 
     assert && assert(
