@@ -112,14 +112,6 @@ define( function( require ) {
     set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a DerivedProperty, tried to set: ' + newValue ); },
 
     /**
-     * Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
-     * @returns {*}
-     * @override
-     * @public
-     */
-    get value() {return Property.prototype.get.call( this );},
-
-    /**
      * Override the mutators to provide an error message.  These should not be called directly,
      * the value should only be modified when the dependencies change.
      * @override
