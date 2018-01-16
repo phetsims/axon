@@ -117,7 +117,15 @@ define( function( require ) {
      * @override
      * @public
      */
-    reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); }
+    reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); },
+
+    /**
+     * Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
+     * @returns {*}
+     * @override
+     * @public
+     */
+    get value() {return Property.prototype.get.call( this );}
   }, {
 
     /**
