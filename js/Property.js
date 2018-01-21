@@ -38,7 +38,10 @@ define( function( require ) {
 
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
-      useDeepEquality: false
+      useDeepEquality: false,
+
+      // If marked as highFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
+      highFrequency: false
     }, options );
 
     // value validation
@@ -86,6 +89,11 @@ define( function( require ) {
 
     // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
+
+    // @private
+    this.changeEventOptions = {
+      highFrequency: options.highFrequency
+    };
   }
 
   axon.register( 'Property', Property );
@@ -175,11 +183,11 @@ define( function( require ) {
           oldValue: this.phetioType.elementType.toStateObject( oldValue ),
           newValue: this.phetioType.elementType.toStateObject( this.get() ),
           units: this.phetioType && this.phetioType.units
-        } );
+        }, this.changeEventOptions );
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
+        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( this.changeEventOptions );
       },
 
       /**
