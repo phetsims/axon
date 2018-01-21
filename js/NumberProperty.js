@@ -77,7 +77,7 @@ define( function( require ) {
       range: null, // {null|Range|{min:number, max:number}} range of the value
       valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       phetioType: NumberPropertyIO,
-      units: null, // {string|null} units for the number, see VALID_UNITS
+      units: null // {string|null} units for the number, see VALID_UNITS
     }, options );
 
     assert && assert(
