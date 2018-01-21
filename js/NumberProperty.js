@@ -130,7 +130,7 @@ define( function( require ) {
   axon.register( 'NumberProperty', NumberProperty );
 
   /**
-   * If valueType is Integer, then the value must be an integer.
+   * If valueType is 'Integer', then the value must be an integer.
    * @param value
    * @param valueType
    * @returns {boolean}

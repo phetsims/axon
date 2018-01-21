@@ -23,7 +23,6 @@ define( function( require ) {
   var PropertyIOImpl = PropertyIO( VALUE_TYPE );
 
   /**
-   * IO type for NumberProperty.
    * @param {NumberProperty} numberProperty
    * @param {string} phetioID
    * @constructor
