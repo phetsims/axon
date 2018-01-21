@@ -80,15 +80,12 @@ define( function( require ) {
       units: null // {string|null} units for the number, see VALID_UNITS
     }, options );
 
-    assert && assert(
-      _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) { return value; } ).length <= 1,
-      'validValues, isValidValue and range are mutually-exclusive options' );
-
+    assert && assert( _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) {
+      return value;
+    } ).length <= 1, 'validValues, isValidValue and range are mutually-exclusive options' );
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
     assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid valueType: ' + options.valueType );
-
-    assert && assert( isValidForValueType( value, options.valueType ),
-      'initial value ' + value + ' must be of type: ' + options.valueType );
+    assert && assert( isValidForValueType( value, options.valueType ), 'initial value ' + value + ' must be of type: ' + options.valueType );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.units = options.units;
@@ -105,8 +102,10 @@ define( function( require ) {
     else if ( options.validValues ) {
 
       // Verify that the values are all numbers.
-      assert && assert( _.every( options.validValues, function( value ) { return isValidForValueType( value, options.valueType ); } ),
-        'validValues must contain numbers of the right valueType' );
+      assert && assert( _.every( options.validValues, function( value ) {
+          return isValidForValueType( value, options.valueType );
+        }
+      ), 'validValues must contain numbers of the right valueType' );
     }
     else if ( options.isValidValue ) {
 
@@ -137,7 +136,7 @@ define( function( require ) {
    * @returns {boolean}
    */
   function isValidForValueType( value, valueType ) {
-    return ( typeof value === 'number' ) && !( valueType === 'Integer' && value % 1 !== 0);
+    return ( typeof value === 'number' ) && !( valueType === 'Integer' && value % 1 !== 0 );
   }
 
   return inherit( Property, NumberProperty );
