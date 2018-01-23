@@ -187,7 +187,7 @@ define( function( require ) {
 
         this.changedEmitter.emit2( this.get(), oldValue );
 
-        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent( this.changeEventOptions );
+        this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
       },
 
       /**
