@@ -120,12 +120,13 @@ define( function( require ) {
     reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); },
 
     /**
-     * Override get value as well to satisfy the linter which wants get/set pairs (even though it just uses the same code as the superclass).
+     * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
+     * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
      * @returns {*}
      * @override
      * @public
      */
-    get value() {return Property.prototype.get.call( this );}
+    get value() { return Property.prototype.get.call( this ); }
   }, {
 
     /**
