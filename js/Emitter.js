@@ -21,6 +21,7 @@ define( function( require ) {
   function Emitter( options ) {
 
     options = _.extend( {
+      phetioState: false,
       phetioType: EmitterIO( [] ) // subtypes can override with EmitterIO([...])
     }, options );
 

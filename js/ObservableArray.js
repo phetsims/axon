@@ -20,6 +20,9 @@ define( function( require ) {
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // phet-io modules
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+
   /**
    * @param {Object[]} [array]
    * @param {Object} [options]
@@ -35,7 +38,7 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      phetioType: ObservableArrayIO,
+      phetioType: ObservableArrayIO( ObjectIO ),
       tandem: Tandem.optional
     }, options );
 
