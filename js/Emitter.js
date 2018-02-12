@@ -144,7 +144,7 @@ define( function( require ) {
     emit1: function( arg0 ) {
 
       // TODO: name the args for the data stream
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
       } );
       this.listenersToEmitTo.push( this.listeners );
@@ -155,7 +155,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
+      this.tandem.isSuppliedAndEnabled() && this.endEvent();
     },
 
     /**
@@ -165,7 +165,7 @@ define( function( require ) {
      * @public
      */
     emit2: function( arg0, arg1 ) {
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 )
@@ -179,7 +179,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
+      this.tandem.isSuppliedAndEnabled() && this.endEvent();
     },
 
     /**
@@ -190,7 +190,7 @@ define( function( require ) {
      * @public
      */
     emit3: function( arg0, arg1, arg2 ) {
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 ),
@@ -205,7 +205,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
+      this.tandem.isSuppliedAndEnabled() && this.endEvent();
     },
 
     /**
@@ -217,7 +217,7 @@ define( function( require ) {
      * @public
      */
     emit4: function( arg0, arg1, arg2, arg3 ) {
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 ),
@@ -233,7 +233,7 @@ define( function( require ) {
       }
 
       this.listenersToEmitTo.pop();
-      this.phetioObjectTandem.isSuppliedAndEnabled() && this.endEvent();
+      this.tandem.isSuppliedAndEnabled() && this.endEvent();
     },
 
     /**
