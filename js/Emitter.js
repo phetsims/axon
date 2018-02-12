@@ -13,6 +13,7 @@ define( function( require ) {
   var EmitterIO = require( 'AXON/EmitterIO' );
   var inherit = require( 'PHET_CORE/inherit' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {Object} [options]
@@ -21,6 +22,7 @@ define( function( require ) {
   function Emitter( options ) {
 
     options = _.extend( {
+      tandem: Tandem.optional,
       phetioState: false,
       phetioType: EmitterIO( [] ) // subtypes can override with EmitterIO([...])
     }, options );
