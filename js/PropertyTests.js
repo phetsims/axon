@@ -100,7 +100,7 @@ define( function( require ) {
   if ( window.phet.phetio ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
       var done = assert.async();
-      var tandem = Tandem.rootTandem.createTandem( 'testTandem' );
+      var tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
       tandem.addInstance = function( instance, options ) {
 
         // Run in the next frame after the object finished getting constructed
