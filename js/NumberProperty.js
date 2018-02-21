@@ -65,7 +65,7 @@ define( function( require ) {
   ];
 
   // valid values for options.numberType
-  var VALID_VALUE_TYPES = [ 'FloatingPoint', 'Integer' ];
+  var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
    * @param {number} value - initial value
@@ -85,7 +85,7 @@ define( function( require ) {
       return value;
     } ).length <= 1, 'validValues, isValidValue and range are mutually-exclusive options' );
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
-    assert && assert( _.includes( VALID_VALUE_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
+    assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
     assert && assert( isValidForValueType( value, options.numberType ), 'initial value ' + value + ' must be of type: ' + options.numberType );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
