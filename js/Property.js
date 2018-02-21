@@ -28,6 +28,10 @@ define( function( require ) {
 
       tandem: Tandem.optional,
 
+      // {*|constructor} type of the value, e.g. Vector2.
+      // Mutually exclusive with options.validValues. Can be combined with options.isValidValue.
+      valueType: null,
+
       // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
       validValues: null,
 
@@ -45,6 +49,7 @@ define( function( require ) {
     }, options );
 
     // value validation
+    assert && assert( !( options.validValues && options.valueType ), 'validValues and valueType are mutually exclusive' );
     assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
 
     PhetioObject.call( this, options );
@@ -60,6 +65,20 @@ define( function( require ) {
       // validation is based on the set of validValues
       this.isValidValue = function( value ) {
         return options.validValues.indexOf( value ) !== -1;
+      };
+    }
+    else if ( !this.isValidValue && options.valueType ) {
+
+      // validation is based on valueType
+      this.isValidValue = function( value ) {
+        return ( value instanceof options.valueType );
+      };
+    }
+    else if ( this.isValidValue && options.valueType ) {
+
+      // validation is based on both valueType and isValidValue
+      this.isValidValue = function( value ) {
+        return ( value instanceof options.valueType ) && options.isValidValue( value );
       };
     }
     assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
