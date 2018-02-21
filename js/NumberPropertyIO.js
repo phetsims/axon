@@ -54,7 +54,7 @@ define( function( require ) {
       assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
 
       var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
-      parentStateObject.valueType = numberProperty.valueType;
+      parentStateObject.numberType = numberProperty.numberType;
       parentStateObject.units = numberProperty.units;
       parentStateObject.range = numberProperty.range;
       return parentStateObject;
@@ -67,7 +67,7 @@ define( function( require ) {
      */
     fromStateObject: function( stateObject ) {
       var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
-      fromParentStateObject.valueType = stateObject.valueType;
+      fromParentStateObject.numberType = stateObject.numberType;
       fromParentStateObject.units = stateObject.units;
       fromParentStateObject.range = stateObject.range;
       return fromParentStateObject;
@@ -79,7 +79,7 @@ define( function( require ) {
       PropertyIOImpl.setValue( numberProperty, fromStateObject );
       numberProperty.units = fromStateObject.units;
       numberProperty.range = fromStateObject.range;
-      numberProperty.valueType = fromStateObject.valueType;
+      numberProperty.numberType = fromStateObject.numberType;
     },
 
     documentation: 'Numeric property model'

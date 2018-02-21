@@ -64,7 +64,7 @@ define( function( require ) {
     'webers'
   ];
 
-  // valid values for options.valueType
+  // valid values for options.numberType
   var VALID_VALUE_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
@@ -76,7 +76,7 @@ define( function( require ) {
 
     options = _.extend( {
       range: null, // {null|Range|{min:number, max:number}} range of the value
-      valueType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
+      numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       phetioType: NumberPropertyIO,
       units: null // {string|null} units for the number, see VALID_UNITS
     }, options );
@@ -85,28 +85,28 @@ define( function( require ) {
       return value;
     } ).length <= 1, 'validValues, isValidValue and range are mutually-exclusive options' );
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
-    assert && assert( _.includes( VALID_VALUE_TYPES, options.valueType ), 'invalid valueType: ' + options.valueType );
-    assert && assert( isValidForValueType( value, options.valueType ), 'initial value ' + value + ' must be of type: ' + options.valueType );
+    assert && assert( _.includes( VALID_VALUE_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
+    assert && assert( isValidForValueType( value, options.numberType ), 'initial value ' + value + ' must be of type: ' + options.numberType );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.units = options.units;
     this.range = options.range;
-    this.valueType = options.valueType;
+    this.numberType = options.numberType;
 
     if ( options.range ) {
 
       // Add a validation function that includes the range check.
       options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.valueType ) && ( value >= options.range.min ) && ( value <= options.range.max );
+        return isValidForValueType( value, options.numberType ) && ( value >= options.range.min ) && ( value <= options.range.max );
       };
     }
     else if ( options.validValues ) {
 
       // Verify that the values are all numbers.
       assert && assert( _.every( options.validValues, function( value ) {
-          return isValidForValueType( value, options.valueType );
+          return isValidForValueType( value, options.numberType );
         }
-      ), 'validValues must contain numbers of the right valueType' );
+      ), 'validValues must contain numbers of the right numberType' );
     }
     else if ( options.isValidValue ) {
 
@@ -114,14 +114,14 @@ define( function( require ) {
       // This prevents the client from having to check (or remember to check) that the value is a number.
       var isValidValue = options.isValidValue;
       options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.valueType ) && isValidValue( value );
+        return isValidForValueType( value, options.numberType ) && isValidValue( value );
       };
     }
     else {
 
       // fallback to verifying that the value is a string
       options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.valueType );
+        return isValidForValueType( value, options.numberType );
       };
     }
 
@@ -131,13 +131,13 @@ define( function( require ) {
   axon.register( 'NumberProperty', NumberProperty );
 
   /**
-   * If valueType is 'Integer', then the value must be an integer.
+   * If numberType is 'Integer', then the value must be an integer.
    * @param value
-   * @param valueType
+   * @param numberType
    * @returns {boolean}
    */
-  function isValidForValueType( value, valueType ) {
-    return ( typeof value === 'number' ) && !( valueType === 'Integer' && value % 1 !== 0 );
+  function isValidForValueType( value, numberType ) {
+    return ( typeof value === 'number' ) && !( numberType === 'Integer' && value % 1 !== 0 );
   }
 
   return inherit( Property, NumberProperty );

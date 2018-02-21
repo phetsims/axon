@@ -50,7 +50,7 @@ define( function( require ) {
 
     // @public (read-only) observe this, but don't set it
     this.lengthProperty = new NumberProperty( this._array.length, {
-      valueType: 'Integer',
+      numberType: 'Integer',
       tandem: options.tandem.createTandem( 'lengthProperty' ),
       phetioReadOnly: true
     } );

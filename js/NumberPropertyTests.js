@@ -38,18 +38,18 @@ define( function( require ) {
       p.value = -1;
     }, 'should throw Assertion failed: invalid value: -1' );
 
-    // valueType
+    // numberType
     p = new NumberProperty( 0 );
-    assert.equal( p.valueType, 'FloatingPoint', 'default valueType should be FloatingPoint' );
+    assert.equal( p.numberType, 'FloatingPoint', 'default numberType should be FloatingPoint' );
 
-    p = new NumberProperty( 0, { valueType: 'Integer' } );
-    assert.equal( p.valueType, 'Integer', 'valueType should be integer when set as such.' );
+    p = new NumberProperty( 0, { numberType: 'Integer' } );
+    assert.equal( p.numberType, 'Integer', 'numberType should be integer when set as such.' );
 
     window.assert && assert.throws( function() {
-      p = new NumberProperty( 0, { valueType: 'GarbaldyGOOK' } );
+      p = new NumberProperty( 0, { numberType: 'GarbaldyGOOK' } );
     }, 'should throw Assertion failed: invalid type: GarbaldyGOOK' );
 
-    p = new NumberProperty( 0, { valueType: 'Integer' } );
+    p = new NumberProperty( 0, { numberType: 'Integer' } );
 
     window.assert && assert.throws( function() {
       p.value = 3.4;
@@ -58,26 +58,26 @@ define( function( require ) {
     p.value = 3;
     assert.equal( p.value, 3 );
 
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'Integer' } );
+    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'Integer' } );
     window.assert && assert.throws( function() {
       p.value = 3.4;
     }, 'should throw Assertion failed: invalid value: 3.4' );
 
-    p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
     window.assert && assert.throws( function() {
-      p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, valueType: 'Integer' } );
+      p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, numberType: 'Integer' } );
     }, 'should throw Assertion failed: initial value 3.4 must be of type: Integer' );
 
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
     p.value = 3.4;
     assert.equal( p.value, 3.4 );
 
-    p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3, 4, 5 ], valueType: 'Integer' } );
+    p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3, 4, 5 ], numberType: 'Integer' } );
     window.assert && assert.throws( function() {
-      p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3.4, 5 ], valueType: 'Integer' } );
-    }, 'should throw Assertion failed: validValues must contain numbers of the right valueType' );
+      p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3.4, 5 ], numberType: 'Integer' } );
+    }, 'should throw Assertion failed: validValues must contain numbers of the right numberType' );
 
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, valueType: 'FloatingPoint' } );
+    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
     p.value = 3.4;
     assert.equal( p.value, 3.4 );
 
