@@ -9,7 +9,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
@@ -60,7 +59,7 @@ define( function( require ) {
    * Make sure linking attributes and unlinking attributes works on Property
    */
   QUnit.test( 'Property.linkAttribute', function( assert ) {
-    var property = new axon.Property( 7 );
+    var property = new Property( 7 );
     var state = { age: 99 };
     var listener = property.linkAttribute( state, 'age' );
     assert.equal( state.age, 7, 'link should synchronize values' );
@@ -78,19 +77,19 @@ define( function( require ) {
 
     var property;
     window.assert && assert.throws( function() {
-      new axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
+      new Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.validValues' );
-    property = new axon.Property( 1, { validValues: [ 1, 2, 3 ] } );
+    property = new Property( 1, { validValues: [ 1, 2, 3 ] } );
     property.set( 3 );
     window.assert && assert.throws( function() {
       property.set( 4 );
     }, 'set an invalid value for Property with options.validValues' );
 
     window.assert && assert.throws( function() {
-      new axon.Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } ); // eslint-disable-line
+      new Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } ); // eslint-disable-line
     }, 'invalid initial value for Property with options.isValidValue' );
 
-    property = new axon.Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
+    property = new Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
     property.set( 3 );
     window.assert && assert.throws( function() {
       property.set( 4 );
@@ -101,9 +100,9 @@ define( function( require ) {
       valueType: TestType
     };
     window.assert && assert.throws( function() {
-      new axon.Property( 0, options ); // eslint-disable-line
+      new Property( 0, options ); // eslint-disable-line
     }, 'invalid value fails valueType validation for Property with options.valueType' );
-    property = new axon.Property( new TestType( 0 ), options );
+    property = new Property( new TestType( 0 ), options );
     property.set( new TestType( 0 ) );
     window.assert && assert.throws( function() {
       property.set( 0 );
@@ -117,12 +116,12 @@ define( function( require ) {
       }
     };
     window.assert && assert.throws( function() {
-      new axon.Property( 0, options ); // eslint-disable-line
+      new Property( 0, options ); // eslint-disable-line
     }, 'initial value fails valueType validation for Property with options.valueType and options.isValidValue' );
     window.assert && assert.throws( function() {
-      new axon.Property( new TestType( -1 ), options ); // eslint-disable-line
+      new Property( new TestType( -1 ), options ); // eslint-disable-line
     }, 'initial value fails isValidValue validation for Property with options.valueType and options.isValidValue' );
-    property = new axon.Property( new TestType( 0 ), options );
+    property = new Property( new TestType( 0 ), options );
     property.set( new TestType( 0 ) );
     window.assert && assert.throws( function() {
       property.set( 0 );
