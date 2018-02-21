@@ -28,7 +28,8 @@ define( function( require ) {
 
       tandem: Tandem.optional,
 
-      // {*|constructor} type of the value, e.g. Vector2.
+      // {constructor|null} type of the value, e.g. Vector2.
+      // null indicates that no type has been specified, and no type validation will be performed.
       // Mutually exclusive with options.validValues. Can be combined with options.isValidValue.
       valueType: null,
 
