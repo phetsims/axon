@@ -73,6 +73,9 @@ define( function( require ) {
 
   QUnit.test( 'Property value validation', function( assert ) {
 
+    // Type that is specific to valueType tests
+    function TestType( index ) { this.index = index; }
+
     var property;
     window.assert && assert.throws( function() {
       new axon.Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
@@ -92,6 +95,41 @@ define( function( require ) {
     window.assert && assert.throws( function() {
       property.set( 4 );
     }, 'set an invalid value for Property with options.isValidValue' );
+
+    // valueType by itself
+    var options = { 
+      valueType: TestType
+    };
+    window.assert && assert.throws( function() {
+      new axon.Property( 0, options ); // eslint-disable-line
+    }, 'invalid value fails valueType validation for Property with options.valueType' );
+    property = new axon.Property( new TestType( 0 ), options );
+    property.set( new TestType( 0 ) );
+    window.assert && assert.throws( function() {
+      property.set( 0 );
+    }, 'set value fails valueType validation for Property with options.valueType' );
+
+    // valueType and isValidValue combined
+    options = {
+      valueType: TestType,
+      isValidValue: function( value ) {
+        return value.index >= 0;
+      }
+    };
+    window.assert && assert.throws( function() {
+      new axon.Property( 0, options ); // eslint-disable-line
+    }, 'initial value fails valueType validation for Property with options.valueType and options.isValidValue' );
+    window.assert && assert.throws( function() {
+      new axon.Property( new TestType( -1 ), options ); // eslint-disable-line
+    }, 'initial value fails isValidValue validation for Property with options.valueType and options.isValidValue' );
+    property = new axon.Property( new TestType( 0 ), options );
+    property.set( new TestType( 0 ) );
+    window.assert && assert.throws( function() {
+      property.set( 0 );
+    }, 'set value fails valueType validation for Property with options.valueType and options.isValidValue' );
+    window.assert && assert.throws( function() {
+      property.set( new TestType( -1 ) );
+    }, 'set value fails isValidValue validation for Property with options.valueType and options.isValidValue' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
