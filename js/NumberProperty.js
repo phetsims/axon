@@ -64,7 +64,7 @@ define( function( require ) {
     'webers'
   ];
 
-  // valid values for options.numberType
+  // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
