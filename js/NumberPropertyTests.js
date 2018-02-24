@@ -63,12 +63,12 @@ define( function( require ) {
       p.value = 3.4;
     }, 'should throw Assertion failed: invalid value: 3.4' );
 
-    p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
+    p = new NumberProperty( 3.4, { range: { min: 0, max: 5 } } );
     window.assert && assert.throws( function() {
       p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, numberType: 'Integer' } );
     }, 'should throw Assertion failed: initial value 3.4 must be of type: Integer' );
 
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
+    p = new NumberProperty( 0, { range: { min: 0, max: 5 } } );
     p.value = 3.4;
     assert.equal( p.value, 3.4 );
 
@@ -77,7 +77,7 @@ define( function( require ) {
       p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3.4, 5 ], numberType: 'Integer' } );
     }, 'should throw Assertion failed: validValues must contain numbers of the right numberType' );
 
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'FloatingPoint' } );
+    p = new NumberProperty( 0, { range: { min: 0, max: 5 } } );
     p.value = 3.4;
     assert.equal( p.value, 3.4 );
 
