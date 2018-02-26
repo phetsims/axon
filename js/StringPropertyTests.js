@@ -40,14 +40,6 @@ define( function( require ) {
       p.value = 'bad';
     }, 'should throw Assertion failed: invalid value: bad' );
 
-    // mutually exclusive options
-    window.assert && assert.throws( function() {
-      p = new StringProperty( 'foo', {
-        validValues: [ 'foo', 'bar' ],
-        isValidValue: function( value ) { return value[ 0 ] === 'f'; }
-      } );
-    }, 'should throw Assertion failed: validValues and isValidValue are mutually exclusive' );
-
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 } );
