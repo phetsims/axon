@@ -29,23 +29,16 @@ define( function( require ) {
       phetioType: PropertyIO( BooleanIO )
     }, options );
 
-    assert && assert( !options.isValidValue, 'isValidValue is provided by BooleanProperty' );
-    options.isValidValue = isBoolean;
-
+    // configure value validation options
+    assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
+    options.valueType = 'boolean';
+    assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
     assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
 
     Property.call( this, value, options );
   }
 
   axon.register( 'BooleanProperty', BooleanProperty );
-
-  /**
-   * @param {*} value
-   * @returns {boolean}
-   */
-  function isBoolean( value ) {
-    return (typeof value === 'boolean');
-  }
 
   return inherit( Property, BooleanProperty );
 } );
