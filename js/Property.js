@@ -27,6 +27,8 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
+    var self = this;
+
     options = _.extend( {
 
       tandem: Tandem.optional,
@@ -74,7 +76,7 @@ define( function( require ) {
     this.useDeepEquality = options.useDeepEquality;
 
     // @private {function|false} value validation function, false if assertions are disabled
-    this.assertValidValue = assert && function( value ) {
+    this.assertPropertyValidateValue = assert && function( value ) {
 
       options.valueType && assertValueType( value, options.valueType );
 
@@ -85,8 +87,15 @@ define( function( require ) {
         'value failed isValidValue test: ' + value );
     };
 
+    // verify that validValues meet other validation criteria
+    if ( this.assertPropertyValidateValue && options.validValues ) {
+      options.validValues.forEach( function( value ) {
+        self.assertPropertyValidateValue( value );
+      } );
+    }
+
     // validate the initial value
-    this.assertValidValue && this.assertValidValue( value );
+    this.assertPropertyValidateValue && this.assertPropertyValidateValue( value );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
@@ -193,7 +202,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        this.assertValidValue && this.assertValidValue( value );
+        this.assertPropertyValidateValue && this.assertPropertyValidateValue( value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyListeners( value );
         }
