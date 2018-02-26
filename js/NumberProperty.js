@@ -84,7 +84,7 @@ define( function( require ) {
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-    assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
+    options.range && assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
     options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
@@ -121,12 +121,12 @@ define( function( require ) {
   axon.register( 'NumberProperty', NumberProperty );
 
   /**
-   * Validates the range option value.
-   * @param {{min:number, max:number}|null} range
+   * Validates a range value.
+   * @param {{min:number, max:number}} range
    * @returns {boolean}
    */
   function isValidRange( range ) {
-    return range === null || ( ( typeof range === 'object' ) && range.hasOwnProperty( 'min' ) && range.hasOwnProperty( 'max' ) );
+    return ( typeof range === 'object' ) && range.hasOwnProperty( 'min' ) && range.hasOwnProperty( 'max' );
   }
 
   return inherit( Property, NumberProperty );
