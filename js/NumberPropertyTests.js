@@ -4,6 +4,7 @@
  * QUnit tests for NumberProperty
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
   'use strict';
@@ -13,105 +14,79 @@ define( function( require ) {
 
   QUnit.module( 'NumberProperty' );
 
-  QUnit.test( 'NumberProperty', function( assert ) {
-    var p = new NumberProperty( 1 );
-    p.value = 0;
+  QUnit.test( 'Test NumberProperty', function( assert ) {
 
-    // default validation
+    var p = null;
+
+    // valueType
     window.assert && assert.throws( function() {
       p = new NumberProperty( 'foo' );
-    }, 'should throw Assertion failed: invalid initial value: foo' );
+    }, 'initial value has invalid valueType' );
     p = new NumberProperty( 0 );
-    window.assert && assert.throws( function() {
-      p.value = 'bar';
-    }, 'should throw Assertion failed: invalid initial value: bar' );
-
-    // range
-    p = new NumberProperty( 0, {
-      range: { min: 0, max: 10 }
-    } );
-    p.value = 5;
-    window.assert && assert.throws( function() {
-      p.value = 11;
-    }, 'should throw Assertion failed: invalid value: 11' );
-    window.assert && assert.throws( function() {
-      p.value = -1;
-    }, 'should throw Assertion failed: invalid value: -1' );
-
-    // numberType
-    p = new NumberProperty( 0 );
-    assert.equal( p.numberType, 'FloatingPoint', 'default numberType should be FloatingPoint' );
-
-    p = new NumberProperty( 0, { numberType: 'Integer' } );
-    assert.equal( p.numberType, 'Integer', 'numberType should be integer when set as such.' );
-
-    window.assert && assert.throws( function() {
-      p = new NumberProperty( 0, { numberType: 'GarbaldyGOOK' } );
-    }, 'should throw Assertion failed: invalid type: GarbaldyGOOK' );
-
-    p = new NumberProperty( 0, { numberType: 'Integer' } );
-
-    window.assert && assert.throws( function() {
-      p.value = 3.4;
-    }, 'should throw Assertion failed: invalid value: 3.4' );
-
-    p.value = 3;
-    assert.equal( p.value, 3 );
-
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 }, numberType: 'Integer' } );
-    window.assert && assert.throws( function() {
-      p.value = 3.4;
-    }, 'should throw Assertion failed: invalid value: 3.4' );
-
-    p = new NumberProperty( 3.4, { range: { min: 0, max: 5 } } );
-    window.assert && assert.throws( function() {
-      p = new NumberProperty( 3.4, { range: { min: 0, max: 5 }, numberType: 'Integer' } );
-    }, 'should throw Assertion failed: initial value 3.4 must be of type: Integer' );
-
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 } } );
-    p.value = 3.4;
-    assert.equal( p.value, 3.4 );
-
-    p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3, 4, 5 ], numberType: 'Integer' } );
-    window.assert && assert.throws( function() {
-      p = new NumberProperty( 0, { validValues: [ 0, 1, 2, 3.4, 5 ], numberType: 'Integer' } );
-    }, 'should throw Assertion failed: validValues must contain numbers of the right numberType' );
-
-    p = new NumberProperty( 0, { range: { min: 0, max: 5 } } );
-    p.value = 3.4;
-    assert.equal( p.value, 3.4 );
-
-    // validValues
-    p = new NumberProperty( 0, {
-      validValues: [ 0, 1, 2 ]
-    } );
     p.value = 1;
-    p.value = 2;
-    window.assert && assert.throws( function() {
-      p.value = 3;
-    }, 'should throw Assertion failed: invalid value: 3' );
-
-    // isValidValue
-    p = new NumberProperty( 0, {
-      isValidValue: function( value ) { return value >= 0; }
-    } );
-    p.value = 1;
-    p.value = 0;
-    window.assert && assert.throws( function() {
-      p.value = -1;
-    }, 'should throw Assertion failed: invalid value: -1' );
     window.assert && assert.throws( function() {
       p.value = 'foo';
-    }, 'should throw Assertion failed: invalid value: foo' );
+    }, 'set value has invalid valueType' );
 
-    // mutually-exclusive options
+    // numberType
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, { numberType: 0 } );
+    }, 'bad numberType' );
+    p = new NumberProperty( 0, { numberType: 'FloatingPoint' } );
+    p.value = 1;
+    p.value = 1.2;
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 1.2, { numberType: 'Integer' } );
+    }, 'initial value has invalid numberType' );
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, {
+        numberType: 'Integer',
+        validValues: [ 0, 1, 1.2, 2 ]
+      } );
+    }, 'member of validValues has invalid numberType' );
+    p = new NumberProperty( 0, { numberType: 'Integer' } );
+    p.value = 1;
+    window.assert && assert.throws( function() {
+      p.value = 1.2;
+    }, 'set value has invalid numberType' );
+
+    // range
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, { range: [ 0, 10 ] } );
+    }, 'bad range' );
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 11, { range: { min: 0, max: 10 } } );
+    }, 'initial value is greater than range.max' );
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( -1, { range: { min: 0, max: 10 } } );
+    }, 'initial value is less than range.min' );
     window.assert && assert.throws( function() {
       p = new NumberProperty( 0, {
         range: { min: 0, max: 10 },
-        isValidValue: function( value ) { return value >= 0; },
-        validValues: [ 0, 1, 2 ]
-      }, 'should throw Assertion failed: validValues, isValidValue and range are mutually-exclusive options' );
-    } );
+        validValues: [ 0, 1, 2, 11 ]
+      } );
+    }, 'member of validValues is greater than range.max' );
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, {
+        range: { min: 0, max: 10 },
+        validValues: [ -1, 0, 1, 2 ]
+      } );
+    }, 'member of validValues is less than range.min' );
+    p = new NumberProperty( 0, { range: { min: 0, max: 10 } } );
+    p.value = 5;
+    window.assert && assert.throws( function() {
+      p.value = 11;
+    }, 'set value is greater than range.max' );
+    window.assert && assert.throws( function() {
+      p.value = -1;
+    }, 'set value is less than range.min' );
+
+    // units
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, { units: 'elephants' } );
+    }, 'bad units' );
+
+    assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 
 } );

@@ -74,70 +74,59 @@ define( function( require ) {
    */
   function NumberProperty( value, options ) {
 
+    var self = this;
+
     options = _.extend( {
-      range: null, // {null|Range|{min:number, max:number}} range of the value
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
+      range: null, // {Range|{min:number, max:number}|null} range of the value
       phetioType: NumberPropertyIO,
       units: null // {string|null} units for the number, see VALID_UNITS
     }, options );
 
-    assert && assert( _.filter( [ options.validValues, options.isValidValue, options.range ], function( value ) {
-      return value;
-    } ).length <= 1, 'validValues, isValidValue and range are mutually-exclusive options' );
-    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-    assert && assert( isValidForValueType( value, options.numberType ), 'initial value ' + value + ' must be of type: ' + options.numberType );
+    assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
+    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
-    this.units = options.units;
-    this.range = options.range;
     this.numberType = options.numberType;
+    this.range = options.range;
+    this.units = options.units;
 
-    if ( options.range ) {
+    assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
+    options.valueType = 'number';
 
-      // Add a validation function that includes the range check.
-      options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.numberType ) && ( value >= options.range.min ) && ( value <= options.range.max );
-      };
-    }
-    else if ( options.validValues ) {
+    // @private {function|false} value validation that is specific to NumberProperty, false if assertions are disabled
+    this.assertNumberPropertyValidateValue = assert && function( value ) {
+      assert( !( options.numberType === 'Integer' && value % 1 !== 0 ),
+        'value has incorrect numberType, value=' + value + ', numberType=' + options.numberType );
+      options.range && assert( value >= options.range.min && value <= options.range.max,
+        'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']');
+    };
 
-      // Verify that the values are all numbers.
-      assert && assert( _.every( options.validValues, function( value ) {
-          return isValidForValueType( value, options.numberType );
-        }
-      ), 'validValues must contain numbers of the right numberType' );
-    }
-    else if ( options.isValidValue ) {
-
-      // Wrap the provided function so that we can verify that the value is a number.
-      // This prevents the client from having to check (or remember to check) that the value is a number.
-      var isValidValue = options.isValidValue;
-      options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.numberType ) && isValidValue( value );
-      };
-    }
-    else {
-
-      // fallback to verifying that the value is a string
-      options.isValidValue = function( value ) {
-        return isValidForValueType( value, options.numberType );
-      };
+    // verify that validValues meet other NumberProperty-specific validation criteria
+    if ( this.assertNumberPropertyValidateValue && options.validValues ) {
+      options.validValues.forEach( function( value ) {
+        self.assertNumberPropertyValidateValue( value );
+      } );
     }
 
     Property.call( this, value, options );
+
+    // Perform value validation that is specific to NumberProperty.
+    assert && self.link( function( value ) {
+      self.assertNumberPropertyValidateValue( value );
+    } );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
 
   /**
-   * If numberType is 'Integer', then the value must be an integer.
-   * @param value
-   * @param numberType
+   * Validates the range option value.
+   * @param {{min:number, max:number}|null} range
    * @returns {boolean}
    */
-  function isValidForValueType( value, numberType ) {
-    return ( typeof value === 'number' ) && !( numberType === 'Integer' && value % 1 !== 0 );
+  function isValidRange( range ) {
+    return range === null || ( ( typeof range === 'object' ) && range.hasOwnProperty( 'min' ) && range.hasOwnProperty( 'max' ) );
   }
 
   return inherit( Property, NumberProperty );
