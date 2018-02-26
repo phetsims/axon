@@ -18,7 +18,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // constants
-  var TYPEOF_VALUE_TYPES = [ 'string', 'number', 'boolean', 'function' ];
+  var TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
   /**
    * @param {*} value - the initial value of the property
@@ -35,7 +35,7 @@ define( function( require ) {
 
       // {function|string|null} type of the value.
       // If {function}, the function must be a constructor.
-      // If {string}, the string must be one of the primitive types listed in TYPEOF_VALUE_TYPES.
+      // If {string}, the string must be one of the primitive types listed in TYPEOF_STRINGS.
       // Unused if null.
       // Examples:
       // valueType: Vector2
@@ -144,9 +144,9 @@ define( function( require ) {
     assert( typeof valueType === 'function' || typeof valueType === 'string' || valueType === null,
       'valueType must be {function|string|null}, valueType=' + valueType );
 
-    // {string} valueType must be one of the primitives in TYPEOF_VALUE_TYPES, for typeof comparison
+    // {string} valueType must be one of the primitives in TYPEOF_STRINGS, for typeof comparison
     if ( typeof valueType === 'string' ) {
-      assert( _.includes( TYPEOF_VALUE_TYPES, valueType ),
+      assert( _.includes( TYPEOF_STRINGS, valueType ),
         'valueType is a string, but not one of the supported primitive types: ' + valueType );
     }
   }
