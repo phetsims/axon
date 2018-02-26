@@ -40,6 +40,20 @@ define( function( require ) {
       p.value = 'bad';
     }, 'should throw Assertion failed: invalid value: bad' );
 
+    // multiple compatible options
+    p = new StringProperty( 'foo', {
+      validValues: [ 'foo', 'bar' ],
+      isValidValue: function( value ) { return value.length === 3; }
+    } );
+
+    // multiple incompatible options
+    window.assert && assert.throws( function() {
+      p = new StringProperty( 'foo', {
+        validValues: [ 'foo', 'bar' ],
+        isValidValue: function( value ) { return value.length === 4; }
+      } );
+    }, 'incompatible validation options fail on initialization' );
+
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 } );
