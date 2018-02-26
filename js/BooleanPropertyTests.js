@@ -13,16 +13,35 @@ define( function( require ) {
 
   QUnit.module( 'BooleanProperty' );
   QUnit.test( 'BooleanProperty', function( assert ) {
+
+    var p = null;
+
+    // isValidValue
     window.assert && assert.throws( function() {
-      new BooleanProperty( 'hello' ); //eslint-disable-line
-    }, 'invalid initial value for BooleanProperty' ); // eslint-disable-line
-    var c = new BooleanProperty( true );
-    c.set( true );
-    c.set( false );
-    c.set( true );
+      p = new BooleanProperty( true, { valueType: 'boolean' } );
+    }, 'valueType cannot be set by client' );
+
+    // validValues
     window.assert && assert.throws( function() {
-      c.set( 123 );
-    }, 'set an invalid value for BooleanProperty' );
+      p = new BooleanProperty( true, { validValues: [ true, false ] } );
+    }, 'validValues cannot be set by client' );
+
+    // isValidValue
+    window.assert && assert.throws( function() {
+      p = new BooleanProperty( true, { isValidValue: function( value ) { return typeof value === 'boolean'; } } );
+    }, 'isValidValue cannot be set by client' );
+
+    window.assert && assert.throws( function() {
+      p = new BooleanProperty( 'hello' );
+    }, 'invalid initial value' );
+
+    p = new BooleanProperty( true );
+    p.set( true );
+    p.set( false );
+    p.set( true );
+    window.assert && assert.throws( function() {
+      p.set( 123 );
+    }, 'invalid set value' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
