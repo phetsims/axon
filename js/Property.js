@@ -132,7 +132,7 @@ define( function( require ) {
       throw new Error( 'call this function only when assertions are enabled' );
     }
 
-    assert( typeof valueType === 'function' || valueType === 'string' || valueType === null,
+    assert( typeof valueType === 'function' || typeof valueType === 'string' || valueType === null,
       'valueType must be {function|string|null}, valueType=' + valueType );
 
     // {string} valueType must be one of the primitives in TYPEOF_VALUE_TYPES, for typeof comparison
