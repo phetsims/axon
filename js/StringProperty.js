@@ -28,37 +28,13 @@ define( function( require ) {
       phetioType: StringIO
     }, options );
 
-    if ( options.validValues ) {
-      assert && assert( _.every( options.validValues, isString ), 'validValues must be strings' );
-    }
-
-    if ( options.isValidValue ) {
-
-      // Wrap the provided function so that we can verify that the value is a string.
-      // This prevents the client from having to check (or remember to check) that the value is a string.
-      var isValidValue = options.isValidValue;
-      options.isValidValue = function( value ) {
-        return isString( value ) && isValidValue( value );
-      };
-    }
-    else if ( !options.validValues ) {
-
-      // fallback to verifying that the value is a string
-      options.isValidValue = isString;
-    }
+    assert && assert( !options.valueType, 'valueType is set by StringProperty' );
+    options.valueType = 'string';
 
     Property.call( this, value, options );
   }
 
   axon.register( 'StringProperty', StringProperty );
-
-  /**
-   * @param {*} value
-   * @returns {boolean}
-   */
-  function isString( value ) {
-    return ( typeof value === 'string' );
-  }
 
   return inherit( Property, StringProperty );
 } );

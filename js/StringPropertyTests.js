@@ -22,6 +22,11 @@ define( function( require ) {
       p.value = 0;
     }, 'should throw Assertion failed: invalid value: 0' );
 
+    // isValidValue
+    window.assert && assert.throws( function() {
+      p = new StringProperty( 'foo', { valueType: 'string' } );
+    }, 'valueType cannot be set by client' );
+
     // validValues
     p = new StringProperty( 'foo', {
       validValues: [ 'foo', 'bar' ]
