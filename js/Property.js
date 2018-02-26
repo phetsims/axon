@@ -17,6 +17,9 @@ define( function( require ) {
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // constants
+  var TYPEOF_VALUE_TYPES = [ 'string', 'number', 'boolean', 'function' ];
+
   /**
    * @param {*} value - the initial value of the property
    * @param {Object} [options] - options
@@ -28,17 +31,24 @@ define( function( require ) {
 
       tandem: Tandem.optional,
 
-      // {constructor|null} type of the value, e.g. Vector2.
-      // null indicates that no type has been specified, and no type validation will be performed.
-      // Mutually exclusive with options.validValues. Can be combined with options.isValidValue.
+      // {function|string|null} type of the value.
+      // If {function}, the function must be a constructor.
+      // If {string}, the string must be one of the primitive types listed in TYPEOF_VALUE_TYPES.
+      // Unused if null.
+      // Examples:
+      // valueType: Vector2
+      // valueType: 'string'
+      // valueType: 'number'
       valueType: null,
 
-      // {*[]|null} valid values for this Property. Mutually exclusive with options.isValidValue
+      // {*[]|null} valid values for this Property. Unused if null.
+      // Example:
+      // validValues: [ 'horizontal', 'vertical' ]
       validValues: null,
 
-      // {function|null} single parameter is a value to validate, returns true if valid, false if invalid
-      // If null and validValues is provided, a value is valid if it is a member of validValues.
-      // If null and no validValues are provided, all values are considered valid.
+      // {function|null} function that validates the value. Single argument is the value. Unused if null.
+      // Example:
+      // isValidValue: function( value ) { return Util.isInteger( value ) && value >= 0; }
       isValidValue: null,
 
       // useDeepEquality: true => Use the `equals` method on the values
@@ -49,9 +59,12 @@ define( function( require ) {
       highFrequency: false
     }, options );
 
-    // value validation
-    assert && assert( !( options.validValues && options.valueType ), 'validValues and valueType are mutually exclusive' );
-    assert && assert( !( options.validValues && options.isValidValue ), 'validValues and isValidValue are mutually exclusive' );
+    // validate options
+    assert && assertOptionValueType( options.valueType );
+    assert && assert( options.validValues === null || options.validValues instanceof Array,
+      'validValues must be an array: ' + options.validValues );
+    assert && assert( options.isValidValue === null || typeof options.isValidValue === 'function',
+      'isValidValue must be a function: ' + options.isValidValue );
 
     PhetioObject.call( this, options );
 
@@ -60,29 +73,20 @@ define( function( require ) {
     // useDeepEquality: false => Use === for equality test
     this.useDeepEquality = options.useDeepEquality;
 
-    this.isValidValue = options.isValidValue; // @private
-    if ( !this.isValidValue && options.validValues ) {
+    // @private {function|false} value validation function, false if assertions are disabled
+    this.assertValidValue = assert && function( value ) {
 
-      // validation is based on the set of validValues
-      this.isValidValue = function( value ) {
-        return options.validValues.indexOf( value ) !== -1;
-      };
-    }
-    else if ( !this.isValidValue && options.valueType ) {
+      options.valueType && assertValueType( value, options.valueType );
 
-      // validation is based on valueType
-      this.isValidValue = function( value ) {
-        return ( value instanceof options.valueType );
-      };
-    }
-    else if ( this.isValidValue && options.valueType ) {
+      options.validValues && assert( options.validValues.indexOf( value ) !== -1,
+        'value is not a member of validValues: ' + value );
 
-      // validation is based on both valueType and isValidValue
-      this.isValidValue = function( value ) {
-        return ( value instanceof options.valueType ) && options.isValidValue( value );
-      };
-    }
-    assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid initial value: ' + value );
+      options.isValidValue && assert( options.isValidValue( value ),
+        'value failed isValidValue test: ' + value );
+    };
+
+    // validate the initial value
+    this.assertValidValue && this.assertValidValue( value );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
@@ -118,6 +122,54 @@ define( function( require ) {
 
   axon.register( 'Property', Property );
 
+  /**
+   * Verifies the value of option valueType, fails assertion if invalid.
+   * @param {function|string|null} valueType
+   */
+  function assertOptionValueType( valueType ) {
+
+    if ( !assert ) {
+      throw new Error( 'call this function only when assertions are enabled' );
+    }
+
+    assert( typeof valueType === 'function' || valueType === 'string' || valueType === null,
+      'valueType must be {function|string|null}, valueType=' + valueType );
+
+    // {string} valueType must be one of the primitives in TYPEOF_VALUE_TYPES, for typeof comparison
+    if ( typeof valueType === 'string' ) {
+      assert( _.includes( TYPEOF_VALUE_TYPES, valueType ),
+        'valueType is a string, but not one of the supported primitive types: ' + valueType );
+    }
+  }
+
+  /**
+   * Performs valueType validation on a value. Fails an assertion if invalid.
+   * @param {*} value
+   * @param {function|string|null} valueType
+   */
+  function assertValueType( value, valueType ) {
+
+    if ( !assert ) {
+      throw new Error( 'call this function only when assertions are enabled' );
+    }
+
+    if ( typeof valueType === 'string' ) {
+
+      // primitive type
+      assert( typeof value === valueType, 'value should have typeof ' + valueType + ', value=' + value );
+    }
+    else if ( typeof valueType === 'function' ) {
+
+      // constructor
+      assert( value instanceof valueType, 'value should be instanceof ' + valueType.name + ', value=' + value );
+    }
+    else {
+
+      // we should never get here, but just in case...
+      assert( valueType === null, 'invalid valueType: ' + valueType );
+    }
+  }
+
   return inherit( PhetioObject, Property, {
 
       /**
@@ -137,7 +189,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        assert && this.isValidValue && assert( this.isValidValue( value ), 'invalid value: ' + value );
+        this.assertValidValue && this.assertValidValue( value );
         if ( !this.equalsValue( value ) ) {
           this._setAndNotifyListeners( value );
         }

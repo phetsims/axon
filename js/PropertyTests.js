@@ -52,7 +52,7 @@ define( function( require ) {
       assert.equal( a, 1 );
       assert.equal( b, 2 );
     } );
-    assert.equal( callbacks, 0, 'shouldnt call back to a lazy multilink' );
+    assert.equal( callbacks, 0, 'should not call back to a lazy multilink' );
   } );
 
   /**
@@ -67,68 +67,114 @@ define( function( require ) {
     assert.equal( state.age, 8, 'link should update values' );
     property.unlinkAttribute( listener );
     property.value = 9;
-    assert.equal( state.age, 8, 'state shouldnt have changed after unlink' );
+    assert.equal( state.age, 8, 'state should not have changed after unlink' );
   } );
 
   QUnit.test( 'Property value validation', function( assert ) {
 
     // Type that is specific to valueType tests
-    function TestType( index ) { this.index = index; }
+    function TestType() {}
 
-    var property;
-    window.assert && assert.throws( function() {
-      new Property( 0, { validValues: [ 1, 2, 3 ] } ); // eslint-disable-line
-    }, 'invalid initial value for Property with options.validValues' );
-    property = new Property( 1, { validValues: [ 1, 2, 3 ] } );
-    property.set( 3 );
-    window.assert && assert.throws( function() {
-      property.set( 4 );
-    }, 'set an invalid value for Property with options.validValues' );
+    var property = null;
+    var options = {};
 
+    // valueType is a primitive type (typeof validation)
+    options = {
+      valueType: 'string'
+    };
     window.assert && assert.throws( function() {
-      new Property( 0, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } ); // eslint-disable-line
-    }, 'invalid initial value for Property with options.isValidValue' );
-
-    property = new Property( 1, { isValidValue: function( value ) { return ( value > 0 && value < 4 ); } } );
-    property.set( 3 );
+      new Property( 0, { valueType: 'foo' } ); // eslint-disable-line
+    }, 'options.valueType is invalid, expected a primitive data type' );
     window.assert && assert.throws( function() {
-      property.set( 4 );
-    }, 'set an invalid value for Property with options.isValidValue' );
+      new Property( 0, options ); // eslint-disable-line
+    }, 'invalid initial value with options.valueType typeof validation' );
+    property = new Property( 'horizontal', options );
+    property.set( 'vertical' );
+    window.assert && assert.throws( function() {
+      property.set( 0 );
+    }, 'invalid set value with options.valueType typeof validation' );
 
-    // valueType by itself
-    var options = { 
+    // valueType is a constructor (instanceof validation)
+    options = {
       valueType: TestType
     };
     window.assert && assert.throws( function() {
       new Property( 0, options ); // eslint-disable-line
-    }, 'invalid value fails valueType validation for Property with options.valueType' );
-    property = new Property( new TestType( 0 ), options );
-    property.set( new TestType( 0 ) );
+    }, 'invalid initial value for options.valueType instanceof validation' );
+    property = new Property( new TestType(), options );
+    property.set( new TestType() );
     window.assert && assert.throws( function() {
       property.set( 0 );
-    }, 'set value fails valueType validation for Property with options.valueType' );
+    }, 'invalid set value with options.valueType instanceof validation' );
 
-    // valueType and isValidValue combined
+    // validValues
     options = {
-      valueType: TestType,
+      validValues: [ 1, 2, 3 ]
+    };
+    window.assert && assert.throws( function() {
+      new Property( 0, { validValues: 0 } ); // eslint-disable-line
+    }, 'options.validValues is invalid' );
+    window.assert && assert.throws( function() {
+      new Property( 0, options ); // eslint-disable-line
+    }, 'invalid initial value with options.validValues' );
+    property = new Property( 1, options );
+    property.set( 3 );
+    window.assert && assert.throws( function() {
+      property.set( 4 );
+    }, 'invalid set value with options.validValues' );
+
+    // isValidValues
+    options = {
       isValidValue: function( value ) {
-        return value.index >= 0;
+        return ( value > 0 && value < 4 );
       }
     };
     window.assert && assert.throws( function() {
-      new Property( 0, options ); // eslint-disable-line
-    }, 'initial value fails valueType validation for Property with options.valueType and options.isValidValue' );
+      new Property( 0, { isValidValue: 0 } ); // eslint-disable-line
+    }, 'options.isValidValue is invalid' );
     window.assert && assert.throws( function() {
-      new Property( new TestType( -1 ), options ); // eslint-disable-line
-    }, 'initial value fails isValidValue validation for Property with options.valueType and options.isValidValue' );
-    property = new Property( new TestType( 0 ), options );
-    property.set( new TestType( 0 ) );
+      new Property( 0, options ); // eslint-disable-line
+    }, 'invalid initial value with options.isValidValue' );
+    property = new Property( 1, options );
+    property.set( 3 );
+    window.assert && assert.throws( function() {
+      property.set( 4 );
+    }, 'invalid set value with options.isValidValue' );
+
+    // Compatible combinations of validation options, possibly redundant (not exhaustive)
+    options = {
+      valueType: 'string',
+      validValues: [ 'bob', 'joe', 'sam' ],
+      isValidValue: function( value ) {
+        return value.length === 3;
+      }
+    };
+    property = new Property( 'bob', options );
     window.assert && assert.throws( function() {
       property.set( 0 );
-    }, 'set value fails valueType validation for Property with options.valueType and options.isValidValue' );
+    }, 'invalid set value with compatible combination of validation options' );
     window.assert && assert.throws( function() {
-      property.set( new TestType( -1 ) );
-    }, 'set value fails isValidValue validation for Property with options.valueType and options.isValidValue' );
+      property.set( 'ted' );
+    }, 'invalid set value with compatible combination of validation options' );
+
+    // Incompatible combinations of validation options (not exhaustive)
+    // These tests will always fail on initialization, since the validation criteria are contradictory.
+    options = {
+      valueType: 'number',
+      validValues: [ 'bob', 'joe', 'sam' ],
+      isValidValue: function( value ) {
+        return value.length === 4;
+      }
+    };
+    window.assert && assert.throws( function() {
+      property = new Property( 0, options );
+    }, 'invalid initial value with incompatible combination of validation options' );
+    window.assert && assert.throws( function() {
+      property = new Property( 'bob', options );
+    }, 'invalid initial value with incompatible combination of validation options' );
+    window.assert && assert.throws( function() {
+      property = new Property( 'fred', options );
+    }, 'invalid initial value with incompatible combination of validation options' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
