@@ -173,7 +173,9 @@ define( function( require ) {
   return inherit( PhetioObject, Property, {
 
       /**
-       * Gets the value.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
+       * Gets the value.
+       * You can also use the es5 getter (property.value) but this means is provided for inner loops
+       * or internal code that must be fast.
        * @returns {*}
        * @public
        */
@@ -182,7 +184,9 @@ define( function( require ) {
       },
 
       /**
-       * Sets the value and notifies listeners.  You can also use the es5 getter (property.value) but this means is provided for inner loops or internal code that must be fast.
+       * Sets the value and notifies listeners.
+       * You can also use the es5 getter (property.value) but this means is provided for inner loops
+       * or internal code that must be fast.
        * If the value hasn't changed, this is a no-op.
        *
        * @param {*} value
