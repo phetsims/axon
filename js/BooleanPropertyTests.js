@@ -4,6 +4,7 @@
  * QUnit Tests for BooleanProperty
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
   'use strict';

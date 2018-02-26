@@ -5,6 +5,7 @@
  * Truthy/falsy values are considered invalid.
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Chris Malley (PixelZoom, Inc.)
  */
 define( function( require ) {
   'use strict';
