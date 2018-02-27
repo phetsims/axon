@@ -26,15 +26,17 @@ define( function( require ) {
    */
   function BooleanProperty( value, options ) {
 
+    // configure value validation options
+    assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
+    assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
+    assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
+
     options = _.extend( {
       phetioType: PropertyIO( BooleanIO )
     }, options );
 
-    // configure value validation options
-    assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
+    // BooleanProperty requires values to be primitive booleans
     options.valueType = 'boolean';
-    assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
-    assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
 
     Property.call( this, value, options );
   }
