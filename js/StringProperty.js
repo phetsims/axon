@@ -15,6 +15,7 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
 
   // phet-io modules
+  var PropertyIO = require( 'AXON/PropertyIO' );
   var StringIO = require( 'ifphetio!PHET_IO/types/StringIO' );
 
   /**
@@ -25,7 +26,7 @@ define( function( require ) {
   function StringProperty( value, options ) {
 
     options = _.extend( {
-      phetioType: StringIO
+      phetioType: PropertyIO( StringIO )
     }, options );
 
     assert && assert( !options.valueType, 'valueType is set by StringProperty' );
