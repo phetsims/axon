@@ -13,9 +13,9 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
+  var PropertyIO = require( 'AXON/PropertyIO' );
 
   // phet-io modules
-  var PropertyIO = require( 'AXON/PropertyIO' );
   var StringIO = require( 'ifphetio!PHET_IO/types/StringIO' );
 
   /**

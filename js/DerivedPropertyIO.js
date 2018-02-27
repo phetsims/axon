@@ -11,11 +11,11 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var PropertyIO = require( 'AXON/PropertyIO' );
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**

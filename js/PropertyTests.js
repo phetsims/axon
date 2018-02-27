@@ -9,10 +9,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var Tandem = require( 'TANDEM/Tandem' );
+
+  // phet-io modules
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
 
   QUnit.module( 'Property' );
 
