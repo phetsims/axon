@@ -105,18 +105,12 @@ define( function( require ) {
     };
 
     // verify that validValues meet other NumberProperty-specific validation criteria
-    if ( assertValidValue && options.validValues ) {
-      options.validValues.forEach( function( value ) {
-        assertValidValue( value );
-      } );
-    }
+    ( assert && options.validValues ) && options.validValues.forEach( assertValidValue );
 
     Property.call( this, value, options );
 
     // Perform value validation that is specific to NumberProperty.
-    assert && self.link( function( value ) {
-      assertValidValue( value );
-    } );
+    assert && self.link( assertValidValue );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
