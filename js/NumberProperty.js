@@ -95,8 +95,8 @@ define( function( require ) {
     assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
     options.valueType = 'number';
 
-    // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
-    this.assertNumberPropertyValidateValue = assert && function( value ) {
+    // {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
+    var assertValidValue = assert && function( value ) {
       if ( options.numberType === 'Integer' ) {
         assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
       }
@@ -105,9 +105,9 @@ define( function( require ) {
     };
 
     // verify that validValues meet other NumberProperty-specific validation criteria
-    if ( this.assertNumberPropertyValidateValue && options.validValues ) {
+    if ( assertValidValue && options.validValues ) {
       options.validValues.forEach( function( value ) {
-        self.assertNumberPropertyValidateValue( value );
+        assertValidValue( value );
       } );
     }
 
@@ -115,7 +115,7 @@ define( function( require ) {
 
     // Perform value validation that is specific to NumberProperty.
     assert && self.link( function( value ) {
-      self.assertNumberPropertyValidateValue( value );
+      assertValidValue( value );
     } );
   }
 
