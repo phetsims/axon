@@ -14,11 +14,11 @@ define( function( require ) {
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
   var NumberIO = require( 'ifphetio!PHET_IO/types/NumberIO' );
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var phetio = require( 'ifphetio!PHET_IO/phetio' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
   /**

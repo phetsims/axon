@@ -15,8 +15,8 @@ define( function( require ) {
 
   // phet-io modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var NumberIO = require( 'ifphetio!PHET_IO/types/NumberIO' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   // constants
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
