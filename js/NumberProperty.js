@@ -98,7 +98,7 @@ define( function( require ) {
     // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
     this.assertNumberPropertyValidateValue = assert && function( value ) {
       if ( options.numberType === 'Integer' ) {
-        assert( value % 1 === 0, 'valueType was Integer but value was ' + value );
+        assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
       }
       options.range && assert( value >= options.range.min && value <= options.range.max,
         'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']' );
