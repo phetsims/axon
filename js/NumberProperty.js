@@ -74,8 +74,6 @@ define( function( require ) {
    */
   function NumberProperty( value, options ) {
 
-    var self = this;
-
     options = _.extend( {
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       range: null, // {Range|{min:number, max:number}|null} range of the value
@@ -110,7 +108,7 @@ define( function( require ) {
     Property.call( this, value, options );
 
     // Perform value validation that is specific to NumberProperty.
-    assert && self.link( assertValidValue );
+    assert && this.link( assertValidValue );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
