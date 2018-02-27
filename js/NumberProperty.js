@@ -93,8 +93,8 @@ define( function( require ) {
     assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
     options.valueType = 'number';
 
-    // {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
-    var assertValidValue = assert && function( value ) {
+    // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
+    this.assertNumberPropertyValidateValue = assert && function( value ) {
       if ( options.numberType === 'Integer' ) {
         assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
       }
@@ -103,12 +103,14 @@ define( function( require ) {
     };
 
     // verify that validValues meet other NumberProperty-specific validation criteria
-    ( assert && options.validValues ) && options.validValues.forEach( assertValidValue );
+    if ( options.validValues && this.assertNumberPropertyValidateValue ) {
+      options.validValues.forEach( this.assertNumberPropertyValidateValue );
+    }
+
+    // validate initial value
+    this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
 
     Property.call( this, value, options );
-
-    // Perform value validation that is specific to NumberProperty.
-    assert && this.link( assertValidValue );
   }
 
   axon.register( 'NumberProperty', NumberProperty );
@@ -122,5 +124,18 @@ define( function( require ) {
     return ( typeof range === 'object' ) && range.hasOwnProperty( 'min' ) && range.hasOwnProperty( 'max' );
   }
 
-  return inherit( Property, NumberProperty );
+  return inherit( Property, NumberProperty, {
+
+    /**
+     * Performs value validation that is specific to NumberProperty.
+     * Then sets the value and notifies listeners.
+     * @param {*} value
+     * @public
+     * @override
+     */
+    set: function( value ) {
+      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
+      Property.prototype.set.call( this, value );
+    }
+  } );
 } );
