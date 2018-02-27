@@ -100,7 +100,7 @@ define( function( require ) {
       assert( !( options.numberType === 'Integer' && value % 1 !== 0 ),
         'value has incorrect numberType, value=' + value + ', numberType=' + options.numberType );
       options.range && assert( value >= options.range.min && value <= options.range.max,
-        'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']');
+        'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']' );
     };
 
     // verify that validValues meet other NumberProperty-specific validation criteria
