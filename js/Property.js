@@ -423,25 +423,6 @@ define( function( require ) {
       hasListeners: function() {
         assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
         return this.changedEmitter.hasListeners();
-      },
-
-      getDeclarator: function( options ) {
-
-        var self = this;
-        return {
-
-          // Getter proxies to Model#get()...
-          get: function() {
-            return self.get();
-          },
-
-          // Setter proxies to Model#set(attributes)
-          set: function( value ) { self.set( value ); },
-
-          // Make it configurable and enumerable so it's easy to override...
-          configurable: true,
-          enumerable: true
-        };
       }
     },
 
