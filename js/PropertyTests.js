@@ -178,21 +178,6 @@ define( function( require ) {
       property = new Property( 'fred', options );
     }, 'invalid initial value with incompatible combination of validation options' );
 
-    // Tests for enum
-
-    // PhET's pattern for an Enum type
-    var ViewTypeEnum = {
-      TOP: 'TOP',
-      SIDE: 'SIDE'
-    };
-
-    // verify that enum is immutable, without the runtime penalty in production code
-    if ( assert ) { Object.freeze( ViewTypeEnum ); }
-
-    property = new Property( ViewTypeEnum.TOP, {
-      valueType: ViewTypeEnum
-    } );
-
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
 
