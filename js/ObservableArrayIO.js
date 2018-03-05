@@ -99,7 +99,7 @@ define( function( require ) {
         fromStateObject: function( stateObject ) {
           var tempArray = [];
           stateObject.array.forEach( function( elementTypePhetioID ) {
-            tempArray.push( phetio.getWrapper( elementTypePhetioID ).instance );
+            tempArray.push( phetio.getInstance( elementTypePhetioID ) );
           } );
           return tempArray;
         },
