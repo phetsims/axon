@@ -31,7 +31,7 @@ define( function( require ) {
 
     options = _.extend( {
 
-      tandem: Tandem.optional,
+      tandem: Tandem.optional, // workaround for https://github.com/phetsims/tandem/issues/50
 
       // {function|string|null} type of the value.
       // If {function}, the function must be a constructor.
