@@ -63,7 +63,7 @@ define( function( require ) {
 
     // validate options
     assert && assertOptionValueType( options.valueType );
-    assert && assert( options.validValues === null || Array.isArray(options.validValues),
+    assert && assert( options.validValues === null || Array.isArray( options.validValues ),
       'validValues must be an array: ' + options.validValues );
     assert && assert( options.isValidValue === null || typeof options.isValidValue === 'function',
       'isValidValue must be a function: ' + options.isValidValue );

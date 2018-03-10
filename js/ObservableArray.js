@@ -31,7 +31,7 @@ define( function( require ) {
   function ObservableArray( array, options ) {
 
     // Special case that the user supplied options but no array
-    if ( array instanceof Object && !( Array.isArray(array) ) ) {
+    if ( array instanceof Object && !( Array.isArray( array ) ) ) {
       options = array;
       array = null;
     }
