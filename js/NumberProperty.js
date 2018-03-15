@@ -15,55 +15,6 @@ define( function( require ) {
   var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   var Property = require( 'AXON/Property' );
 
-  // valid values for options.units (or it can be null)
-  var VALID_UNITS = [
-    'amperes',
-    'milliamperes',
-    'becquerels',
-    'centimeters',
-    'centimeters-squared',
-    'coulombs',
-    'degrees Celsius',
-    'farads',
-    'kilograms',
-    'grams',
-    'gray',
-    'henrys',
-    'henries',
-    'hertz',
-    'joules',
-    'katals',
-    'kelvins',
-    'liters',
-    'liters/second',
-    'lumens',
-    'lux',
-    'meters',
-    'meters/second',
-    'meters/second/second',
-    'moles',
-    'moles/liter',
-    'nanometers',
-    'newtons',
-    'newtons/meters',
-    'newtons-second/meters',
-    'ohms',
-    'ohm-centimeters',
-    'pascals',
-    'percent',
-    'radians',
-    'radians/second',
-    'seconds',
-    'siemens',
-    'sieverts',
-    'steradians',
-    'tesla',
-    'view-coordinates/second',
-    'volts',
-    'watts',
-    'webers'
-  ];
-
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
@@ -77,18 +28,15 @@ define( function( require ) {
     options = _.extend( {
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
       range: null, // {Range|{min:number, max:number}|null} range of the value
-      phetioType: NumberPropertyIO,
-      units: null // {string|null} units for the number, see VALID_UNITS
+      phetioType: NumberPropertyIO
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
     options.range && assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
-    options.units && assert && assert( _.includes( VALID_UNITS, options.units ), 'invalid units: ' + options.units );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;
     this.range = options.range;
-    this.units = options.units;
 
     assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
     options.valueType = 'number';

@@ -14,6 +14,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
+  var units = require( 'AXON/units' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
@@ -58,7 +59,10 @@ define( function( require ) {
       useDeepEquality: false,
 
       // If marked as highFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
-      highFrequency: false
+      highFrequency: false,
+
+      // {string|null} units for the number, see units.js
+      units: null
     }, options );
 
     // validate options
@@ -68,7 +72,12 @@ define( function( require ) {
     assert && assert( options.isValidValue === null || typeof options.isValidValue === 'function',
       'isValidValue must be a function: ' + options.isValidValue );
 
+    assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
+
     PhetioObject.call( this, options );
+
+    // @public (phet-io) Units, if any.  See units.js for valid values
+    this.units = options.units;
 
     // @private (read-only) whether to use the values' equals method or === equality
     // useDeepEquality: true => Use the `equals` method on the values

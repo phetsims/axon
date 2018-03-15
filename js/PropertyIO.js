@@ -125,6 +125,8 @@ define( function( require ) {
             return phetioValueType.toStateObject( v );
           } );
         }
+
+        stateObject.units = property.units;
         return stateObject;
       },
 
@@ -135,6 +137,7 @@ define( function( require ) {
        */
       fromStateObject: function( stateObject ) {
         return {
+          units: stateObject.units,
           value: phetioValueType.fromStateObject( stateObject.value ),
           validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
             return phetioValueType.fromStateObject( v );
@@ -144,11 +147,12 @@ define( function( require ) {
 
       /**
        * Used to set the value when loading a state
-       * @param property
-       * @param fromStateObject
+       * @param {Property} property
+       * @param {Object} fromStateObject
        */
       setValue: function( property, fromStateObject ) {
         assert && assertInstanceOf( property, phet.axon.Property );
+        property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
       },
