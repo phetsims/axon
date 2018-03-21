@@ -126,7 +126,10 @@ define( function( require ) {
           } );
         }
 
-        stateObject.units = property.units;
+        // Only supply units if they were specified, to avoid seeing "units: null" in so many properties, see https://github.com/phetsims/phet-io/issues/1315
+        if ( property.units ) {
+          stateObject.units = property.units;
+        }
         return stateObject;
       },
 
