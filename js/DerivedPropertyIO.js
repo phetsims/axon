@@ -60,28 +60,7 @@ define( function( require ) {
       // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
 
-      elementType: phetioValueType,
-
-      /**
-       * Encodes a DerivedProperty instance to a state.
-       * @param {Object} derivedProperty
-       * @returns {Object}
-       */
-      toStateObject: function( derivedProperty ) {
-        assert && assertInstanceOf( derivedProperty, phet.axon.DerivedProperty );
-
-        // TODO: this doesn't match the PropertyIO structure which has {value}
-        return phetioValueType.toStateObject( derivedProperty.value );
-      },
-
-      /**
-       * Decodes a state into a DerivedProperty.
-       * @param {Object} stateObject
-       * @returns {Object}
-       */
-      fromStateObject: function( stateObject ) {
-        return phetioValueType.fromStateObject( stateObject );
-      }
+      elementType: phetioValueType
     } );
   }
 
