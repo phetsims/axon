@@ -60,7 +60,8 @@ define( function( require ) {
         implementation: function( value ) {
           this.instance.set( value );
         },
-        documentation: 'Sets the value of the property, and triggers notifications if the value is different'
+        documentation: 'Sets the value of the property. If the value differs from the previous value, listeners are ' +
+                       'notified with the new value.'
       },
 
       link: {
@@ -70,7 +71,8 @@ define( function( require ) {
           this.instance.link( listener );
         },
         documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
-                       'also called with the current value.'
+                       'also called with the current value. The listener takes two arguments, the new value and the ' +
+                       'previous value.'
       },
 
       lazyLink: {
@@ -79,8 +81,9 @@ define( function( require ) {
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
-        documentation: 'Add a listener which will be called when the value changes. This method is like "link", but ' +
-                       'without the current-value callback on registration.'
+        documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
+                       'without the current-value callback on registration. The listener takes two arguments, the new ' +
+                       'value and the previous value.'
       },
 
       unlink: {
@@ -89,7 +92,7 @@ define( function( require ) {
         implementation: function( listener ) {
           this.instance.unlink( listener );
         },
-        documentation: 'Removes a listener'
+        documentation: 'Removes a listener.'
       }
     }, {
       documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +

@@ -54,8 +54,15 @@ define( function( require ) {
       assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
 
       var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
-      parentStateObject.numberType = numberProperty.numberType;
-      parentStateObject.range = numberProperty.range;
+
+      // conditionals to avoid keys with value "null" in state objects
+      if(numberProperty.numberType){
+        parentStateObject.numberType = numberProperty.numberType;
+      }
+
+      if ( numberProperty.range ) {
+        parentStateObject.range = numberProperty.range;
+      }
       return parentStateObject;
     },
 
@@ -71,6 +78,10 @@ define( function( require ) {
       return fromParentStateObject;
     },
 
+    /**
+     * @param {NumberProperty} numberProperty
+     * @param {Object} fromStateObject
+     */
     setValue: function( numberProperty, fromStateObject ) {
       assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
 
@@ -79,7 +90,7 @@ define( function( require ) {
       numberProperty.numberType = fromStateObject.numberType;
     },
 
-    documentation: 'Numeric property model'
+    documentation: 'Includes number-specific attributes in the state.'
   } );
 
   return NumberPropertyIO;
