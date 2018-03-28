@@ -69,8 +69,8 @@ define( function( require ) {
         implementation: function( listener ) {
           this.instance.link( listener );
         },
-        documentation: 'Add a listener which will be called when the value changes.  The listener also gets an ' +
-                       'immediate callback with the current value.'
+        documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
+                       'also called with the current value.'
       },
 
       lazyLink: {
@@ -79,7 +79,8 @@ define( function( require ) {
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
-        documentation: 'Add a listener which will be called when the value changes, but not for the initial value.'
+        documentation: 'Add a listener which will be called when the value changes. This method is like "link", but ' +
+                       'without the current-value callback on registration.'
       },
 
       unlink: {
@@ -91,9 +92,9 @@ define( function( require ) {
         documentation: 'Removes a listener'
       }
     }, {
-      documentation: 'Model values that can send out notifications when the value changes. This is different from the ' +
-                     'traditional listener pattern in that listeners also receive a callback with the current value ' +
-                     'when the listeners are registered.',
+      documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
+                     'traditional listener pattern in that added listeners also receive a callback with the current value ' +
+                     'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
       elementType: phetioValueType,
 
       // Used to generate the unique parametric typename for each PropertyIO
