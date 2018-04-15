@@ -98,6 +98,7 @@ define( function( require ) {
       documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
                      'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
+      methodOrder: [ 'link', 'lazyLink' ],
       elementType: phetioValueType,
 
       // Used to generate the unique parametric typename for each PropertyIO
