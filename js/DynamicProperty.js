@@ -246,8 +246,7 @@ define( function( require ) {
      * @public
      */
     reset: function() {
-      assert && assert( this.bidirectional,
-        'Cannot reset a non-bidirectional DynamicProperty' );
+      assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
       if ( this.valuePropertyProperty.value !== null ) {
         this.derive( this.valuePropertyProperty.value ).reset();
