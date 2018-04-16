@@ -258,8 +258,6 @@ define( function( require ) {
      * @public
      * @override
      *
-     * TODO: DerivedProperty should only need to do this, not all of the other methods it's also doing
-     *
      * @param {*} value
      */
     set: function( value ) {
