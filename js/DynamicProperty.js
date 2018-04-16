@@ -174,6 +174,7 @@ define( function( require ) {
 
     // If we aren't bidirectional, we should never add this listener.
     if ( options.bidirectional ) {
+      // No unlink needed, since our own disposal will remove this listener.
       this.lazyLink( this.onSelfChange.bind( this ) );
     }
   }
