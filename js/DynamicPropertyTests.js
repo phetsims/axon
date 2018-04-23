@@ -135,12 +135,14 @@ define( function( require ) {
     var propertyProperty = new Property( property );
     var dynamicProperty = new DynamicProperty( propertyProperty );
 
-    assert.throws( function() {
+    window.assert && assert.throws( function() {
       dynamicProperty.value = 10;
     }, /bidirectional/, 'Should not be able to set a non-bidrectional DynamicProperty' );
 
-    assert.throws( function() {
+    window.assert && assert.throws( function() {
       dynamicProperty.reset();
     }, /bidirectional/, 'Should not be able to reset a non-bidrectional DynamicProperty' );
+
+    assert.expect( window.assert ? 2 : 0 );
   } );
 } );
