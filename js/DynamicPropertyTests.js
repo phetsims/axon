@@ -129,4 +129,18 @@ define( function( require ) {
     assert.equal( secondProperty.value, 0 );
     assert.equal( firstProperty.value, 2 );
   } );
+
+  QUnit.test( 'Attempted setters to nonbidrectional', function( assert ) {
+    var property = new Property( 5 );
+    var propertyProperty = new Property( property );
+    var dynamicProperty = new DynamicProperty( propertyProperty );
+
+    assert.throws( function() {
+      dynamicProperty.value = 10;
+    }, /bidirectional/, 'Should not be able to set a non-bidrectional DynamicProperty' );
+
+    assert.throws( function() {
+      dynamicProperty.reset();
+    }, /bidirectional/, 'Should not be able to reset a non-bidrectional DynamicProperty' );
+  } );
 } );

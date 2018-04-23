@@ -134,6 +134,8 @@ define( function( require ) {
       inverseMap: _.identity
     }, options );
 
+    assert && assert( valuePropertyProperty instanceof Property, 'valuePropertyProperty should be a Property' );
+
     // @public {boolean} - Set to true when this Property's value is changing from an external source.
     this.isExternallyChanging = false;
 
@@ -255,7 +257,7 @@ define( function( require ) {
     },
 
     /**
-     * Prevent setting this Property manually
+     * Prevent setting this Property manually if it is not marked as bidirectional.
      * @public
      * @override
      *
