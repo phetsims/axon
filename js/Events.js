@@ -171,7 +171,7 @@ define( function( require ) {
       var suffix;
       var hasNoArguments = arguments.length === 1;
       if ( !hasNoArguments && (count > 0 || staticCount > 0) ) {
-        window.phetAllocation && phetAllocation( 'Array' );
+        phetAllocation && phetAllocation( 'Array' );
         suffix = Array.prototype.slice.call( arguments, 1 );
       }
 
