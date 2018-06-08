@@ -20,7 +20,7 @@ define( function( require ) {
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
-  // phet-io modules
+  // ifphetio
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
 
   /**

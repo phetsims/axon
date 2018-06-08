@@ -13,7 +13,7 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
   var Tandem = require( 'TANDEM/Tandem' );
 
-  // phet-io modules
+  // ifphetio
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
 
   QUnit.module( 'Property' );
