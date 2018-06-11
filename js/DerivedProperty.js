@@ -13,6 +13,7 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var DerivedPropertyIO = require( 'AXON/DerivedPropertyIO' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var Tandem = require( 'TANDEM/Tandem' );
@@ -31,8 +32,10 @@ define( function( require ) {
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, options );
 
-    if ( window.phet && window.phet.phetio ) {
-      assert && assert( options.phetioType === null || options.phetioType.typeName.indexOf( 'DerivedPropertyIO' ) === 0, 'phetioType should be DerivedPropertyIO' );
+    if ( options.tandem.isSuppliedAndEnabled() ) {
+
+      // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
+      assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
     }
 
     this.dependencies = dependencies; // @private
@@ -49,13 +52,13 @@ define( function( require ) {
 
     for ( var i = 0; i < dependencies.length; i++ ) {
       var dependency = dependencies[ i ];
-      (function( dependency ) {
+      ( function( dependency ) {
         var listener = function() {
           Property.prototype.set.call( self, derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) ) );
         };
         self.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
-      })( dependency, i );
+      } )( dependency, i );
     }
   }
 

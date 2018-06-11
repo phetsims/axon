@@ -43,7 +43,7 @@ define( function( require ) {
 
       PropertyIOImpl.call( this, derivedProperty, phetioID );
     };
-    return phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', DerivedPropertyIOImpl, {
+    phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', DerivedPropertyIOImpl, {
 
       setValue: {
         returnType: VoidIO,
@@ -62,10 +62,14 @@ define( function( require ) {
 
       elementType: phetioValueType
     } );
+
+    // @public - allow type checking for DerivedPropertyIOImpl
+    DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
+
+    return DerivedPropertyIOImpl;
   }
 
   axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 
   return DerivedPropertyIO;
 } );
-
