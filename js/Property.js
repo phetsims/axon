@@ -208,6 +208,7 @@ define( function( require ) {
        * If the value hasn't changed, this is a no-op.
        *
        * @param {*} value
+       * @returns {Property} this instance, for chaining.
        * @public
        */
       set: function( value ) {
