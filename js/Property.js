@@ -214,7 +214,7 @@ define( function( require ) {
       set: function( value ) {
         this.assertPropertyValidateValue && this.assertPropertyValidateValue( value );
         if ( !this.equalsValue( value ) ) {
-          this._setAndNotifyListeners( value );
+          this.setValueAndNotifyListeners( value );
         }
         return this;
       },
@@ -263,8 +263,12 @@ define( function( require ) {
         return this._initialValue;
       },
 
-      // @private
-      _setAndNotifyListeners: function( value ) {
+      /**
+       * Updates the value of this node
+       * @param {*} value - the new value this Property will take, which is different than the previous value.
+       * @protected - can be overridden.
+       */
+      setValueAndNotifyListeners: function( value ) {
         var oldValue = this.get();
         this._value = value;
         this._notifyListeners( oldValue );
