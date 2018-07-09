@@ -24,11 +24,10 @@ define( function( require ) {
    * An observable property that triggers notifications when the value changes.
    * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
    *                                     'ifphetio!' plugin.
-   * @param options
    * @module PropertyIO
    * @constructor
    */
-  function PropertyIO( phetioValueType, options ) {
+  function PropertyIO( phetioValueType ) {
 
     /**
      * @param {Property} property
@@ -163,9 +162,7 @@ define( function( require ) {
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
-      },
-
-      options: options
+      }
     } );
   }
 
