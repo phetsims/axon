@@ -57,7 +57,12 @@ define( function( require ) {
       'view-coordinates/second',
       'volts',
       'watts',
-      'webers'
+      'webers',
+
+      // abbreviations -- in time we will replace all full forms with abbreviations only
+      // see https://github.com/phetsims/phet-io/issues/530
+      'cm',
+      'nm'
     ],
 
     isValidUnits: function( unit ) {
