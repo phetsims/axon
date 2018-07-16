@@ -211,34 +211,6 @@ define( function( require ) {
     },
 
     /**
-     * Emits a single event with three arguments.  This is a copy-paste of emit() for performance reasons.
-     * @param {*} arg0
-     * @param {*} arg1
-     * @param {*} arg2
-     * @param {*} arg3
-     * @public
-     */
-    emit4: function( arg0, arg1, arg2, arg3 ) {
-      this.tandem.isSuppliedAndEnabled() && this.startEvent( 'model', 'emitted', {
-        args: [
-          this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
-          this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 ),
-          this.phetioType.parameterTypes[ 2 ].toStateObject( arg2 ),
-          this.phetioType.parameterTypes[ 3 ].toStateObject( arg3 )
-        ]
-      } );
-      this.listenersToEmitTo.push( this.listeners );
-      var lastEntry = this.listenersToEmitTo.length - 1;
-
-      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg0, arg1, arg2, arg3 );
-      }
-
-      this.listenersToEmitTo.pop();
-      this.tandem.isSuppliedAndEnabled() && this.endEvent();
-    },
-
-    /**
      * Checks whether a listener is registered with this Emitter
      * @param {function} listener
      * @returns {boolean}
