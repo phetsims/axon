@@ -93,9 +93,11 @@ define( function( require ) {
       numberProperty.numberType = fromStateObject.numberType;
     },
 
-    documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( ' + VALID_NUMBER_TYPES.join( ' | ' ) + ' )',
-    VALID_NUMBER_TYPES: VALID_NUMBER_TYPES
+    documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( ' + VALID_NUMBER_TYPES.join( ' | ' ) + ' )'
   } );
+
+  // we need this attribute to be defined even if the brand is not phetio, so we cannot rely on phetio inherit
+  NumberPropertyIO.VALID_NUMBER_TYPES = VALID_NUMBER_TYPES;
 
   return NumberPropertyIO;
 } );
