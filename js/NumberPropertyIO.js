@@ -22,6 +22,9 @@ define( function( require ) {
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
   var PropertyIOImpl = PropertyIO( VALUE_TYPE );
 
+  // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
+  var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
+
   /**
    * @param {NumberProperty} numberProperty
    * @param {string} phetioID
@@ -56,7 +59,7 @@ define( function( require ) {
       var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
       // conditionals to avoid keys with value "null" in state objects
-      if(numberProperty.numberType){
+      if ( numberProperty.numberType ) {
         parentStateObject.numberType = numberProperty.numberType;
       }
 
@@ -90,7 +93,8 @@ define( function( require ) {
       numberProperty.numberType = fromStateObject.numberType;
     },
 
-    documentation: 'Includes number-specific attributes in the state.'
+    documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( ' + VALID_NUMBER_TYPES.join( ' | ' ) + ' )',
+    VALID_NUMBER_TYPES: VALID_NUMBER_TYPES
   } );
 
   return NumberPropertyIO;

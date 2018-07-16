@@ -15,8 +15,8 @@ define( function( require ) {
   var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   var Property = require( 'AXON/Property' );
 
-  // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
-  var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
+  // constants
+  var VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
 
   /**
    * @param {number} value - initial value
