@@ -49,6 +49,14 @@ define( function( require ) {
           this.instance.addListener( listener );
         },
         documentation: 'Add a listener which will be called when the emitter emits.'
+      },
+      emit: {
+        returnType: VoidIO,
+        parameterTypes: [ VoidIO ],
+        implementation: function() {
+          this.instance.emit();
+        },
+        documentation: 'Emit a single event with no arguments to all added listeners.'
       }
     }, {
       documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
