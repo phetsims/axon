@@ -126,7 +126,7 @@ define( function( require ) {
      * @public
      */
     emit: function() {
-      this.phetioStartEvent( 'model', 'emitted' );
+      this.phetioStartEvent( 'emitted' );
       this.listenersToEmitTo.push( this.listeners );
       var lastEntry = this.listenersToEmitTo.length - 1;
 
@@ -146,7 +146,7 @@ define( function( require ) {
     emit1: function( arg0 ) {
 
       // TODO: name the args for the data stream
-      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
       } );
       this.listenersToEmitTo.push( this.listeners );
@@ -167,7 +167,7 @@ define( function( require ) {
      * @public
      */
     emit2: function( arg0, arg1 ) {
-      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 )
@@ -192,7 +192,7 @@ define( function( require ) {
      * @public
      */
     emit3: function( arg0, arg1, arg2 ) {
-      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'model', 'emitted', {
+      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 ),
