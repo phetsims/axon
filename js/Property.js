@@ -62,7 +62,14 @@ define( function( require ) {
       highFrequency: false,
 
       // {string|null} units for the number, see units.js
-      units: null
+      units: null,
+
+      // {boolean} Whether reentrant calls to 'set' are allowed.
+      // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
+      // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
+      // cycles may pollute the message stream. See https://github.com/phetsims/axon/issues/179
+      reentrant: true
+
     }, options );
 
     // validate options
@@ -128,6 +135,12 @@ define( function( require ) {
     // @private (unit-tests) - emit1 is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
     this.changedEmitter = new Emitter();
+
+    // @private whether we are in the process of notifying listeners
+    this.notifying = false;
+
+    // @private whether to allow reenty of calls to set
+    this.reentrant = options.reentrant;
 
     // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
@@ -284,7 +297,12 @@ define( function( require ) {
           units: this.phetioType && this.phetioType.units
         }, this.changeEventOptions );
 
+        // notify listeners, optionally detect loops where this Property is set again before this completes.
+        assert && assert( !this.notifying || this.reentrant,
+          'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
+        this.notifying = true;
         this.changedEmitter.emit2( this.get(), oldValue );
+        this.notifying = false;
 
         this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
       },
