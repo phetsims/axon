@@ -31,7 +31,7 @@ define( function( require ) {
 
     /**
      * @param {Emitter} emitter
-     * @param {string phetioID
+     * @param {string} phetioID
      * @constructor
      */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
@@ -52,7 +52,7 @@ define( function( require ) {
       },
       emit: {
         returnType: VoidIO,
-        parameterTypes: [ VoidIO ],
+        parameterTypes: [],
         implementation: function() {
           this.instance.emit();
         },
