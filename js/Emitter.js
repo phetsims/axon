@@ -27,12 +27,12 @@ define( function( require ) {
       phetioType: EmitterIO( [] ) // subtypes can override with EmitterIO([...])
     }, options );
 
-    // @private {Function[]} - the listeners to emit to
+    // @private {function[]} - the listeners that will be called on emit
     this.listeners = [];
 
-    // @private - during emit() keep track of which listeners should receive events in order to manage removal of
-    //          - listeners during emit()
-    this.listenersToEmitTo = [];
+    // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
+    //                         - removal of listeners during emit()
+    this.activeListenersStack = [];
 
     PhetioObject.call( this, options );
   }
@@ -97,17 +97,17 @@ define( function( require ) {
     },
 
     /**
-     * If processing callbacks during an emit() call and addListener/removeListener() is called,
-     * make a defensive copy of the array of listener before changing the array, and use it for
-     * the rest of the callbacks until the emit call has completed.
+     * If processing callbacks during an emit() call and addListener/removeListener() is called, make a defensive copy
+     * of the array of listener before changing the array, and use it for the rest of the callbacks until the emit call
+     * has completed.
      * @private
      */
     defendCallbacks: function() {
 
-      for ( var i = this.listenersToEmitTo.length - 1; i >= 0; i-- ) {
+      for ( var i = this.activeListenersStack.length - 1; i >= 0; i-- ) {
 
         // Once we meet a level that was already defended, we can stop, since all previous levels are also defended
-        if ( this.listenersToEmitTo[ i ].defended ) {
+        if ( this.activeListenersStack[ i ].defended ) {
           break;
         }
         else {
@@ -115,7 +115,7 @@ define( function( require ) {
 
           // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified list.
           defendedListeners.defended = true;
-          this.listenersToEmitTo[ i ] = defendedListeners;
+          this.activeListenersStack[ i ] = defendedListeners;
         }
       }
     },
@@ -127,14 +127,14 @@ define( function( require ) {
      */
     emit: function() {
       this.phetioStartEvent( 'emitted' );
-      this.listenersToEmitTo.push( this.listeners );
-      var lastEntry = this.listenersToEmitTo.length - 1;
+      this.activeListenersStack.push( this.listeners );
+      var lastEntry = this.activeListenersStack.length - 1;
 
-      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]();
+      for ( var i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+        this.activeListenersStack[ lastEntry ][ i ]();
       }
 
-      this.listenersToEmitTo.pop();
+      this.activeListenersStack.pop();
       this.phetioEndEvent();
     },
 
@@ -149,14 +149,14 @@ define( function( require ) {
       this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
       } );
-      this.listenersToEmitTo.push( this.listeners );
-      var lastEntry = this.listenersToEmitTo.length - 1;
+      this.activeListenersStack.push( this.listeners );
+      var lastEntry = this.activeListenersStack.length - 1;
 
-      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg0 );
+      for ( var i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+        this.activeListenersStack[ lastEntry ][ i ]( arg0 );
       }
 
-      this.listenersToEmitTo.pop();
+      this.activeListenersStack.pop();
       this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
     },
 
@@ -173,14 +173,14 @@ define( function( require ) {
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 )
         ]
       } );
-      this.listenersToEmitTo.push( this.listeners );
-      var lastEntry = this.listenersToEmitTo.length - 1;
+      this.activeListenersStack.push( this.listeners );
+      var lastEntry = this.activeListenersStack.length - 1;
 
-      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg0, arg1 );
+      for ( var i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1 );
       }
 
-      this.listenersToEmitTo.pop();
+      this.activeListenersStack.pop();
       this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
     },
 
@@ -199,14 +199,14 @@ define( function( require ) {
           this.phetioType.parameterTypes[ 2 ].toStateObject( arg2 )
         ]
       } );
-      this.listenersToEmitTo.push( this.listeners );
-      var lastEntry = this.listenersToEmitTo.length - 1;
+      this.activeListenersStack.push( this.listeners );
+      var lastEntry = this.activeListenersStack.length - 1;
 
-      for ( var i = 0; i < this.listenersToEmitTo[ lastEntry ].length; i++ ) {
-        this.listenersToEmitTo[ lastEntry ][ i ]( arg0, arg1, arg2 );
+      for ( var i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1, arg2 );
       }
 
-      this.listenersToEmitTo.pop();
+      this.activeListenersStack.pop();
       this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
     },
 
