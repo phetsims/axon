@@ -62,9 +62,10 @@ define( function( require ) {
 
       assert && assert( this.listeners.indexOf( listener ) === -1, 'Cannot add the same listener twice' );
 
-      // If callbacks are in progress, make a copy of the current list of listeners--the newly added listener
-      // will be available for the next emit() but not the one in progress.  This is to match behavior with removeListener
-      this.defendCallbacks();
+      // If a listener is added during an emit(), we must make a copy of the current list of listeners--the newly added
+      // listener will be available for the next emit() but not the one in progress.  This is to match behavior with
+      // removeListener.
+      this.defendListeners();
 
       this.listeners.push( listener );
     },
@@ -79,9 +80,9 @@ define( function( require ) {
       var index = this.listeners.indexOf( listener );
       assert && assert( index >= 0, 'tried to removeListener on something that wasn\'t a listener' );
 
-      // If callbacks are in progress, make a copy of the current list of listeners--the removed listener
-      // will remain in the list and receive a callback for this emit call, see #72
-      this.defendCallbacks();
+      // If an emit is in progress, make a copy of the current list of listeners--the removed listener will remain in
+      // the list and be called for this emit call, see #72
+      this.defendListeners();
 
       this.listeners.splice( index, 1 );
     },
@@ -97,12 +98,12 @@ define( function( require ) {
     },
 
     /**
-     * If processing callbacks during an emit() call and addListener/removeListener() is called, make a defensive copy
-     * of the array of listener before changing the array, and use it for the rest of the callbacks until the emit call
-     * has completed.
+     * If addListener/removeListener is called while emit() is in progress, we must make a defensive copy of the array
+     * of listeners before changing the array, and use it for the rest of the notifications until the emit call has
+     * completed.
      * @private
      */
-    defendCallbacks: function() {
+    defendListeners: function() {
 
       for ( var i = this.activeListenersStack.length - 1; i >= 0; i-- ) {
 
@@ -113,7 +114,8 @@ define( function( require ) {
         else {
           var defendedListeners = this.listeners.slice();
 
-          // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified list.
+          // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified
+          // list.
           defendedListeners.defended = true;
           this.activeListenersStack[ i ] = defendedListeners;
         }
