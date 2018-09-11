@@ -60,7 +60,8 @@ define( function( require ) {
           this.instance.set( value );
         },
         documentation: 'Sets the value of the property. If the value differs from the previous value, listeners are ' +
-                       'notified with the new value.'
+                       'notified with the new value.',
+        canBeInvokedForReadOnlyInstances: false
       },
 
       link: {
