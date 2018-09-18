@@ -368,6 +368,7 @@ define( function( require ) {
 
       /**
        * Removes all listeners. If no listeners are registered, this is a no-op.
+       * @public
        */
       unlinkAll: function() {
         this.changedEmitter.removeAllListeners();
