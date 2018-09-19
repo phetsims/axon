@@ -10,6 +10,7 @@ define( function( require ) {
 
   // modules
   require( 'AXON/DynamicPropertyTests' );
+  require( 'AXON/EmitterTests' );
   require( 'AXON/EventsTests' );
   require( 'AXON/NumberPropertyTests' );
   require( 'AXON/ObservableArrayTests' );

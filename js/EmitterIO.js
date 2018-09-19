@@ -29,6 +29,8 @@ define( function( require ) {
    */
   function EmitterIO( phetioArgumentTypes ) {
 
+    assert && assert( Array.isArray( phetioArgumentTypes ) );
+
     /**
      * @param {Emitter} emitter
      * @param {string} phetioID
