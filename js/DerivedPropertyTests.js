@@ -9,7 +9,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
   var DerivedProperty = require( 'AXON/DerivedProperty' );
   var Property = require( 'AXON/Property' );
 
