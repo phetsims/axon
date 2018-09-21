@@ -53,9 +53,9 @@ define( function( require ) {
 
 
   QUnit.test( 'DerivedProperty.valueEquals', function( assert ) {
-    var propA = new axon.Property( 'a' );
-    var propB = new axon.Property( 'b' );
-    var prop = axon.DerivedProperty.valueEquals( propA, propB );
+    var propA = new Property( 'a' );
+    var propB = new Property( 'b' );
+    var prop = DerivedProperty.valueEquals( propA, propB );
     assert.equal( prop.value, false );
     propA.value = 'b';
     assert.equal( prop.value, true );
@@ -63,22 +63,22 @@ define( function( require ) {
 
   QUnit.test( 'DerivedProperty and/or', function( assert ) {
 
-    var propA = new axon.Property( false );
-    var propB = new axon.Property( false );
-    var propC = new axon.Property( false );
-    var propD = new axon.Property( 0 ); // dependency with an invalid (non-boolean) type
+    var propA = new Property( false );
+    var propB = new Property( false );
+    var propC = new Property( false );
+    var propD = new Property( 0 ); // dependency with an invalid (non-boolean) type
 
     // fail: 'and' with non-boolean Property
-    window.assert && assert.throws( function() { return axon.DerivedProperty.and( [ propA, propD ] ); },
+    window.assert && assert.throws( function() { return DerivedProperty.and( [ propA, propD ] ); },
       'DerivedProperty.and requires booleans Property values' );
 
     // fail: 'or' with non-boolean Property
-    window.assert && assert.throws( function() { return axon.DerivedProperty.or( [ propA, propD ] ); },
+    window.assert && assert.throws( function() { return DerivedProperty.or( [ propA, propD ] ); },
       'DerivedProperty.or requires booleans Property values' );
 
     // correct usages of 'and' and 'or'
-    var and = axon.DerivedProperty.and( [ propA, propB, propC ] );
-    var or = axon.DerivedProperty.or( [ propA, propB, propC ] );
+    var and = DerivedProperty.and( [ propA, propB, propC ] );
+    var or = DerivedProperty.or( [ propA, propB, propC ] );
 
     assert.equal( and.value, false );
     assert.equal( or.value, false );
