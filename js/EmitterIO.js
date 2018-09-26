@@ -59,7 +59,7 @@ define( function( require ) {
           this.instance.emit();
         },
         documentation: 'Emit a single event with no arguments to all added listeners.',
-        canBeInvokedForReadOnlyInstances: false
+        invocableForReadOnlyInstances: false
       }
     }, {
       documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
