@@ -86,7 +86,9 @@ define( function( require ) {
       // Unlink from dependent Properties
       for ( var i = 0; i < this.dependencies.length; i++ ) {
         var dependency = this.dependencies[ i ];
-        dependency.unlink( this.dependencyListeners[ i ] );
+        if ( !dependency.isDisposed ) {
+          dependency.unlink( this.dependencyListeners[ i ] );
+        }
       }
       this.dependencies = null;
       this.dependencyListeners = null;
