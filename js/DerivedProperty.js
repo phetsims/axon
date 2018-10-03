@@ -32,18 +32,19 @@ define( function( require ) {
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, options );
 
-    if ( options.tandem.isSuppliedAndEnabled() ) {
-
-      // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
-      assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
-    }
-
     this.dependencies = dependencies; // @private
 
     var initialValue = derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     Property.call( this, initialValue, options );
+
+
+    if ( this.isPhetioInstrumented() ) {
+
+      // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
+      assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
+    }
 
     var self = this;
 
