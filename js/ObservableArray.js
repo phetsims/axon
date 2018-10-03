@@ -134,7 +134,10 @@ define( function( require ) {
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'itemAdded', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
+      var self = this;
+      this.phetioStartEvent( 'itemAdded', function() {
+        return self.phetioType.elementType.toStateObject( item );
+      } );
 
       //Signify that an item was added to the list
       var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -142,12 +145,15 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
+      this.phetioEndEvent();
     },
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'itemRemoved', this.phetioType.elementType.toStateObject && this.phetioType.elementType.toStateObject( item ) );
+      var self = this;
+      this.phetioStartEvent( 'itemRemoved', function() {
+        return self.phetioType.elementType.toStateObject( item );
+      } );
 
       //Signify that an item was removed from the list
       var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
@@ -155,7 +161,7 @@ define( function( require ) {
         copy[ i ]( item, this );
       }
 
-      this.tandem.isSuppliedAndEnabled() && this.phetioEndEvent();
+      this.phetioEndEvent();
     },
 
     /**

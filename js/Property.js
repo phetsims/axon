@@ -289,13 +289,15 @@ define( function( require ) {
 
       // @private
       _notifyListeners: function( oldValue ) {
+        var self = this;
 
-        // We must short circuit based on tandem here as a guard against the toStateObject calls
-        this.tandem.isSuppliedAndEnabled() && this.phetioStartEvent( 'changed', {
-          oldValue: this.phetioType.elementType.toStateObject( oldValue ),
-          newValue: this.phetioType.elementType.toStateObject( this.get() ),
-          units: this.phetioType && this.phetioType.units
-        }, this.changeEventOptions );
+        this.phetioStartEvent( 'changed', function() {
+          return {
+            oldValue: self.phetioType.elementType.toStateObject( oldValue ),
+            newValue: self.phetioType.elementType.toStateObject( self.get() ),
+            units: self.phetioType.units
+          };
+        }, self.changeEventOptions );
 
         // notify listeners, optionally detect loops where this Property is set again before this completes.
         assert && assert( !this.notifying || this.reentrant,
