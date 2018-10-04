@@ -67,7 +67,7 @@ define( function( require ) {
       // {boolean} Whether reentrant calls to 'set' are allowed.
       // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
       // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
-      // cycles may pollute the message stream. See https://github.com/phetsims/axon/issues/179
+      // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
       reentrant: false
 
     }, options );
