@@ -42,6 +42,10 @@ define( function( require ) {
     // Export the value type from the parent so clients can read it from this type
     elementType: NumberIO,
 
+    /**
+     * @returns {Object}
+     * @override
+     */
     getAPI: function() {
       return {
         elementType: phet.phetIo.phetio.getAPIForType( VALUE_TYPE )
@@ -52,6 +56,7 @@ define( function( require ) {
      * Encodes a NumberProperty instance to a state.
      * @param {Object} numberProperty
      * @returns {Object} - a state object
+     * @override
      */
     toStateObject: function( numberProperty ) {
       assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
@@ -73,6 +78,7 @@ define( function( require ) {
      * Decodes a state into a NumberProperty.
      * @param {Object} stateObject
      * @returns {Object}
+     * @override
      */
     fromStateObject: function( stateObject ) {
       var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
@@ -84,6 +90,7 @@ define( function( require ) {
     /**
      * @param {NumberProperty} numberProperty
      * @param {Object} fromStateObject
+     * @override
      */
     setValue: function( numberProperty, fromStateObject ) {
       assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
