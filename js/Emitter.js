@@ -21,12 +21,39 @@ define( require => {
     constructor( options ) {
 
       options = _.extend( {
+
+        // used to validate that you are emitting with the appropriate number/types of args, see https://github.com/phetsims/axon/issues/182
+        valueTypes: [],
+
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIO( [] ) // subtypes can override with EmitterIO([...])
       }, options );
 
+      assert && assert( options.valueTypes.length <= 3, 'Emitter supports up to 3 arguments' );
+
       super( options );
+
+      // @private
+      this.numberOfArgs = options.valueTypes.length;
+
+      //@private
+      this.assertEmittingValidValues = assert && function() {
+        const args = arguments;
+        assert( args.length === this.numberOfArgs,
+          `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
+        for ( let i = 0; i < args.length; i++ ) {
+          const arg = args[ i ];
+          assert( typeof arg === options.valueTypes[ i ],
+            `arg{i} has incorrect value type. Expected ${options.valueTypes[ i ]} and received ${typeof arg}` );
+        }
+      };
+
+      // TODO: comment this back in once all emitter method consolidation work is complete, https://github.com/phetsims/axon/issues/182
+      // if ( this.isPhetioInstrumented() ) {
+      //   assert && assert( options.phetioType.parameterTypes.length === this.numberOfArgs,
+      //     'phet/phet-io argument types mismatch.' );
+      // }
 
       // @private {function[]} - the listeners that will be called on emit
       this.listeners = [];
@@ -122,17 +149,31 @@ define( require => {
      * This method is called many times in a simulation and must be well-optimized.
      * @public
      */
-    emit() {
-      this.phetioStartEvent( 'emitted' );
+    emit( arg0, arg1, arg2 ) {
+
+      this.assertPropertyValidateValue && this.assertEmittingValidValues( arg0, arg1, arg2 );
+      if ( this.isPhetioInstrumented() ) {
+        let parameters;
+        if ( this.numberOfArgs !== 0 ) {
+          parameters = { args: [] };
+
+          // TODO: this could be simplified if we can access `arguments`, but I think that's a speed reduction, see https://github.com/phetsims/axon/issues/182
+          let args = [ arg0, arg1, arg2 ];
+          for ( let i = 0; i < this.numberOfArgs; i++ ) {
+            parameters.args.push( this.phetioType.parameterTypes[ i ].toStateObject( args[ i ] ) );
+          }
+        }
+        this.phetioStartEvent( 'emitted', parameters );
+      }
       this.activeListenersStack.push( this.listeners );
       const lastEntry = this.activeListenersStack.length - 1;
 
       for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ]();
+        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1, arg2 );
       }
 
       this.activeListenersStack.pop();
-      this.phetioEndEvent();
+      this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
     /**
