@@ -44,8 +44,16 @@ define( require => {
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
         for ( let i = 0; i < args.length; i++ ) {
           const arg = args[ i ];
-          assert( typeof arg === options.valueTypes[ i ],
-            `arg{i} has incorrect value type. Expected ${options.valueTypes[ i ]} and received ${typeof arg}` );
+          if ( typeof arg === 'object' ) {
+            assert( arg instanceof options.valueTypes[ i ],
+              `arg${i} has incorrect value type. Expected type: ${options.valueTypes[ i ]} for arg value: ${arg}` );
+
+          }
+          else {
+            assert( typeof arg === options.valueTypes[ i ],
+              `arg${i} has incorrect value type. Expected type: ${options.valueTypes[ i ]} and received type: ${typeof arg}` );
+
+          }
         }
       };
 
