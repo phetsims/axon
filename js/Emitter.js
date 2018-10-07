@@ -166,12 +166,15 @@ define( require => {
       this.assertPropertyValidateValue && this.assertEmittingValidValues( arg0, arg1, arg2 );
       if ( this.isPhetioInstrumented() ) {
         let parameters;
-        if ( this.numberOfArgs !== 0 ) {
+
+        // For now, only check the phetioType parameters instead of requiring this.numberOfArgs to match
+        // TODO: unify this.phetioType.parameterTypes.length with this.numberOfArgs
+        if ( this.phetioType.parameterTypes.length !== 0 ) {
           parameters = { args: [] };
 
           // TODO: this could be simplified if we can access `arguments`, but I think that's a speed reduction, see https://github.com/phetsims/axon/issues/182
           let args = [ arg0, arg1, arg2 ];
-          for ( let i = 0; i < this.numberOfArgs; i++ ) {
+          for ( let i = 0; i < this.phetioType.parameterTypes.length; i++ ) {
             parameters.args.push( this.phetioType.parameterTypes[ i ].toStateObject( args[ i ] ) );
           }
         }
