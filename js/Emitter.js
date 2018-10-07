@@ -27,7 +27,8 @@ define( require => {
 
         tandem: Tandem.optional,
         phetioState: false,
-        phetioType: EmitterIO( [] ) // subtypes can override with EmitterIO([...])
+        phetioType: EmitterIO( [] ), // subtypes can override with EmitterIO([...])
+        listener: null // {function} [listener] optional listener to be added during construction.
       }, options );
 
       assert && assert( options.valueTypes.length <= 3, 'Emitter supports up to 3 arguments' );
@@ -69,6 +70,9 @@ define( require => {
       // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
+
+      // If an initial listener was specified, add it now
+      options.listener && this.addListener( options.listener );
     }
 
     /**
