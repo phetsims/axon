@@ -58,8 +58,8 @@ define( function( require ) {
       // useDeepEquality: false => Use === for equality test
       useDeepEquality: false,
 
-      // If marked as highFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
-      highFrequency: false,
+      // If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
+      phetioHighFrequency: false,
 
       // {string|null} units for the number, see units.js
       units: null,
@@ -147,7 +147,7 @@ define( function( require ) {
 
     // @private
     this.changeEventOptions = {
-      highFrequency: options.highFrequency
+      phetioHighFrequency: options.phetioHighFrequency
     };
   }
 
