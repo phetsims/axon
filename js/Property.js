@@ -58,9 +58,6 @@ define( function( require ) {
       // useDeepEquality: false => Use === for equality test
       useDeepEquality: false,
 
-      // If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
-      phetioHighFrequency: false,
-
       // {string|null} units for the number, see units.js
       units: null,
 
@@ -144,11 +141,6 @@ define( function( require ) {
 
     // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
     this.isDisposed = false;
-
-    // @private
-    this.changeEventOptions = {
-      phetioHighFrequency: options.phetioHighFrequency
-    };
   }
 
   axon.register( 'Property', Property );
@@ -297,7 +289,7 @@ define( function( require ) {
             newValue: self.phetioType.elementType.toStateObject( self.get() ),
             units: self.phetioType.units
           };
-        }, self.changeEventOptions );
+        } );
 
         // notify listeners, optionally detect loops where this Property is set again before this completes.
         assert && assert( !this.notifying || this.reentrant,
