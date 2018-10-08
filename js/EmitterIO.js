@@ -22,14 +22,16 @@ define( function( require ) {
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
-   * @param {function[]} phetioArgumentTypes - If loaded by phet (not phet-io), the array will be of functions
-   *                                          returned by the 'ifphetio!' plugin.
+   * @param {Object[]} elements, each with {name:string, type: IO type, documentation: string}
+   *                             - If loaded by phet (not phet-io), the array will be of functions
+   *                             - returned by the 'ifphetio!' plugin.
    * @returns {EmitterIOImpl}
    * @constructor
    */
-  function EmitterIO( phetioArgumentTypes ) {
+  function EmitterIO( elements ) {
 
-    assert && assert( Array.isArray( phetioArgumentTypes ) );
+    assert && assert( Array.isArray( elements ) );
+    var elementTypes = elements.map( function( element ) {return element.type;} );
 
     /**
      * @param {Emitter} emitter
@@ -37,7 +39,7 @@ define( function( require ) {
      * @constructor
      */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
-      assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
+      assert && assert( elements, 'phetioArgumentTypes should be defined' );
       assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
       ObjectIO.call( this, emitter, phetioID );
@@ -46,25 +48,30 @@ define( function( require ) {
     return phetioInherit( ObjectIO, 'EmitterIO', EmitterIOImpl, {
       addListener: {
         returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, phetioArgumentTypes ) ],
+        parameterTypes: [ FunctionIO( VoidIO, elementTypes ) ],
         implementation: function( listener ) {
           this.instance.addListener( listener );
         },
-        documentation: 'Add a listener which will be called when the emitter emits.'
+        documentation: 'Adds a listener which will be called when the emitter emits.'
       },
       emit: {
         returnType: VoidIO,
-        parameterTypes: [],
-        implementation: function() {
-          this.instance.emit();
+        parameterTypes: elementTypes,
+        implementation: function( args ) {
+          this.instance.emit.apply( this.instance, args );
         },
-        documentation: 'Emit a single event with no arguments to all added listeners.',
+        documentation: 'Emits a single event to all listeners.',
         invocableForReadOnlyInstances: false
       }
     }, {
-      documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
+      documentation: 'Emits when an event occurs. ' + ( elements.length === 0 ? 'No arguments.' : 'The arguments are:<br>' +
+                     '<ol>' + elements.map( function( element ) {
+          var docText = element.documentation ? '. ' + element.documentation : '';
+          return '<li>' + element.name + ': ' + element.type.typeName + docText + '</li>';
+        } ).join( '\n' ) + '</ol>' ),
       events: [ 'emitted' ],
-      parameterTypes: phetioArgumentTypes
+      parameterTypes: elementTypes,
+      elements: elements
     } );
   }
 
