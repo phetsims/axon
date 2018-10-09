@@ -13,11 +13,17 @@ define( require => {
    * Performs valueType validation on a value. Fails an assertion if invalid.
    * @param {*} value
    * @param {function|string|null} valueType
+   * @param {boolean} allowUndefined - allow undefined value
    */
-  function assertValueType( value, valueType ) {
+  function assertValueType( value, valueType, allowUndefined ) {
 
     if ( !assert ) {
       throw new Error( 'call this function only when assertions are enabled' );
+    }
+
+    // short circuit the asserts if the value is permitted to be undefined and is
+    if ( allowUndefined && value === undefined ) {
+      return;
     }
 
     if ( typeof valueType === 'string' ) {

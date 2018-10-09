@@ -9,6 +9,7 @@ define( require => {
   'use strict';
 
   // modules
+  const assertValueType = require( 'AXON/assertValueType' );
   const axon = require( 'AXON/axon' );
   const EmitterIO = require( 'AXON/EmitterIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
@@ -25,36 +26,39 @@ define( require => {
         // used to validate that you are emitting with the appropriate number/types of args, see https://github.com/phetsims/axon/issues/182
         valueTypes: [],
 
+        // {Array.<boolean>|null} - whether or not a value type can be an optional parameter for the emit function
+        areTypesOptional: null,
+
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIO( [] ), // subtypes can override with EmitterIO([...])
         listener: null // {function} [listener] optional listener to be added during construction.
       }, options );
 
-      assert && assert( options.valueTypes.length <= 3, 'Emitter supports up to 3 arguments' );
-
       super( options );
 
       // @private
       this.numberOfArgs = options.valueTypes.length;
 
+      if ( options.areTypesOptional !== null ) {
+        assert && assert( Array.isArray( options.areTypesOptional ) );
+        assert && assert( this.numberOfArgs === options.areTypesOptional.length, 'if types are declared as optional, all args must be' +
+                                                                                 'declared.' );
+        for ( let i = 0; i < options.areTypesOptional.length; i++ ) {
+          assert( typeof options.areTypesOptional[ i ] === 'boolean' );
+        }
+      }
+
       //@private
-      this.assertEmittingValidValues = assert && function() {
-        const args = arguments;
-        assert( args.length === this.numberOfArgs,
+      this.assertEmittingValidValues = assert && function( args ) {
+        !options.areTypesOptional && assert( args.length === this.numberOfArgs,
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
-        for ( let i = 0; i < args.length; i++ ) {
-          const arg = args[ i ];
-          if ( typeof arg === 'object' ) {
-            assert( arg instanceof options.valueTypes[ i ],
-              `arg${i} has incorrect value type. Expected type: ${options.valueTypes[ i ]} for arg value: ${arg}` );
-
+        for ( let i = 0; i < options.valueTypes.length; i++ ) {
+          let isOptional;
+          if ( options.areTypesOptional ) {
+            isOptional = options.areTypesOptional[ i ];
           }
-          else {
-            assert( typeof arg === options.valueTypes[ i ],
-              `arg${i} has incorrect value type. Expected type: ${options.valueTypes[ i ]} and received type: ${typeof arg}` );
-
-          }
+          assertValueType( args[ i ], options.valueTypes[ i ], isOptional );
         }
       };
 
@@ -159,26 +163,42 @@ define( require => {
     /**
      * Emits a single event.
      * This method is called many times in a simulation and must be well-optimized.
+     * @params - expected parameters are based on options.valueTypes, see constructor
      * @public
      */
-    emit( arg0, arg1, arg2 ) {
+    emit() {
 
-      this.assertPropertyValidateValue && this.assertEmittingValidValues( arg0, arg1, arg2 );
+      // Get the arguments from the function in an optimizable way.
+      // Copied from https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
+      // .length is just an integer, this doesn't leak
+      // the arguments object itself
+      let args = new Array( arguments.length );
+      for ( let i = 0; i < args.length; ++i ) {
+        //i is always valid index in the arguments object
+        args[ i ] = arguments[ i ];
+      }
+
+      // validate the args
+      this.assertEmittingValidValues && this.assertEmittingValidValues( args );
+
+      // handle phet-io events for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
-        // Enumerate named args for the data stream.
-        var args = {};
+        // Enumerate named argsObject for the data stream.
+        let argsObject = {};
         for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-          var element = this.phetioType.elements[ i ];
-          args[ element.name ] = element.type.toStateObject( arguments[ i ] );
+          let element = this.phetioType.elements[ i ];
+          argsObject[ element.name ] = element.type.toStateObject( arguments[ i ] );
         }
-        this.phetioStartEvent( 'emitted', args );
+        this.phetioStartEvent( 'emitted', argsObject );
       }
+
       this.activeListenersStack.push( this.listeners );
       const lastEntry = this.activeListenersStack.length - 1;
 
+      // Notify listeners
       for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1, arg2 );
+        this.activeListenersStack[ lastEntry ][ i ].apply( this, args );
       }
 
       this.activeListenersStack.pop();

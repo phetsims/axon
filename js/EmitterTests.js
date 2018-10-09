@@ -15,6 +15,39 @@ define( require => {
 
   QUnit.module( 'Emitter' );
 
+  QUnit.test( 'Emitter Constructing and options', assert => {
+
+    let e1 = new Emitter( {
+      valueTypes: [ 'number' ]
+    } );
+
+    e1.emit( 1 );
+
+    if ( window.assert ) {
+      assert.throws( () => { e1.emit( 2, 2 ); }, 'Wrong number of emitting parameters' );
+      assert.throws( () => { e1.emit( true ); }, 'Wrong parameter type bool' );
+      assert.throws( () => { e1.emit( '2, 2' ); }, 'Wrong parameter type string' );
+      assert.throws( () => { e1.emit( undefined ); }, 'Wrong parameter type undefined' );
+      assert.throws( () => { e1.emit( null ); }, 'Wrong parameter type null' );
+    }
+
+    // emitting with an object as parameter
+    let e2 = new Emitter( {
+      valueTypes: [ Emitter, Object, 'function' ]
+    } );
+
+    e2.emit( new Emitter(), {}, () => {} );
+
+    let e3 = new Emitter( {
+      valueTypes: [ 'number', 'string' ],
+      areTypesOptional: [ false, true ]
+    } );
+
+    e3.emit( 1, 'hi' );
+    e3.emit( 1 );
+    e3.emit( 1, undefined );
+  } );
+
   QUnit.test( 'Test emit timing Emitter', assert => {
 
     const e = new Emitter();
@@ -33,7 +66,7 @@ define( require => {
     e1.addListener( () => {} );
 
 
-    let testEmitter = function( e, numberOfLoopings ) {
+    let testEmitter = ( e, numberOfLoopings ) => {
 
       let start = Date.now();
 
@@ -51,14 +84,14 @@ define( require => {
     testEmitter( e, 10000000 );
   } );
 
-  QUnit.test( 'Emitter Basics', function( assert ) {
-    var stack = [];
-    var emitter = new Emitter(); // eslint-disable-line no-undef
-    var a = function() {
+  QUnit.test( 'Emitter Basics', assert => {
+    let stack = [];
+    let emitter = new Emitter(); // eslint-disable-line no-undef
+    let a = () => {
       stack.push( 'a' );
       emitter.removeListener( b );
     };
-    var b = function() {
+    let b = () => {
       stack.push( 'b' );
     };
     emitter.addListener( a );
@@ -72,19 +105,19 @@ define( require => {
     assert.equal( emitter.hasListener( b ), false, 'b should have been removed' );
   } );
 
-  QUnit.test( 'Emitter Tricks', function( assert ) {
-    var entries = [];
+  QUnit.test( 'Emitter Tricks', assert => {
+    let entries = [];
 
-    var emitter = new Emitter( { valueTypes: [ 'string' ] } ); // eslint-disable-line no-undef
+    let emitter = new Emitter( { valueTypes: [ 'string' ] } ); // eslint-disable-line no-undef
 
-    var a = function( arg ) {
+    let a = arg => {
       entries.push( { listener: 'a', arg: arg } );
 
       if ( arg === 'first' ) {
         emitter.emit( 'second' );
       }
     };
-    var b = function( arg ) {
+    let b = arg => {
       entries.push( { listener: 'b', arg: arg } );
 
       if ( arg === 'second' ) {
@@ -92,7 +125,7 @@ define( require => {
         emitter.emit( 'third' );
       }
     };
-    var c = function( arg ) {
+    let c = arg => {
       entries.push( { listener: 'c', arg: arg } );
     };
 
@@ -114,7 +147,7 @@ define( require => {
      * If the stack is [ undefended, undefended ], changing listeners copies only the top, leaving
      * [ undefended, defended ], and our first event triggers a listener that wasn't listening when it was called.
      */
-    _.each( entries, function( entry ) {
+    _.each( entries, entry => {
       assert.ok( !( entry.listener === 'c' && entry.arg === 'first' ), 'not C,first' );
     } );
 
