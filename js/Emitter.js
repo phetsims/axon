@@ -45,7 +45,7 @@ define( require => {
         assert && assert( this.numberOfArgs === options.areTypesOptional.length, 'if types are declared as optional, all args must be' +
                                                                                  'declared.' );
         for ( let i = 0; i < options.areTypesOptional.length; i++ ) {
-          assert( typeof options.areTypesOptional[ i ] === 'boolean' );
+          assert && assert( typeof options.areTypesOptional[ i ] === 'boolean' );
         }
       }
 
