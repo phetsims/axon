@@ -17,6 +17,7 @@ define( require => {
 
   QUnit.test( 'Emitter Constructing and options', assert => {
 
+    assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
     let e1 = new Emitter( {
       valueTypes: [ 'number' ]
     } );
