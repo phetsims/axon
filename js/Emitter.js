@@ -31,7 +31,7 @@ define( require => {
 
         tandem: Tandem.optional,
         phetioState: false,
-        phetioType: EmitterIO( [] ), // subtypes can override with EmitterIO([...])
+        phetioType: EmitterIO( [] ), // subtypes can override with EmitterIO([...]), see EmitterIO.js
         listener: null // {function} [listener] optional listener to be added during construction.
       }, options );
 
