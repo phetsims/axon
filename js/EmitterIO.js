@@ -69,6 +69,7 @@ define( function( require ) {
           var docText = element.documentation ? '. ' + element.documentation : '';
           return '<li>' + element.name + ': ' + element.type.typeName + docText + '</li>';
         } ).join( '\n' ) + '</ol>' ),
+
       events: [ 'emitted' ],
       parameterTypes: elementTypes,
       elements: elements
