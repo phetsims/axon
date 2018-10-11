@@ -22,6 +22,9 @@ define( function( require ) {
   // constants
   var TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
+  // variables
+  var globalId = 0; // autoincremented for unique IDs
+
   /**
    * @param {*} value - the initial value of the property
    * @param {Object} [options] - options
@@ -80,6 +83,9 @@ define( function( require ) {
     assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
 
     PhetioObject.call( this, options );
+
+    // @public {number} - Unique identifier for this Property.
+    this.id = globalId++;
 
     // @public (phet-io) Units, if any.  See units.js for valid values
     this.units = options.units;
@@ -268,7 +274,7 @@ define( function( require ) {
         assert && assert( !this.notifying || this.reentrant,
           'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
         this.notifying = true;
-        this.changedEmitter.emit2( this.get(), oldValue );
+        this.changedEmitter.emit3( this.get(), oldValue, this );
         this.notifying = false;
 
         this.isPhetioInstrumented() && this.phetioEndEvent();
@@ -283,7 +289,7 @@ define( function( require ) {
        * @public
        */
       notifyListenersStatic: function() {
-        this.changedEmitter.emit1( this.get() );
+        this.changedEmitter.emit1( this.get(), undefined, this );
       },
 
       /**
