@@ -181,7 +181,7 @@ define( require => {
       // validate the args
       this.assertEmittingValidValues && this.assertEmittingValidValues( args );
 
-      // handle phet-io events for the emitted event
+      // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
         // Enumerate named argsObject for the data stream.
