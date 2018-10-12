@@ -57,8 +57,10 @@ define( function( require ) {
       emit: {
         returnType: VoidIO,
         parameterTypes: elementTypes,
-        implementation: function( args ) {
-          this.instance.emit.apply( this.instance, args );
+
+        // Match Emitter.emit's dynamic number of arguments
+        implementation: function() {
+          this.instance.emit.apply( this.instance, arguments );
         },
         documentation: 'Emits a single event to all listeners.',
         invocableForReadOnlyInstances: false
