@@ -45,7 +45,7 @@ define( require => {
 
     e3.emit( 1, 'hi' );
     e3.emit( 1, null );
-    if ( assert ) {
+    if ( window.assert ) {
       assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type null' );
       assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type null' );
       assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type null' );
