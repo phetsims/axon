@@ -23,11 +23,9 @@ define( require => {
 
       options = _.extend( {
 
-        // used to validate that you are emitting with the appropriate number/types of args, see https://github.com/phetsims/axon/issues/182
+        // {Array.<string|function|null>} used to validate that you are emitting with the appropriate number/types of args, matches
+        // logic of assertValueType, see https://github.com/phetsims/axon/issues/182
         valueTypes: [],
-
-        // {Array.<boolean>|null} - whether or not a value type can be an optional parameter for the emit function
-        areTypesOptional: null,
 
         tandem: Tandem.optional,
         phetioState: false,
@@ -40,26 +38,13 @@ define( require => {
       // @private
       this.numberOfArgs = options.valueTypes.length;
 
-      if ( options.areTypesOptional !== null ) {
-        assert && assert( Array.isArray( options.areTypesOptional ) );
-        assert && assert( this.numberOfArgs === options.areTypesOptional.length, 'if types are declared as optional, all args must be' +
-                                                                                 'declared.' );
-        for ( let i = 0; i < options.areTypesOptional.length; i++ ) {
-          assert && assert( typeof options.areTypesOptional[ i ] === 'boolean' );
-        }
-      }
-
       //@private
       this.assertEmittingValidValues = assert && function() {
         var args = arguments;
-        !options.areTypesOptional && assert( args.length === this.numberOfArgs,
+        assert( args.length === this.numberOfArgs,
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
         for ( let i = 0; i < options.valueTypes.length; i++ ) {
-          let isOptional;
-          if ( options.areTypesOptional ) {
-            isOptional = options.areTypesOptional[ i ];
-          }
-          assertValueType( args[ i ], options.valueTypes[ i ], isOptional );
+          assertValueType( args[ i ], options.valueTypes[ i ] );
         }
       };
 

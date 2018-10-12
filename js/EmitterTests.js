@@ -40,13 +40,17 @@ define( require => {
     e2.emit( new Emitter(), {}, () => {} );
 
     let e3 = new Emitter( {
-      valueTypes: [ 'number', 'string' ],
-      areTypesOptional: [ false, true ]
+      valueTypes: [ 'number', v => v === null || typeof v === 'string' ]
     } );
 
     e3.emit( 1, 'hi' );
-    e3.emit( 1 );
-    e3.emit( 1, undefined );
+    e3.emit( 1, null );
+    if ( assert ) {
+      assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type null' );
+      assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type null' );
+      assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type null' );
+    }
+
   } );
 
   QUnit.test( 'Test emit timing Emitter', assert => {
