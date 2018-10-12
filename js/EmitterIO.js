@@ -19,10 +19,13 @@ define( function( require ) {
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
 
+  // allowed keys
+  var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];
+
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
-   * @param {Object[]} elements, each with {name:string, type: IO type, documentation: string}
+   * @param {Object[]} elements, each with {name:string, type: IO type, documentation: string, [predicate]: function}
    *                             - If loaded by phet (not phet-io), the array will be of functions
    *                             - returned by the 'ifphetio!' plugin.
    * @returns {EmitterIOImpl}
@@ -31,7 +34,19 @@ define( function( require ) {
   function EmitterIO( elements ) {
 
     assert && assert( Array.isArray( elements ) );
-    var elementTypes = elements.map( function( element ) {return element.type;} );
+
+    var elementTypes = elements.map( function( element ) {
+
+      // validate the look of the content
+      assert && assert( typeof element === 'object' );
+      var keys = Object.keys( element );
+      for ( let i = 0; i < keys.length; i++ ) {
+        const key = keys[ i ];
+        assert && assert( ELEMENT_KEYS.indexOf( key ) >= 0, 'unrecognized element key: ' + key );
+      }
+      return element.type;
+
+    } );
 
     /**
      * @param {Emitter} emitter
@@ -71,6 +86,10 @@ define( function( require ) {
         } ).join( '\n' ) + '</ol>' ),
 
       events: [ 'emitted' ],
+
+      /**
+       * {Array.<ObjectIO>} - typeIOs
+       */
       parameterTypes: elementTypes,
       elements: elements
     } );
