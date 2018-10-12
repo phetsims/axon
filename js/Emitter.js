@@ -50,7 +50,8 @@ define( require => {
       }
 
       //@private
-      this.assertEmittingValidValues = assert && function( args ) {
+      this.assertEmittingValidValues = assert && function() {
+        var args = arguments;
         !options.areTypesOptional && assert( args.length === this.numberOfArgs,
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
         for ( let i = 0; i < options.valueTypes.length; i++ ) {
@@ -168,18 +169,8 @@ define( require => {
      */
     emit() {
 
-      // Get the arguments from the function in an optimizable way.
-      // Copied from https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
-      // .length is just an integer, this doesn't leak
-      // the arguments object itself
-      let args = new Array( arguments.length );
-      for ( let i = 0; i < args.length; ++i ) {
-        //i is always valid index in the arguments object
-        args[ i ] = arguments[ i ];
-      }
-
       // validate the args
-      this.assertEmittingValidValues && this.assertEmittingValidValues( args );
+      this.assertEmittingValidValues && this.assertEmittingValidValues.apply( this, arguments );
 
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
@@ -198,7 +189,7 @@ define( require => {
 
       // Notify listeners
       for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ].apply( this, args );
+        this.activeListenersStack[ lastEntry ][ i ].apply( this, arguments );
       }
 
       this.activeListenersStack.pop();
