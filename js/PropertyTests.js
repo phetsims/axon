@@ -57,6 +57,33 @@ define( function( require ) {
     assert.equal( callbacks, 0, 'should not call back to a lazy multilink' );
   } );
 
+  QUnit.test( 'Property ID checks', function( assert ) {
+    assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' );
+  } );
+
+  QUnit.test( 'Property link parameters', function( assert ) {
+    var p = new Property( 1 );
+    var calls = [];
+    p.link( function( newValue, oldValue, property ) {
+      calls.push( {
+        newValue: newValue,
+        oldValue: oldValue,
+        property: property
+      } );
+    } );
+    p.value = 2;
+
+    assert.equal( calls.length, 2 );
+
+    assert.equal( calls[ 0 ].newValue, 1 );
+    assert.equal( calls[ 0 ].oldValue, undefined );
+    assert.equal( calls[ 0 ].property, p );
+
+    assert.equal( calls[ 1 ].newValue, 2 );
+    assert.equal( calls[ 1 ].oldValue, 1 );
+    assert.equal( calls[ 1 ].property, p );
+  } );
+
   /**
    * Make sure linking attributes and unlinking attributes works on Property
    */
