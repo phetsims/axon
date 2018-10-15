@@ -315,7 +315,7 @@ define( function( require ) {
        */
       link: function( listener ) {
         this.changedEmitter.addListener( listener );
-        listener( this.get(), null ); // null should be used when an object is expected but unavailable
+        listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
       },
 
       /**
