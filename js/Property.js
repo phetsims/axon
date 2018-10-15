@@ -289,7 +289,7 @@ define( function( require ) {
        * @public
        */
       notifyListenersStatic: function() {
-        this.changedEmitter.emit1( this.get(), undefined, this );
+        this.changedEmitter.emit3( this.get(), undefined, this );
       },
 
       /**
