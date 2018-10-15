@@ -124,7 +124,7 @@ define( function( require ) {
           value: phetioValueType.toStateObject( property.value )
         };
 
-        // Only include validValues if specified, so they only show up in studio when supplied.
+        // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
         if ( property.validValues ) {
           stateObject.validValues = property.validValues.map( function( v ) {
             return phetioValueType.toStateObject( v );
