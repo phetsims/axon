@@ -14,6 +14,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   var Property = require( 'AXON/Property' );
+  var Range = require( 'DOT/Range' );
 
   // constants
   var VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
@@ -33,6 +34,11 @@ define( function( require ) {
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
     options.range && assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
+
+    // for phet-io deserialization, it's good to have all ranges as a consistent type
+    if ( options.range && !( options.range instanceof Range ) ) {
+      options.range = new Range( options.range.min, options.range.max );
+    }
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;

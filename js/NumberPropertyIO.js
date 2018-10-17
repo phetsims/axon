@@ -12,6 +12,7 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var PropertyIO = require( 'AXON/PropertyIO' );
+  var RangeIO = require( 'DOT/RangeIO' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
@@ -69,7 +70,7 @@ define( function( require ) {
       }
 
       if ( numberProperty.range ) {
-        parentStateObject.range = numberProperty.range;
+        parentStateObject.range = RangeIO.toStateObject( numberProperty.range );
       }
       return parentStateObject;
     },
