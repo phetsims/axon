@@ -373,7 +373,7 @@ define( function( require ) {
       },
 
       // @public Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
-      toString: function() {return 'Property{' + this.get() + '}'; },
+      toString: function() {return 'Property#' + this.id + '{' + this.get() + '}'; },
 
       // @public
       valueOf: function() {return this.toString();},
