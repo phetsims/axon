@@ -14,10 +14,10 @@ define( function( require ) {
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var FunctionIO = require( 'ifphetio!PHET_IO/types/FunctionIO' );
-  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // allowed keys
   var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];

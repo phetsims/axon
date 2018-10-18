@@ -21,7 +21,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // ifphetio
-  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   /**
    * @param {Object[]} [array]

@@ -16,7 +16,7 @@ define( function( require ) {
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var VoidIO = require( 'ifphetio!PHET_IO/types/VoidIO' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
    * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.

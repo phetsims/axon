@@ -16,7 +16,7 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
 
   // ifphetio
-  var StringIO = require( 'ifphetio!PHET_IO/types/StringIO' );
+  var StringIO = require( 'TANDEM/types/StringIO' );
 
   /**
    * @param {string} value - initial value
