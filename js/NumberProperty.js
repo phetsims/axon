@@ -28,7 +28,9 @@ define( function( require ) {
 
     options = _.extend( {
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
-      range: null, // {Range|{min:number, max:number}|null} range of the value
+
+      // {Range|{min:number, max:number}|null} range of the value. If passing in an object literal, then it will be converted to type {Range}
+      range: null,
       phetioType: NumberPropertyIO
     }, options );
 
