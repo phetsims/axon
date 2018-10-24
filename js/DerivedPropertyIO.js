@@ -12,11 +12,11 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var PropertyIO = require( 'AXON/PropertyIO' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
    * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.

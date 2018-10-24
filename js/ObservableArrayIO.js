@@ -11,15 +11,15 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-
-  // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var NumberIO = require( 'TANDEM/types/NumberIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
+
+  // ifphetio
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.

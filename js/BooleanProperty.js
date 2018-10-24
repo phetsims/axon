@@ -12,12 +12,10 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var BooleanIO = require( 'TANDEM/types/BooleanIO' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
-
-  // ifphetio
-  var BooleanIO = require( 'TANDEM/types/BooleanIO' );
 
   /**
    * @param {boolean} value - initial value

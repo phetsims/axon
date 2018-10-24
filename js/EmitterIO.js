@@ -11,13 +11,13 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // allowed keys
   var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];

@@ -14,8 +14,6 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
-
-  // ifphetio
   var StringIO = require( 'TANDEM/types/StringIO' );
 
   /**

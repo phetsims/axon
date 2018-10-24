@@ -16,12 +16,10 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var inherit = require( 'PHET_CORE/inherit' );
   var NumberProperty = require( 'AXON/NumberProperty' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
-
-  // ifphetio
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   /**
    * @param {Object[]} [array]
