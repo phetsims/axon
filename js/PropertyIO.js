@@ -14,11 +14,11 @@ define( function( require ) {
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   /**
    * An observable property that triggers notifications when the value changes.

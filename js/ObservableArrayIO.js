@@ -15,11 +15,11 @@ define( function( require ) {
   var NumberIO = require( 'TANDEM/types/NumberIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetio = require( 'ifphetio!PHET_IO/phetio' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.

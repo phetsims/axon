@@ -14,10 +14,10 @@ define( function( require ) {
   var NumberIO = require( 'TANDEM/types/NumberIO' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var RangeIO = require( 'DOT/RangeIO' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   // constants
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
