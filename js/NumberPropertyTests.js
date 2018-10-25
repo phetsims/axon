@@ -11,6 +11,7 @@ define( function( require ) {
 
   // modules
   var NumberProperty = require( 'AXON/NumberProperty' );
+  var Range = require( 'DOT/Range' );
 
   QUnit.module( 'NumberProperty' );
 
@@ -55,24 +56,24 @@ define( function( require ) {
       p = new NumberProperty( 0, { range: [ 0, 10 ] } );
     }, 'bad range' );
     window.assert && assert.throws( function() {
-      p = new NumberProperty( 11, { range: { min: 0, max: 10 } } );
+      p = new NumberProperty( 11, { range: new Range( 0, 10 ) } );
     }, 'initial value is greater than range.max' );
     window.assert && assert.throws( function() {
-      p = new NumberProperty( -1, { range: { min: 0, max: 10 } } );
+      p = new NumberProperty( -1, { range: new Range( 0, 10 ) } );
     }, 'initial value is less than range.min' );
     window.assert && assert.throws( function() {
       p = new NumberProperty( 0, {
-        range: { min: 0, max: 10 },
+        range: new Range( 0, 10 ),
         validValues: [ 0, 1, 2, 11 ]
       } );
     }, 'member of validValues is greater than range.max' );
     window.assert && assert.throws( function() {
       p = new NumberProperty( 0, {
-        range: { min: 0, max: 10 },
+        range: new Range( 0, 10 ),
         validValues: [ -1, 0, 1, 2 ]
       } );
     }, 'member of validValues is less than range.min' );
-    p = new NumberProperty( 0, { range: { min: 0, max: 10 } } );
+    p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
     p.value = 5;
     window.assert && assert.throws( function() {
       p.value = 11;
