@@ -29,18 +29,13 @@ define( function( require ) {
     options = _.extend( {
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
 
-      // {Range|{min:number, max:number}|null} range of the value. If passing in an object literal, then it will be converted to type {Range}
+      // {Range|null} range
       range: null,
       phetioType: NumberPropertyIO
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-    options.range && assert && assert( isValidRange( options.range ), 'invalid range: ' + options.range );
-
-    // for phet-io deserialization, it's good to have all ranges as a consistent type
-    if ( options.range && !( options.range instanceof Range ) ) {
-      options.range = new Range( options.range.min, options.range.max );
-    }
+    options.range && assert && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;
@@ -70,15 +65,6 @@ define( function( require ) {
   }
 
   axon.register( 'NumberProperty', NumberProperty );
-
-  /**
-   * Validates a range value.
-   * @param {{min:number, max:number}} range
-   * @returns {boolean}
-   */
-  function isValidRange( range ) {
-    return ( typeof range === 'object' ) && typeof range.min === 'number' && typeof range.max === 'number';
-  }
 
   return inherit( Property, NumberProperty, {
 
