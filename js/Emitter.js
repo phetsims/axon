@@ -23,9 +23,10 @@ define( require => {
 
       options = _.extend( {
 
-        // {Array.<string|function|null>} used to validate that you are emitting with the appropriate number/types of args, matches
+        // {Array.<string|function|null>|null} Used to validate that you are emitting with the appropriate number/types of args, matches
         // logic of assertValueType, see https://github.com/phetsims/axon/issues/182
-        valueTypes: [],
+        // If null, it is attempted to be set through the phetioType below.
+        valueTypes: null,
 
         tandem: Tandem.optional,
         phetioState: false,
@@ -34,6 +35,11 @@ define( require => {
       }, options );
 
       super( options );
+
+      // If no valueTypes are provided, use the valueTypes from the EmitterIO type.
+      if ( !options.valueTypes ) {
+        options.valueTypes = options.phetioType.valueTypes;
+      }
 
       // @private
       this.numberOfArgs = options.valueTypes.length;
@@ -47,12 +53,6 @@ define( require => {
           assertValueType( args[ i ], options.valueTypes[ i ] );
         }
       };
-
-      // TODO: comment this back in once all emitter method consolidation work is complete, https://github.com/phetsims/axon/issues/182
-      // if ( this.isPhetioInstrumented() ) {
-      //   assert && assert( options.phetioType.parameterTypes.length === this.numberOfArgs,
-      //     'phet/phet-io argument types mismatch.' );
-      // }
 
       // @private {function[]} - the listeners that will be called on emit
       this.listeners = [];

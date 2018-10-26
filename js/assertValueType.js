@@ -27,7 +27,8 @@ define( require => {
     }
     else if ( typeof valueType === 'function' ) {
 
-      // support predicate functions
+      // support predicate functions, if passing in an anonymous function, then assume it is a predicate. Also support
+      // a `isPredicate` property marker on functions.
       if ( valueType.isPredicate || !valueType.name ) {
         assert( valueType( value ), 'valueType predicate did not resolve truthy for value=' + value );
       }

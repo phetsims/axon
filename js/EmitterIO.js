@@ -35,6 +35,7 @@ define( function( require ) {
 
     assert && assert( Array.isArray( elements ) );
 
+    var valueTypes = [];
     var elementTypes = elements.map( function( element ) {
 
       // validate the look of the content
@@ -44,8 +45,9 @@ define( function( require ) {
         const key = keys[ i ];
         assert && assert( ELEMENT_KEYS.indexOf( key ) >= 0, 'unrecognized element key: ' + key );
       }
+      assert && assert( element.predicate || element.type.isInstance, 'no valueType specified' );
+      valueTypes.push( element.predicate || element.type.isInstance );
       return element.type;
-
     } );
 
     /**
@@ -93,6 +95,17 @@ define( function( require ) {
        * {Array.<ObjectIO>} - typeIOs
        */
       parameterTypes: elementTypes,
+
+      /**
+       * @public
+       * {Array.<function>} - list of predicate functions that will validate an value against whether it is of the
+       * element IOType's core type.
+       */
+      valueTypes: valueTypes,
+
+      /**
+       * {Array.<Object>} - see constructor for details on object literal keys
+       */
       elements: elements
     } );
   }
