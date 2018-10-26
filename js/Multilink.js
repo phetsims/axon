@@ -36,8 +36,12 @@ define( function( require ) {
     //When a dependency value changes, update the list of dependencies and call back to the callback
     dependencies.forEach( function( dependency, i ) {
       var listener = function( value ) {
-        self.dependencyValues[ i ] = value;
-        callback.apply( null, self.dependencyValues );
+
+        // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
+        if ( self.dependencies ) {
+          self.dependencyValues[ i ] = value;
+          callback.apply( null, self.dependencyValues );
+        }
       };
       self.dependencyListeners.push( listener );
       dependency.lazyLink( listener );
