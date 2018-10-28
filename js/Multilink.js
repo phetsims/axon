@@ -38,7 +38,7 @@ define( function( require ) {
       var listener = function( value ) {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
-        if ( self.dependencies ) {
+        if ( !self.isDisposed ) {
           self.dependencyValues[ i ] = value;
           callback.apply( null, self.dependencyValues );
         }
@@ -51,6 +51,9 @@ define( function( require ) {
     if ( !lazy ) {
       callback.apply( null, this.dependencyValues );
     }
+
+    // @private - whether the Multilink has been disposed
+    this.isDisposed = false;
   }
 
   axon.register( 'Multilink', Multilink );
@@ -71,6 +74,7 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
       this.dependencyValues = null;
+      this.isDisposed = true;
     }
   } );
 } );
