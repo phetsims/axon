@@ -12,9 +12,9 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var NumberIO = require( 'TANDEM/types/NumberIO' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var RangeIO = require( 'DOT/RangeIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );

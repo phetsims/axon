@@ -13,8 +13,8 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
