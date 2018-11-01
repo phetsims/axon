@@ -10,14 +10,14 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
   var assertValueType = require( 'AXON/assertValueType' );
+  var axon = require( 'AXON/axon' );
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var Multilink = require( 'AXON/Multilink' );
-  var units = require( 'AXON/units' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var units = require( 'AXON/units' );
 
   // constants
   var TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
