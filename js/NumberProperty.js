@@ -30,12 +30,14 @@ define( function( require ) {
       numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
 
       // {Range|null} range
-      range: null,
-      phetioType: NumberPropertyIO
+      range: null
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
     options.range && assert && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
+
+    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
+    options.phetioType = NumberPropertyIO;
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;
