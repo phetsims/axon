@@ -24,14 +24,15 @@ define( function( require ) {
    */
   function BooleanProperty( value, options ) {
 
-    options = _.extend( {
-      phetioType: PropertyIO( BooleanIO )
-    }, options );
+    options = options || {};
 
     assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
     assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
     assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
     options.valueType = 'boolean';  // BooleanProperty requires values to be primitive booleans
+
+    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
+    options.phetioType = PropertyIO( BooleanIO );
 
     Property.call( this, value, options );
   }
