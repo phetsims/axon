@@ -23,12 +23,13 @@ define( function( require ) {
    */
   function StringProperty( value, options ) {
 
-    options = _.extend( {
-      phetioType: PropertyIO( StringIO )
-    }, options );
+    options = options || {};
 
     assert && assert( !options.valueType, 'valueType is set by StringProperty' );
     options.valueType = 'string';
+
+    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by StringProperty' );
+    options.phetioType = PropertyIO( StringIO );
 
     Property.call( this, value, options );
   }
