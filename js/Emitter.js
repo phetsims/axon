@@ -161,8 +161,9 @@ define( require => {
       if ( this.isPhetioInstrumented() ) {
 
         // Enumerate named argsObject for the data stream.
-        var argumentOrder = [];
+        const argumentOrder = [];
         let argsObject = {};
+        let parameters = {};
         for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
           let element = this.phetioType.elements[ i ];
           argsObject[ element.name ] = element.type.toStateObject( arguments[ i ] );
@@ -171,12 +172,12 @@ define( require => {
 
         // phetioPlayback events are marked so they can be easily played back, see https://github.com/phetsims/phet-io/issues/1383
         if ( this.phetioPlayback ) {
-          argsObject.isPlaybackEmitter = true;
 
           // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
-          argsObject.argumentOrder = argumentOrder;
+          parameters.argumentOrder = argumentOrder;
         }
-        this.phetioStartEvent( 'emitted', argsObject );
+        parameters.args = argsObject;
+        this.phetioStartEvent( 'emitted', parameters );
       }
 
       this.activeListenersStack.push( this.listeners );
