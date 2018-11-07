@@ -84,7 +84,9 @@ define( function( require ) {
     fromStateObject: function( stateObject ) {
       var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.numberType = stateObject.numberType;
-      fromParentStateObject.range = stateObject.range;
+
+      // Create Range instance if defined, otherwise preserve value of null or undefined.
+      fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) : stateObject.range;
       return fromParentStateObject;
     },
 
