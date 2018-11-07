@@ -34,7 +34,7 @@ define( function( require ) {
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-    options.range && assert && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
+    assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
 
     assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
     options.phetioType = NumberPropertyIO;
