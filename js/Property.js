@@ -265,8 +265,11 @@ define( function( require ) {
         this.phetioStartEvent( 'changed', function() {
           return {
             oldValue: self.phetioType.elementType.toStateObject( oldValue ),
-            newValue: self.phetioType.elementType.toStateObject( self.get() ),
-            units: self.phetioType.units
+            newValue: self.phetioType.elementType.toStateObject( self.get() )
+          };
+        }, function() {
+          return {
+            units: self.units
           };
         } );
 

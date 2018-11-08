@@ -63,6 +63,16 @@ define( require => {
 
       // If an initial listener was specified, add it now
       options.listener && this.addListener( options.listener );
+
+      // @private - Enumerate named argsObject for the data stream.
+      // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
+      // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
+      if ( this.phetioPlayback ) {
+        this.phetioEventMetadata = {
+          dataKeys: this.phetioType.elements.map( element => element.name ),
+          playback: true
+        };
+      }
     }
 
     /**
@@ -161,23 +171,12 @@ define( require => {
       if ( this.isPhetioInstrumented() ) {
 
         // Enumerate named argsObject for the data stream.
-        const argumentOrder = [];
-        let argsObject = {};
-        let parameters = {};
+        let data = {};
         for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
           let element = this.phetioType.elements[ i ];
-          argsObject[ element.name ] = element.type.toStateObject( arguments[ i ] );
-          argumentOrder.push( element.name );
+          data[ element.name ] = element.type.toStateObject( arguments[ i ] );
         }
-
-        // phetioPlayback events are marked so they can be easily played back, see https://github.com/phetsims/phet-io/issues/1383
-        if ( this.phetioPlayback ) {
-
-          // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
-          parameters.argumentOrder = argumentOrder;
-        }
-        parameters.args = argsObject;
-        this.phetioStartEvent( 'emitted', parameters );
+        this.phetioStartEvent( 'emitted', data, this.phetioEventMetadata );
       }
 
       this.activeListenersStack.push( this.listeners );
