@@ -39,6 +39,9 @@ define( function( require ) {
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     Property.call( this, initialValue, options );
 
+    // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
+    // See https://github.com/phetsims/axon/issues/193
+    this._initialValue = null;
 
     if ( this.isPhetioInstrumented() ) {
 
@@ -123,6 +126,17 @@ define( function( require ) {
      * @public
      */
     reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); },
+
+    /**
+     * Prevent the retrieval of the initial value, since we don't store it.
+     * See https://github.com/phetsims/axon/issues/193
+     * @public
+     * @override
+     * @returns {*}
+     */
+    getInitialValue: function() {
+      throw new Error( 'Cannot get the initial value of a DerivedProperty' );
+    },
 
     /**
      * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property

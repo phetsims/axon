@@ -165,6 +165,12 @@ define( function( require ) {
     // Super call
     Property.call( this, initialValue, options );
 
+    // If we can't reset(), then we won't store the initial value.
+    // See https://github.com/phetsims/axon/issues/193.
+    if ( !this.bidirectional ) {
+      this._initialValue = null;
+    }
+
     // @private {function}
     this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
 
@@ -254,6 +260,16 @@ define( function( require ) {
       if ( this.valuePropertyProperty.value !== null ) {
         this.derive( this.valuePropertyProperty.value ).reset();
       }
+    },
+
+    /**
+     * Resets the current property.
+     * @public
+     */
+    getInitialValue: function() {
+      assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
+
+      return Property.prototype.getInitialValue.call( this );
     },
 
     /**
