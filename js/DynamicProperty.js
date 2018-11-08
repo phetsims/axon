@@ -263,7 +263,7 @@ define( function( require ) {
     },
 
     /**
-     * Resets the current property.
+     * Prevent getting this Property manually if it is not marked as bidirectional.
      * @public
      */
     getInitialValue: function() {
