@@ -21,6 +21,9 @@ define( function( require ) {
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
+  var ObservableArrayIOType = ObservableArrayIO( ObjectIO );
+
   /**
    * @param {Object[]} [array]
    * @param {Object} [options]
@@ -36,7 +39,7 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      phetioType: ObservableArrayIO( ObjectIO ),
+      phetioType: ObservableArrayIOType,
       tandem: Tandem.optional
     }, options );
 
