@@ -19,7 +19,7 @@ define( function( require ) {
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
+  var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
@@ -99,7 +99,7 @@ define( function( require ) {
         fromStateObject: function( stateObject ) {
           var tempArray = [];
           stateObject.array.forEach( function( elementTypePhetioID ) {
-            tempArray.push( phetio.getInstance( elementTypePhetioID ) );
+            tempArray.push( phetioEngine.getInstance( elementTypePhetioID ) );
           } );
           return tempArray;
         },

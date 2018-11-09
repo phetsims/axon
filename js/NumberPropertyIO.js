@@ -49,7 +49,8 @@ define( function( require ) {
      */
     getAPI: function() {
       return {
-        elementType: phet.phetIo.phetio.getAPIForType( VALUE_TYPE )
+        // TODO: why can't we use the namespace for this?
+        elementType: phet.phetIo.phetioEngine.getAPIForType( VALUE_TYPE )
       };
     },
 

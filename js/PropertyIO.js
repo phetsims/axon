@@ -18,7 +18,7 @@ define( function( require ) {
 
   // ifphetio
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-  var phetio = require( 'ifphetio!PHET_IO/phetio' );
+  var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -108,7 +108,7 @@ define( function( require ) {
 
       getAPI: function() {
         return {
-          elementType: phetio.getAPIForType( phetioValueType )
+          elementType: phetioEngine.getAPIForType( phetioValueType )
         };
       },
 
