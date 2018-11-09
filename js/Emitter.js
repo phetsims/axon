@@ -69,8 +69,7 @@ define( require => {
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
       if ( this.phetioPlayback ) {
         this.phetioEventMetadata = {
-          dataKeys: this.phetioType.elements.map( element => element.name ),
-          playback: true
+          dataKeys: this.phetioType.elements.map( element => element.name )
         };
       }
     }
