@@ -16,6 +16,9 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
   var StringIO = require( 'TANDEM/types/StringIO' );
 
+  // constants
+  var StringPropertyIO = PropertyIO( StringIO );
+
   /**
    * @param {string} value - initial value
    * @param {Object} [options]
@@ -29,7 +32,7 @@ define( function( require ) {
     options.valueType = 'string';
 
     assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by StringProperty' );
-    options.phetioType = PropertyIO( StringIO );
+    options.phetioType = StringPropertyIO;
 
     Property.call( this, value, options );
   }

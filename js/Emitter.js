@@ -15,6 +15,9 @@ define( require => {
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
 
+  // constants
+  const EmitterIOWithNoArgs = EmitterIO( [] );
+
   /**
    * @param {Object} [options]
    */
@@ -30,7 +33,7 @@ define( require => {
 
         tandem: Tandem.optional,
         phetioState: false,
-        phetioType: EmitterIO( [] ), // subtypes can override with EmitterIO([...]), see EmitterIO.js
+        phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
         listener: null // {function} [listener] optional listener to be added during construction.
       }, options );
 
