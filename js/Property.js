@@ -130,7 +130,7 @@ define( function( require ) {
     // @private - Store the internal value and the initial value
     this._value = value;
 
-    // @private - Initial value
+    // @protected - Initial value
     this._initialValue = value;
 
     // @public (phet-io)
@@ -242,9 +242,19 @@ define( function( require ) {
         }
       },
 
+      /**
+       * Returns the initial value of this Property.
+       * @public
+       *
+       * @returns {*}
+       */
+      getInitialValue: function() {
+        return this._initialValue;
+      },
+
       // @public
       get initialValue() {
-        return this._initialValue;
+        return this.getInitialValue();
       },
 
       /**
