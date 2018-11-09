@@ -17,6 +17,9 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var PropertyIO = require( 'AXON/PropertyIO' );
 
+  // constants
+  var BooleanPropertyIO = PropertyIO( BooleanIO );
+
   /**
    * @param {boolean} value - initial value
    * @param {Object} [options]
@@ -32,7 +35,7 @@ define( function( require ) {
     options.valueType = 'boolean';  // BooleanProperty requires values to be primitive booleans
 
     assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
-    options.phetioType = PropertyIO( BooleanIO );
+    options.phetioType = BooleanPropertyIO;
 
     Property.call( this, value, options );
   }
