@@ -41,6 +41,8 @@ define( function( require ) {
 
     // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;
+
+    // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
     this.range = options.range;
 
     assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
