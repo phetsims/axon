@@ -44,17 +44,6 @@ define( function( require ) {
     elementType: NumberIO,
 
     /**
-     * @returns {Object}
-     * @override
-     */
-    getAPI: function() {
-      return {
-        // TODO: why can't we use the namespace for this?
-        elementType: phet.phetIo.phetioEngine.getAPIForType( VALUE_TYPE )
-      };
-    },
-
-    /**
      * Encodes a NumberProperty instance to a state.
      * @param {Object} numberProperty
      * @returns {Object} - a state object
