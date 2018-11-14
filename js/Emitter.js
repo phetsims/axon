@@ -114,7 +114,12 @@ define( require => {
     removeListener( listener ) {
 
       const index = this.listeners.indexOf( listener );
-      assert && assert( index >= 0, 'tried to removeListener on something that wasn\'t a listener' );
+
+      // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
+      // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
+      if ( assert && !this.phetioObjectDisposed ) {
+        assert && assert( index >= 0, 'tried to removeListener on something that wasn\'t a listener' );
+      }
 
       // If an emit is in progress, make a copy of the current list of listeners--the removed listener will remain in
       // the list and be called for this emit call, see #72

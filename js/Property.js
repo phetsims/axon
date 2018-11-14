@@ -422,6 +422,7 @@ define( function( require ) {
         this.unlinkAll();
 
         PhetioObject.prototype.dispose.call( this );
+        this.changedEmitter.dispose();
       },
 
       /**
