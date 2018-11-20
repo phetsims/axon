@@ -13,6 +13,7 @@ define( function( require ) {
   var axon = require( 'AXON/axon' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  var Property = require( 'AXON/Property' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
@@ -39,7 +40,7 @@ define( function( require ) {
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
-      assert && assertInstanceOf( property, phet.axon.Property );
+      assert && assertInstanceOf( property, Property );
       ObjectIO.call( this, property, phetioID );
     };
 
@@ -118,7 +119,7 @@ define( function( require ) {
        * @returns {Object} - a state object
        */
       toStateObject: function( property ) {
-        assert && assertInstanceOf( property, phet.axon.Property );
+        assert && assertInstanceOf( property, Property );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
         var stateObject = {
           value: phetioValueType.toStateObject( property.value )
@@ -159,7 +160,7 @@ define( function( require ) {
        * @param {Object} fromStateObject
        */
       setValue: function( property, fromStateObject ) {
-        assert && assertInstanceOf( property, phet.axon.Property );
+        assert && assertInstanceOf( property, Property );
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
