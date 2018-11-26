@@ -145,4 +145,46 @@ define( function( require ) {
 
     assert.expect( window.assert ? 2 : 0 );
   } );
+
+  QUnit.test( 'Bidirectional prevention of pingponging', function( assert ) {
+    var callbackCount = 0;
+
+    var sourceProperty = new Property( 0 );
+    sourceProperty.link( function() {
+      if ( callbackCount++ > 500 ) {
+        throw new Error( 'Infinite loop detected' );
+      }
+    } );
+
+    var wrapperProperty = new Property( sourceProperty );
+    var dynamicProperty = new DynamicProperty( wrapperProperty, {
+      bidirectional: true,
+      // NOT a true inverse
+      map: n => n + 2,
+      inverseMap: n => n - 1
+    } );
+    dynamicProperty.link( function() {
+      if ( callbackCount++ > 500 ) {
+        throw new Error( 'Infinite loop detected' );
+      }
+    } );
+    assert.equal( sourceProperty.value, 0 );
+    assert.equal( dynamicProperty.value, 2 );
+
+    dynamicProperty.value = 3;
+    assert.equal( sourceProperty.value, 2 );
+    assert.equal( dynamicProperty.value, 3 );
+
+    sourceProperty.value = 5;
+    assert.equal( sourceProperty.value, 5 );
+    assert.equal( dynamicProperty.value, 7 );
+
+    dynamicProperty.value = -10;
+    assert.equal( sourceProperty.value, -11 );
+    assert.equal( dynamicProperty.value, -10 );
+
+    sourceProperty.value = 12;
+    assert.equal( sourceProperty.value, 12 );
+    assert.equal( dynamicProperty.value, 14 );
+  } );
 } );
