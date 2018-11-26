@@ -207,7 +207,7 @@ define( function( require ) {
        * Returns true if and only if the specified value equals the value of this property
        * @param {Object} value
        * @returns {boolean}
-       * @private
+       * @protected
        */
       equalsValue: function( value ) {
         return this.areValuesEqual( value, this._value );

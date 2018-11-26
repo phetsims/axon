@@ -196,8 +196,24 @@ define( function( require ) {
      *
      * @param {*} value - Should be either our defaultValue (if valuePropertyProperty.value is null), or
      *                    derive( valuePropertyProperty.value ).value otherwise.
+     * @param {*} oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
+     * @param {Property.<*>|null} innerProperty
      */
-    onPropertyPropertyChange: function( value ) {
+    onPropertyPropertyChange: function( value, oldValue, innerProperty ) {
+
+      // If the value of the inner Property is already the inverse of our value, we will never attempt to update our
+      // own value in an attempt to limit "ping-ponging" cases mainly due to numerical error. Otherwise it would be
+      // possible, given certain values and map/inverse, for both Properties to toggle back-and-forth.
+      // See https://github.com/phetsims/axon/issues/197 for more details.
+      if ( this.bidirectional && this.valuePropertyProperty.value !== null && innerProperty ) {
+        var currentProperty = this.derive( this.valuePropertyProperty.value );
+        // Notably, we only want to cancel interactions if the Property that sent the notification is still the Property
+        // we are paying attention to.
+        if ( currentProperty === innerProperty && innerProperty.equalsValue( this.inverseMap( this.value ) ) ) {
+          return;
+        }
+      }
+
       // Since we override the setter here, we need to call the version on the prototype
       Property.prototype.set.call( this, this.map( value ) );
     },
@@ -220,7 +236,7 @@ define( function( require ) {
       }
       else {
         // Switch to null when our Property's value is null.
-        this.onPropertyPropertyChange( this.defaultValue );
+        this.onPropertyPropertyChange( this.defaultValue, null, null );
       }
     },
 
@@ -231,8 +247,18 @@ define( function( require ) {
      * @param {*} value
      */
     onSelfChange: function( value ) {
+      assert && assert( this.bidirectional );
+
       if ( this.valuePropertyProperty.value !== null ) {
-        this.derive( this.valuePropertyProperty.value ).value = this.inverseMap( value );
+        var innerProperty = this.derive( this.valuePropertyProperty.value );
+
+        // If our new value is the result of map() from the inner Property's value, we don't want to propagate that
+        // change back to the innerProperty in the case where the map/inverseMap are not exact matches (generally due
+        // to floating-point issues).
+        // See https://github.com/phetsims/axon/issues/197 for more details.
+        if ( !this.areValuesEqual( value, this.map( innerProperty.value ) ) ) {
+          innerProperty.value = this.inverseMap( value );
+        }
       }
     },
 
