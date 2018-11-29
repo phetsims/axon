@@ -145,9 +145,6 @@ define( function( require ) {
 
     // @private whether to allow reenty of calls to set
     this.reentrant = options.reentrant;
-
-    // @public (read-only, scenery) {boolean} indicate whether the Property has been disposed
-    this.isDisposed = false;
   }
 
   axon.register( 'Property', Property );
@@ -413,10 +410,6 @@ define( function( require ) {
 
       // @public Ensures that the Property is eligible for GC
       dispose: function() {
-
-        assert && assert( !this.isDisposed, 'cannot be disposed twice' );
-
-        this.isDisposed = true; // TODO: move this to PhetioObject?
 
         // remove any listeners that are still attached to this property
         this.unlinkAll();
