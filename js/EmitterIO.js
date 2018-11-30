@@ -11,6 +11,7 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
+  var TypeDef = require( 'AXON/TypeDef' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
@@ -20,33 +21,38 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
 
   // allowed keys
-  var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];
+  var ELEMENT_KEYS = [ 'name', 'type', 'documentation', 'predicate' ];
 
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
-   * @param {Object[]} elements, each with {name:string, type: IO type, documentation: string, [predicate]: function}
-   *                             - If loaded by phet (not phet-io), the array will be of functions
-   *                             - returned by the 'ifphetio!' plugin.
-   * @returns {EmitterIOImpl}
+   * TODO: predicate type is really TypeDef, not function=>boolean
+   * TODO: support predicate key without `type` key?
+   * TODO: https://github.com/phetsims/axon/issues/189
+   *
+   * @param {Object[]} argumentObjects, each with {name:string, type: IO type, documentation: string, [predicate]: function.<boolean>}
+   * @returns {EmitterIOImpl} - the parameterized type
    * @constructor
    */
-  function EmitterIO( elements ) {
+  function EmitterIO( argumentObjects ) {
 
-    assert && assert( Array.isArray( elements ) );
+    assert && assert( Array.isArray( argumentObjects ) );
 
-    var valueTypes = [];
-    var elementTypes = elements.map( function( element ) {
+    var argumentTypes = [];
+    var elementTypes = argumentObjects.map( function( element ) {
 
       // validate the look of the content
-      assert && assert( typeof element === 'object' );
+      assert && assert( element instanceof Object );
       var keys = Object.keys( element );
       for ( let i = 0; i < keys.length; i++ ) {
         const key = keys[ i ];
         assert && assert( ELEMENT_KEYS.indexOf( key ) >= 0, 'unrecognized element key: ' + key );
       }
-      assert && assert( element.predicate || element.type.isInstance, 'no valueType specified' );
-      valueTypes.push( element.predicate || element.type.isInstance );
+      assert && assert( element.type, 'required element key: type.' );
+
+      // predicate overrides the type
+      assert && assert( TypeDef.isTypeDef( element.predicate || element.type ), 'incorrect type specified: ' + element.type );
+      argumentTypes.push( element.predicate || element.type );
       return element.type;
     } );
 
@@ -56,7 +62,7 @@ define( function( require ) {
      * @constructor
      */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
-      assert && assert( elements, 'phetioArgumentTypes should be defined' );
+      assert && assert( argumentObjects, 'phetioArgumentTypes should be defined' );
       assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
       ObjectIO.call( this, emitter, phetioID );
@@ -83,8 +89,8 @@ define( function( require ) {
         invocableForReadOnlyInstances: false
       }
     }, {
-      documentation: 'Emits when an event occurs. ' + ( elements.length === 0 ? 'No arguments.' : 'The arguments are:<br>' +
-                     '<ol>' + elements.map( function( element ) {
+      documentation: 'Emits when an event occurs. ' + ( argumentObjects.length === 0 ? 'No arguments.' : 'The arguments are:<br>' +
+                     '<ol>' + argumentObjects.map( function( element ) {
           var docText = element.documentation ? '. ' + element.documentation : '';
           return '<li>' + element.name + ': ' + element.type.typeName + docText + '</li>';
         } ).join( '\n' ) + '</ol>' ),
@@ -101,12 +107,12 @@ define( function( require ) {
        * {Array.<function>} - list of predicate functions that will validate an value against whether it is of the
        * element IOType's core type.
        */
-      valueTypes: valueTypes,
+      argumentTypes: argumentTypes,
 
       /**
        * {Array.<Object>} - see constructor for details on object literal keys
        */
-      elements: elements
+      elements: argumentObjects
     } );
   }
 

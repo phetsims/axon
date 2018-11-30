@@ -12,6 +12,8 @@ define( require => {
 
   // modules
   const Emitter = require( 'AXON/Emitter' );
+  const EmitterIO = require( 'AXON/EmitterIO' );
+  const TypeDef = require( 'AXON/TypeDef' );
 
   QUnit.module( 'Emitter' );
 
@@ -19,7 +21,7 @@ define( require => {
 
     assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
     let e1 = new Emitter( {
-      valueTypes: [ 'number' ]
+      phetioType: EmitterIO( [ { type: 'number' } ] )
     } );
 
     e1.emit( 1 );
@@ -34,21 +36,24 @@ define( require => {
 
     // emitting with an object as parameter
     let e2 = new Emitter( {
-      valueTypes: [ Emitter, Object, 'function' ]
+      phetioType: EmitterIO( [ { type: Emitter }, { type: Object }, { type: 'function' } ] )
     } );
 
     e2.emit( new Emitter(), {}, () => {} );
 
+    let type = TypeDef.getNullOrTypeofPredicate( 'string' );
+
     let e3 = new Emitter( {
-      valueTypes: [ 'number', v => v === null || typeof v === 'string' ]
+      phetioType: EmitterIO( [ { type: 'number' }, { type: type } ] )
     } );
 
     e3.emit( 1, 'hi' );
     e3.emit( 1, null );
     if ( window.assert ) {
-      assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type null' );
-      assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type null' );
-      assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type null' );
+      assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type undefined' );
+      assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type undefined' );
+      assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type 0' );
+      assert.throws( () => { e3.emit( 1, { hello: 'hi' } ); }, 'Wrong parameter type object' );
     }
 
   } );
@@ -113,7 +118,7 @@ define( require => {
   QUnit.test( 'Emitter Tricks', assert => {
     let entries = [];
 
-    let emitter = new Emitter( { valueTypes: [ 'string' ] } ); // eslint-disable-line no-undef
+    let emitter = new Emitter( { phetioType: EmitterIO( [ { type: 'string' } ] ) } ); // eslint-disable-line no-undef
 
     let a = arg => {
       entries.push( { listener: 'a', arg: arg } );

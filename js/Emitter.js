@@ -9,11 +9,11 @@ define( require => {
   'use strict';
 
   // modules
-  const assertValueType = require( 'AXON/assertValueType' );
   const axon = require( 'AXON/axon' );
   const EmitterIO = require( 'AXON/EmitterIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
+  const TypeDef = require( 'AXON/TypeDef' );
 
   // constants
   const EmitterIOWithNoArgs = EmitterIO( [] );
@@ -29,7 +29,7 @@ define( require => {
         // {Array.<string|function|null>|null} Used to validate that you are emitting with the appropriate number/types of args, matches
         // logic of assertValueType, see https://github.com/phetsims/axon/issues/182
         // If null, it is attempted to be set through the phetioType below.
-        valueTypes: null,
+        argumentTypes: null,
 
         tandem: Tandem.optional,
         phetioState: false,
@@ -39,21 +39,21 @@ define( require => {
 
       super( options );
 
-      // If no valueTypes are provided, use the valueTypes from the EmitterIO type.
-      if ( !options.valueTypes ) {
-        options.valueTypes = options.phetioType.valueTypes;
+      // If no argumentTypes are provided, use the argumentTypes from the EmitterIO type.
+      if ( !options.argumentTypes ) {
+        options.argumentTypes = options.phetioType.argumentTypes;
       }
 
       // @private
-      this.numberOfArgs = options.valueTypes.length;
+      this.numberOfArgs = options.argumentTypes.length;
 
       //@private
       this.assertEmittingValidValues = assert && function() {
         var args = arguments;
         assert( args.length === this.numberOfArgs,
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
-        for ( let i = 0; i < options.valueTypes.length; i++ ) {
-          assertValueType( args[ i ], options.valueTypes[ i ] );
+        for ( let i = 0; i < options.argumentTypes.length; i++ ) {
+          assert( TypeDef.validValue( args[ i ], options.argumentTypes[ i ] ), 'value is unexpected type: ' + args[ i ] );
         }
       };
 
@@ -166,7 +166,7 @@ define( require => {
     /**
      * Emits a single event.
      * This method is called many times in a simulation and must be well-optimized.
-     * @params - expected parameters are based on options.valueTypes, see constructor
+     * @params - expected parameters are based on options.argumentTypes, see constructor
      * @public
      */
     emit() {
