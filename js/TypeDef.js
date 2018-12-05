@@ -22,7 +22,7 @@ define( require => {
      */
     isTypeDef( type ) {
       if ( typeof type === 'function' ) {
-        if ( type.isPredicate || !type.name ) { // TODO: are these the best criteria?
+        if ( type.isPredicate ) { // TODO: are these the best criteria? Function.name ISN'T SUPPORTED ON IE11
           return typeof type() === 'boolean'; // should return a boolean is a predicate function
         }
 
