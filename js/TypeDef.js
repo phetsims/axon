@@ -98,7 +98,7 @@ define( require => {
      */
     getNullOrTypeofPredicate( typeString ) {
       assert && assert( typeof typeString === 'string' );
-      var predicate = v => v === null || typeof v === typeString;
+      const predicate = v => v === null || typeof v === typeString;
       predicate.isPredicate = true;
       return predicate;
     },
@@ -110,7 +110,7 @@ define( require => {
      */
     getNullOrInstanceOfPredicate( type ) {
       assert && assert( typeof type === 'function' );
-      var predicate = v => v === null || v instanceof type;
+      const predicate = v => v === null || v instanceof type;
       predicate.isPredicate = true;
       return predicate;
     }
