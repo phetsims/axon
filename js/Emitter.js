@@ -177,12 +177,18 @@ define( require => {
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
-        // Enumerate named argsObject for the data stream.
-        let data = {};
-        for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-          let element = this.phetioType.elements[ i ];
-          data[ element.name ] = element.type.toStateObject( arguments[ i ] );
+        // null if there are no arguments
+        let data = null;
+        if ( this.phetioType.elements.length > 0 ) {
+
+          // Enumerate named argsObject for the data stream.
+          data = {};
+          for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
+            let element = this.phetioType.elements[ i ];
+            data[ element.name ] = element.type.toStateObject( arguments[ i ] );
+          }
         }
+
         this.phetioStartEvent( 'emitted', data, this.phetioEventMetadata );
       }
 
