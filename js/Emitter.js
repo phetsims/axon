@@ -37,6 +37,14 @@ define( require => {
         listener: null // {function} [listener] optional listener to be added during construction.
       }, options );
 
+      // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
+      // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
+      if ( options.phetioPlayback ) {
+        options.phetioEventMetadata = options.phetioEventMetadata || {};
+        assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ), 'dataKeys should be supplied by Emitter, not elsewhere' );
+        options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
+      }
+
       super( options );
 
       // If no argumentTypes are provided, use the argumentTypes from the EmitterIO type.
@@ -66,15 +74,6 @@ define( require => {
 
       // If an initial listener was specified, add it now
       options.listener && this.addListener( options.listener );
-
-      // @private - Enumerate named argsObject for the data stream.
-      // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
-      // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
-      if ( this.phetioPlayback ) {
-        this.phetioEventMetadata = {
-          dataKeys: this.phetioType.elements.map( element => element.name )
-        };
-      }
     }
 
     /**
@@ -177,7 +176,7 @@ define( require => {
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
-        // null if there are no arguments
+        // null if there are no arguments.  dataStream.js omits null values for data
         let data = null;
         if ( this.phetioType.elements.length > 0 ) {
 
@@ -189,7 +188,7 @@ define( require => {
           }
         }
 
-        this.phetioStartEvent( 'emitted', data, this.phetioEventMetadata );
+        this.phetioStartEvent( 'emitted', data );
       }
 
       this.activeListenersStack.push( this.listeners );

@@ -81,6 +81,11 @@ define( function( require ) {
       'isValidValue must be a function: ' + options.isValidValue );
 
     assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
+    if ( options.units ) {
+      options.phetioEventMetadata = options.phetioEventMetadata || {};
+      assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'units' ), 'units should be supplied by Property, not elsewhere' );
+      options.phetioEventMetadata.units = options.units;
+    }
 
     PhetioObject.call( this, options );
 
@@ -273,10 +278,6 @@ define( function( require ) {
           return {
             oldValue: self.phetioType.elementType.toStateObject( oldValue ),
             newValue: self.phetioType.elementType.toStateObject( self.get() )
-          };
-        }, function() {
-          return {
-            units: self.units
           };
         } );
 
