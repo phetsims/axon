@@ -191,15 +191,19 @@ define( require => {
         this.phetioStartEvent( 'emitted', data );
       }
 
-      this.activeListenersStack.push( this.listeners );
-      const lastEntry = this.activeListenersStack.length - 1;
+      // Notify wired-up listeners, if any
+      if ( this.listeners.length > 0 ) {
 
-      // Notify listeners
-      for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ].apply( this, arguments );
+        this.activeListenersStack.push( this.listeners );
+        const lastEntry = this.activeListenersStack.length - 1;
+
+        // Notify listeners
+        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+          this.activeListenersStack[ lastEntry ][ i ].apply( this, arguments );
+        }
+
+        this.activeListenersStack.pop();
       }
-
-      this.activeListenersStack.pop();
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
@@ -213,14 +217,17 @@ define( require => {
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
       } );
-      this.activeListenersStack.push( this.listeners );
-      const lastEntry = this.activeListenersStack.length - 1;
 
-      for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ]( arg0 );
+      if ( this.listeners.length > 0 ) {
+        this.activeListenersStack.push( this.listeners );
+        const lastEntry = this.activeListenersStack.length - 1;
+
+        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+          this.activeListenersStack[ lastEntry ][ i ]( arg0 );
+        }
+
+        this.activeListenersStack.pop();
       }
-
-      this.activeListenersStack.pop();
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
@@ -237,14 +244,16 @@ define( require => {
           this.phetioType.parameterTypes[ 1 ].toStateObject( arg1 )
         ]
       } );
-      this.activeListenersStack.push( this.listeners );
-      const lastEntry = this.activeListenersStack.length - 1;
 
-      for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1 );
+      if ( this.listeners.length > 0 ) {
+        this.activeListenersStack.push( this.listeners );
+        const lastEntry = this.activeListenersStack.length - 1;
+
+        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+          this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1 );
+        }
+        this.activeListenersStack.pop();
       }
-
-      this.activeListenersStack.pop();
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
@@ -263,14 +272,17 @@ define( require => {
           this.phetioType.parameterTypes[ 2 ].toStateObject( arg2 )
         ]
       } );
-      this.activeListenersStack.push( this.listeners );
-      const lastEntry = this.activeListenersStack.length - 1;
 
-      for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1, arg2 );
+      if ( this.listeners.length > 0 ) {
+        this.activeListenersStack.push( this.listeners );
+        const lastEntry = this.activeListenersStack.length - 1;
+
+        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+          this.activeListenersStack[ lastEntry ][ i ]( arg0, arg1, arg2 );
+        }
+
+        this.activeListenersStack.pop();
       }
-
-      this.activeListenersStack.pop();
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
