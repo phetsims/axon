@@ -183,7 +183,7 @@ define( require => {
           // Enumerate named argsObject for the data stream.
           data = {};
           for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-            let element = this.phetioType.elements[ i ];
+            const element = this.phetioType.elements[ i ];
             data[ element.name ] = element.type.toStateObject( arguments[ i ] );
           }
         }

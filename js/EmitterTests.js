@@ -20,7 +20,7 @@ define( require => {
   QUnit.test( 'Emitter Constructing and options', assert => {
 
     assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
-    let e1 = new Emitter( {
+    const e1 = new Emitter( {
       phetioType: EmitterIO( [ { type: 'number' } ] )
     } );
 
@@ -35,15 +35,15 @@ define( require => {
     }
 
     // emitting with an object as parameter
-    let e2 = new Emitter( {
+    const e2 = new Emitter( {
       phetioType: EmitterIO( [ { type: Emitter }, { type: Object }, { type: 'function' } ] )
     } );
 
     e2.emit( new Emitter(), {}, () => {} );
 
-    let type = TypeDef.getNullOrTypeofPredicate( 'string' );
+    const type = TypeDef.getNullOrTypeofPredicate( 'string' );
 
-    let e3 = new Emitter( {
+    const e3 = new Emitter( {
       phetioType: EmitterIO( [ { type: 'number' }, { type: type } ] )
     } );
 
@@ -76,16 +76,16 @@ define( require => {
     e1.addListener( () => {} );
 
 
-    let testEmitter = ( e, numberOfLoopings ) => {
+    const testEmitter = ( e, numberOfLoopings ) => {
 
-      let start = Date.now();
+      const start = Date.now();
 
       for ( let i = 0; i < numberOfLoopings; i++ ) {
         // e.emit();
         e.emit3( 'blarg', 'fdsa', 344738291043 );
       }
-      let end = Date.now();
-      let totalTime = end - start;
+      const end = Date.now();
+      const totalTime = end - start;
       console.log( `Time for ${numberOfLoopings}: `, totalTime, totalTime / numberOfLoopings );
     };
 
@@ -95,13 +95,13 @@ define( require => {
   } );
 
   QUnit.test( 'Emitter Basics', assert => {
-    let stack = [];
-    let emitter = new Emitter(); // eslint-disable-line no-undef
-    let a = () => {
+    const stack = [];
+    const emitter = new Emitter(); // eslint-disable-line no-undef
+    const a = () => {
       stack.push( 'a' );
       emitter.removeListener( b );
     };
-    let b = () => {
+    const b = () => {
       stack.push( 'b' );
     };
     emitter.addListener( a );
@@ -116,18 +116,18 @@ define( require => {
   } );
 
   QUnit.test( 'Emitter Tricks', assert => {
-    let entries = [];
+    const entries = [];
 
-    let emitter = new Emitter( { phetioType: EmitterIO( [ { type: 'string' } ] ) } ); // eslint-disable-line no-undef
+    const emitter = new Emitter( { phetioType: EmitterIO( [ { type: 'string' } ] ) } ); // eslint-disable-line no-undef
 
-    let a = arg => {
+    const a = arg => {
       entries.push( { listener: 'a', arg: arg } );
 
       if ( arg === 'first' ) {
         emitter.emit( 'second' );
       }
     };
-    let b = arg => {
+    const b = arg => {
       entries.push( { listener: 'b', arg: arg } );
 
       if ( arg === 'second' ) {
@@ -135,7 +135,7 @@ define( require => {
         emitter.emit( 'third' );
       }
     };
-    let c = arg => {
+    const c = arg => {
       entries.push( { listener: 'c', arg: arg } );
     };
 
