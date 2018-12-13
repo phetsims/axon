@@ -94,7 +94,7 @@ define( require => {
     /**
      * Return a predicate that accepts null or the typeof the typeString provided
      * @param typeString
-     * @returns {function(*=): boolean}
+     * @returns {function(*): boolean}
      */
     getNullOrTypeofPredicate( typeString ) {
       assert && assert( typeof typeString === 'string' );
@@ -106,7 +106,7 @@ define( require => {
     /**
      * Return a predicate that accepts null or the typeof the typeString provided
      * @param typeString
-     * @returns {function(*=): boolean}
+     * @returns {function(*): boolean}
      */
     getNullOrInstanceOfPredicate( type ) {
       assert && assert( typeof type === 'function' );
