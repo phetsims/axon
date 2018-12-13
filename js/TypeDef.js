@@ -104,8 +104,8 @@ define( require => {
     },
 
     /**
-     * Return a predicate that accepts null or the typeof the typeString provided
-     * @param typeString
+     * Return a predicate that accepts null or the typeof the type provided
+     * @param {function} type - a constructor function
      * @returns {function(*): boolean}
      */
     getNullOrInstanceOfPredicate( type ) {
