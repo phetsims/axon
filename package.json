@@ -12,5 +12,8 @@
   "phet": {
     "generatedUnitTests": true,
     "requirejsNamespace": "AXON"
+  },
+  "eslintConfig": {
+    "extends": "../chipper/eslint/.eslintrc.js"
   }
 }
