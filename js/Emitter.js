@@ -211,6 +211,7 @@ define( require => {
      * Emits a single event with one argument.  This is a copy-paste of emit() for performance reasons.
      * @param {*} arg0
      * @public
+     * @deprecated - please use emit()
      */
     emit1( arg0 ) {
 
@@ -236,6 +237,7 @@ define( require => {
      * @param {*} arg0
      * @param {*} arg1
      * @public
+     * @deprecated - please use emit()
      */
     emit2( arg0, arg1 ) {
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
@@ -263,6 +265,7 @@ define( require => {
      * @param {*} arg1
      * @param {*} arg2
      * @public
+     * @deprecated - please use emit()
      */
     emit3( arg0, arg1, arg2 ) {
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
