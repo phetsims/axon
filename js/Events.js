@@ -27,7 +27,6 @@ define( function( require ) {
 
     // @public
     dispose: function() {
-      this.removeAllEventListeners();
     },
 
     /////////////////////////////////////////////
@@ -171,7 +170,7 @@ define( function( require ) {
       // only compute our arguments suffix once, instead of in our inner loop
       var suffix;
       var hasNoArguments = arguments.length === 1;
-      if ( !hasNoArguments && ( count > 0 || staticCount > 0 ) ) {
+      if ( !hasNoArguments && (count > 0 || staticCount > 0) ) {
         suffix = Array.prototype.slice.call( arguments, 1 );
       }
 
