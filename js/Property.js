@@ -10,7 +10,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertValueType = require( 'AXON/assertValueType' );
   var axon = require( 'AXON/axon' );
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
@@ -18,9 +17,7 @@ define( function( require ) {
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
   var units = require( 'AXON/units' );
-
-  // constants
-  var TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
+  var Validator = require( 'AXON/Validator' );
 
   // variables
   var globalId = 0; // autoincremented for unique IDs
@@ -32,31 +29,9 @@ define( function( require ) {
    */
   function Property( value, options ) {
 
-    var self = this;
-
     options = _.extend( {
 
       tandem: Tandem.optional, // workaround for https://github.com/phetsims/tandem/issues/50
-
-      // {function|string|null} type of the value.
-      // If {function}, the function must be a constructor.
-      // If {string}, the string must be one of the primitive types listed in TYPEOF_STRINGS.
-      // Unused if null.
-      // Examples:
-      // valueType: Vector2
-      // valueType: 'string'
-      // valueType: 'number'
-      valueType: null,
-
-      // {*[]|null} valid values for this Property. Unused if null.
-      // Example:
-      // validValues: [ 'horizontal', 'vertical' ]
-      validValues: null,
-
-      // {function|null} function that validates the value. Single argument is the value, returns boolean. Unused if null.
-      // Example:
-      // isValidValue: function( value ) { return Util.isInteger( value ) && value >= 0; }
-      isValidValue: null,
 
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
@@ -71,14 +46,18 @@ define( function( require ) {
       // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
       reentrant: false
 
+      // See Validator.DEFAULT_OPTIONS for validation options.
+    }, Validator.DEFAULT_OPTIONS, {
+
+      // By default, check the options once in the constructor, not on each subsequent value validation, to improve
+      // performance in requirejs mode
+      validateOptionsOnValidateValue: false
     }, options );
 
-    // validate options
-    assert && assertOptionValueType( options.valueType );
-    assert && assert( options.validValues === null || Array.isArray( options.validValues ),
-      'validValues must be an array: ' + options.validValues );
-    assert && assert( options.isValidValue === null || typeof options.isValidValue === 'function',
-      'isValidValue must be a function: ' + options.isValidValue );
+    // @private
+    this.validatorOptions = Validator.pluckOptions( options );
+
+    assert && Validator.validateOptions( this.validatorOptions );
 
     assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
     if ( options.units ) {
@@ -100,27 +79,8 @@ define( function( require ) {
     // useDeepEquality: false => Use === for equality test
     this.useDeepEquality = options.useDeepEquality;
 
-    // @private {function|false} value validation function, false if assertions are disabled
-    this.assertPropertyValidateValue = assert && function( value ) {
-
-      options.valueType && assertValueType( value, options.valueType );
-
-      options.validValues && assert( options.validValues.indexOf( value ) !== -1,
-        'value is not a member of validValues: ' + value );
-
-      options.isValidValue && assert( options.isValidValue( value ),
-        'value failed isValidValue test: ' + value );
-    };
-
-    // verify that validValues meet other validation criteria
-    if ( this.assertPropertyValidateValue && options.validValues ) {
-      options.validValues.forEach( function( value ) {
-        self.assertPropertyValidateValue( value );
-      } );
-    }
-
     // validate the initial value
-    this.assertPropertyValidateValue && this.assertPropertyValidateValue( value );
+    assert && Validator.validate( value, this.validatorOptions );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
@@ -154,26 +114,6 @@ define( function( require ) {
 
   axon.register( 'Property', Property );
 
-  /**
-   * Verifies the value of option valueType, fails assertion if invalid.
-   * @param {function|string|null} valueType
-   */
-  function assertOptionValueType( valueType ) {
-
-    if ( !assert ) {
-      throw new Error( 'call this function only when assertions are enabled' );
-    }
-
-    assert( typeof valueType === 'function' || typeof valueType === 'string' || valueType === null,
-      'valueType must be {function|string|null}, valueType=' + valueType );
-
-    // {string} valueType must be one of the primitives in TYPEOF_STRINGS, for typeof comparison
-    if ( typeof valueType === 'string' ) {
-      assert( _.includes( TYPEOF_STRINGS, valueType ),
-        'valueType is a string, but not one of the supported primitive types: ' + valueType );
-    }
-  }
-
   return inherit( PhetioObject, Property, {
 
       /**
@@ -198,7 +138,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        this.assertPropertyValidateValue && this.assertPropertyValidateValue( value );
+        assert && Validator.validate( value, this.validatorOptions );
         if ( !this.equalsValue( value ) ) {
           this.setValueAndNotifyListeners( value );
         }
