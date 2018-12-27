@@ -134,7 +134,7 @@ define( require => {
      * @returns {Object}
      * @public
      */
-    pluckOptions: options => _.pick( options, DEFAULT_OPTIONS_KEYS )
+    pickOptions: options => _.pick( options, DEFAULT_OPTIONS_KEYS )
   };
 
   Validator.DEFAULT_OPTIONS = DEFAULT_OPTIONS;

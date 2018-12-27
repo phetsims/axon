@@ -55,7 +55,7 @@ define( function( require ) {
     }, options );
 
     // @private
-    this.validatorOptions = Validator.pluckOptions( options );
+    this.validatorOptions = Validator.pickOptions( options );
 
     assert && Validator.validateOptions( this.validatorOptions );
 
