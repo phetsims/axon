@@ -27,7 +27,11 @@ define( function( require ) {
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
-  function ObservableArrayIO( elementType ) {
+  function ObservableArrayIO( elementType, options ) {
+
+    options = _.extend( {
+      isReferenceType: true
+    }, options );
 
     /**
      * This type constructor is parameterized based on the elementType
@@ -36,7 +40,7 @@ define( function( require ) {
      * @constructor
      */
     var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
-      assert && assert( typeof( elementType ) === 'function', 'element type should be defined' );
+      assert && assert( typeof ( elementType ) === 'function', 'element type should be defined' );
       assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
 
       ObjectIO.call( this, observableArray, phetioID );
@@ -92,7 +96,10 @@ define( function( require ) {
             return observableArray;
           }
           return {
-            array: observableArray.getArray().map( function( item ) { return item.phetioID; } )
+            array: observableArray.getArray().map( function( item ) {
+              return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined
+                     elementType.toStateObject( item );
+            } )
           };
         },
 
