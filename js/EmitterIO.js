@@ -11,7 +11,6 @@ define( function( require ) {
 
   // modules
   var axon = require( 'AXON/axon' );
-  var TypeDef = require( 'AXON/TypeDef' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
@@ -21,16 +20,13 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
 
   // allowed keys
-  var ELEMENT_KEYS = [ 'name', 'type', 'documentation', 'predicate' ];
+  var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];
 
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
-   * TODO: predicate type is really TypeDef, not function=>boolean
-   * TODO: support predicate key without `type` key?
-   * TODO: https://github.com/phetsims/axon/issues/189
    *
-   * @param {Object[]} argumentObjects, each with {name:string, type: IO type, documentation: string, [predicate]: function.<boolean>}
+   * @param {Object[]} argumentObjects, each with {name:string, type: IO type, documentation: string}
    * @returns {EmitterIOImpl} - the parameterized type
    * @constructor
    */
@@ -38,7 +34,6 @@ define( function( require ) {
 
     assert && assert( Array.isArray( argumentObjects ) );
 
-    var argumentTypes = [];
     var elementTypes = argumentObjects.map( function( element ) {
 
       // validate the look of the content
@@ -50,9 +45,6 @@ define( function( require ) {
       }
       assert && assert( element.type, 'required element key: type.' );
 
-      // predicate overrides the type
-      assert && assert( TypeDef.isTypeDef( element.predicate || element.type ), 'incorrect type specified: ' + element.type );
-      argumentTypes.push( element.predicate || element.type );
       return element.type;
     } );
 
@@ -101,13 +93,6 @@ define( function( require ) {
        * {Array.<ObjectIO>} - typeIOs
        */
       parameterTypes: elementTypes,
-
-      /**
-       * @public
-       * {Array.<function>} - list of predicate functions that will validate an value against whether it is of the
-       * element IOType's core type.
-       */
-      argumentTypes: argumentTypes,
 
       /**
        * {Array.<Object>} - see constructor for details on object literal keys

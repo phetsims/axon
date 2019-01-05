@@ -13,7 +13,7 @@ define( require => {
   const EmitterIO = require( 'AXON/EmitterIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
-  const TypeDef = require( 'AXON/TypeDef' );
+  const Validator = require( 'AXON/Validator' );
 
   // constants
   const EmitterIOWithNoArgs = EmitterIO( [] );
@@ -26,9 +26,8 @@ define( require => {
 
       options = _.extend( {
 
-        // {Array.<string|function|null>|null} Used to validate that you are emitting with the appropriate number/types of args, matches
-        // logic of assertValueType, see https://github.com/phetsims/axon/issues/182
-        // If null, it is attempted to be set through the phetioType below.
+        // {Array.<Object>|null} - array of "Validator Options" Objects that hold options for how to validate each
+        // argument, see Validator.js for details.
         argumentTypes: null,
 
         tandem: Tandem.optional,
@@ -47,21 +46,38 @@ define( require => {
 
       super( options );
 
-      // If no argumentTypes are provided, use the argumentTypes from the EmitterIO type.
+      // TODO: perhaps this should be the default, but not until we switch all usages, see https://github.com/phetsims/axon/issues/182
       if ( !options.argumentTypes ) {
-        options.argumentTypes = options.phetioType.argumentTypes;
+        options.argumentTypes = [];
       }
+
+      assert && assert( Array.isArray( options.argumentTypes ),
+        `incorrect type for argumentTypes: ${typeof options.argumentTypes}` );
+
 
       // @private
       this.numberOfArgs = options.argumentTypes.length;
 
+      if ( assert ) {
+
+        // Iterate through all argumentType validator options and make sure that they won't validate options on validating value
+        for ( let i = 0; i < options.argumentTypes.length; i++ ) {
+          const validatorOptions = options.argumentTypes[ i ];
+          assert && assert( validatorOptions.validateOptionsOnValidateValue === undefined, 'emitter sets its own validateOptionsOnValidateValue for each argument type' );
+          validatorOptions.validateOptionsOnValidateValue = false;
+
+          // validate the options passed in to validate each emitter argument
+          Validator.validateOptions( validatorOptions );
+        }
+      }
+
       //@private
       this.assertEmittingValidValues = assert && function() {
-        var args = arguments;
+        const args = arguments;
         assert( args.length === this.numberOfArgs,
           `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
         for ( let i = 0; i < options.argumentTypes.length; i++ ) {
-          assert( TypeDef.validValue( args[ i ], options.argumentTypes[ i ] ), 'value is unexpected type: ' + args[ i ] );
+          Validator.validate( args[ i ], options.argumentTypes[ i ] );
         }
       };
 

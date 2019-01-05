@@ -12,8 +12,6 @@ define( require => {
 
   // modules
   const Emitter = require( 'AXON/Emitter' );
-  const EmitterIO = require( 'AXON/EmitterIO' );
-  const TypeDef = require( 'AXON/TypeDef' );
 
   QUnit.module( 'Emitter' );
 
@@ -21,7 +19,7 @@ define( require => {
 
     assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
     const e1 = new Emitter( {
-      phetioType: EmitterIO( [ { type: 'number' } ] )
+      argumentTypes: [ { valueType: 'number' } ]
     } );
 
     e1.emit( 1 );
@@ -36,15 +34,15 @@ define( require => {
 
     // emitting with an object as parameter
     const e2 = new Emitter( {
-      phetioType: EmitterIO( [ { type: Emitter }, { type: Object }, { type: 'function' } ] )
+      argumentTypes: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
     } );
 
     e2.emit( new Emitter(), {}, () => {} );
 
-    const type = TypeDef.getNullOrTypeofPredicate( 'string' );
+    const type = v => v === null || typeof v === 'string';
 
     const e3 = new Emitter( {
-      phetioType: EmitterIO( [ { type: 'number' }, { type: type } ] )
+      argumentTypes: [ { valueType: 'number' }, { isValidValue: type } ]
     } );
 
     e3.emit( 1, 'hi' );
@@ -118,7 +116,9 @@ define( require => {
   QUnit.test( 'Emitter Tricks', assert => {
     const entries = [];
 
-    const emitter = new Emitter( { phetioType: EmitterIO( [ { type: 'string' } ] ) } ); // eslint-disable-line no-undef
+    const emitter = new Emitter( {
+      argumentTypes: [ { valueType: 'string' } ]
+    } );
 
     const a = arg => {
       entries.push( { listener: 'a', arg: arg } );
