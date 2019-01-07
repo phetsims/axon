@@ -61,8 +61,6 @@ define( require => {
         // validate options, but allow opting out for improved performance for repeat cases like Property
         options.validateOptionsOnValidateValue && Validator.validateOptions( options );
 
-        // TODO: now that we have Validator, do we still want to overload valueType?  Or split it up into:
-        // TODO: {valueTypeOf: 'boolean'} vs {valueInstanceOf: 'Vector2'}
         // See https://github.com/phetsims/axon/issues/201
         if ( options.valueType ) {
           const valueType = options.valueType;
