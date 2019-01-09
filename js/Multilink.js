@@ -25,9 +25,6 @@ define( function( require ) {
 
     this.dependencies = dependencies; // @private
 
-    // @private Keep track of each dependency and only update the changed value, for speed
-    this.dependencyValues = dependencies.map( function( property ) {return property.get();} );
-
     var self = this;
 
     // @private Keep track of listeners so they can be detached
@@ -39,8 +36,7 @@ define( function( require ) {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
         if ( !self.isDisposed ) {
-          self.dependencyValues[ i ] = value;
-          callback.apply( null, self.dependencyValues );
+          callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
         }
       };
       self.dependencyListeners.push( listener );
@@ -49,7 +45,7 @@ define( function( require ) {
 
     //Send initial call back but only if we are non-lazy
     if ( !lazy ) {
-      callback.apply( null, this.dependencyValues );
+      callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
     }
 
     // @private - whether the Multilink has been disposed
@@ -73,7 +69,6 @@ define( function( require ) {
       }
       this.dependencies = null;
       this.dependencyListeners = null;
-      this.dependencyValues = null;
       this.isDisposed = true;
     }
   } );
