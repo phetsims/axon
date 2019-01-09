@@ -55,6 +55,45 @@ define( function( require ) {
     assert.equal( callbacks, 0, 'should not call back to a lazy multilink' );
   } );
 
+  QUnit.test( 'Test basic transactions', function( assert ) {
+    var property = new Property( 0 );
+    var callbacks = 0;
+    property.lazyLink( function( newValue, oldValue ) {
+      callbacks++;
+      assert.equal( newValue, 2, 'newValue should be the final value after the transaction' );
+      assert.equal( oldValue, 0, 'oldValue should be the original value before the transaction' );
+    } );
+    property.startTransaction();
+    property.value = 1;
+    property.value = 2;
+    property.endTransaction();
+    assert.equal( callbacks, 1, 'should not update value more than once' );
+
+  } );
+
+  // Make sure that one Property can be in a transaction while another is not.
+  QUnit.test( 'Test two-Property transactions', function( assert ) {
+    var p1 = new Property( 1 );
+    var p2 = new Property( 2 );
+    var callbacks = 0;
+
+    p1.lazyLink( function( newValue, oldValue ) {
+      p2.value = newValue * 20;
+    } );
+    p1.startTransaction();
+    p1.set( 2 );
+    assert.equal( p2.value, p2._initialValue, 'p2 should still equal its initial value' );
+
+    p2.lazyLink( function( newValue, oldValue ) {
+      callbacks++;
+      p1.value = newValue * 10;
+    } );
+    var p2NewValue = 3;
+    p2.set( p2NewValue );
+    assert.equal( p2.value, p2NewValue, 'p2 should not have called p1\'s listeners' );
+    assert.equal( callbacks, 1, 'should not update value more than once' );
+  } );
+
   QUnit.test( 'Property ID checks', function( assert ) {
     assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' );
   } );

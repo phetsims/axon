@@ -108,8 +108,15 @@ define( function( require ) {
     // @private whether we are in the process of notifying listeners
     this.notifying = false;
 
-    // @private whether to allow reenty of calls to set
+    // @private whether to allow reentry of calls to set
     this.reentrant = options.reentrant;
+
+    // @private {number} - the number of transactions that are in progress. see startTransaction() for usage.
+    this.transactionCount = 0;
+
+    // @private {*} - when the final transaction completes, listeners are notified with the value this Property had when
+    // the first transaction began.
+    this.transactionOriginalValue = null;
   }
 
   axon.register( 'Property', Property );
@@ -207,7 +214,9 @@ define( function( require ) {
       setValueAndNotifyListeners: function( value ) {
         var oldValue = this.get();
         this._value = value;
-        this._notifyListeners( oldValue );
+        if ( this.transactionCount === 0 ) {
+          this._notifyListeners( oldValue );
+        }
       },
 
       // @private
@@ -241,6 +250,31 @@ define( function( require ) {
        */
       notifyListenersStatic: function() {
         this.changedEmitter.emit3( this.get(), undefined, this );
+      },
+
+      /**
+       * Notifications are suppressed when a transaction is in place. You can have an arbitrary number of transactions.
+       *
+       * @public
+       */
+      startTransaction: function() {
+        if ( this.transactionCount === 0 ) {
+          this.transactionOriginalValue = this.value;
+        }
+        this.transactionCount++;
+      },
+
+      /**
+       * Ends the current transaction. If the current ended transaction was the final transaction, listeners are notified.
+       *
+       * @public
+       */
+      endTransaction: function() {
+        assert && assert( this.transactionCount >= 1, 'end transaction called without corresponding startTransaction' );
+        this.transactionCount--;
+        if ( this.transactionCount === 0 ) {
+          this._notifyListeners( this.transactionOriginalValue );
+        }
       },
 
       /**
