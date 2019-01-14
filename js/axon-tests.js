@@ -18,6 +18,7 @@ define( function( require ) {
   require( 'AXON/BooleanPropertyTests' );
   require( 'AXON/DerivedPropertyTests' );
   require( 'AXON/StringPropertyTests' );
+  require( 'AXON/TransactionTests' );
   require( 'AXON/ValidatorTests' );
 
   // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests

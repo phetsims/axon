@@ -111,12 +111,16 @@ define( function( require ) {
     // @private whether to allow reentry of calls to set
     this.reentrant = options.reentrant;
 
-    // @private {number} - the number of transactions that are in progress. see startTransaction() for usage.
-    this.transactionCount = 0;
+    // @private - while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
+    // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
+    // send notifications.
+    this.isDeferred = false;
 
-    // @private {*} - when the final transaction completes, listeners are notified with the value this Property had when
-    // the first transaction began.
-    this.transactionOriginalValue = null;
+    // @private {*} - the value that this Property will take after no longer deferred
+    this.deferredValue = null;
+
+    // @private {boolean} whether a deferred value has been set
+    this.hasDeferredValue = false;
   }
 
   axon.register( 'Property', Property );
@@ -135,10 +139,9 @@ define( function( require ) {
       },
 
       /**
-       * Sets the value and notifies listeners.
-       * You can also use the es5 getter (property.value) but this means is provided for inner loops
-       * or internal code that must be fast.
-       * If the value hasn't changed, this is a no-op.
+       * Sets the value and notifies listeners, unless deferred. You can also use the es5 getter (property.value) but
+       * this means is provided for inner loops or internal code that must be fast. If the value hasn't changed, this is
+       * a no-op.
        *
        * @param {*} value
        * @returns {Property} this instance, for chaining.
@@ -146,7 +149,11 @@ define( function( require ) {
        */
       set: function( value ) {
         assert && Validator.validate( value, this.validatorOptions );
-        if ( !this.equalsValue( value ) ) {
+        if ( this.isDeferred ) {
+          this.deferredValue = value;
+          this.hasDeferredValue = true;
+        }
+        else if ( !this.equalsValue( value ) ) {
           this.setValueAndNotifyListeners( value );
         }
         return this;
@@ -214,12 +221,13 @@ define( function( require ) {
       setValueAndNotifyListeners: function( value ) {
         var oldValue = this.get();
         this._value = value;
-        if ( this.transactionCount === 0 ) {
-          this._notifyListeners( oldValue );
-        }
+        this._notifyListeners( oldValue );
       },
 
-      // @private
+      /**
+       * @param {*} oldValue
+       * @private
+       */
       _notifyListeners: function( oldValue ) {
         var self = this;
 
@@ -253,28 +261,45 @@ define( function( require ) {
       },
 
       /**
-       * Notifications are suppressed when a transaction is in place. You can have an arbitrary number of transactions.
+       * When deferred, set values do not take effect or send out notifications.  After defer ends, the Property takes
+       * its deferred value (if any), and a follow-up action (return value) can be invoked to send out notifications
+       * once other Properties have also taken their deferred values.
        *
+       * @param {boolean} isDeferred - whether the Property should be deferred or not
+       * @returns {function|null} - action that can be used to send notifications after final setDeferred(false),
+       *                          - if the value changed
        * @public
        */
-      startTransaction: function() {
-        if ( this.transactionCount === 0 ) {
-          this.transactionOriginalValue = this.value;
+      setDeferred: function( isDeferred ) {
+        assert && assert( isDeferred || !isDeferred, 'bad value for isDeferred' );
+        if ( isDeferred ) {
+          assert && assert( !this.isDeferred, 'Property already deferred' );
+          this.isDeferred = true;
         }
-        this.transactionCount++;
-      },
+        else if ( !isDeferred ) {
+          assert && assert( this.isDeferred, 'Property wasn\'t deferred' );
+          this.isDeferred = false;
 
-      /**
-       * Ends the current transaction. If the current ended transaction was the final transaction, listeners are notified.
-       *
-       * @public
-       */
-      endTransaction: function() {
-        assert && assert( this.transactionCount >= 1, 'end transaction called without corresponding startTransaction' );
-        this.transactionCount--;
-        if ( this.transactionCount === 0 ) {
-          this._notifyListeners( this.transactionOriginalValue );
+          var oldValue = this._value;
+
+          // Take the new value
+          if ( this.hasDeferredValue ) {
+            this._value = this.deferredValue;
+            this.hasDeferredValue = false;
+          }
+
+          // If the value has changed, prepare to send out notifications (after all other Properties in this transaction
+          // have their final values)
+          if ( !this.equalsValue( oldValue ) ) {
+            var self = this;
+            return function() {
+              self._notifyListeners( oldValue );
+            };
+          }
         }
+
+        // no action to signify change
+        return null;
       },
 
       /**
