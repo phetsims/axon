@@ -35,7 +35,7 @@ define( require => {
      * @public
      */
     start() {
-      assert && assert( this.count === 1, 'Wrong count in Transaction.start, probably indicates a logic error.' );
+      assert && assert( this.count === 0, 'Wrong count in Transaction.start, probably indicates a logic error.' );
 
       this.count++;
 
