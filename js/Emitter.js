@@ -18,6 +18,10 @@ define( require => {
   // constants
   const EmitterIOWithNoArgs = EmitterIO( [] );
 
+  // Simulations have thousands of Emitters, so we re-use objects where possible.
+  const EMPTY_ARRAY = [];
+  assert && Object.freeze( EMPTY_ARRAY );
+
   /**
    * @param {Object} [options]
    */
@@ -28,7 +32,7 @@ define( require => {
 
         // {Array.<Object>|null} - array of "Validator Options" Objects that hold options for how to validate each
         // argument, see Validator.js for details.
-        argumentTypes: null,
+        argumentTypes: EMPTY_ARRAY,
 
         tandem: Tandem.optional,
         phetioState: false,
@@ -46,38 +50,37 @@ define( require => {
 
       super( options );
 
-      // TODO: perhaps this should be the default, but not until we switch all usages, see https://github.com/phetsims/axon/issues/182
-      if ( !options.argumentTypes ) {
-        options.argumentTypes = [];
-      }
-
-      assert && assert( Array.isArray( options.argumentTypes ),
-        `incorrect type for argumentTypes: ${typeof options.argumentTypes}` );
-
-
-      // @private
-      this.numberOfArgs = options.argumentTypes.length;
+      Validator.validate( options.argumentTypes, { valueType: Array } );
 
       if ( assert ) {
 
         // Iterate through all argumentType validator options and make sure that they won't validate options on validating value
-        for ( let i = 0; i < options.argumentTypes.length; i++ ) {
-          const validatorOptions = options.argumentTypes[ i ];
-          assert && assert( validatorOptions.validateOptionsOnValidateValue === undefined, 'emitter sets its own validateOptionsOnValidateValue for each argument type' );
+        options.argumentTypes.forEach( validatorOptions => {
+          assert && assert(
+            validatorOptions.validateOptionsOnValidateValue === undefined,
+            'emitter sets its own validateOptionsOnValidateValue for each argument type'
+          );
           validatorOptions.validateOptionsOnValidateValue = false;
+
+          // Changing the validator options after construction indicates a logic error
+          assert && Object.freeze( validatorOptions );
 
           // validate the options passed in to validate each emitter argument
           Validator.validateOptions( validatorOptions );
-        }
+        } );
+
+        // Changing after construction indicates a logic error
+        assert && Object.freeze( options.argumentTypes );
       }
 
-      //@private
-      this.assertEmittingValidValues = assert && function() {
-        const args = arguments;
-        assert( args.length === this.numberOfArgs,
-          `Emitted unexpected number of args. Expected: ${this.numberOfArgs} and received ${args.length}` );
+      // @private {function|false}
+      this.validate = assert && function() {
+        assert(
+          arguments.length === options.argumentTypes.length,
+          `Emitted unexpected number of args. Expected: ${options.argumentTypes.length} and received ${arguments.length}`
+        );
         for ( let i = 0; i < options.argumentTypes.length; i++ ) {
-          Validator.validate( args[ i ], options.argumentTypes[ i ] );
+          Validator.validate( arguments[ i ], options.argumentTypes[ i ] );
         }
       };
 
@@ -187,7 +190,7 @@ define( require => {
     emit() {
 
       // validate the args
-      this.assertEmittingValidValues && this.assertEmittingValidValues.apply( this, arguments );
+      this.validate && this.validate.apply( this, arguments );
 
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {

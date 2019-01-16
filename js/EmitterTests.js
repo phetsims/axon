@@ -39,21 +39,29 @@ define( require => {
 
     e2.emit( new Emitter(), {}, () => {} );
 
-    const type = v => v === null || typeof v === 'string';
+    if ( window.assert ) {
+      assert.throws( () => { e2.emit( 2, 2 ); }, 'Wrong number of emitting parameters, for e2' );
+      assert.throws( () => { e2.emit( true ); }, 'Wrong parameter type bool, for e2' );
+      assert.throws( () => { e2.emit( '2, 2' ); }, 'Wrong parameter type string, for e2' );
+      assert.throws( () => { e2.emit( undefined ); }, 'Wrong parameter type undefined, for e2' );
+      assert.throws( () => { e2.emit( null ); }, 'Wrong parameter type null, for e2' );
+      assert.throws( () => { e2.emit( new Emitter(), 7, () => {} ); }, 'Should catch second argument as wrong type' );
+      assert.throws( () => { e2.emit( new Emitter() ); }, 'Should catch not enough arguments' );
+    }
 
     const e3 = new Emitter( {
-      argumentTypes: [ { valueType: 'number' }, { isValidValue: type } ]
+      argumentTypes: [ { valueType: 'number' }, { isValidValue: v => v === null || typeof v === 'string' } ]
     } );
 
     e3.emit( 1, 'hi' );
     e3.emit( 1, null );
+
     if ( window.assert ) {
       assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type undefined' );
       assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type undefined' );
       assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type 0' );
       assert.throws( () => { e3.emit( 1, { hello: 'hi' } ); }, 'Wrong parameter type object' );
     }
-
   } );
 
   QUnit.test( 'Test emit timing Emitter', assert => {
@@ -72,7 +80,6 @@ define( require => {
 
     const e1 = new Emitter();
     e1.addListener( () => {} );
-
 
     const testEmitter = ( e, numberOfLoopings ) => {
 
