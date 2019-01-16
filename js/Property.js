@@ -54,10 +54,7 @@ define( function( require ) {
       validateOptionsOnValidateValue: false
     }, options );
 
-    // @private
-    this.validatorOptions = Validator.pickOptions( options );
-
-    assert && Validator.validateOptions( this.validatorOptions );
+    assert && Validator.validateOptions( options );
 
     assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
     if ( options.units ) {
@@ -79,8 +76,13 @@ define( function( require ) {
     // useDeepEquality: false => Use === for equality test
     this.useDeepEquality = options.useDeepEquality;
 
+    // @private {function|false} - closure over options for validation in set()
+    this.validate = assert && function( value ) {
+      Validator.validate( value, options );
+    };
+
     // validate the initial value
-    assert && Validator.validate( value, this.validatorOptions );
+    assert && this.validate( value );
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
     // This assertion helps in instrumenting code that has the tandem but not type
@@ -148,7 +150,7 @@ define( function( require ) {
        * @public
        */
       set: function( value ) {
-        assert && Validator.validate( value, this.validatorOptions );
+        this.validate && this.validate( value );
         if ( this.isDeferred ) {
           this.deferredValue = value;
           this.hasDeferredValue = true;

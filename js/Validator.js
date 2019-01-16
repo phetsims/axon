@@ -43,8 +43,6 @@ define( require => {
     validateOptionsOnValidateValue: true
   };
 
-  const DEFAULT_OPTIONS_KEYS = _.keys( DEFAULT_OPTIONS );
-
   const Validator = {
 
     /**
@@ -128,15 +126,7 @@ define( require => {
       else {
         return true;
       }
-    },
-
-    /**
-     * Get only the options that are used by Validator
-     * @param {Object} [options]
-     * @returns {Object}
-     * @public
-     */
-    pickOptions: options => _.pick( options, DEFAULT_OPTIONS_KEYS )
+    }
   };
 
   Validator.DEFAULT_OPTIONS = DEFAULT_OPTIONS;
