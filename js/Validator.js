@@ -1,4 +1,4 @@
-// Copyright 2018, University of Colorado Boulder
+// Copyright 2018-2019, University of Colorado Boulder
 
 /**
  * Throws assertion errors if a value doesn't match the specified criteria.
@@ -65,10 +65,13 @@ define( require => {
         if ( options.valueType ) {
           const valueType = options.valueType;
           if ( typeof valueType === 'string' ) { // primitive type
-            assert( typeof value === valueType, 'value should have typeof ' + valueType + ', value=' + value );
+            assert( typeof value === valueType, `value should have typeof ${valueType}, value=${value}` );
           }
           else if ( typeof valueType === 'function' ) { // constructor
-            assert( value instanceof valueType, 'value should be instanceof ' + valueType.name + ', value=' + value );
+            assert( value instanceof valueType, `value should be instanceof ${valueType.name}, value=${value}` );
+          }
+          else if ( valueType === Array ) {
+            assert( Array.isArray( value ), `value should have been an array, value=${value}` );
           }
         }
         options.validValues && assert( options.validValues.indexOf( value ) >= 0, `value not in validValues: ${value}` );
@@ -97,12 +100,12 @@ define( require => {
           typeof valueType === 'string' ||
           valueType === null ||
           valueType === undefined,
-          'valueType must be {function|string|null}, valueType=' + valueType
+          `valueType must be {function|string|null}, valueType=${valueType}`
         );
 
         // {string} valueType must be one of the primitives in TYPEOF_STRINGS, for typeof comparison
         if ( typeof valueType === 'string' ) {
-          assert( _.includes( TYPEOF_STRINGS, valueType ), 'valueType not a supported primitive types: ' + valueType );
+          assert( _.includes( TYPEOF_STRINGS, valueType ), `valueType not a supported primitive types: ${valueType}` );
         }
 
         if ( options.hasOwnProperty( 'isValidValue' ) ) {
@@ -110,12 +113,12 @@ define( require => {
             options.isValidValue === null ||
             typeof options.isValidValue === 'function' ||
             options.isValidValue === undefined,
-            'isValidValue must be a function: ' + options.isValidValue
+            `isValidValue must be a function: ${options.isValidValue}`
           );
         }
 
         if ( options.validValues !== undefined && options.validValues !== null ) {
-          assert( Array.isArray( options.validValues ), 'validValues must be an array: ' + options.validValues );
+          assert( Array.isArray( options.validValues ), `validValues must be an array: ${options.validValues}` );
 
           // Make sure each initial value is valid.
           const remainingOptions = _.omit( options, 'validValues' );
