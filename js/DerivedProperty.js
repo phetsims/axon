@@ -127,6 +127,44 @@ define( require => {
      * @public
      */
     get value() { return super.get(); }
+
+    /**
+     * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
+     * value.
+     * @public
+     *
+     * @param {Property.<*>} firstProperty
+     * @param {Property.<*>} secondProperty
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {DerivedProperty.<boolean>}
+     */
+    static valueEquals( firstProperty, secondProperty, options ) {
+      return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
+    }
+
+    /**
+     * Creates a derived boolean Property whose value is true iff every input Property value is true.
+     * @public
+     *
+     * @param {Array.<Property.<boolean>>} properties
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {DerivedProperty.<boolean>}
+     */
+    static and( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
+    }
+
+    /**
+     * Creates a derived boolean Property whose value is true iff any input Property value is true.
+     * @public
+     *
+     * @param {Array.<Property.<boolean>>} properties
+     * @param {Object} [options] - Forwarded to the DerivedProperty
+     * @returns {DerivedProperty.<boolean>}
+     */
+    static or( properties, options ) {
+      return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
+    }
   }
 
   const equalsFunction = ( a, b ) => {
@@ -141,44 +179,6 @@ define( require => {
   const orFunction = ( value, property ) => {
     assert && assert( typeof property.value === 'boolean', 'boolean value required' );
     return value || property.value;
-  };
-
-  /**
-   * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
-   * value.
-   * @public
-   *
-   * @param {Property.<*>} firstProperty
-   * @param {Property.<*>} secondProperty
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
-   */
-  DerivedProperty.valueEquals = ( firstProperty, secondProperty, options ) => {
-    return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
-  };
-
-  /**
-   * Creates a derived boolean Property whose value is true iff every input Property value is true.
-   * @public
-   *
-   * @param {Array.<Property.<boolean>>} properties
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
-   */
-  DerivedProperty.and = ( properties, options ) => {
-    return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
-  };
-
-  /**
-   * Creates a derived boolean Property whose value is true iff any input Property value is true.
-   * @public
-   *
-   * @param {Array.<Property.<boolean>>} properties
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
-   */
-  DerivedProperty.or = ( properties, options ) => {
-    return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
   };
 
   return axon.register( 'DerivedProperty', DerivedProperty );

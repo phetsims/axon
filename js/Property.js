@@ -428,34 +428,38 @@ define( require => {
       assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
       return this.changedEmitter.hasListeners();
     }
+
+    /**
+     * Registers a listener with multiple properties, then notifies the listener immediately.
+     * @param {Property[]} properties
+     * @param {function} listener function that takes values from the properties and returns nothing
+     * @returns {Multilink}
+     * @static
+     */
+    static multilink( properties, listener ) {
+      return new Multilink( properties, listener, false );
+    }
+
+    /**
+     * Registers an listener with multiple properties *without* an immediate callback with current values.
+     * @param {Property[]} properties
+     * @param {function} listener function that takes values from the properties and returns nothing
+     * @returns {Multilink}
+     * @static
+     */
+    static lazyMultilink( properties, listener ) {
+      return new Multilink( properties, listener, true );
+    }
+
+    /**
+     * Unlinks an listener that was added with multilink or lazyMultilink.
+     * @param {Multilink} multilink
+     * @static
+     */
+    static unmultilink() {
+      multilink => multilink.dispose();
+    }
   }
-
-  //statics
-
-  /**
-   * Registers a listener with multiple properties, then notifies the listener immediately.
-   * @param {Property[]} properties
-   * @param {function} listener function that takes values from the properties and returns nothing
-   * @returns {Multilink}
-   * @static
-   */
-  Property.multilink = ( properties, listener ) => new Multilink( properties, listener, false );
-
-  /**
-   * Registers an listener with multiple properties *without* an immediate callback with current values.
-   * @param {Property[]} properties
-   * @param {function} listener function that takes values from the properties and returns nothing
-   * @returns {Multilink}
-   * @static
-   */
-  Property.lazyMultilink = ( properties, listener ) => new Multilink( properties, listener, true );
-
-  /**
-   * Unlinks an listener that was added with multilink or lazyMultilink.
-   * @param {Multilink} multilink
-   * @static
-   */
-  Property.unmultilink = multilink => multilink.dispose();
 
   return axon.register( 'Property', Property );
 } );
