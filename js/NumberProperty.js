@@ -10,67 +10,65 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
-  var Property = require( 'AXON/Property' );
-  var Range = require( 'DOT/Range' );
+  const axon = require( 'AXON/axon' );
+  const NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
+  const Property = require( 'AXON/Property' );
+  const Range = require( 'DOT/Range' );
 
   // constants
-  var VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
+  const VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
 
-  /**
-   * @param {number} value - initial value
-   * @param {Object} [options]
-   * @constructor
-   */
-  function NumberProperty( value, options ) {
+  class NumberProperty extends Property {
 
-    options = _.extend( {
-      numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
+    /**
+     * @param {number} value - initial value
+     * @param {Object} [options]
+     * @constructor
+     */
+    constructor( value, options ) {
 
-      // {Range|null} range
-      range: null
-    }, options );
+      options = _.extend( {
+        numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
 
-    assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-    assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
+        // {Range|null} range
+        range: null
+      }, options );
 
-    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
-    options.phetioType = NumberPropertyIO;
+      assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
+      assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
 
-    // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
-    this.numberType = options.numberType;
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
 
-    // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
-    this.range = options.range;
+      options.phetioType = NumberPropertyIO;
 
-    assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
-    options.valueType = 'number';
+      assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
+      options.valueType = 'number';
 
-    // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
-    this.assertNumberPropertyValidateValue = assert && function( value ) {
-      if ( options.numberType === 'Integer' ) {
-        assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
+      super( value, options );
+
+      // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
+      this.numberType = options.numberType;
+
+      // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
+      this.range = options.range;
+
+      // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
+      this.assertNumberPropertyValidateValue = assert && ( value => {
+        if ( options.numberType === 'Integer' ) {
+          assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
+        }
+        options.range && assert( value >= options.range.min && value <= options.range.max,
+          'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']' );
+      } );
+
+      // verify that validValues meet other NumberProperty-specific validation criteria
+      if ( options.validValues && this.assertNumberPropertyValidateValue ) {
+        options.validValues.forEach( this.assertNumberPropertyValidateValue );
       }
-      options.range && assert( value >= options.range.min && value <= options.range.max,
-        'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']' );
-    };
 
-    // verify that validValues meet other NumberProperty-specific validation criteria
-    if ( options.validValues && this.assertNumberPropertyValidateValue ) {
-      options.validValues.forEach( this.assertNumberPropertyValidateValue );
+      // validate initial value
+      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
     }
-
-    // validate initial value
-    this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
-
-    Property.call( this, value, options );
-  }
-
-  axon.register( 'NumberProperty', NumberProperty );
-
-  return inherit( Property, NumberProperty, {
 
     /**
      * Performs value validation that is specific to NumberProperty.
@@ -79,9 +77,13 @@ define( function( require ) {
      * @public
      * @override
      */
-    set: function( value ) {
+    set( value ) {
+
+      // TODO: should be handled in the super
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
-      Property.prototype.set.call( this, value );
+      super.set( value );
     }
-  } );
+  }
+
+  return axon.register( 'NumberProperty', NumberProperty );
 } );

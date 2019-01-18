@@ -7,40 +7,40 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var BooleanIO = require( 'TANDEM/types/BooleanIO' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var Property = require( 'AXON/Property' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
+  const axon = require( 'AXON/axon' );
+  const BooleanIO = require( 'TANDEM/types/BooleanIO' );
+  const Property = require( 'AXON/Property' );
+  const PropertyIO = require( 'AXON/PropertyIO' );
 
   // constants
-  var BooleanPropertyIO = PropertyIO( BooleanIO );
+  const BooleanPropertyIO = PropertyIO( BooleanIO );
 
-  /**
-   * @param {boolean} value - initial value
-   * @param {Object} [options]
-   * @constructor
-   */
-  function BooleanProperty( value, options ) {
+  class BooleanProperty extends Property {
 
-    options = options || {};
+    /**
+     * @param {boolean} value - initial value
+     * @param {Object} [options]
+     * @constructor
+     */
+    constructor( value, options ) {
 
-    assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
-    assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
-    assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
-    options.valueType = 'boolean';  // BooleanProperty requires values to be primitive booleans
+      options = options || {};
 
-    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
-    options.phetioType = BooleanPropertyIO;
+      assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
+      assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
+      assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
+      options.valueType = 'boolean';  // BooleanProperty requires values to be primitive booleans
 
-    Property.call( this, value, options );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
+      options.phetioType = BooleanPropertyIO;
+
+      super( value, options );
+    }
   }
 
-  axon.register( 'BooleanProperty', BooleanProperty );
-
-  return inherit( Property, BooleanProperty );
+  return axon.register( 'BooleanProperty', BooleanProperty );
 } );

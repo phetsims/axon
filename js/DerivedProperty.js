@@ -8,88 +8,70 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var DerivedPropertyIO = require( 'AXON/DerivedPropertyIO' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var Property = require( 'AXON/Property' );
-  var Tandem = require( 'TANDEM/Tandem' );
+  const axon = require( 'AXON/axon' );
+  const DerivedPropertyIO = require( 'AXON/DerivedPropertyIO' );
+  const Property = require( 'AXON/Property' );
+  const Tandem = require( 'TANDEM/Tandem' );
 
-  /**
-   * @param {Property[]} dependencies - Properties that this Property's value is derived from
-   * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
-   * @param {Object} [options] - see Property
-   * @constructor
-   */
-  function DerivedProperty( dependencies, derivation, options ) {
+  class DerivedProperty extends Property {
 
-    options = _.extend( {
-      tandem: Tandem.optional,
-      phetioType: null, // must be supplied by instantiations and must be of type DerivedPropertyIO
-      phetioReadOnly: true // derived properties can be read but not set by PhET-iO
-    }, options );
+    /**
+     * @param {Property[]} dependencies - Properties that this Property's value is derived from
+     * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
+     * @param {Object} [options] - see Property
+     */
+    constructor( dependencies, derivation, options ) {
 
-    this.dependencies = dependencies; // @private
+      options = _.extend( {
+        tandem: Tandem.optional,
+        phetioType: null, // must be supplied by instantiations and must be of type DerivedPropertyIO
+        phetioReadOnly: true // derived properties can be read but not set by PhET-iO
+      }, options );
 
-    var initialValue = derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+      const initialValue = derivation.apply( null, dependencies.map( property => property.get() ) );
 
-    // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
-    Property.call( this, initialValue, options );
+      // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
+      super( initialValue, options );
 
-    // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
-    // See https://github.com/phetsims/axon/issues/193
-    this._initialValue = null;
+      this.dependencies = dependencies; // @private
 
-    if ( this.isPhetioInstrumented() ) {
+      // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
+      // See https://github.com/phetsims/axon/issues/193
+      this._initialValue = null;
 
-      // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
-      assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
+      if ( this.isPhetioInstrumented() ) {
+
+        // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
+        assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
+      }
+
+      const self = this;
+
+      // @private Keep track of listeners so they can be detached
+      this.dependencyListeners = [];
+
+      for ( let i = 0; i < dependencies.length; i++ ) {
+        const dependency = dependencies[ i ];
+        ( dependency => {
+          const listener = () => {
+            super.set( derivation.apply( null, dependencies.map( property => property.get() ) ) );
+          };
+          self.dependencyListeners.push( listener );
+          dependency.lazyLink( listener );
+        } )( dependency, i );
+      }
     }
-
-    var self = this;
-
-    // @private Keep track of listeners so they can be detached
-    this.dependencyListeners = [];
-
-    for ( var i = 0; i < dependencies.length; i++ ) {
-      var dependency = dependencies[ i ];
-      ( function( dependency ) {
-        var listener = function() {
-          Property.prototype.set.call( self, derivation.apply( null, dependencies.map( function( property ) {return property.get();} ) ) );
-        };
-        self.dependencyListeners.push( listener );
-        dependency.lazyLink( listener );
-      } )( dependency, i );
-    }
-  }
-
-  axon.register( 'DerivedProperty', DerivedProperty );
-
-  function equalsFunction( a, b ) {
-    return a === b;
-  }
-
-  function andFunction( value, property ) {
-    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
-    return value && property.value;
-  }
-
-  function orFunction( value, property ) {
-    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
-    return value || property.value;
-  }
-
-  return inherit( Property, DerivedProperty, {
 
     // @public
-    dispose: function() {
+    dispose() {
 
       // Unlink from dependent Properties
-      for ( var i = 0; i < this.dependencies.length; i++ ) {
-        var dependency = this.dependencies[ i ];
+      for ( let i = 0; i < this.dependencies.length; i++ ) {
+        const dependency = this.dependencies[ i ];
         if ( !dependency.isDisposed ) {
           dependency.unlink( this.dependencyListeners[ i ] );
         }
@@ -97,8 +79,8 @@ define( function( require ) {
       this.dependencies = null;
       this.dependencyListeners = null;
 
-      Property.prototype.dispose.call( this );
-    },
+      super.dispose( this );
+    }
 
     /**
      * Override the mutators to provide an error message.  These should not be called directly,
@@ -107,7 +89,7 @@ define( function( require ) {
      * @override
      * @public
      */
-    set: function( value ) { throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value ); },
+    set( value ) { throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value ); }
 
     /**
      * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
@@ -117,7 +99,7 @@ define( function( require ) {
      * @override
      * @public
      */
-    set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a DerivedProperty, tried to set: ' + newValue ); },
+    set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a DerivedProperty, tried to set: ' + newValue ); }
 
     /**
      * Override the mutators to provide an error message.  These should not be called directly,
@@ -125,7 +107,7 @@ define( function( require ) {
      * @override
      * @public
      */
-    reset: function() { throw new Error( 'Cannot reset a DerivedProperty directly' ); },
+    reset() { throw new Error( 'Cannot reset a DerivedProperty directly' ); }
 
     /**
      * Prevent the retrieval of the initial value, since we don't store it.
@@ -134,56 +116,70 @@ define( function( require ) {
      * @override
      * @returns {*}
      */
-    getInitialValue: function() {
-      throw new Error( 'Cannot get the initial value of a DerivedProperty' );
-    },
+    getInitialValue() { throw new Error( 'Cannot get the initial value of a DerivedProperty' ); }
 
     /**
      * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
      * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
+     * TODO: is this still necessary?
      * @returns {*}
      * @override
      * @public
      */
-    get value() { return Property.prototype.get.call( this ); }
-  }, {
+    get value() { return super.get(); }
+  }
 
-    /**
-     * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
-     * value.
-     * @public
-     *
-     * @param {Property.<*>} firstProperty
-     * @param {Property.<*>} secondProperty
-     * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {DerivedProperty.<boolean>}
-     */
-    valueEquals: function( firstProperty, secondProperty, options ) {
-      return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
-    },
+  const equalsFunction = ( a, b ) => {
+    return a === b;
+  };
 
-    /**
-     * Creates a derived boolean Property whose value is true iff every input Property value is true.
-     * @public
-     *
-     * @param {Array.<Property.<boolean>>} properties
-     * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {DerivedProperty.<boolean>}
-     */
-    and: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
-    },
+  const andFunction = ( value, property ) => {
+    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
+    return value && property.value;
+  };
 
-    /**
-     * Creates a derived boolean Property whose value is true iff any input Property value is true.
-     * @public
-     *
-     * @param {Array.<Property.<boolean>>} properties
-     * @param {Object} [options] - Forwarded to the DerivedProperty
-     * @returns {DerivedProperty.<boolean>}
-     */
-    or: function( properties, options ) {
-      return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
-    }
-  } );
+  const orFunction = ( value, property ) => {
+    assert && assert( typeof property.value === 'boolean', 'boolean value required' );
+    return value || property.value;
+  };
+
+  /**
+   * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
+   * value.
+   * @public
+   *
+   * @param {Property.<*>} firstProperty
+   * @param {Property.<*>} secondProperty
+   * @param {Object} [options] - Forwarded to the DerivedProperty
+   * @returns {DerivedProperty.<boolean>}
+   */
+  DerivedProperty.valueEquals = ( firstProperty, secondProperty, options ) => {
+    return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
+  };
+
+  /**
+   * Creates a derived boolean Property whose value is true iff every input Property value is true.
+   * @public
+   *
+   * @param {Array.<Property.<boolean>>} properties
+   * @param {Object} [options] - Forwarded to the DerivedProperty
+   * @returns {DerivedProperty.<boolean>}
+   */
+  DerivedProperty.and = ( properties, options ) => {
+    return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
+  };
+
+  /**
+   * Creates a derived boolean Property whose value is true iff any input Property value is true.
+   * @public
+   *
+   * @param {Array.<Property.<boolean>>} properties
+   * @param {Object} [options] - Forwarded to the DerivedProperty
+   * @returns {DerivedProperty.<boolean>}
+   */
+  DerivedProperty.or = ( properties, options ) => {
+    return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
+  };
+
+  return axon.register( 'DerivedProperty', DerivedProperty );
 } );

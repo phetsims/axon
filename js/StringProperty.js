@@ -10,34 +10,34 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var Property = require( 'AXON/Property' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
-  var StringIO = require( 'TANDEM/types/StringIO' );
+  const axon = require( 'AXON/axon' );
+  const Property = require( 'AXON/Property' );
+  const PropertyIO = require( 'AXON/PropertyIO' );
+  const StringIO = require( 'TANDEM/types/StringIO' );
 
   // constants
-  var StringPropertyIO = PropertyIO( StringIO );
+  const StringPropertyIO = PropertyIO( StringIO );
 
-  /**
-   * @param {string} value - initial value
-   * @param {Object} [options]
-   * @constructor
-   */
-  function StringProperty( value, options ) {
+  class StringProperty extends Property {
 
-    options = options || {};
+    /**
+     * @param {string} value - initial value
+     * @param {Object} [options]
+     * @constructor
+     */
+    constructor( value, options ) {
 
-    assert && assert( !options.valueType, 'valueType is set by StringProperty' );
-    options.valueType = 'string';
+      options = options || {};
 
-    assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by StringProperty' );
-    options.phetioType = StringPropertyIO;
+      assert && assert( !options.valueType, 'valueType is set by StringProperty' );
+      options.valueType = 'string';
 
-    Property.call( this, value, options );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by StringProperty' );
+      options.phetioType = StringPropertyIO;
+
+      super( value, options );
+    }
   }
 
-  axon.register( 'StringProperty', StringProperty );
-
-  return inherit( Property, StringProperty );
+  return axon.register( 'StringProperty', StringProperty );
 } );

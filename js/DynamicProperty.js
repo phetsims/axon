@@ -20,11 +20,11 @@
  *******************************
  * General example
  *******************************
- *   var firstProperty = new Property( Color.RED );
- *   var secondProperty = new Property( Color.BLUE );
- *   var currentProperty = new Property( firstProperty ); // {Property.<Property.<Color>>}
+ *   const firstProperty = new Property( Color.RED );
+ *   const secondProperty = new Property( Color.BLUE );
+ *   const currentProperty = new Property( firstProperty ); // {Property.<Property.<Color>>}
  *
- *   var backgroundFill = new DynamicProperty( currentProperty ) // Turns into a {Property.<Color>}
+ *   const backgroundFill = new DynamicProperty( currentProperty ) // Turns into a {Property.<Color>}
  *   backgroundFill.value; // Color.RED, since: currentProperty.value === firstProperty and
  *                                              firstProperty.value === Color.RED
  *   firstProperty.value = Color.YELLOW;
@@ -49,7 +49,7 @@
  *     backgroundColorProperty: {Property.<Color>}
  *   }
  * and you have a currentSceneProperty: {Property.<Scene>}, you may want to create:
- *   var currentBackgroundColorProperty = new DynamicProperty( currentSceneProperty, {
+ *   const currentBackgroundColorProperty = new DynamicProperty( currentSceneProperty, {
  *     derive: 'backgroundColorProperty'
  *   } );
  * This would always report the current scene's current background color.
@@ -65,10 +65,10 @@
  *******************************
  * If you would like for direct changes to this Property to change the original source (bidirectional synchronization),
  * then pass bidirectional:true:
- *   var firstProperty = new Property( 5 );
- *   var secondProperty = new Property( 10 );
- *   var numberPropertyProperty = new Property( firstProperty );
- *   var dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } );
+ *   const firstProperty = new Property( 5 );
+ *   const secondProperty = new Property( 10 );
+ *   const numberPropertyProperty = new Property( firstProperty );
+ *   const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } );
  *   dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
  *   firstProperty.value; // 2
  *   numberPropertyProperty.value = secondProperty; // change which Property is active
@@ -95,101 +95,99 @@
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var Property = require( 'AXON/Property' );
+  const axon = require( 'AXON/axon' );
+  const Property = require( 'AXON/Property' );
 
-  /**
-   * @constructor
-   * @extends {Property}
-   *
-   * @param {Property.<*|null>} valuePropertyProperty - If the value is null, it is considered disconnected. If the
-   *                                                    'derive' option is not used, then this should always have the
-   *                                                    type {Property.<Property.<*>|null>}
-   * @param {Object} [options] - options
-   */
-  function DynamicProperty( valuePropertyProperty, options ) {
+  class DynamicProperty extends Property {
 
-    options = _.extend( {
-      // {boolean} - If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the
-      //             time) will also be made to derive( valuePropertyProperty.value ).
-      bidirectional: false,
+    /**
+     * @constructor
+     * @extends {Property}
+     *
+     * @param {Property.<*|null>} valuePropertyProperty - If the value is null, it is considered disconnected. If the
+     *                                                    'derive' option is not used, then this should always have the
+     *                                                    type {Property.<Property.<*>|null>}
+     * @param {Object} [options] - options
+     */
+    constructor( valuePropertyProperty, options ) {
 
-      // {*} - If valuePropertyProperty.value === null, this dynamicProperty will act instead like
-      //       derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map
-      //       function is provided, it will be applied to this defaultValue to determine our Property's value.
-      defaultValue: null,
+      options = _.extend( {
+        // {boolean} - If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the
+        //             time) will also be made to derive( valuePropertyProperty.value ).
+        bidirectional: false,
 
-      // {function|string} - Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level
-      //                     documentation for usage. Uses the Lodash path specification (if it's a string).
-      derive: _.identity,
+        // {*} - If valuePropertyProperty.value === null, this dynamicProperty will act instead like
+        //       derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map
+        //       function is provided, it will be applied to this defaultValue to determine our Property's value.
+        defaultValue: null,
 
-      // {function|string} - Maps our input Property value to/from this Property's value. See top-level documentation
-      //                     for usage. Uses the Lodash path specification (if it's a string).
-      map: _.identity,
-      inverseMap: _.identity
-    }, options );
+        // {function|string} - Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level
+        //                     documentation for usage. Uses the Lodash path specification (if it's a string).
+        derive: _.identity,
 
-    assert && assert( valuePropertyProperty instanceof Property, 'valuePropertyProperty should be a Property' );
+        // {function|string} - Maps our input Property value to/from this Property's value. See top-level documentation
+        //                     for usage. Uses the Lodash path specification (if it's a string).
+        map: _.identity,
+        inverseMap: _.identity
+      }, options );
 
-    // @public {boolean} - Set to true when this Property's value is changing from an external source.
-    this.isExternallyChanging = false;
+      assert && assert( valuePropertyProperty instanceof Property, 'valuePropertyProperty should be a Property' );
 
-    // @private {Property.<*|null>}
-    this.valuePropertyProperty = valuePropertyProperty;
+      const derive = typeof options.derive === 'string' ? _.property( options.derive ) : options.derive;
+      const map = typeof options.map === 'string' ? _.property( options.map ) : options.map;
 
-    // @private {boolean}
-    this.bidirectional = options.bidirectional;
+      // Use the Property's initial value
+      const initialValue = valuePropertyProperty.value === null ?
+                           map( options.defaultValue ) :
+                           map( derive( valuePropertyProperty.value ).value );
 
-    // @private {*}
-    this.defaultValue = options.defaultValue;
+      super( initialValue, options );
 
-    // @private {function}
-    this.derive = typeof options.derive === 'string' ? _.property( options.derive ) : options.derive;
-    this.map = typeof options.map === 'string' ? _.property( options.map ) : options.map;
-    this.inverseMap = typeof options.inverseMap === 'string' ? _.property( options.inverseMap ) : options.inverseMap;
+      // @private {*}
+      this.defaultValue = options.defaultValue;
 
-    // Use the Property's initial value
-    var initialValue;
-    if ( this.valuePropertyProperty.value === null ) {
-      initialValue = this.map( this.defaultValue );
+      // @private {function}
+      this.derive = derive;
+      this.map = map;
+
+      // @private {function}
+      this.inverseMap = typeof options.inverseMap === 'string' ? _.property( options.inverseMap ) : options.inverseMap;
+
+      // @private {boolean}
+      this.bidirectional = options.bidirectional;
+
+      // @private {Property.<*|null>}
+      this.valuePropertyProperty = valuePropertyProperty;
+
+      // @public {boolean} - Set to true when this Property's value is changing from an external source.
+      this.isExternallyChanging = false;
+
+      // If we can't reset(), then we won't store the initial value.
+      // See https://github.com/phetsims/axon/issues/193.
+      if ( !this.bidirectional ) {
+        this._initialValue = null;
+      }
+
+      // @private {function}
+      this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
+
+      // @private {function}
+      this.propertyListener = this.onPropertyChange.bind( this );
+
+      // Rehook our listener to whatever is the active Property.
+      valuePropertyProperty.link( this.propertyListener );
+
+      // If we aren't bidirectional, we should never add this listener.
+      if ( options.bidirectional ) {
+        // No unlink needed, since our own disposal will remove this listener.
+        this.lazyLink( this.onSelfChange.bind( this ) );
+      }
     }
-    else {
-      initialValue = this.map( this.derive( this.valuePropertyProperty.value ).value );
-    }
 
-    // Super call
-    Property.call( this, initialValue, options );
-
-    // If we can't reset(), then we won't store the initial value.
-    // See https://github.com/phetsims/axon/issues/193.
-    if ( !this.bidirectional ) {
-      this._initialValue = null;
-    }
-
-    // @private {function}
-    this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
-
-    // @private {function}
-    this.propertyListener = this.onPropertyChange.bind( this );
-
-    // Rehook our listener to whatever is the active Property.
-    valuePropertyProperty.link( this.propertyListener );
-
-    // If we aren't bidirectional, we should never add this listener.
-    if ( options.bidirectional ) {
-      // No unlink needed, since our own disposal will remove this listener.
-      this.lazyLink( this.onSelfChange.bind( this ) );
-    }
-  }
-
-  axon.register( 'DynamicProperty', DynamicProperty );
-
-  return inherit( Property, DynamicProperty, {
     /**
      * Listener added to the active inner Property.
      * @private
@@ -199,14 +197,14 @@ define( function( require ) {
      * @param {*} oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
      * @param {Property.<*>|null} innerProperty
      */
-    onPropertyPropertyChange: function( value, oldValue, innerProperty ) {
+    onPropertyPropertyChange( value, oldValue, innerProperty ) {
 
       // If the value of the inner Property is already the inverse of our value, we will never attempt to update our
       // own value in an attempt to limit "ping-ponging" cases mainly due to numerical error. Otherwise it would be
       // possible, given certain values and map/inverse, for both Properties to toggle back-and-forth.
       // See https://github.com/phetsims/axon/issues/197 for more details.
       if ( this.bidirectional && this.valuePropertyProperty.value !== null && innerProperty ) {
-        var currentProperty = this.derive( this.valuePropertyProperty.value );
+        const currentProperty = this.derive( this.valuePropertyProperty.value );
         // Notably, we only want to cancel interactions if the Property that sent the notification is still the Property
         // we are paying attention to.
         if ( currentProperty === innerProperty && innerProperty.equalsValue( this.inverseMap( this.value ) ) ) {
@@ -215,8 +213,8 @@ define( function( require ) {
       }
 
       // Since we override the setter here, we need to call the version on the prototype
-      Property.prototype.set.call( this, this.map( value ) );
-    },
+      super.set( this.map( value ) );
+    }
 
     /**
      * Listener added to the outer Property.
@@ -227,7 +225,7 @@ define( function( require ) {
      *                                              We additionally handle the initial link() case where this is
      *                                              undefined.
      */
-    onPropertyChange: function( newPropertyValue, oldPropertyValue ) {
+    onPropertyChange( newPropertyValue, oldPropertyValue ) {
       if ( oldPropertyValue ) {
         this.derive( oldPropertyValue ).unlink( this.propertyPropertyListener );
       }
@@ -238,7 +236,7 @@ define( function( require ) {
         // Switch to null when our Property's value is null.
         this.onPropertyPropertyChange( this.defaultValue, null, null );
       }
-    },
+    }
 
     /**
      * Listener added to ourself when we are bidirectional
@@ -246,11 +244,11 @@ define( function( require ) {
      *
      * @param {*} value
      */
-    onSelfChange: function( value ) {
+    onSelfChange( value ) {
       assert && assert( this.bidirectional );
 
       if ( this.valuePropertyProperty.value !== null ) {
-        var innerProperty = this.derive( this.valuePropertyProperty.value );
+        const innerProperty = this.derive( this.valuePropertyProperty.value );
 
         // If our new value is the result of map() from the inner Property's value, we don't want to propagate that
         // change back to the innerProperty in the case where the map/inverseMap are not exact matches (generally due
@@ -260,43 +258,43 @@ define( function( require ) {
           innerProperty.value = this.inverseMap( value );
         }
       }
-    },
+    }
 
     /**
      * Disposes this Property
      * @public
      */
-    dispose: function() {
+    dispose() {
       this.valuePropertyProperty.unlink( this.propertyListener );
 
       if ( this.valuePropertyProperty.value !== null ) {
         this.derive( this.valuePropertyProperty.value ).unlink( this.propertyPropertyListener );
       }
 
-      Property.prototype.dispose.call( this );
-    },
+      super.dispose( this );
+    }
 
     /**
      * Resets the current property.
      * @public
      */
-    reset: function() {
+    reset() {
       assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
       if ( this.valuePropertyProperty.value !== null ) {
         this.derive( this.valuePropertyProperty.value ).reset();
       }
-    },
+    }
 
     /**
      * Prevent getting this Property manually if it is not marked as bidirectional.
      * @public
      */
-    getInitialValue: function() {
+    getInitialValue() {
       assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
 
-      return Property.prototype.getInitialValue.call( this );
-    },
+      return super.getInitialValue();
+    }
 
     /**
      * Prevent setting this Property manually if it is not marked as bidirectional.
@@ -305,15 +303,16 @@ define( function( require ) {
      *
      * @param {*} value
      */
-    set: function( value ) {
+    set( value ) {
       assert && assert( this.bidirectional,
         'Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ' + value );
 
       this.isExternallyChanging = true;
-
-      Property.prototype.set.call( this, value );
+      super.set( value );
 
       this.isExternallyChanging = false;
     }
-  } );
+  }
+
+  return axon.register( 'DynamicProperty', DynamicProperty );
 } );
