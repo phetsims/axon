@@ -457,7 +457,7 @@ define( require => {
      * @static
      */
     static unmultilink( multilink ) {
-      multilink => multilink.dispose();
+      multilink.dispose();
     }
   }
 
