@@ -108,7 +108,7 @@ define( require => {
     }
 
     /**
-     * Adds a listener
+     * Adds a listener.  When emitting, the listeners are called in the order they were added.
      * @param {function} listener
      * @public
      */
@@ -182,8 +182,8 @@ define( require => {
     }
 
     /**
-     * Emits a single event.
-     * This method is called many times in a simulation and must be well-optimized.
+     * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
+     * are notified in the order they were added via addListener.
      * @params - expected parameters are based on options.argumentTypes, see constructor
      * @public
      */

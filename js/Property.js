@@ -309,7 +309,8 @@ define( require => {
 
     /**
      * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
-     * notification provides the current value for newValue and null for oldValue.
+     * notification provides the current value for newValue and null for oldValue.  On value changes, listeners
+     * are called back in the order they were added.
      *
      * @param {function} listener a function of the form listener(newValue,oldValue)
      * @public
@@ -320,10 +321,9 @@ define( require => {
     }
 
     /**
-     * Add an listener to the Property, without calling it back right away.
-     * This is used when you need to register a listener without an immediate callback.
-     *
-     * @param {function} listener - a function with a single argument, which is the value of the property at the time the function is called.
+     * Add an listener to the Property, without calling it back right away. This is used when you need to register a
+     * listener without an immediate callback. On value changes, listeners are called back in the order they were added.
+     * @param {function} listener - a function with a single argument, which is the current value of the Property.
      * @public
      */
     lazyLink( listener ) {
