@@ -114,7 +114,7 @@ define( require => {
     }
 
     /**
-     * Adds a listener.  When emitting, the listeners are called in the order they were added.
+     * Adds a listener which will be called during emit.
      * @param {function} listener
      * @public
      */
