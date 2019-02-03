@@ -196,7 +196,7 @@ define( require => {
     emit() {
 
       // validate the args
-      this.validate && this.validate.apply( this, arguments );
+      this.validate && this.validate.apply( null, arguments );
 
       this.before && this.before.apply( null, arguments );
 
