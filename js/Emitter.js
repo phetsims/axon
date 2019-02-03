@@ -218,7 +218,7 @@ define( require => {
 
         // Notify listeners
         for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-          this.activeListenersStack[ lastEntry ][ i ].apply( this, arguments );
+          this.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
         }
 
         this.activeListenersStack.pop();
