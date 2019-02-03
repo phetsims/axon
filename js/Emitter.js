@@ -37,8 +37,11 @@ define( require => {
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
-        listener: null // {function} [listener] optional listener to be added during construction.
+        before: null, // {function} [before] optional function to call before listeners
+        after: null // {function} [before] optional function to call after listeners
       }, options );
+
+      assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use before' );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -91,8 +94,11 @@ define( require => {
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
 
-      // If an initial listener was specified, add it now
-      options.listener && this.addListener( options.listener );
+      // @private {function|undefined} if defined, called before listeners are notified
+      this.before = options.before;
+
+      // @private {function|undefined} if defined, called after listeners are notified
+      this.after = options.after;
     }
 
     /**
@@ -192,6 +198,8 @@ define( require => {
       // validate the args
       this.validate && this.validate.apply( this, arguments );
 
+      this.before && this.before.apply( null, arguments );
+
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
@@ -224,6 +232,8 @@ define( require => {
         this.activeListenersStack.pop();
       }
       this.isPhetioInstrumented() && this.phetioEndEvent();
+
+      this.after && this.after.apply( null, arguments );
     }
 
     /**
@@ -233,6 +243,8 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit1( arg0 ) {
+
+      this.before && this.before( arg0 );
 
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
@@ -249,6 +261,8 @@ define( require => {
         this.activeListenersStack.pop();
       }
       this.isPhetioInstrumented() && this.phetioEndEvent();
+
+      this.after && this.after( arg0 );
     }
 
     /**
@@ -259,6 +273,7 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit2( arg0, arg1 ) {
+      this.before && this.before( arg0, arg1 );
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
@@ -276,6 +291,7 @@ define( require => {
         this.activeListenersStack.pop();
       }
       this.isPhetioInstrumented() && this.phetioEndEvent();
+      this.after && this.after( arg0, arg1 );
     }
 
     /**
@@ -287,6 +303,7 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit3( arg0, arg1, arg2 ) {
+      this.before && this.before( arg0, arg1, arg2 );
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
@@ -306,6 +323,7 @@ define( require => {
         this.activeListenersStack.pop();
       }
       this.isPhetioInstrumented() && this.phetioEndEvent();
+      this.after && this.after( arg0, arg1, arg2 );
     }
 
     /**
