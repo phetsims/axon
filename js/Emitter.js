@@ -37,8 +37,8 @@ define( require => {
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
-        before: null, // {function} [before] optional function to call before listeners
-        after: null // {function} [before] optional function to call after listeners
+        before: null, // {function|null} optional function to call before listeners, with same args as listeners
+        after: null // {function|null} optional function to call after listeners, with same args as listeners
       }, options );
 
       assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use before' );
@@ -94,10 +94,10 @@ define( require => {
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
 
-      // @private {function|undefined} if defined, called before listeners are notified
+      // @private {function|null} if defined, called before listeners are notified
       this.before = options.before;
 
-      // @private {function|undefined} if defined, called after listeners are notified
+      // @private {function|null} if defined, called after listeners are notified
       this.after = options.after;
     }
 
