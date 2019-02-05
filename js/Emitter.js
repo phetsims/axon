@@ -198,8 +198,6 @@ define( require => {
       // validate the args
       this.validate && this.validate.apply( null, arguments );
 
-      this.before && this.before.apply( null, arguments );
-
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 
@@ -218,6 +216,8 @@ define( require => {
         this.phetioStartEvent( 'emitted', data );
       }
 
+      this.before && this.before.apply( null, arguments );
+
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
 
@@ -231,9 +231,10 @@ define( require => {
 
         this.activeListenersStack.pop();
       }
-      this.isPhetioInstrumented() && this.phetioEndEvent();
 
       this.after && this.after.apply( null, arguments );
+
+      this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
     /**
