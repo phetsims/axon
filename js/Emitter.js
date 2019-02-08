@@ -232,7 +232,7 @@ define( require => {
     }
 
     /**
-     * Emits a single event with one argument.  This is a copy-paste of emit() for performance reasons.
+     * Emits a single event with one argument.
      * @param {*} arg0
      * @public
      * @deprecated - please use emit()
@@ -243,7 +243,7 @@ define( require => {
     }
 
     /**
-     * Emits a single event with two arguments.  This is a copy-paste of emit() for performance reasons.
+     * Emits a single event with two arguments.
      * @param {*} arg0
      * @param {*} arg1
      * @public
@@ -255,7 +255,7 @@ define( require => {
     }
 
     /**
-     * Emits a single event with three arguments.  This is a copy-paste of emit() for performance reasons.
+     * Emits a single event with three arguments.
      * @param {*} arg0
      * @param {*} arg1
      * @param {*} arg2
