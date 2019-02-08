@@ -37,11 +37,11 @@ define( require => {
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
-        before: null, // {function|null} optional function to call before listeners, with same args as listeners
-        after: null // {function|null} optional function to call after listeners, with same args as listeners
+        first: null // {function|null} [first] optional listener which will be added as the first listener
       }, options );
 
-      assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use before' );
+      assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use first' );
+      assert && assert( !options.hasOwnProperty( 'before' ), 'before option no longer supported, please use first' );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -95,10 +95,9 @@ define( require => {
       this.activeListenersStack = [];
 
       // @private {function|null} if defined, called before listeners are notified
-      this.before = options.before;
+      this.first = options.first;
 
-      // @private {function|null} if defined, called after listeners are notified
-      this.after = options.after;
+      this.first && this.listeners.push( this.first );
     }
 
     /**
@@ -106,10 +105,7 @@ define( require => {
      * listeners.
      */
     dispose() {
-
-      // See https://github.com/phetsims/axon/issues/124
-      this.listeners.length = 0;
-
+      this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
       PhetioObject.prototype.dispose.call( this );
     }
 
@@ -196,7 +192,7 @@ define( require => {
     emit() {
 
       // validate the args
-      this.validate && this.validate.apply( null, arguments );
+      assert && this.validate && this.validate.apply( null, arguments );
 
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
@@ -216,7 +212,7 @@ define( require => {
         this.phetioStartEvent( 'emitted', data );
       }
 
-      this.before && this.before.apply( null, arguments );
+      assert && assert( this.first === null || this.listeners[ 0 ] === this.first, 'first must be null or listeners[0]' );
 
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
@@ -232,8 +228,6 @@ define( require => {
         this.activeListenersStack.pop();
       }
 
-      this.after && this.after.apply( null, arguments );
-
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
@@ -244,9 +238,6 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit1( arg0 ) {
-
-      this.before && this.before( arg0 );
-
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [ this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ) ]
       } );
@@ -274,7 +265,6 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit2( arg0, arg1 ) {
-      this.before && this.before( arg0, arg1 );
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
@@ -304,7 +294,6 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit3( arg0, arg1, arg2 ) {
-      this.before && this.before( arg0, arg1, arg2 );
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
         args: [
           this.phetioType.parameterTypes[ 0 ].toStateObject( arg0 ),
