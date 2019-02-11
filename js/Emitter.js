@@ -227,13 +227,12 @@ define( require => {
 
     /**
      * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
-     * are notified in the order they were added via addListener.
+     * are notified in the order they were added via addListener, though it is poor practice to rely on the order
+     * of listener notifications.
      * @params - expected parameters are based on options.argumentTypes, see constructor
      * @public
      */
     emit() {
-
-      // validate the args
       assert && this.validate && this.validate.apply( null, arguments );
       assert && this.first && assert( this.listeners.indexOf( this.first ) === 0, 'first should be at the beginning' );
       assert && this.last && assert( this.listeners.indexOf( this.last ) === this.listeners.length - 1, 'last should be ' +
@@ -243,11 +242,10 @@ define( require => {
 
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
-
         this.activeListenersStack.push( this.listeners );
-        const lastEntry = this.activeListenersStack.length - 1;
 
-        // Notify listeners
+        // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
+        const lastEntry = this.activeListenersStack.length - 1;
         for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
           this.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
         }
