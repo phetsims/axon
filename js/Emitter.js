@@ -241,8 +241,6 @@ define( require => {
       // handle phet-io data stream for the emitted event
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', this.getPhetioData.apply( this, arguments ) );
 
-      assert && assert( this.first === null || this.listeners[ 0 ] === this.first, 'first must be null or listeners[0]' );
-
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
 
