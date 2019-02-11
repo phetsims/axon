@@ -111,8 +111,7 @@ define( require => {
     }
 
     /**
-     * Dispose an Emitter that is no longer used.  Like Property.dispose, this method checks that there are no leaked
-     * listeners.
+     * Disposes an Emitter. All listeners are removed.
      * @public
      * @override
      */
