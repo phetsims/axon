@@ -37,7 +37,14 @@ define( require => {
         tandem: Tandem.optional,
         phetioState: false,
         phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
-        first: null // {function|null} [first] optional listener which will be added as the first listener
+
+        // {function|null} [first] optional listener which will be added as the first listener.
+        // Can be removed via removeListener.
+        first: null,
+
+        // {function|null} [last] optional listener which will be added as the last listener.
+        // Can be removed via removeListener.
+        last: null
       }, options );
 
       assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use first' );
@@ -94,10 +101,13 @@ define( require => {
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
 
-      // @private {function|null} if defined, called before listeners are notified
+      // @private {function|null} if defined, called as the first listener
       this.first = options.first;
-
       this.first && this.listeners.push( this.first );
+
+      // @private {function|null} if defined, called as the last listener
+      this.last = options.last;
+      this.last && this.listeners.push( this.last );
     }
 
     /**
@@ -105,6 +115,8 @@ define( require => {
      * listeners.
      */
     dispose() {
+      this.first = null;
+      this.last = null;
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
       PhetioObject.prototype.dispose.call( this );
     }
@@ -123,7 +135,8 @@ define( require => {
       // removeListener.
       this.defendListeners();
 
-      this.listeners.push( listener );
+      const index = this.last ? this.listeners.length - 1 : this.listeners.length;
+      this.listeners.splice( index, 0, listener );
     }
 
     /**
@@ -146,6 +159,14 @@ define( require => {
       this.defendListeners();
 
       this.listeners.splice( index, 1 );
+
+      // Cleanup for special cases of first and last
+      if ( this.last === listener ) {
+        this.last = null;
+      }
+      if ( this.first === listener ) {
+        this.first = null;
+      }
     }
 
     /**
@@ -193,7 +214,9 @@ define( require => {
 
       // validate the args
       assert && this.validate && this.validate.apply( null, arguments );
-
+      assert && this.first && assert( this.listeners.indexOf( this.first ) === 0, 'first should be at the beginning' );
+      assert && this.last && assert( this.listeners.indexOf( this.last ) === this.listeners.length - 1, 'last should be ' +
+                                                                                                        'at the end' );
       // handle phet-io data stream for the emitted event
       if ( this.isPhetioInstrumented() ) {
 

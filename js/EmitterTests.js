@@ -191,4 +191,52 @@ define( require => {
     assert.equal( entries[ 6 ].listener, 'b' );
     assert.equal( entries[ 6 ].arg, 'first' );
   } );
+
+  QUnit.test( 'Emitter first|last', assert => {
+    const entries = [];
+
+    const emitter = new Emitter( {
+      first: () => entries.push( 'a' ),
+      last: () => entries.push( 'd' )
+    } );
+    emitter.addListener( () => entries.push( 'b' ) );
+    emitter.addListener( () => entries.push( 'c' ) );
+    emitter.emit();
+
+    assert.ok( _.isEqual( entries, [ 'a', 'b', 'c', 'd' ] ), 'Order incorrect' );
+  } );
+
+  QUnit.test( 'Emitter last removal', assert => {
+    const entries = [];
+
+    const first = () => entries.push( 'a' );
+    const last = () => entries.push( 'd' );
+    const emitter = new Emitter( {
+      first: first,
+      last: last
+    } );
+    emitter.addListener( () => entries.push( 'b' ) );
+    emitter.addListener( () => entries.push( 'c' ) );
+    emitter.removeListener( last );
+    emitter.emit();
+
+    assert.ok( _.isEqual( entries, [ 'a', 'b', 'c' ] ), 'Order incorrect' );
+  } );
+
+  QUnit.test( 'Emitter first removal', assert => {
+    const entries = [];
+
+    const first = () => entries.push( 'a' );
+    const last = () => entries.push( 'd' );
+    const emitter = new Emitter( {
+      first: first,
+      last: last
+    } );
+    emitter.addListener( () => entries.push( 'b' ) );
+    emitter.addListener( () => entries.push( 'c' ) );
+    emitter.removeListener( first );
+    emitter.emit();
+
+    assert.ok( _.isEqual( entries, [ 'b', 'c', 'd' ] ), 'Order incorrect' );
+  } );
 } );
