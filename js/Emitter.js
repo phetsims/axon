@@ -205,6 +205,27 @@ define( require => {
     }
 
     /**
+     * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
+     * @returns {*}
+     * @private
+     */
+    getPhetioData() {
+
+      // null if there are no arguments.  dataStream.js omits null values for data
+      let data = null;
+      if ( this.phetioType.elements.length > 0 ) {
+
+        // Enumerate named argsObject for the data stream.
+        data = {};
+        for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
+          const element = this.phetioType.elements[ i ];
+          data[ element.name ] = element.type.toStateObject( arguments[ i ] );
+        }
+      }
+      return data;
+    }
+
+    /**
      * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
      * are notified in the order they were added via addListener.
      * @params - expected parameters are based on options.argumentTypes, see constructor
@@ -218,22 +239,7 @@ define( require => {
       assert && this.last && assert( this.listeners.indexOf( this.last ) === this.listeners.length - 1, 'last should be ' +
                                                                                                         'at the end' );
       // handle phet-io data stream for the emitted event
-      if ( this.isPhetioInstrumented() ) {
-
-        // null if there are no arguments.  dataStream.js omits null values for data
-        let data = null;
-        if ( this.phetioType.elements.length > 0 ) {
-
-          // Enumerate named argsObject for the data stream.
-          data = {};
-          for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-            const element = this.phetioType.elements[ i ];
-            data[ element.name ] = element.type.toStateObject( arguments[ i ] );
-          }
-        }
-
-        this.phetioStartEvent( 'emitted', data );
-      }
+      this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', this.getPhetioData.apply( this, arguments ) );
 
       assert && assert( this.first === null || this.listeners[ 0 ] === this.first, 'first must be null or listeners[0]' );
 
