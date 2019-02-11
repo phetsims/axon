@@ -113,12 +113,14 @@ define( require => {
     /**
      * Dispose an Emitter that is no longer used.  Like Property.dispose, this method checks that there are no leaked
      * listeners.
+     * @public
+     * @override
      */
     dispose() {
       this.first = null;
       this.last = null;
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
-      PhetioObject.prototype.dispose.call( this );
+      super.dispose();
     }
 
     /**
