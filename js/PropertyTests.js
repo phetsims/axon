@@ -231,20 +231,31 @@ define( function( require ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
       var done = assert.async();
       var tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
-      tandem.addInstance = function( instance, options ) {
+      const phetioType = PropertyIO( ObjectIO ); // TODO: This should be a NumberProperty
+      const propertyValue = 123;
+      const validValues = [ 0, 1, 2, 3, propertyValue ];
+      tandem.addPhetioObject = function( instance, options ) {
 
-        // Run in the next frame after the object finished getting constructed
-        setTimeout( function() {
-          var stateObject = ObjectIO.toStateObject( instance );
-          assert.equal( stateObject.value, 0, 'toStateObject should match' );
+        // PhET-iO operates under the assumption that nothing will access a PhetioObject until the next animation frame
+        // when the object is fully constructed.  For example, Property state variables are set after the callback
+        // to addPhetioObject, which occurs during Property.constructor.super().
+        setTimeout( () => {
+
+          // Run in the next frame after the object finished getting constructed
+          var stateObject = phetioType.toStateObject( instance );
+          assert.equal( stateObject.value, propertyValue, 'toStateObject should match' );
+          assert.deepEqual( stateObject.validValues, validValues, 'toStateObject should match' );
           done();
         }, 0 );
       };
-      new Property( 0, { // eslint-disable-line
-        phetioType: PropertyIO( ObjectIO ),
+
+      new Property( propertyValue, { // eslint-disable-line
+        phetioType: phetioType,
         tandem: tandem,
-        validValues: [ 0, 1, 2, 3 ]
+        validValues: validValues
       } );
+
+
     } );
   }
 } );
