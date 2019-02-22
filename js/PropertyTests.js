@@ -76,7 +76,7 @@ define( function( require ) {
   } );
 
   QUnit.test( 'Property ID checks', function( assert ) {
-    assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' );
+    assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' ); // eslint-disable-line no-self-compare
   } );
 
   QUnit.test( 'Property link parameters', function( assert ) {
