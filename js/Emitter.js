@@ -58,6 +58,20 @@ define( require => {
         options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
       }
 
+      // keep track of if we get the validators from options, or the phetioType
+      let validatorsFromTypeIO = false;
+
+      // important to be before super call
+      const phetioTypeSupplied = options.phetioType !== EmitterIOWithNoArgs;
+      assert && assert( !( phetioTypeSupplied && options.validators.length > 0 ),
+        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Emitter' );
+
+      // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
+      if ( phetioTypeSupplied ) {
+        options.validators = options.phetioType.validators;
+        validatorsFromTypeIO = true;
+      }
+
       super( options );
 
       validate( options.validators, { valueType: Array } );
@@ -68,20 +82,21 @@ define( require => {
         // mainly done for performance
         options.validators.forEach( validatorOptions => {
           assert && assert(
-            validatorOptions.validateOptionsOnValidateValue === undefined,
+            validatorOptions.validateOptionsOnValidateValue !== true,
             'emitter sets its own validateOptionsOnValidateValue for each argument type'
           );
           validatorOptions.validateOptionsOnValidateValue = false;
 
-          // Changing the validator options after construction indicates a logic error
-          assert && Object.freeze( validatorOptions );
+          // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
+          // are shared between instances.
+          assert && !validatorsFromTypeIO && Object.freeze( validatorOptions );
 
           // validate the options passed in to validate each emitter argument
           ValidatorDef.validateValidator( validatorOptions );
         } );
 
-        // Changing after construction indicates a logic error
-        assert && Object.freeze( options.validators );
+        // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances
+        assert && !validatorsFromTypeIO && Object.freeze( options.validators );
       }
 
       // @private {function|false}

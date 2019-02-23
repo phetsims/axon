@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var ValidatorDef = require( 'AXON/ValidatorDef' );
   var axon = require( 'AXON/axon' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
@@ -20,7 +21,12 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
 
   // allowed keys
-  var ELEMENT_KEYS = [ 'name', 'type', 'documentation' ];
+  var ELEMENT_KEYS = [
+    'name', // {string}
+    'type', // {ObjectIO}
+    'documentation', // {string}
+    'validator' // {ValidatorDef}
+  ];
 
   /**
    * IO type for Emitter
@@ -34,19 +40,23 @@ define( function( require ) {
 
     assert && assert( Array.isArray( argumentObjects ) );
 
-    var elementTypes = argumentObjects.map( function( element ) {
+    var elementTypes = argumentObjects.map( function( argumentObject ) {
 
       // validate the look of the content
-      assert && assert( element instanceof Object );
-      var keys = Object.keys( element );
+      assert && assert( argumentObject !== null && typeof argumentObject === 'object' );
+      argumentObject.validator && ValidatorDef.validateValidator( argumentObject.validator );
+
+      var keys = Object.keys( argumentObject );
       for ( let i = 0; i < keys.length; i++ ) {
         const key = keys[ i ];
-        assert && assert( ELEMENT_KEYS.indexOf( key ) >= 0, 'unrecognized element key: ' + key );
+        assert && assert( ELEMENT_KEYS.indexOf( key ) >= 0, 'unrecognized argumentObject key: ' + key );
       }
-      assert && assert( element.type, 'required element key: type.' );
+      assert && assert( argumentObject.type, 'required argumentObject key: type.' );
 
-      return element.type;
+      return argumentObject.type;
     } );
+
+    var validators = argumentObjects.map( argumentObject => argumentObject.validator || argumentObject.type.validator );
 
     /**
      * @param {Emitter} emitter
@@ -97,7 +107,12 @@ define( function( require ) {
       /**
        * {Array.<Object>} - see constructor for details on object literal keys
        */
-      elements: argumentObjects
+      elements: argumentObjects,
+
+      /**
+       * {ValidatorDef[]}
+       */
+      validators: validators
     } );
   }
 
