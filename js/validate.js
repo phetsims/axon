@@ -15,7 +15,7 @@ define( require => {
   /**
    * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
    * @param {Object|null} value
-   * @param {Object} [validator]
+   * @param {Object} validator
    * @returns {Object|null} - returns the value for chaining
    * @public
    */
@@ -32,11 +32,11 @@ define( require => {
         if ( typeof valueType === 'string' ) { // primitive type
           assert( typeof value === valueType, `value should have typeof ${valueType}, value=${value}` );
         }
-        else if ( typeof valueType === 'function' ) { // constructor
-          assert( value instanceof valueType, `value should be instanceof ${valueType.name}, value=${value}` );
-        }
         else if ( valueType === Array ) {
           assert( Array.isArray( value ), `value should have been an array, value=${value}` );
+        }
+        else if ( typeof valueType === 'function' ) { // constructor
+          assert( value instanceof valueType, `value should be instanceof ${valueType.name}, value=${value}` );
         }
       }
       validator.validValues && assert( validator.validValues.indexOf( value ) >= 0, `value not in validValues: ${value}` );

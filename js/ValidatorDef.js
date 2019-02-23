@@ -47,10 +47,9 @@ define( require => {
   // TODO: do we need a isValidatorDef function? See https://github.com/phetsims/axon/issues/212
   const ValidatorDef = {
 
-
     /**
-     * Throws assertions errors if the validator is invalid.
-     * @param {Object} [validator]
+     * Throws assertion errors if the validator is invalid.
+     * @param {Object} validator
      * @public
      */
     validateValidator: validator => {
@@ -71,8 +70,8 @@ define( require => {
 
         if ( validator.hasOwnProperty( 'isValidValue' ) ) {
           assert(
-            validator.isValidValue === null ||
             typeof validator.isValidValue === 'function' ||
+            validator.isValidValue === null ||
             validator.isValidValue === undefined,
             `isValidValue must be a function: ${validator.isValidValue}`
           );
