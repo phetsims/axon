@@ -49,7 +49,7 @@ define( require => {
 
     /**
      * Throws assertion errors if the validator is invalid.
-     * @param {Object} [validator]
+     * @param {Object} validator
      * @public
      */
     validateValidator: validator => {

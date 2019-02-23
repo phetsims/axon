@@ -15,7 +15,7 @@ define( require => {
   /**
    * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
    * @param {Object|null} value
-   * @param {Object} [validator]
+   * @param {Object} validator
    * @returns {Object|null} - returns the value for chaining
    * @public
    */
