@@ -70,8 +70,8 @@ define( require => {
 
         if ( validator.hasOwnProperty( 'isValidValue' ) ) {
           assert(
-            validator.isValidValue === null ||
             typeof validator.isValidValue === 'function' ||
+            validator.isValidValue === null ||
             validator.isValidValue === undefined,
             `isValidValue must be a function: ${validator.isValidValue}`
           );
