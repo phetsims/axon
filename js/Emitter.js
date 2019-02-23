@@ -31,9 +31,8 @@ define( require => {
 
       options = _.extend( {
 
-        // {Array.<Object>|null} - array of "Validator Options" Objects that hold options for how to validate each
-        // argument, see ValidatorDef.js for details.
-        argumentTypes: EMPTY_ARRAY,
+        // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
+        validators: EMPTY_ARRAY,
 
         tandem: Tandem.optional,
         phetioState: false,
@@ -61,12 +60,13 @@ define( require => {
 
       super( options );
 
-      validate( options.argumentTypes, { valueType: Array } );
+      validate( options.validators, { valueType: Array } );
 
       if ( assert ) {
 
-        // Iterate through all argumentType validator options and make sure that they won't validate options on validating value
-        options.argumentTypes.forEach( validatorOptions => {
+        // Iterate through each validator and make sure that it won't validate options on validating value. This is
+        // mainly done for performance
+        options.validators.forEach( validatorOptions => {
           assert && assert(
             validatorOptions.validateOptionsOnValidateValue === undefined,
             'emitter sets its own validateOptionsOnValidateValue for each argument type'
@@ -81,17 +81,17 @@ define( require => {
         } );
 
         // Changing after construction indicates a logic error
-        assert && Object.freeze( options.argumentTypes );
+        assert && Object.freeze( options.validators );
       }
 
       // @private {function|false}
       this.validate = assert && function() {
         assert(
-          arguments.length === options.argumentTypes.length,
-          `Emitted unexpected number of args. Expected: ${options.argumentTypes.length} and received ${arguments.length}`
+          arguments.length === options.validators.length,
+          `Emitted unexpected number of args. Expected: ${options.validators.length} and received ${arguments.length}`
         );
-        for ( let i = 0; i < options.argumentTypes.length; i++ ) {
-          validate( arguments[ i ], options.argumentTypes[ i ] );
+        for ( let i = 0; i < options.validators.length; i++ ) {
+          validate( arguments[ i ], options.validators[ i ] );
         }
       };
 
@@ -231,7 +231,7 @@ define( require => {
      * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
      * are notified in the order they were added via addListener, though it is poor practice to rely on the order
      * of listener notifications.
-     * @params - expected parameters are based on options.argumentTypes, see constructor
+     * @params - expected parameters are based on options.validators, see constructor
      * @public
      */
     emit() {

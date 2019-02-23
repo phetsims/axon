@@ -19,7 +19,7 @@ define( require => {
 
     assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
     const e1 = new Emitter( {
-      argumentTypes: [ { valueType: 'number' } ]
+      validators: [ { valueType: 'number' } ]
     } );
 
     e1.emit( 1 );
@@ -34,7 +34,7 @@ define( require => {
 
     // emitting with an object as parameter
     const e2 = new Emitter( {
-      argumentTypes: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
+      validators: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
     } );
 
     e2.emit( new Emitter(), {}, () => {} );
@@ -50,7 +50,7 @@ define( require => {
     }
 
     const e3 = new Emitter( {
-      argumentTypes: [ { valueType: 'number' }, { isValidValue: v => v === null || typeof v === 'string' } ]
+      validators: [ { valueType: 'number' }, { isValidValue: v => v === null || typeof v === 'string' } ]
     } );
 
     e3.emit( 1, 'hi' );
@@ -124,7 +124,7 @@ define( require => {
     const entries = [];
 
     const emitter = new Emitter( {
-      argumentTypes: [ { valueType: 'string' } ]
+      validators: [ { valueType: 'string' } ]
     } );
 
     const a = arg => {
