@@ -47,9 +47,8 @@ define( require => {
   // TODO: do we need a isValidatorDef function? See https://github.com/phetsims/axon/issues/212
   const ValidatorDef = {
 
-
     /**
-     * Throws assertions errors if the validator is invalid.
+     * Throws assertion errors if the validator is invalid.
      * @param {Object} [validator]
      * @public
      */
