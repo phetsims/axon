@@ -44,7 +44,6 @@ define( require => {
     validateOptionsOnValidateValue: true
   };
 
-  // TODO: do we need a isValidatorDef function? See https://github.com/phetsims/axon/issues/212
   const ValidatorDef = {
 
     /**
