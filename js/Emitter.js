@@ -13,7 +13,8 @@ define( require => {
   const EmitterIO = require( 'AXON/EmitterIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
-  const Validator = require( 'AXON/Validator' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
+  const validate = require( 'AXON/validate' );
 
   // constants
   const EmitterIOWithNoArgs = EmitterIO( [] );
@@ -31,7 +32,7 @@ define( require => {
       options = _.extend( {
 
         // {Array.<Object>|null} - array of "Validator Options" Objects that hold options for how to validate each
-        // argument, see Validator.js for details.
+        // argument, see ValidatorDef.js for details.
         argumentTypes: EMPTY_ARRAY,
 
         tandem: Tandem.optional,
@@ -60,7 +61,7 @@ define( require => {
 
       super( options );
 
-      Validator.validate( options.argumentTypes, { valueType: Array } );
+      validate( options.argumentTypes, { valueType: Array } );
 
       if ( assert ) {
 
@@ -76,7 +77,7 @@ define( require => {
           assert && Object.freeze( validatorOptions );
 
           // validate the options passed in to validate each emitter argument
-          Validator.validateOptions( validatorOptions );
+          ValidatorDef.validateValidator( validatorOptions );
         } );
 
         // Changing after construction indicates a logic error
@@ -90,7 +91,7 @@ define( require => {
           `Emitted unexpected number of args. Expected: ${options.argumentTypes.length} and received ${arguments.length}`
         );
         for ( let i = 0; i < options.argumentTypes.length; i++ ) {
-          Validator.validate( arguments[ i ], options.argumentTypes[ i ] );
+          validate( arguments[ i ], options.argumentTypes[ i ] );
         }
       };
 

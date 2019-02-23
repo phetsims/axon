@@ -16,7 +16,8 @@ define( require => {
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const units = require( 'AXON/units' );
-  const Validator = require( 'AXON/Validator' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
+  const validate = require( 'AXON/validate' );
 
   // variables
   let globalId = 0; // autoincremented for unique IDs
@@ -45,15 +46,15 @@ define( require => {
         // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
         reentrant: false
 
-        // See Validator.DEFAULT_OPTIONS for validation options.
-      }, Validator.DEFAULT_OPTIONS, {
+        // See ValidatorDef.DEFAULT_OPTIONS for validation options.
+      }, ValidatorDef.DEFAULT_OPTIONS, {
 
         // By default, check the options once in the constructor, not on each subsequent value validation, to improve
         // performance in requirejs mode
         validateOptionsOnValidateValue: false
       }, options );
 
-      assert && Validator.validateOptions( options );
+      assert && ValidatorDef.validateValidator( options );
 
       assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
       if ( options.units ) {
@@ -76,7 +77,7 @@ define( require => {
       this.useDeepEquality = options.useDeepEquality;
 
       // @private {function|false} - closure over options for validation in set()
-      this.validate = assert && ( value => Validator.validate( value, options ) );
+      this.validate = assert && ( value => validate( value, options ) );
 
       // validate the initial value
       assert && this.validate( value );
