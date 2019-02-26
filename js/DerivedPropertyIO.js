@@ -15,9 +15,6 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
-  // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-
   /**
    * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.
    *
@@ -39,7 +36,6 @@ define( function( require ) {
      */
     var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
       assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
-      assert && assertInstanceOf( derivedProperty, phet.axon.DerivedProperty );
 
       PropertyIOImpl.call( this, derivedProperty, phetioID );
     };
@@ -61,7 +57,8 @@ define( function( require ) {
       // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
 
-      elementType: phetioValueType
+      elementType: phetioValueType,
+      validator: { isValidValue: v => v instanceof phet.axon.DerivedProperty }
     } );
 
     // @public - allow type checking for DerivedPropertyIOImpl

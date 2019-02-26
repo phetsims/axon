@@ -16,9 +16,9 @@ define( function( require ) {
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var validate = require( 'AXON/validate' );
 
   // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   /**
@@ -41,8 +41,6 @@ define( function( require ) {
      */
     var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
       assert && assert( typeof ( elementType ) === 'function', 'element type should be defined' );
-      assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
-
       ObjectIO.call( this, observableArray, phetioID );
     };
     return phetioInherit( ObjectIO, 'ObservableArrayIO', ObservableArrayIOImpl, {
@@ -91,7 +89,7 @@ define( function( require ) {
       {
 
         toStateObject: function( observableArray ) {
-          assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
+          validate( observableArray, this.validator );
           if ( !observableArray ) {
             return observableArray;
           }
@@ -112,13 +110,14 @@ define( function( require ) {
         },
 
         setValue: function( observableArray, fromStateObject ) {
-          assert && assertInstanceOf( observableArray, phet.axon.ObservableArray );
+          validate( observableArray, this.validator );
           observableArray.clear();
           observableArray.addAll( fromStateObject );
         },
 
         documentation: 'An array that sends notifications when its values have changed.',
         elementType: elementType,
+        validator: { isValidValue: v => v instanceof phet.axon.ObservableArray },
         events: [ 'itemAdded', 'itemRemoved' ]
       } );
   }

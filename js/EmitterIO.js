@@ -17,9 +17,6 @@ define( function( require ) {
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
-  // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
-
   // allowed keys
   var ELEMENT_KEYS = [
     'name', // {string}
@@ -65,7 +62,6 @@ define( function( require ) {
      */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
       assert && assert( argumentObjects, 'phetioArgumentTypes should be defined' );
-      assert && assertInstanceOf( emitter, phet.axon.Emitter );
 
       ObjectIO.call( this, emitter, phetioID );
     };
@@ -112,7 +108,9 @@ define( function( require ) {
       /**
        * {ValidatorDef[]}
        */
-      validators: validators
+      validators: validators, // TODO: where is this used: https://github.com/phetsims/axon/issues/204
+
+      validator: { isValidValue: v => v instanceof phet.axon.Emitter }
     } );
   }
 

@@ -15,9 +15,7 @@ define( function( require ) {
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var PropertyIO = require( 'AXON/PropertyIO' );
   var RangeIO = require( 'DOT/RangeIO' );
-
-  // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
+  var validate = require( 'AXON/validate' );
 
   // constants
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
@@ -32,13 +30,14 @@ define( function( require ) {
    * @constructor
    */
   function NumberPropertyIO( numberProperty, phetioID ) {
-    assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
     PropertyIOImpl.call( this, numberProperty, phetioID );
   }
 
   axon.register( 'NumberPropertyIO', NumberPropertyIO );
 
   phetioInherit( PropertyIOImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
+
+    validator: { isValidValue: v => v instanceof phet.axon.NumberProperty },
 
     // Export the value type from the parent so clients can read it from this type
     elementType: NumberIO,
@@ -50,7 +49,7 @@ define( function( require ) {
      * @override
      */
     toStateObject: function( numberProperty ) {
-      assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
+      validate( numberProperty, this.validator );
 
       var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
@@ -86,7 +85,7 @@ define( function( require ) {
      * @override
      */
     setValue: function( numberProperty, fromStateObject ) {
-      assert && assertInstanceOf( numberProperty, phet.axon.NumberProperty );
+      validate( numberProperty, this.validator );
 
       PropertyIOImpl.setValue( numberProperty, fromStateObject );
       numberProperty.range = fromStateObject.range;

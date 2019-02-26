@@ -16,9 +16,9 @@ define( function( require ) {
   var Property = require( 'AXON/Property' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var validate = require( 'AXON/validate' );
 
   // ifphetio
-  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   /**
@@ -40,7 +40,6 @@ define( function( require ) {
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
-      assert && assertInstanceOf( property, Property );
       ObjectIO.call( this, property, phetioID );
     };
 
@@ -101,6 +100,7 @@ define( function( require ) {
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
       methodOrder: [ 'link', 'lazyLink' ],
       elementType: phetioValueType,
+      validator: { valueType: Property },
 
       // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
@@ -119,7 +119,7 @@ define( function( require ) {
        * @returns {Object} - a state object
        */
       toStateObject: function( property ) {
-        assert && assertInstanceOf( property, Property );
+        validate( property, this.validator );
         assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
         var stateObject = {
           value: phetioValueType.toStateObject( property.value )
@@ -160,7 +160,7 @@ define( function( require ) {
        * @param {Object} fromStateObject
        */
       setValue: function( property, fromStateObject ) {
-        assert && assertInstanceOf( property, Property );
+        validate( property, this.validator );
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
