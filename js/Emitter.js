@@ -80,6 +80,12 @@ define( require => {
 
       assert && validate( options.validators, { valueType: Array } );
 
+      // @private - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
+      this.validators = options.validators;
+
+      // @private - short circuit for emit1, emit2, emit3.  Can be removed when those are gone.
+      this.validationEnabled = true;
+
       if ( assert ) {
 
         // Iterate through each validator and make sure that it won't validate options on validating value. This is
@@ -102,17 +108,6 @@ define( require => {
         // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances
         assert && !validatorsFromTypeIO && Object.freeze( options.validators );
       }
-
-      // @private {function|false}
-      this.validate = assert && function() {
-        assert(
-          arguments.length === options.validators.length,
-          `Emitted unexpected number of args. Expected: ${options.validators.length} and received ${arguments.length}`
-        );
-        for ( let i = 0; i < options.validators.length; i++ ) {
-          validate( arguments[ i ], options.validators[ i ] );
-        }
-      };
 
       // @private {function[]} - the listeners that will be called on emit
       this.listeners = [];
@@ -254,7 +249,16 @@ define( require => {
      * @public
      */
     emit() {
-      assert && this.validate && this.validate.apply( null, arguments );
+      if ( assert && this.validationEnabled ) {
+        assert(
+          arguments.length === this.validators.length,
+          `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
+        );
+        for ( let i = 0; i < this.validators.length; i++ ) {
+          validate( arguments[ i ], this.validators[ i ] );
+        }
+      }
+
       assert && this.first && assert( this.listeners.indexOf( this.first ) === 0, 'first should be at the beginning' );
       assert && this.last && assert( this.listeners.indexOf( this.last ) === this.listeners.length - 1, 'last should be ' +
                                                                                                         'at the end' );
@@ -284,7 +288,7 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit1( arg0 ) {
-      this.validate = null;
+      this.validationEnabled = false; // Disable validation until emit() is used properly
       this.emit( arg0 );
     }
 
@@ -296,7 +300,7 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit2( arg0, arg1 ) {
-      this.validate = null;
+      this.validationEnabled = false; // Disable validation until emit() is used properly
       this.emit( arg0, arg1 );
     }
 
@@ -309,7 +313,7 @@ define( require => {
      * @deprecated - please use emit()
      */
     emit3( arg0, arg1, arg2 ) {
-      this.validate = null;
+      this.validationEnabled = false; // Disable validation until emit() is used properly
       this.emit( arg0, arg1, arg2 );
     }
 
