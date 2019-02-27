@@ -29,6 +29,9 @@ define( require => {
   class Emitter extends PhetioObject {
     constructor( options ) {
 
+      const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
+      const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
+
       options = _.extend( {
 
         // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
@@ -61,10 +64,11 @@ define( require => {
       // keep track of if we get the validators from options, or the phetioType
       let validatorsFromTypeIO = false;
 
-      // important to be before super call
-      const phetioTypeSupplied = options.phetioType !== EmitterIOWithNoArgs;
-      assert && assert( !( phetioTypeSupplied && options.validators.length > 0 ),
-        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Emitter' );
+      // important to be before super call.  OK to supply neither or one or the other, but not both.  That is a NAND.
+      assert && assert(
+        !( phetioTypeSupplied && validatorsSupplied ),
+        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Emitter'
+      );
 
       // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
@@ -74,7 +78,7 @@ define( require => {
 
       super( options );
 
-      validate( options.validators, { valueType: Array } );
+      assert && validate( options.validators, { valueType: Array } );
 
       if ( assert ) {
 
