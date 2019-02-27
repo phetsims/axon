@@ -94,5 +94,5 @@ define( require => {
   }
 
   // Register and return a singleton
-  return axon.register( 'timer', new Timer() );
+  return axon.register( 'timer', new Timer( { validators: [ { valueType: 'number' } ] } ) );
 } );

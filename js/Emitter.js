@@ -283,17 +283,6 @@ define( require => {
     }
 
     /**
-     * Emits a single event with one argument.
-     * @param {*} arg0
-     * @public
-     * @deprecated - please use emit()
-     */
-    emit1( arg0 ) {
-      this.validationEnabled = false; // Disable validation until emit() is used properly
-      this.emit( arg0 );
-    }
-
-    /**
      * Checks whether a listener is registered with this Emitter
      * @param {function} listener
      * @returns {boolean}
