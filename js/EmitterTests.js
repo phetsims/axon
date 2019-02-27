@@ -66,7 +66,7 @@ define( require => {
 
   QUnit.test( 'Test emit timing Emitter', assert => {
 
-    const e = new Emitter();
+    const e = new Emitter( { validationEnabled: false } );
     let x = 0;
     e.addListener( () => {x++;} );
     e.addListener( () => {x++;} );
@@ -78,7 +78,7 @@ define( require => {
 
     assert.ok( x === 5, 'fired all listeners' );
 
-    const e1 = new Emitter();
+    const e1 = new Emitter( { validationEnabled: false } );
     e1.addListener( () => {} );
 
     const testEmitter = ( e, numberOfLoopings ) => {
@@ -87,7 +87,7 @@ define( require => {
 
       for ( let i = 0; i < numberOfLoopings; i++ ) {
         // e.emit();
-        e.emit3( 'blarg', 'fdsa', 344738291043 );
+        e.emit( 'blarg', 'fdsa', 344738291043 );
       }
       const end = Date.now();
       const totalTime = end - start;

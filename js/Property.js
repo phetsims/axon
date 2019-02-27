@@ -108,7 +108,7 @@ define( require => {
 
       // @private (unit-tests) - emit1 is called when the value changes (or on link)
       // Also used in ShapePlacementBoard.js at the moment
-      this.changedEmitter = new Emitter();
+      this.changedEmitter = new Emitter( { validationEnabled: false } );
 
       // @private whether we are in the process of notifying listeners
       this.notifying = false;
@@ -242,7 +242,7 @@ define( require => {
       assert && assert( !this.notifying || this.reentrant,
         'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
       this.notifying = true;
-      this.changedEmitter.emit3( this.get(), oldValue, this );
+      this.changedEmitter.emit( this.get(), oldValue, this );
       this.notifying = false;
 
       this.isPhetioInstrumented() && this.phetioEndEvent();
@@ -257,7 +257,7 @@ define( require => {
      * @public
      */
     notifyListenersStatic() {
-      this.changedEmitter.emit3( this.get(), undefined, this );
+      this.changedEmitter.emit( this.get(), undefined, this );
     }
 
     /**

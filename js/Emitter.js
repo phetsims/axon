@@ -37,9 +37,8 @@ define( require => {
         // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
         validators: EMPTY_ARRAY,
 
-        tandem: Tandem.optional,
-        phetioState: false,
-        phetioType: EmitterIOWithNoArgs, // subtypes can override with EmitterIO([...]), see EmitterIO.js
+        // {boolean} @deprecated, only to support legacy emit1, emit2, emit3 calls.
+        validationEnabled: true,
 
         // {function|null} [first] optional listener which will be added as the first listener.
         // Can be removed via removeListener.
@@ -47,7 +46,13 @@ define( require => {
 
         // {function|null} [last] optional listener which will be added as the last listener.
         // Can be removed via removeListener.
-        last: null
+        last: null,
+
+        // phet-io
+        tandem: Tandem.optional,
+        phetioState: false,
+        phetioType: EmitterIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
+
       }, options );
 
       assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use first' );
@@ -78,8 +83,8 @@ define( require => {
       // @private - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.validators = options.validators;
 
-      // @private - short circuit for emit1, emit2, emit3.  Can be removed when those are gone.
-      this.validationEnabled = true;
+      // @private - opt out of validation. Can be removed when deprecated emit functions are gone.
+      this.validationEnabled = options.validationEnabled;
 
       if ( assert ) {
 
@@ -298,19 +303,6 @@ define( require => {
     emit2( arg0, arg1 ) {
       this.validationEnabled = false; // Disable validation until emit() is used properly
       this.emit( arg0, arg1 );
-    }
-
-    /**
-     * Emits a single event with three arguments.
-     * @param {*} arg0
-     * @param {*} arg1
-     * @param {*} arg2
-     * @public
-     * @deprecated - please use emit()
-     */
-    emit3( arg0, arg1, arg2 ) {
-      this.validationEnabled = false; // Disable validation until emit() is used properly
-      this.emit( arg0, arg1, arg2 );
     }
 
     /**
