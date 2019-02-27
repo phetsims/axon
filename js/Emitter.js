@@ -90,19 +90,19 @@ define( require => {
 
         // Iterate through each validator and make sure that it won't validate options on validating value. This is
         // mainly done for performance
-        options.validators.forEach( validatorOptions => {
+        options.validators.forEach( validator => {
           assert && assert(
-            validatorOptions.validateOptionsOnValidateValue !== true,
+            validator.validateOptionsOnValidateValue !== true,
             'emitter sets its own validateOptionsOnValidateValue for each argument type'
           );
-          validatorOptions.validateOptionsOnValidateValue = false;
+          validator.validateOptionsOnValidateValue = false;
 
           // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
           // are shared between instances.
-          assert && !validatorsFromTypeIO && Object.freeze( validatorOptions );
+          assert && !validatorsFromTypeIO && Object.freeze( validator );
 
           // validate the options passed in to validate each emitter argument
-          ValidatorDef.validateValidator( validatorOptions );
+          assert && ValidatorDef.validateValidator( validator );
         } );
 
         // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances

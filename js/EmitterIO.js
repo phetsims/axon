@@ -41,7 +41,7 @@ define( function( require ) {
 
       // validate the look of the content
       assert && assert( argumentObject !== null && typeof argumentObject === 'object' );
-      argumentObject.validator && ValidatorDef.validateValidator( argumentObject.validator );
+      assert && argumentObject.validator && ValidatorDef.validateValidator( argumentObject.validator );
 
       var keys = Object.keys( argumentObject );
       for ( let i = 0; i < keys.length; i++ ) {

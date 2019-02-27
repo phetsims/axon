@@ -16,8 +16,8 @@ define( require => {
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const units = require( 'AXON/units' );
-  const ValidatorDef = require( 'AXON/ValidatorDef' );
   const validate = require( 'AXON/validate' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // variables
   let globalId = 0; // autoincremented for unique IDs
@@ -44,16 +44,21 @@ define( require => {
         // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
         // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
         // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
-        reentrant: false
-
-        // See ValidatorDef.DEFAULT_OPTIONS for validation options.
-      }, ValidatorDef.DEFAULT_OPTIONS, {
+        reentrant: false,
 
         // By default, check the options once in the constructor, not on each subsequent value validation, to improve
         // performance in requirejs mode
         validateOptionsOnValidateValue: false
+
+        /************************************************
+         * Property also supports options as a validator.  See ValidatorDef.VALIDATOR_KEYS for validation options.
+         ********************************/
       }, options );
 
+      // Support non-validated Property
+      if ( !ValidatorDef.containsValidatorKey( options ) ) {
+        options.isValidValue = () => true;
+      }
       assert && ValidatorDef.validateValidator( options );
 
       assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );

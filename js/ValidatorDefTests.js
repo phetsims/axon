@@ -22,6 +22,9 @@ define( require => {
     window.assert && assert.throws( () => !validate( 4, { validValues: [ 1, 2, 3 ] } ), 'invalid number' );
     window.assert && assert.throws( () => !validate( 'hello', { valueType: Array } ), 'string isn\'t Array' );
 
-    window.assert && assert.throws( () => !ValidatorDef.validateValidator( { valueType: Array, isValidValue: 4 } ), 'isValidValue should be function' );
+    window.assert && assert.throws( () => !ValidatorDef.validateValidator( {
+      valueType: Array,
+      isValidValue: 4
+    } ), 'isValidValue should be function' );
   } );
 } );
