@@ -171,7 +171,7 @@ define( require => {
       }
 
       // See https://github.com/phetsims/axon/issues/201
-      if ( validator.valueType ) {
+      if ( validator.hasOwnProperty( 'valueType' ) ) {
         const valueType = validator.valueType;
         if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
           assert && options.assertions && assert( false, `value should have typeof ${valueType}, value=${value}` );
@@ -186,11 +186,11 @@ define( require => {
           return false;
         }
       }
-      if ( validator.validValues && validator.validValues.indexOf( value ) === -1 ) {
+      if ( validator.hasOwnProperty( 'validValues' ) && validator.validValues.indexOf( value ) === -1 ) {
         assert && options.assertions && assert( false, `value not in validValues: ${value}` );
         return false;
       }
-      if ( validator.isValidValue && !validator.isValidValue( value ) ) {
+      if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue( value ) ) {
         assert && options.assertions && assert( false, `value failed isValidValue: ${value}` );
         return false;
       }

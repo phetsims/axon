@@ -22,7 +22,7 @@ define( function( require ) {
     'name', // {string}
     'type', // {ObjectIO}
     'documentation', // {string}
-    'validator' // {ValidatorDef}
+    'validator' // {ValidatorDef} - This should be a complete validator, it will not be combined with type.validator.
   ];
 
   /**
