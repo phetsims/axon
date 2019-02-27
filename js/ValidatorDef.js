@@ -136,14 +136,17 @@ define( require => {
     },
 
     /**
-     * @param {Object} validator - object which may or may not contain validation keys
+     * @param {ValidatorDef} validator - object which may or may not contain validation keys
      * @returns {boolean}
      * @public
      */
     containsValidatorKey( validator ) {
-
-      // TODO: garbage-free implementation, see https://github.com/phetsims/axon/issues/204
-      return _.intersection( VALIDATOR_KEYS, Object.keys( validator ) ).length > 0;
+      for ( let i = 0; i < VALIDATOR_KEYS.length; i++ ) {
+        if ( validator.hasOwnProperty( VALIDATOR_KEYS[ i ] ) ) {
+          return true;
+        }
+      }
+      return false;
     },
 
     /**
