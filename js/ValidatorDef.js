@@ -53,6 +53,14 @@ define( require => {
      */
     validateValidator: validator => {
       if ( assert ) {
+
+        assert(
+          validator.hasOwnProperty( 'isValidValue' ) ||
+          validator.hasOwnProperty( 'valueType' ) ||
+          validator.hasOwnProperty( 'validValues' ),
+          'validator must have at least one of: isValidValue, valueType, validValues'
+        );
+
         const valueType = validator.valueType;
         assert(
           typeof valueType === 'function' ||
