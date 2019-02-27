@@ -61,24 +61,19 @@ define( require => {
         options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
       }
 
-      // keep track of if we get the validators from options, or the phetioType
-      let validatorsFromTypeIO = false;
-
-      // important to be before super call.  OK to supply neither or one or the other, but not both.  That is a NAND.
-      assert && assert(
-        !( phetioTypeSupplied && validatorsSupplied ),
+      // important to be before super call. OK to supply neither or one or the other, but not both.  That is a NAND.
+      assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
         'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Emitter'
       );
 
       // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
         options.validators = options.phetioType.validators;
-        validatorsFromTypeIO = true;
       }
 
       super( options );
 
-      assert && validate( options.validators, { valueType: Array } );
+      validate( options.validators, { valueType: Array } );
 
       // @private - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.validators = options.validators;
@@ -98,15 +93,16 @@ define( require => {
           validator.validateOptionsOnValidateValue = false;
 
           // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
-          // are shared between instances.
-          assert && !validatorsFromTypeIO && Object.freeze( validator );
+          // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
+          assert && !phetioTypeSupplied && Object.freeze( validator );
 
           // validate the options passed in to validate each emitter argument
           assert && ValidatorDef.validateValidator( validator );
         } );
 
-        // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances
-        assert && !validatorsFromTypeIO && Object.freeze( options.validators );
+        // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
+        // Don't assume we "own" the validator if it came from the TypeIO.
+        assert && !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
       // @private {function[]} - the listeners that will be called on emit

@@ -106,9 +106,10 @@ define( function( require ) {
       elements: argumentObjects,
 
       /**
+       * A list of validators, one for each argument that will be emitted.
        * {ValidatorDef[]}
        */
-      validators: validators, // TODO: where is this used: https://github.com/phetsims/axon/issues/204
+      validators: validators,
 
       validator: { isValidValue: v => v instanceof phet.axon.Emitter }
     } );
