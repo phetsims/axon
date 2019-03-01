@@ -1,16 +1,17 @@
-// Copyright 2017, University of Colorado Boulder
+// Copyright 2017-2019, University of Colorado Boulder
 
 /**
  * Unit tests for axon. Please run once in phet brand and once in brand=phet-io to cover all functionality.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
   require( 'AXON/DynamicPropertyTests' );
   require( 'AXON/EmitterTests' );
+  require( 'AXON/EmitterIOTests' );
   require( 'AXON/EventsTests' );
   require( 'AXON/NumberPropertyTests' );
   require( 'AXON/ObservableArrayTests' );

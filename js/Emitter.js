@@ -32,6 +32,10 @@ define( require => {
       const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
       const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
 
+      if ( assert && phetioTypeSupplied ) {
+        assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
+      }
+
       options = _.extend( {
 
         // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
@@ -80,7 +84,7 @@ define( require => {
 
       validate( options.validators, { valueType: Array } );
 
-      // @private - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
+      // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.validators = options.validators;
 
       // @private - opt out of validation. Can be removed when deprecated emit functions are gone.
