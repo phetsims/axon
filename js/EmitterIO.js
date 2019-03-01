@@ -1,9 +1,20 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * IO type for Emitter
+ * IO type for Emitter.
+ *
+ * Providing validators to instrumented Emitters:
+ * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).
+ * To provide validators, there are two methods. First, by default each TypeIO has its own
+ * validator that will be used. So specifying an argument object like `{ type: NumberIO }` will automatically use
+ * `NumberIO.validator` as the validator. This can be overridden with the `validator` key (second option), like
+ * { type: NumberIO, validator: { isValidValue: v=> typeof v === 'number' &&  v < 5 } }`
+ * NOTE: currently the implementation is either/or, if a validator is provided via the `validator` key, the validator
+ * from the `type` will be ignored.
+ * see https://github.com/phetsims/axon/issues/204 for more details.
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 define( function( require ) {
