@@ -28,15 +28,18 @@ define( require => {
      */
     constructor( value, options ) {
 
-      assert && assert( !options || !options.hasOwnProperty( 'isValidValue' ), 'isValidValue is not supported by BooleanProperty' );
-      assert && assert( !options || !options.hasOwnProperty( 'validValues' ), 'validValues is not supported by BooleanProperty' );
-      assert && assert( !options || !options.hasOwnProperty( 'valueType' ), 'valueType is set by BooleanProperty' );
-      assert && assert( !options || !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
+      options = options || {};
 
-      super( value, _.extend( {
-        valueType: 'boolean', // BooleanProperty requires values to be primitive booleans
-        phetioType: BooleanPropertyIO
-      }, options ) );
+      assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
+      assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
+      
+      assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
+      options.valueType = 'boolean';
+
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
+      options.phetioType = BooleanPropertyIO;
+
+      super( value, options );
     }
   }
 
