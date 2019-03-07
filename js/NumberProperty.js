@@ -38,7 +38,6 @@ define( function( require ) {
       assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
 
       assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
-
       options.phetioType = NumberPropertyIO;
 
       assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
