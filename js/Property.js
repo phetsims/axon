@@ -108,6 +108,7 @@ define( require => {
 
       // @private (unit-tests) - emit1 is called when the value changes (or on link)
       // Also used in ShapePlacementBoard.js at the moment
+      // We are validating here in Property, so we don't need the sub-emitter to validate too.
       this.changedEmitter = new Emitter( { validationEnabled: false } );
 
       // @private whether we are in the process of notifying listeners
