@@ -36,7 +36,7 @@ define( require => {
       super( value, _.extend( {
         valueType: 'boolean', // BooleanProperty requires values to be primitive booleans
         phetioType: BooleanPropertyIO
-      } ) );
+      }, options ) );
     }
   }
 
