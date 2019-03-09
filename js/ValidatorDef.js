@@ -1,9 +1,26 @@
-// Copyright 2018-2019, University of Colorado Boulder
+// Copyright 2019, University of Colorado Boulder
 
 /**
- * Throws assertion errors if a value doesn't match the specified criteria.
+ * The definition file for "validators" used to validate values. This file holds associated logic that validates the
+ * schema of the "validator" object, as well as testing if a value adheres to the restrictions provided by a validator.
+ * See validate.js for usage with assertions to check that values are valid.
+ *
+ * Examples:
+ *
+ * A {ValidatorDef} (commonly know as "validator") that only accepts number values:
+ * { valueType: 'number' }
+ *
+ * A validator that only accepts the numbers "2" or "3":
+ * { valueType: 'number', validValues: [ 2, 3 ] }
+ *
+ * A validator that accepts any Object:
+ * { valueType: Object }
+ *
+ * A validator that accepts a string or a number greater than 2:
+ * { isValidValue: value => { typeof value === 'string' || (typeof value === 'number' && value > 2)} }
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( require => {
   'use strict';
