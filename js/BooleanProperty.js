@@ -1,8 +1,7 @@
 // Copyright 2016-2019, University of Colorado Boulder
 
 /**
- * Convenience subtype of Property that constrains values to be true or false.
- * Truthy/falsy values are considered invalid.
+ * Property whose value must be true or false. Truthy/falsy values are invalid.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
