@@ -37,11 +37,15 @@ define( function( require ) {
       assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
       assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
 
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by NumberProperty' );
-      options.phetioType = NumberPropertyIO;
+      // client cannot specify superclass options that are controlled by NumberProperty
+      assert && assert( !options.valueType, 'NumberProperty sets valueType' );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'NumberProperty sets phetioType' );
 
-      assert && assert( !options.valueType, 'valueType is set by NumberProperty' );
-      options.valueType = 'number';
+      // Fill in superclass options that are controlled by NumberProperty.
+      options = _.extend( {
+        valueType: 'number',
+        phetioType: NumberPropertyIO
+      }, options );
 
       super( value, options );
 

@@ -27,13 +27,17 @@ define( function( require ) {
      */
     constructor( value, options ) {
 
-      options = options || {};
+      // client cannot specify superclass options that are controlled by StringProperty
+      if ( options ) {
+        assert && assert( !options.hasOwnProperty( 'valueType' ), 'StringProperty sets valueType' );
+        assert && assert( !options.hasOwnProperty( 'phetioType' ), 'StringProperty sets phetioType' );
+      }
 
-      assert && assert( !options.valueType, 'valueType is set by StringProperty' );
-      options.valueType = 'string';
-
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by StringProperty' );
-      options.phetioType = StringPropertyIO;
+      // Fill in superclass options that are controlled by StringProperty.
+      options = _.extend( {
+        valueType: 'string',
+        phetioType: StringPropertyIO
+      }, options );
 
       super( value, options );
     }

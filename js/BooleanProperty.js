@@ -28,16 +28,22 @@ define( require => {
      */
     constructor( value, options ) {
 
-      options = options || {};
+      if ( options ) {
 
-      assert && assert( !options.isValidValue, 'isValidValue is not supported by BooleanProperty' );
-      assert && assert( !options.validValues, 'validValues is not supported by BooleanProperty' );
-      
-      assert && assert( !options.valueType, 'valueType is set by BooleanProperty' );
-      options.valueType = 'boolean';
+        // client cannot specify superclass options that are not supported by BooleanProperty
+        assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'BooleanProperty does not support isValidValue' );
+        assert && assert( !options.hasOwnProperty( 'validValues' ), 'BooleanProperty does not support validValues' );
 
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'phetioType is set by BooleanProperty' );
-      options.phetioType = BooleanPropertyIO;
+        // client cannot specify superclass options that are controlled by BooleanProperty
+        assert && assert( !options.hasOwnProperty( 'valueType' ), 'BooleanProperty sets valueType' );
+        assert && assert( !options.hasOwnProperty( 'phetioType' ), 'BooleanProperty sets phetioType' );
+      }
+
+      // Fill in superclass options that are controlled by BooleanProperty.
+      options = _.extend( {
+        valueType: 'boolean',
+        phetioType: BooleanPropertyIO
+      }, options );
 
       super( value, options );
     }
