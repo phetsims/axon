@@ -156,9 +156,22 @@ define( require => {
         this.hasDeferredValue = true;
       }
       else if ( !this.equalsValue( value ) ) {
-        this.setValueAndNotifyListeners( value );
+        const oldValue = this.get();
+        this.setPropertyValue( value );
+        this._notifyListeners( oldValue );
       }
       return this;
+    }
+
+    /**
+     * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
+     * when setting the value.
+     *
+     * @param {*} value
+     * @protected - for overriding only
+     */
+    setPropertyValue( value ) {
+      this._value = value;
     }
 
     /**
@@ -213,17 +226,6 @@ define( require => {
     // @public
     get initialValue() {
       return this.getInitialValue();
-    }
-
-    /**
-     * Updates the value of this node
-     * @param {*} value - the new value this Property will take, which is different than the previous value.
-     * @protected - can be overridden.
-     */
-    setValueAndNotifyListeners( value ) {
-      const oldValue = this.get();
-      this._value = value;
-      this._notifyListeners( oldValue );
     }
 
     /**
@@ -285,7 +287,7 @@ define( require => {
 
         // Take the new value
         if ( this.hasDeferredValue ) {
-          this._value = this.deferredValue;
+          this.setPropertyValue( this.deferredValue );
           this.hasDeferredValue = false;
         }
 
