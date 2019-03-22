@@ -14,6 +14,7 @@ define( function( require ) {
   var units = {
     values: [
       'amperes',
+      'atmospheres',
       'milliamperes',
       'becquerels',
       'centimeters',
@@ -30,6 +31,7 @@ define( function( require ) {
       'joules',
       'katals',
       'kelvins',
+      'kilopascals',
       'liters',
       'liters/second',
       'lumens',
@@ -47,6 +49,7 @@ define( function( require ) {
       'ohm-centimeters',
       'pascals',
       'percent',
+      'picoseconds',
       'radians',
       'radians/second',
       'seconds',
