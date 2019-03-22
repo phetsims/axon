@@ -1,4 +1,4 @@
-// Copyright 2018, University of Colorado Boulder
+// Copyright 2018-2019, University of Colorado Boulder
 
 /**
  * These are the units that can be associated with Property instances.
@@ -13,6 +13,16 @@ define( function( require ) {
 
   var units = {
     values: [
+
+      // NOTE: Abbreviations are preferred, see https://github.com/phetsims/phet-io/issues/530
+      'atm', // atmospheres
+      'cm', // centimeters
+      '\u00B0C', // degrees Celsius
+      'kPa', // kilopascals
+      'nm', // nanometers
+      'ps', // picoseconds
+
+      // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
       'milliamperes',
       'becquerels',
@@ -57,16 +67,7 @@ define( function( require ) {
       'view-coordinates/second',
       'volts',
       'watts',
-      'webers',
-
-      // abbreviations -- in time we will replace all full forms with abbreviations only
-      // see https://github.com/phetsims/phet-io/issues/530
-      'atm', // atmospheres
-      'cm', // centimeters
-      '\u00B0C', // degrees Celsius
-      'kPa', // kilopascals
-      'nm', // nanometers
-      'ps' // picoseconds
+      'webers'
     ],
 
     isValidUnits: function( unit ) {
