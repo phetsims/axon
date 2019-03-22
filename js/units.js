@@ -14,7 +14,6 @@ define( function( require ) {
   var units = {
     values: [
       'amperes',
-      'atmospheres',
       'milliamperes',
       'becquerels',
       'centimeters',
@@ -31,7 +30,6 @@ define( function( require ) {
       'joules',
       'katals',
       'kelvins',
-      'kilopascals',
       'liters',
       'liters/second',
       'lumens',
@@ -49,7 +47,6 @@ define( function( require ) {
       'ohm-centimeters',
       'pascals',
       'percent',
-      'picoseconds',
       'radians',
       'radians/second',
       'seconds',
@@ -64,8 +61,12 @@ define( function( require ) {
 
       // abbreviations -- in time we will replace all full forms with abbreviations only
       // see https://github.com/phetsims/phet-io/issues/530
-      'cm',
-      'nm'
+      'atm', // atmospheres
+      'cm', // centimeters
+      '\u00B0C', // degrees Celsius
+      'kPa', // kilopascals
+      'nm', // nanometers
+      'ps' // picoseconds
     ],
 
     isValidUnits: function( unit ) {
