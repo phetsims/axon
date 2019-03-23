@@ -1,4 +1,4 @@
-// Copyright 2013-2018, University of Colorado Boulder
+// Copyright 2013-2019, University of Colorado Boulder
 
 /**
  * An observable property which notifies listeners when the value changes.
@@ -50,9 +50,8 @@ define( require => {
         // performance in requirejs mode
         validateOptionsOnValidateValue: false
 
-        /************************************************
-         * Property also supports options as a validator.  See ValidatorDef.VALIDATOR_KEYS for validation options.
-         ********************************/
+        // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
+
       }, options );
 
       // Support non-validated Property
