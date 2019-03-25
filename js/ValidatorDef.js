@@ -17,8 +17,9 @@
  * { valueType: Object }
  * 
  * A validator that accepts Enumeration values:
+ * { valueType: MyEnumeration }
+ * or
  * { validValues: MyEnumeration.VALUES }
- * TODO: {valueType: MyEnumeration } would be ideal, but it is currently not supported, see #238
  *
  * A validator that accepts a string or a number greater than 2:
  * { isValidValue: value => { typeof value === 'string' || (typeof value === 'number' && value > 2)} }
