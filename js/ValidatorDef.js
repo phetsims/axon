@@ -31,6 +31,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const Enumeration = require( 'PHET_CORE/Enumeration' );
 
   // constants
   const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
@@ -93,16 +94,19 @@ define( require => {
       if ( !( validator.hasOwnProperty( 'isValidValue' ) ||
               validator.hasOwnProperty( 'valueType' ) ||
               validator.hasOwnProperty( 'validValues' ) ) ) {
-        assert && options.assertions && assert( false, 'validator must have at least one of: isValidValue, valueType, validValues' );
+        assert && options.assertions && assert( false,
+          'validator must have at least one of: isValidValue, valueType, validValues' );
         return false;
       }
 
       const valueType = validator.valueType;
       if ( !( typeof valueType === 'function' ||
               typeof valueType === 'string' ||
+              valueType instanceof Enumeration ||
               valueType === null ||
               valueType === undefined ) ) {
-        assert && options.assertions && assert( false, `valueType must be {function|string|null}, valueType=${valueType}` );
+        assert && options.assertions && assert( false,
+          `valueType must be {function|string|Enumeration|null|undefined}, valueType=${valueType}` );
         return false;
       }
 
@@ -200,6 +204,10 @@ define( require => {
         }
         else if ( valueType === Array && !Array.isArray( value ) ) {
           assert && options.assertions && assert( false, `value should have been an array, value=${value}` );
+          return false;
+        }
+        else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
+          assert && assert( false, 'value is not a member of Enumeration ' + valueType );
           return false;
         }
         else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor
