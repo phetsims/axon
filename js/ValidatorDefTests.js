@@ -9,6 +9,7 @@ define( require => {
   'use strict';
 
   // modules
+  const Enumeration = require( 'PHET_CORE/Enumeration' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
   const validate = require( 'AXON/validate' );
 
@@ -62,5 +63,13 @@ define( require => {
     assert.ok( !ValidatorDef.isValidValidator( { valueType: 'blaradysharady' } ), 'invalid valueType string' );
     assert.ok( ValidatorDef.isValidValidator( { isValidValue: () => {} } ), 'isValidValue is a function' );
     assert.ok( !ValidatorDef.isValidValidator( { isValidValue: 'hi' } ), 'isValidValue should not be string' );
+  } );
+
+  QUnit.test( 'Test valueType: {Enumeration}', assert => {
+
+    const Birds = new Enumeration( [ 'ROBIN', 'JAY', 'WREN' ] );
+    assert.ok( ValidatorDef.isValidValidator( { valueType: Birds } ), 'good valueType' );
+    assert.ok( ValidatorDef.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
+    window.assert && assert.throws( () => ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );
   } );
 } );
