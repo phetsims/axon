@@ -61,7 +61,7 @@ define( function( require ) {
         },
         documentation: 'Sets the value of the property. If the value differs from the previous value, listeners are ' +
                        'notified with the new value.',
-        invocableForReadOnlyInstances: false
+        invocableForReadOnlyElements: false
       },
 
       link: {

@@ -95,7 +95,7 @@ define( function( require ) {
           this.instance.emit.apply( this.instance, arguments );
         },
         documentation: 'Emits a single event to all listeners.',
-        invocableForReadOnlyInstances: false
+        invocableForReadOnlyElements: false
       }
     }, {
       documentation: 'Emits when an event occurs. ' + ( argumentObjects.length === 0 ? 'No arguments.' : 'The arguments are:<br>' +

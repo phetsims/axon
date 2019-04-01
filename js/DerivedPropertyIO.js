@@ -48,7 +48,7 @@ define( function( require ) {
           return this.instance.set( value );
         },
         documentation: 'Errors out when you try to set a derived property.',
-        invocableForReadOnlyInstances: false
+        invocableForReadOnlyElements: false
       }
     }, {
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
