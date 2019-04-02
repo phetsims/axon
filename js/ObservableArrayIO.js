@@ -104,7 +104,7 @@ define( function( require ) {
         fromStateObject: function( stateObject ) {
           var tempArray = [];
           stateObject.array.forEach( function( elementTypePhetioID ) {
-            tempArray.push( phetioEngine.getInstance( elementTypePhetioID ) );
+            tempArray.push( phetioEngine.getPhetioObject( elementTypePhetioID ) );
           } );
           return tempArray;
         },
