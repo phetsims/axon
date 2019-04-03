@@ -67,45 +67,39 @@ define( function( require ) {
     },
 
     /**
-     * Remove a listener added with on() from the specified event type.  Does nothing if the listener did not exist.
+     * Remove a listener added with on() from the specified event type.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @param {boolean} [assertListenerExists] - if true, will throw errors if the listener doesn't exist
      * @public
      */
-    off: function( eventName, callback ) {
+    off: function( eventName, callback, assertListenerExists = true ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
+      assert && assertListenerExists && assert( this._eventListeners[ eventName ], 'eventName should be defined' );
 
-      var index = -1;
-      if ( this._eventListeners[ eventName ] ) {
-        index = this._eventListeners[ eventName ].indexOf( callback );
-        if ( index !== -1 ) {
-          this._eventListeners[ eventName ].splice( index, 1 );
-        }
-      }
+      const index = this._eventListeners[ eventName ].indexOf( callback );
+      assert && assertListenerExists && assert( index >= 0, 'listener should be here' );
 
-      return index; // so we can tell if we actually removed a listener
+      this._eventListeners[ eventName ].splice( index, 1 );
     },
 
     /**
-     * Remove a listener added with onStatic() from the specified event type.  Does nothing if the listener did not exist.
+     * Remove a listener added with onStatic() from the specified event type.
      * @param {string} eventName the name for the event channel
      * @param {function} callback
+     * @param {boolean} [assertListenerExists] - if true, will throw errors if the listener doesn't exist
      * @public
      */
-    offStatic: function( eventName, callback ) {
+    offStatic: function( eventName, callback, assertListenerExists = true ) {
       assert && assert( typeof eventName === 'string', 'eventName should be a string' );
       assert && assert( typeof callback === 'function', 'callback should be a function' );
+      assert && assertListenerExists && assert( this._staticEventListeners[ eventName ], 'eventName should exist' );
 
-      var index = -1;
-      if ( this._staticEventListeners[ eventName ] ) {
-        index = this._staticEventListeners[ eventName ].indexOf( callback );
-        if ( index !== -1 ) {
-          this._staticEventListeners[ eventName ].splice( index, 1 );
-        }
-      }
+      const index = this._staticEventListeners[ eventName ].indexOf( callback );
+      assert && assertListenerExists && assert( index >= 0, 'listener not found' );
 
-      return index; // so we can tell if we actually removed a listener
+      this._staticEventListeners[ eventName ].splice( index, 1 );
     },
 
     /**
