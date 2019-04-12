@@ -11,7 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const Emitter = require( 'AXON/Emitter' );
+  const TinyEmitter = require( 'AXON/TinyEmitter' );
   const Multilink = require( 'AXON/Multilink' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
@@ -108,7 +108,7 @@ define( require => {
       // @private (unit-tests) - emit1 is called when the value changes (or on link)
       // Also used in ShapePlacementBoard.js at the moment
       // We are validating here in Property, so we don't need the sub-emitter to validate too.
-      this.changedEmitter = new Emitter( { validationEnabled: false } );
+      this.changedEmitter = new TinyEmitter( );
 
       // @private whether we are in the process of notifying listeners
       this.notifying = false;
@@ -244,7 +244,7 @@ define( require => {
       assert && assert( !this.notifying || this.reentrant,
         'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
       this.notifying = true;
-      this.changedEmitter.emit( this.get(), oldValue, this );
+      this.changedEmitter.tinyEmit( this.get(), oldValue, this );
       this.notifying = false;
 
       this.isPhetioInstrumented() && this.phetioEndEvent();
@@ -259,7 +259,7 @@ define( require => {
      * @public
      */
     notifyListenersStatic() {
-      this.changedEmitter.emit( this.get(), undefined, this );
+      this.changedEmitter.tinyEmit( this.get(), undefined, this );
     }
 
     /**

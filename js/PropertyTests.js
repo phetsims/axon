@@ -24,11 +24,11 @@ define( function( require ) {
     p.link( a );
     p.link( b );
     p.link( c );
-    assert.equal( p.changedEmitter.listeners.length, 3, 'should have 3 observers now' );
+    assert.equal( p.changedEmitter.getListenerCount(), 3, 'should have 3 observers now' );
     p.unlink( b );
-    assert.equal( p.changedEmitter.listeners[ 0 ], a, 'should have removed b' );
-    assert.equal( p.changedEmitter.listeners[ 1 ], c, 'should have removed b' );
-    assert.equal( p.changedEmitter.listeners.length, 2, 'should have removed an item' );
+    assert.ok( p.changedEmitter.hasListener( a ), 'should have removed b' );
+    assert.ok( p.changedEmitter.hasListener( c ), 'should have removed b' );
+    assert.equal( p.changedEmitter.getListenerCount(), 2, 'should have removed an item' );
   } );
 
   QUnit.test( 'Test Property.multilink', function( assert ) {

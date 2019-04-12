@@ -31,8 +31,8 @@ define( function( require ) {
     var listener = function( area ) { /*console.log( 'area = ' + area );*/ };
     areaProperty.link( listener );
 
-    assert.equal( widthProperty.changedEmitter.listeners.length, 1 );
-    assert.equal( heightProperty.changedEmitter.listeners.length, 1 );
+    assert.equal( widthProperty.changedEmitter.getListenerCount(), 1 );
+    assert.equal( heightProperty.changedEmitter.getListenerCount(), 1 );
     assert.equal( areaProperty.dependencies.length, 2 );
     assert.equal( areaProperty.dependencyListeners.length, 2 );
 
@@ -40,9 +40,9 @@ define( function( require ) {
     areaProperty.unlink( listener );
     areaProperty.dispose();
 
-    assert.equal( widthProperty.changedEmitter.listeners.length, 0 );
-    assert.equal( heightProperty.changedEmitter.listeners.length, 0 );
-    assert.equal( heightProperty.changedEmitter.listeners.length, 0 );
+    assert.equal( widthProperty.changedEmitter.getListenerCount(), 0 );
+    assert.equal( heightProperty.changedEmitter.getListenerCount(), 0 );
+    assert.equal( heightProperty.changedEmitter.getListenerCount(), 0 );
 
     assert.equal( areaProperty.dependencies, null );
     assert.equal( areaProperty.dependencyListeners, null );
