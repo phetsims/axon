@@ -23,12 +23,12 @@ define( require => {
   class Emitter extends Action {
 
     /**
-     *
-     * new Emitter({validators:[number,number]})
      * @param {Object} [options]
      */
     constructor( options ) {
 
+      // For the common case of creating an instrumented Emitter with no args, the phetioType is automatically supplied.
+      // If validators are supplied, the parent will check via assertions that appropriate options are supplied.
       if ( options && !options.validators && !options.phetioType ) {
         options.phetioType = EmitterIOWithNoArgs;
       }
