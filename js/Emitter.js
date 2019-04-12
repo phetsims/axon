@@ -71,7 +71,6 @@ define( require => {
      * @public
      */
     removeListener( listener ) {
-
       this.tinyEmitter.removeListener( listener );
     }
 
@@ -80,7 +79,6 @@ define( require => {
      * @public
      */
     removeAllListeners() {
-
       this.tinyEmitter.removeAllListeners();
     }
 
@@ -101,7 +99,6 @@ define( require => {
      */
     hasListeners() {
       return this.tinyEmitter.hasListeners();
-
     }
 
     /**
