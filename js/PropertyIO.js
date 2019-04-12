@@ -26,7 +26,6 @@ define( function( require ) {
    * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
    *                                     'ifphetio!' plugin.
    * @module PropertyIO
-   * @constructor
    */
   function PropertyIO( phetioValueType ) {
 

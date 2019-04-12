@@ -20,12 +20,11 @@ define( function( require ) {
    *
    * @param {function} phetioValueType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
-   * @constructor
    */
   function DerivedPropertyIO( phetioValueType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-    var PropertyIOImpl = new PropertyIO( phetioValueType );
+    var PropertyIOImpl = PropertyIO( phetioValueType );
 
     /**
      * This type constructor is parameterized based on the phetioValueType.

@@ -13,21 +13,25 @@ define( require => {
 
   // modules
   const Action = require( 'AXON/Action' );
+  const EmitterIO = require( 'AXON/EmitterIO' );
   const axon = require( 'AXON/axon' );
   const TinyEmitter = require( 'AXON/TinyEmitter' );
+
+  // constants
+  const EmitterIOWithNoArgs = EmitterIO( [] );
 
   class Emitter extends Action {
 
     /**
+     *
+     * new Emitter({validators:[number,number]})
      * @param {Object} [options]
      */
     constructor( options ) {
 
-      // TODO https://github.com/phetsims/axon/issues/222: clean this up
-      // options = _.extend( {
-      //
-      //   // phetioType: EmitterIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
-      // }, options );
+      if ( options && !options.validators && !options.phetioType ) {
+        options.phetioType = EmitterIOWithNoArgs;
+      }
 
       super( null, options );
 

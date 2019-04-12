@@ -10,15 +10,15 @@ define( require => {
   'use strict';
 
   // modules
+  const ActionIO = require( 'AXON/ActionIO' );
   const axon = require( 'AXON/axon' );
-  const EmitterIO = require( 'AXON/EmitterIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
   const validate = require( 'AXON/validate' );
 
   // constants
-  const ActionIOWithNoArgs = EmitterIO( [] ); // TODO https://github.com/phetsims/axon/issues/222 factor out ActionIO
+  const ActionIOWithNoArgs = ActionIO( [] );
 
   // Simulations have thousands of Emitters, so we re-use objects where possible.
   const EMPTY_ARRAY = [];
@@ -35,7 +35,9 @@ define( require => {
       const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
       const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
 
-      if ( assert && phetioTypeSupplied ) {
+      // ActionIO that have 0 args should use the built-in ActionIO([]) default.  But we must support EmitterIO([]),
+      // so we guard based on the type name.
+      if ( assert && phetioTypeSupplied && options.phetioType.typeName.indexOf( 'ActionIO' ) === 0 ) {
         assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
       }
 
@@ -65,6 +67,10 @@ define( require => {
       assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
         'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Action'
       );
+
+      if ( options.tandem.supplied ) {
+        assert && assert( !validatorsSupplied, 'when specifying tandem, use phetioType instead of validators' );
+      }
 
       // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
