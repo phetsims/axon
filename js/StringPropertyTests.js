@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var StringIO = require( 'TANDEM/types/StringIO' );
   var StringProperty = require( 'AXON/StringProperty' );
 
   QUnit.module( 'StringProperty' );
@@ -74,6 +75,10 @@ define( function( require ) {
         isValidValue: function( value ) { return value.length === 4; }
       } );
     }, 'incompatible validation options fail on initialization' );
+
+    window.assert && assert.throws( function() {
+      p = new StringProperty( 'hello', { phetioType: StringIO } );
+    }, 'EnumerationProperty sets phetioType' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );

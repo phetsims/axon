@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  const BooleanIO = require( 'TANDEM/types/BooleanIO' );
   var BooleanProperty = require( 'AXON/BooleanProperty' );
 
   QUnit.module( 'BooleanProperty' );
@@ -43,6 +44,10 @@ define( function( require ) {
     window.assert && assert.throws( function() {
       p.set( 123 );
     }, 'invalid set value' );
+
+    window.assert && assert.throws( function() {
+      p = new BooleanProperty( true, { phetioType: BooleanIO } );
+    }, 'EnumerationProperty sets phetioType' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );

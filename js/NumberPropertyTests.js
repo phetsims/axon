@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var NumberIO = require( 'TANDEM/types/NumberIO' );
   var NumberProperty = require( 'AXON/NumberProperty' );
   var Range = require( 'DOT/Range' );
 
@@ -86,6 +87,11 @@ define( function( require ) {
     window.assert && assert.throws( function() {
       p = new NumberProperty( 0, { units: 'elephants' } );
     }, 'bad units' );
+
+
+    window.assert && assert.throws( function() {
+      p = new NumberProperty( 0, { phetioType: NumberIO } );
+    }, 'EnumerationProperty sets phetioType' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );
