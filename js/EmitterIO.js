@@ -122,7 +122,7 @@ define( function( require ) {
        */
       validators: validators,
 
-      validator: { isValidValue: v => v instanceof phet.axon.Emitter }
+      validator: { isValidValue: v => v instanceof phet.axon.Emitter || v instanceof phet.axon.Action } // TODO https://github.com/phetsims/axon/issues/222 create ActionIO?
     } );
   }
 

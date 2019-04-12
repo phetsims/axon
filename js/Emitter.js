@@ -9,110 +9,48 @@ define( require => {
   'use strict';
 
   // modules
+  const Action = require( 'AXON/Action' );
   const axon = require( 'AXON/axon' );
-  const EmitterIO = require( 'AXON/EmitterIO' );
-  const PhetioObject = require( 'TANDEM/PhetioObject' );
-  const Tandem = require( 'TANDEM/Tandem' );
-  const ValidatorDef = require( 'AXON/ValidatorDef' );
-  const validate = require( 'AXON/validate' );
-
-  // constants
-  const EmitterIOWithNoArgs = EmitterIO( [] );
 
   // Simulations have thousands of Emitters, so we re-use objects where possible.
   const EMPTY_ARRAY = [];
   assert && Object.freeze( EMPTY_ARRAY );
 
-  /**
-   * @param {Object} [options]
-   */
-  class Emitter extends PhetioObject {
+  // TODO https://github.com/phetsims/axon/issues/222: create LightweightEmitter which does not extend PhetioObject, but used here by composition
+
+  class Emitter extends Action {
+
+    /**
+     * @param {Object} [options]
+     */
     constructor( options ) {
 
-      const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
-      const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
+      // TODO https://github.com/phetsims/axon/issues/222: clean this up
+      // options = _.extend( {
+      //
+      //   // phetioType: EmitterIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
+      // }, options );
 
-      if ( assert && phetioTypeSupplied ) {
-        assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
-      }
+      super( null, options );
 
-      options = _.extend( {
+      const self = this;
 
-        // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
-        validators: EMPTY_ARRAY,
+      // Set the action in the parent type now that we have self, use function to support arguments
+      this.action = function() {
 
-        // {boolean} @deprecated, only to support legacy emit1, emit2, emit3 calls.
-        validationEnabled: true,
+        // Notify wired-up listeners, if any
+        if ( self.listeners.length > 0 ) {
+          self.activeListenersStack.push( self.listeners );
 
-        // {function|null} [first] optional listener which will be added as the first listener.
-        // Can be removed via removeListener.
-        first: null,
+          // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
+          const lastEntry = self.activeListenersStack.length - 1;
+          for ( let i = 0; i < self.activeListenersStack[ lastEntry ].length; i++ ) {
+            self.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
+          }
 
-        // {function|null} [last] optional listener which will be added as the last listener.
-        // Can be removed via removeListener.
-        last: null,
-
-        // phet-io
-        tandem: Tandem.optional,
-        phetioState: false,
-        phetioType: EmitterIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
-
-      }, options );
-
-      assert && assert( !options.hasOwnProperty( 'listener' ), 'listener option no longer supported, please use first' );
-      assert && assert( !options.hasOwnProperty( 'before' ), 'before option no longer supported, please use first' );
-
-      // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
-      // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
-      if ( options.phetioPlayback ) {
-        options.phetioEventMetadata = options.phetioEventMetadata || {};
-        assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ), 'dataKeys should be supplied by Emitter, not elsewhere' );
-        options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
-      }
-
-      // important to be before super call. OK to supply neither or one or the other, but not both.  That is a NAND.
-      assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
-        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Emitter'
-      );
-
-      // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
-      if ( phetioTypeSupplied ) {
-        options.validators = options.phetioType.validators;
-      }
-
-      super( options );
-
-      validate( options.validators, { valueType: Array } );
-
-      // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
-      this.validators = options.validators;
-
-      // @private - opt out of validation. Can be removed when deprecated emit functions are gone.
-      this.validationEnabled = options.validationEnabled;
-
-      if ( assert ) {
-
-        // Iterate through each validator and make sure that it won't validate options on validating value. This is
-        // mainly done for performance
-        options.validators.forEach( validator => {
-          assert && assert(
-            validator.validateOptionsOnValidateValue !== true,
-            'emitter sets its own validateOptionsOnValidateValue for each argument type'
-          );
-          validator.validateOptionsOnValidateValue = false;
-
-          // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
-          // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
-          assert && !phetioTypeSupplied && Object.freeze( validator );
-
-          // validate the options passed in to validate each emitter argument
-          assert && ValidatorDef.validateValidator( validator );
-        } );
-
-        // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
-        // Don't assume we "own" the validator if it came from the TypeIO.
-        assert && !phetioTypeSupplied && Object.freeze( options.validators );
-      }
+          self.activeListenersStack.pop();
+        }
+      };
 
       // @private {function[]} - the listeners that will be called on emit
       this.listeners = [];
@@ -120,14 +58,6 @@ define( require => {
       // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
-
-      // @private {function|null} if defined, called as the first listener
-      this.first = options.first;
-      this.first && this.listeners.push( this.first );
-
-      // @private {function|null} if defined, called as the last listener
-      this.last = options.last;
-      this.last && this.listeners.push( this.last );
     }
 
     /**
@@ -136,8 +66,6 @@ define( require => {
      * @override
      */
     dispose() {
-      this.first = null;
-      this.last = null;
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
       super.dispose();
     }
@@ -180,14 +108,6 @@ define( require => {
       this.defendListeners();
 
       this.listeners.splice( index, 1 );
-
-      // Cleanup for special cases of first and last
-      if ( this.last === listener ) {
-        this.last = null;
-      }
-      if ( this.first === listener ) {
-        this.first = null;
-      }
     }
 
     /**
@@ -223,67 +143,6 @@ define( require => {
           this.activeListenersStack[ i ] = defendedListeners;
         }
       }
-    }
-
-    /**
-     * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
-     * @returns {*}
-     * @private
-     */
-    getPhetioData() {
-
-      // null if there are no arguments.  dataStream.js omits null values for data
-      let data = null;
-      if ( this.phetioType.elements.length > 0 ) {
-
-        // Enumerate named argsObject for the data stream.
-        data = {};
-        for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-          const element = this.phetioType.elements[ i ];
-          data[ element.name ] = element.type.toStateObject( arguments[ i ] );
-        }
-      }
-      return data;
-    }
-
-    /**
-     * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
-     * are notified in the order they were added via addListener, though it is poor practice to rely on the order
-     * of listener notifications.
-     * @params - expected parameters are based on options.validators, see constructor
-     * @public
-     */
-    emit() {
-      if ( assert && this.validationEnabled ) {
-        assert(
-          arguments.length === this.validators.length,
-          `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
-        );
-        for ( let i = 0; i < this.validators.length; i++ ) {
-          validate( arguments[ i ], this.validators[ i ] );
-        }
-      }
-
-      assert && this.first && assert( this.listeners.indexOf( this.first ) === 0, 'first should be at the beginning' );
-      assert && this.last && assert( this.listeners.indexOf( this.last ) === this.listeners.length - 1, 'last should be ' +
-                                                                                                        'at the end' );
-      // handle phet-io data stream for the emitted event
-      this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', this.getPhetioData.apply( this, arguments ) );
-
-      // Notify wired-up listeners, if any
-      if ( this.listeners.length > 0 ) {
-        this.activeListenersStack.push( this.listeners );
-
-        // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
-        const lastEntry = this.activeListenersStack.length - 1;
-        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-          this.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
-        }
-
-        this.activeListenersStack.pop();
-      }
-
-      this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
     /**
