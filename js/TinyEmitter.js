@@ -1,61 +1,24 @@
-// Copyright 2015-2018, University of Colorado Boulder
+// Copyright 2019, University of Colorado Boulder
 
 /**
  * Lightweight event & listener abstraction for a single event type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( require => {
   'use strict';
 
   // modules
-  const Action = require( 'AXON/Action' );
   const axon = require( 'AXON/axon' );
 
-  // Simulations have thousands of Emitters, so we re-use objects where possible.
-  const EMPTY_ARRAY = [];
-  assert && Object.freeze( EMPTY_ARRAY );
+  class TinyEmitter {
+    constructor() {
 
-  // TODO https://github.com/phetsims/axon/issues/222: create LightweightEmitter which does not extend PhetioObject, but used here by composition
-
-  class Emitter extends Action {
-
-    /**
-     * @param {Object} [options]
-     */
-    constructor( options ) {
-
-      // TODO https://github.com/phetsims/axon/issues/222: clean this up
-      // options = _.extend( {
-      //
-      //   // phetioType: EmitterIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
-      // }, options );
-
-      super( null, options );
-
-      const self = this;
-
-      // Set the action in the parent type now that we have self, use function to support arguments
-      this.action = function() {
-
-        // Notify wired-up listeners, if any
-        if ( self.listeners.length > 0 ) {
-          self.activeListenersStack.push( self.listeners );
-
-          // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
-          const lastEntry = self.activeListenersStack.length - 1;
-          for ( let i = 0; i < self.activeListenersStack[ lastEntry ].length; i++ ) {
-            self.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
-          }
-
-          self.activeListenersStack.pop();
-        }
-      };
-
-      // @private {function[]} - the listeners that will be called on emit
+      // @private {function[]} - the listeners that will be called on tinyEmit
       this.listeners = [];
 
-      // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
+      // @private {function[][]} - during tinyEmit() keep track of which listeners should receive events in order to manage
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
     }
@@ -63,11 +26,32 @@ define( require => {
     /**
      * Disposes an Emitter. All listeners are removed.
      * @public
-     * @override
      */
     dispose() {
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
-      super.dispose();
+    }
+
+    /**
+     * Notify listeners
+     *
+     * This is called "tinyEmit" because in javascript polymorphism is difficult because of string searches, and we
+     * didn't want confusion between this call and Emitter.emit().
+     * @public
+     */
+    tinyEmit() {
+
+      // Notify wired-up listeners, if any
+      if ( this.listeners.length > 0 ) {
+        this.activeListenersStack.push( this.listeners );
+
+        // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
+        const lastEntry = this.activeListenersStack.length - 1;
+        for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
+          this.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
+        }
+
+        this.activeListenersStack.pop();
+      }
     }
 
     /**
@@ -176,5 +160,5 @@ define( require => {
     }
   }
 
-  return axon.register( 'Emitter', Emitter );
+  return axon.register( 'TinyEmitter', TinyEmitter );
 } );
