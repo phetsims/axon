@@ -11,6 +11,7 @@ define( require => {
   // modules
   require( 'AXON/DynamicPropertyTests' );
   require( 'AXON/EmitterTests' );
+  require( 'AXON/TinyEmitterTests' );
   require( 'AXON/EmitterIOTests' );
   require( 'AXON/EnumerationPropertyTests' );
   require( 'AXON/EventsTests' );

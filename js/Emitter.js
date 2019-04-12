@@ -27,8 +27,14 @@ define( require => {
      */
     constructor( options ) {
 
+      // If provided, make sure the phetioType is different from the default to save complexity/memory.
+      if ( assert && options && options.phetioType ) {
+        assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
+      }
+
       // For the common case of creating an instrumented Emitter with no args, the phetioType is automatically supplied.
-      // If validators are supplied, the parent will check via assertions that appropriate options are supplied.
+      // If validators and/or phetioType are supplied, the parent will check via assertions that supplied options
+      // are correct.
       if ( options && !options.validators && !options.phetioType ) {
         options.phetioType = EmitterIOWithNoArgs;
       }
