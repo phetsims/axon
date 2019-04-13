@@ -21,10 +21,14 @@ define( function( require ) {
   // ifphetio
   var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
+  // constants
+  var ObservableArray = window.phet ? phet.axon.ObservableArray : axon.ObservableArray;
+
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
    * @param {ObjectIO} elementType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
+   * @param {Object} options
    * @constructor
    */
   function ObservableArrayIO( elementType, options ) {
@@ -117,7 +121,7 @@ define( function( require ) {
 
         documentation: 'An array that sends notifications when its values have changed.',
         elementType: elementType,
-        validator: { isValidValue: v => v instanceof phet.axon.ObservableArray },
+        validator: { isValidValue: v => v instanceof ObservableArray },
         events: [ 'itemAdded', 'itemRemoved' ]
       } );
   }

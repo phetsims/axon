@@ -20,6 +20,7 @@ define( function( require ) {
   // constants
   var VALUE_TYPE = NumberIO; // It's a NumberProperty.
   var PropertyIOImpl = PropertyIO( VALUE_TYPE );
+  var NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
 
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -37,7 +38,7 @@ define( function( require ) {
 
   phetioInherit( PropertyIOImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
 
-    validator: { isValidValue: v => v instanceof phet.axon.NumberProperty },
+    validator: { isValidValue: v => v instanceof NumberProperty },
 
     // Export the value type from the parent so clients can read it from this type
     elementType: NumberIO,

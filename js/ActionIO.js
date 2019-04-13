@@ -27,6 +27,7 @@ define( function( require ) {
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var Action = window.phet ? phet.axon.Action : axon.Action;
 
   // allowed keys
   var ELEMENT_KEYS = [
@@ -122,7 +123,7 @@ define( function( require ) {
        */
       validators: validators,
 
-      validator: { valueType: phet.axon.Action }
+      validator: { valueType: Action }
     } );
   }
 

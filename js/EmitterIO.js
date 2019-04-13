@@ -27,6 +27,9 @@ define( function( require ) {
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
+  // constants
+  var Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
+
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
@@ -85,7 +88,7 @@ define( function( require ) {
        */
       validators: validators,  // TODO: https://github.com/phetsims/axon/issues/241 Can this be supplied by the parent?
 
-      validator: { valueType: phet.axon.Emitter }
+      validator: { valueType: Emitter }
     } );
   }
 
