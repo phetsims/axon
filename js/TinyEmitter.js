@@ -21,6 +21,9 @@ define( require => {
       // @private {function[][]} - during tinyEmit() keep track of which listeners should receive events in order to manage
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
+
+      // @private {boolean} - to keep track if it has been disposed or not
+      this.isDisposed = false;
     }
 
     /**
@@ -29,6 +32,7 @@ define( require => {
      */
     dispose() {
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
+      this.isDisposed = true;
     }
 
     /**
