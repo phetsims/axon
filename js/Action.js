@@ -111,7 +111,7 @@ define( require => {
         assert && !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
-      // @protected - can be supplied by subclasses after superconstructor call completes
+      // @protected - can be supplied by subclasses after super constructor call completes
       this.action = action;
     }
 
