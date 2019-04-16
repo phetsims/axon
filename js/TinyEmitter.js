@@ -22,8 +22,12 @@ define( require => {
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
 
-      // @private {boolean} - to keep track if it has been disposed or not
-      this.isDisposed = false;
+      // for production memory concerns; no need to keep this around.
+      if ( assert ) {
+
+        // @private {boolean} - to keep track if it has been disposed or not
+        this.isDisposed = false;
+      }
     }
 
     /**
@@ -32,7 +36,10 @@ define( require => {
      */
     dispose() {
       this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
-      this.isDisposed = true;
+
+      if ( assert ) {
+        this.isDisposed = true;
+      }
     }
 
     /**
@@ -72,8 +79,7 @@ define( require => {
       // removeListener.
       this.defendListeners();
 
-      const index = this.last ? this.listeners.length - 1 : this.listeners.length;
-      this.listeners.splice( index, 0, listener );
+      this.listeners.push( listener );
     }
 
     /**
