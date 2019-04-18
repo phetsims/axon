@@ -15,10 +15,10 @@ define( require => {
   class TinyEmitter {
     constructor() {
 
-      // @private {function[]} - the listeners that will be called on tinyEmit
+      // @private {function[]} - the listeners that will be called on emit
       this.listeners = [];
 
-      // @private {function[][]} - during tinyEmit() keep track of which listeners should receive events in order to manage
+      // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
       //                         - removal of listeners during emit()
       this.activeListenersStack = [];
 
@@ -44,12 +44,9 @@ define( require => {
 
     /**
      * Notify listeners
-     *
-     * This is called "tinyEmit" because in javascript polymorphism is difficult because of string searches, and we
-     * didn't want confusion between this call and Emitter.emit().
      * @public
      */
-    tinyEmit() {
+    emit() {
 
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {

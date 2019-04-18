@@ -244,7 +244,7 @@ define( require => {
       assert && assert( !this.notifying || this.reentrant,
         'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
       this.notifying = true;
-      this.changedEmitter.tinyEmit( this.get(), oldValue, this );
+      this.changedEmitter.emit( this.get(), oldValue, this );
       this.notifying = false;
 
       this.isPhetioInstrumented() && this.phetioEndEvent();
@@ -259,7 +259,7 @@ define( require => {
      * @public
      */
     notifyListenersStatic() {
-      this.changedEmitter.tinyEmit( this.get(), undefined, this );
+      this.changedEmitter.emit( this.get(), undefined, this );
     }
 
     /**

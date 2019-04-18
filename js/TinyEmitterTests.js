@@ -20,22 +20,22 @@ define( require => {
     assert.ok( true, 'Token test, because each test must have at least one assert.' );
 
     const e1 = new TinyEmitter();
-    e1.tinyEmit( 1 );
-    e1.tinyEmit( 2, 2 );
-    e1.tinyEmit( true );
-    e1.tinyEmit( '2, 2' );
-    e1.tinyEmit( undefined );
-    e1.tinyEmit( null );
+    e1.emit( 1 );
+    e1.emit( 2, 2 );
+    e1.emit( true );
+    e1.emit( '2, 2' );
+    e1.emit( undefined );
+    e1.emit( null );
 
     const e2 = new TinyEmitter();
-    e2.tinyEmit( new TinyEmitter(), {}, () => {} );
-    e2.tinyEmit( 2, 2 );
-    e2.tinyEmit( true );
-    e2.tinyEmit( '2, 2' );
-    e2.tinyEmit( undefined );
-    e2.tinyEmit( null );
-    e2.tinyEmit( new TinyEmitter(), 7, () => {} );
-    e2.tinyEmit( new TinyEmitter() );
+    e2.emit( new TinyEmitter(), {}, () => {} );
+    e2.emit( 2, 2 );
+    e2.emit( true );
+    e2.emit( '2, 2' );
+    e2.emit( undefined );
+    e2.emit( null );
+    e2.emit( new TinyEmitter(), 7, () => {} );
+    e2.emit( new TinyEmitter() );
   } );
 
   QUnit.test( 'Test emit timing TinyEmitter', assert => {
@@ -48,7 +48,7 @@ define( require => {
     e.addListener( () => {x++;} );
     e.addListener( () => {x++;} );
 
-    e.tinyEmit();
+    e.emit();
 
     assert.ok( x === 5, 'fired all listeners' );
 
@@ -60,7 +60,7 @@ define( require => {
       const start = Date.now();
 
       for ( let i = 0; i < numberOfLoopings; i++ ) {
-        emitter.tinyEmit();
+        emitter.emit();
       }
       const end = Date.now();
       const totalTime = end - start;
@@ -84,7 +84,7 @@ define( require => {
     };
     emitter.addListener( a );
     emitter.addListener( b );
-    emitter.tinyEmit();
+    emitter.emit();
 
     assert.equal( stack.length, 2, 'Should have received 2 callbacks' );
     assert.equal( stack[ 0 ], 'a', 'true' );
@@ -102,7 +102,7 @@ define( require => {
       entries.push( { listener: 'a', arg: arg } );
 
       if ( arg === 'first' ) {
-        emitter.tinyEmit( 'second' );
+        emitter.emit( 'second' );
       }
     };
     const b = arg => {
@@ -110,7 +110,7 @@ define( require => {
 
       if ( arg === 'second' ) {
         emitter.addListener( c );
-        emitter.tinyEmit( 'third' );
+        emitter.emit( 'third' );
       }
     };
     const c = arg => {
@@ -119,7 +119,7 @@ define( require => {
 
     emitter.addListener( a );
     emitter.addListener( b );
-    emitter.tinyEmit( 'first' );
+    emitter.emit( 'first' );
 
     /*
      * Expected order:

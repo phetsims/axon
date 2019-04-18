@@ -48,7 +48,7 @@ define( require => {
 
       // Set the action in the parent type now that we have self, use function to support arguments
       this.action = function() {
-        self.tinyEmitter.tinyEmit.apply( self.tinyEmitter, arguments );
+        self.tinyEmitter.emit.apply( self.tinyEmitter, arguments );
       };
     }
 
