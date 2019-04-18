@@ -36,7 +36,7 @@ define( require => {
       // If validators and/or phetioType are supplied, the parent will check via assertions that supplied options
       // are correct.
       if ( options && !options.validators && !options.phetioType ) {
-        options.phetioType = EmitterIOWithNoArgs;
+        options = _.extend( {}, options, { phetioType: EmitterIOWithNoArgs } );
       }
 
       super( null, options );

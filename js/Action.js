@@ -43,24 +43,28 @@ define( require => {
 
       options = _.extend( {
 
-        // {Array.<Object>|null} - array of "validators" as defined by ValidatorDef.js
+        // {Array.<Object>} - array of "validators" as defined by ValidatorDef.js
         validators: EMPTY_ARRAY,
 
         // {boolean} @deprecated, only to support legacy emit1, emit2, emit3 calls.
         validationEnabled: true,
 
-        // phet-io
+        // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
         phetioState: false,
-        phetioType: ActionIOWithNoArgs // subtypes can override with EmitterIO([...]), see EmitterIO.js
+        phetioType: ActionIOWithNoArgs, // subtypes can override with ActionIO([...]), see ActionIO.js
+        phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
+        phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata
       }, options );
+
+      const optionsSetByAction = {};
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
       if ( options.phetioPlayback ) {
-        options.phetioEventMetadata = options.phetioEventMetadata || {};
-        assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ), 'dataKeys should be supplied by Emitter, not elsewhere' );
-        options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
+        optionsSetByAction.phetioEventMetadata = options.phetioEventMetadata || {};
+        assert && assert( !optionsSetByAction.phetioEventMetadata.hasOwnProperty( 'dataKeys' ), 'dataKeys should be supplied by Action, not elsewhere' );
+        optionsSetByAction.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
       }
 
       // important to be before super call. OK to supply neither or one or the other, but not both.  That is a NAND.
@@ -74,7 +78,12 @@ define( require => {
 
       // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
-        options.validators = options.phetioType.validators;
+        optionsSetByAction.validators = options.phetioType.validators;
+      }
+
+      // extend options with values set by Action, only if there are any to set
+      if ( Object.keys( optionsSetByAction ).length > 0 ) {
+        options = _.extend( {}, options, optionsSetByAction );
       }
 
       super( options );
@@ -94,7 +103,7 @@ define( require => {
         options.validators.forEach( validator => {
           assert && assert(
             validator.validateOptionsOnValidateValue !== true,
-            'emitter sets its own validateOptionsOnValidateValue for each argument type'
+            'Action sets its own validateOptionsOnValidateValue for each argument type'
           );
           validator.validateOptionsOnValidateValue = false;
 
@@ -102,7 +111,7 @@ define( require => {
           // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
           assert && !phetioTypeSupplied && Object.freeze( validator );
 
-          // validate the options passed in to validate each emitter argument
+          // validate the options passed in to validate each Action argument
           assert && ValidatorDef.validateValidator( validator );
         } );
 
