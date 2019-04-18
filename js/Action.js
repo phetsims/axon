@@ -101,7 +101,7 @@ define( require => {
         // Iterate through each validator and make sure that it won't validate options on validating value. This is
         // mainly done for performance
         options.validators.forEach( validator => {
-          assert && assert(
+          assert(
             validator.validateOptionsOnValidateValue !== true,
             'Action sets its own validateOptionsOnValidateValue for each argument type'
           );
@@ -109,15 +109,15 @@ define( require => {
 
           // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
           // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
-          assert && !phetioTypeSupplied && Object.freeze( validator );
+          !phetioTypeSupplied && Object.freeze( validator );
 
           // validate the options passed in to validate each Action argument
-          assert && ValidatorDef.validateValidator( validator );
+          ValidatorDef.validateValidator( validator );
         } );
 
         // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
         // Don't assume we "own" the validator if it came from the TypeIO.
-        assert && !phetioTypeSupplied && Object.freeze( options.validators );
+        !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
       // @protected - can be supplied by subclasses after super constructor call completes
