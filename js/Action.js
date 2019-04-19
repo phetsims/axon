@@ -120,6 +120,8 @@ define( require => {
         !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
+      assert && assert( typeof this._action === 'function', 'action should be a function' );
+
       // @private {function}
       this._action = action;
     }
@@ -153,7 +155,6 @@ define( require => {
      * @public
      */
     emit() {
-      assert && assert( typeof this._action === 'function', 'action should exist when emit is called' );
       if ( assert && this.validationEnabled ) {
         assert( arguments.length === this.validators.length,
           `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
