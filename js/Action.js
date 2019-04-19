@@ -27,7 +27,7 @@ define( require => {
   class Action extends PhetioObject {
 
     /**
-     * @param {function|null} action - the function that is called when this Action occurs
+     * @param {function} action - the function that is called when this Action occurs
      * @param {Object} [options]
      */
     constructor( action, options ) {
@@ -120,8 +120,8 @@ define( require => {
         !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
-      // @protected - can be supplied by subclasses after super constructor call completes
-      this.action = action;
+      // @private {function}
+      this._action = action;
     }
 
     /**
@@ -153,7 +153,7 @@ define( require => {
      * @public
      */
     emit() {
-      assert && assert( typeof this.action === 'function', 'action should exist when emit is called' );
+      assert && assert( typeof this._action === 'function', 'action should exist when emit is called' );
       if ( assert && this.validationEnabled ) {
         assert( arguments.length === this.validators.length,
           `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
@@ -166,7 +166,7 @@ define( require => {
       // handle phet-io data stream for the emitted event
       this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', this.getPhetioData.apply( this, arguments ) );
 
-      this.action.apply( null, arguments );
+      this._action.apply( null, arguments );
 
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }

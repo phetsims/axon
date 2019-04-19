@@ -39,17 +39,17 @@ define( require => {
         options = _.extend( {}, options, { phetioType: EmitterIOWithNoArgs } );
       }
 
-      super( null, options );
+      super( function() {
+        assert && assert( self.tinyEmitter instanceof TinyEmitter,
+          'Emitter should not emit until after its constructor has completed' );
+
+        self.tinyEmitter.emit.apply( self.tinyEmitter, arguments );
+      }, options );
 
       const self = this;
 
       // @private - provide Emitter functionality via composition
       this.tinyEmitter = new TinyEmitter();
-
-      // Set the action in the parent type now that we have self, use function to support arguments
-      this.action = function() {
-        self.tinyEmitter.emit.apply( self.tinyEmitter, arguments );
-      };
     }
 
     /**
