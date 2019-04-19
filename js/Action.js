@@ -1,7 +1,8 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
- * An action that can be sent to the data stream, and optionally recorded for playback.
+ * An action that can be executed and sent to the PhET-iO data stream, and optionally recorded for playback. This type
+ * will also validate the argument types passed to the action function
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -32,8 +33,14 @@ define( require => {
      */
     constructor( action, options ) {
 
+      // It is important to know if the following options were provided by the client
       const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
       const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
+
+      // Important to be before super call. OK to supply either or one or the other, but not both. This is a NAND operator.
+      assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
+        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Action'
+      );
 
       // ActionIO that have 0 args should use the built-in ActionIO([]) default.  But we must support EmitterIO([]),
       // so we guard based on the type name.
@@ -43,7 +50,7 @@ define( require => {
 
       options = _.extend( {
 
-        // {Array.<Object>} - array of "validators" as defined by ValidatorDef.js
+        // {ValidatorDef[]}
         validators: EMPTY_ARRAY,
 
         // {boolean} @deprecated, only to support legacy emit1, emit2, emit3 calls.
@@ -57,38 +64,33 @@ define( require => {
         phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata
       }, options );
 
+      // Use a separate object so as to not mutate passed in options object.
       const optionsSetByAction = {};
+
+      // Use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
+      if ( phetioTypeSupplied ) {
+        optionsSetByAction.validators = options.phetioType.validators;
+      }
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
       if ( options.phetioPlayback ) {
         optionsSetByAction.phetioEventMetadata = options.phetioEventMetadata || {};
-        assert && assert( !optionsSetByAction.phetioEventMetadata.hasOwnProperty( 'dataKeys' ), 'dataKeys should be supplied by Action, not elsewhere' );
+
+        assert && assert( !optionsSetByAction.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
+          'dataKeys should be supplied by Action, not elsewhere' );
+
         optionsSetByAction.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
       }
 
-      // important to be before super call. OK to supply neither or one or the other, but not both.  That is a NAND.
-      assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
-        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Action'
-      );
-
-      if ( options.tandem.supplied ) {
-        assert && assert( !validatorsSupplied, 'when specifying tandem, use phetioType instead of validators' );
-      }
-
-      // use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
-      if ( phetioTypeSupplied ) {
-        optionsSetByAction.validators = options.phetioType.validators;
-      }
-
-      // extend options with values set by Action, only if there are any to set
+      // Extend options with values set by Action, only if there are any to set to save an object declaration.
       if ( Object.keys( optionsSetByAction ).length > 0 ) {
         options = _.extend( {}, options, optionsSetByAction );
       }
 
       super( options );
 
-      validate( options.validators, { valueType: Array } );
+      assert && this.validateValidators( options.validators, validatorsSupplied, phetioTypeSupplied );
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.validators = options.validators;
@@ -96,34 +98,47 @@ define( require => {
       // @private - opt out of validation. Can be removed when deprecated emit functions are gone.
       this.validationEnabled = options.validationEnabled;
 
-      if ( assert ) {
-
-        // Iterate through each validator and make sure that it won't validate options on validating value. This is
-        // mainly done for performance
-        options.validators.forEach( validator => {
-          assert(
-            validator.validateOptionsOnValidateValue !== true,
-            'Action sets its own validateOptionsOnValidateValue for each argument type'
-          );
-          validator.validateOptionsOnValidateValue = false;
-
-          // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
-          // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
-          !phetioTypeSupplied && Object.freeze( validator );
-
-          // validate the options passed in to validate each Action argument
-          ValidatorDef.validateValidator( validator );
-        } );
-
-        // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
-        // Don't assume we "own" the validator if it came from the TypeIO.
-        !phetioTypeSupplied && Object.freeze( options.validators );
-      }
-
       assert && assert( typeof action === 'function', 'action should be a function' );
 
       // @private {function}
       this._action = action;
+    }
+
+    /**
+     * @private
+     * @param {ValidatorDef[]} validators
+     * @param {boolean} validatorsSuppliedByClient - true if the validators option was passed into the constructor via options,
+     *                                               false if using the default from the options extend call
+     * @param phetioTypeSuppliedByClient - true if the phetioType option was passed into the constructor via options,
+     *                                     false if using the default from the options extend call
+     */
+    validateValidators( validators, validatorsSuppliedByClient, phetioTypeSuppliedByClient ) {
+
+      // validate the validators object
+      validate( validators, { valueType: Array } );
+
+      this.isPhetioInstrumented() && assert( !validatorsSuppliedByClient, 'when specifying tandem, use phetioType instead of validators' );
+
+      // Iterate through each validator and make sure that it won't validate options on validating value. This is
+      // mainly done for performance
+      validators.forEach( validator => {
+        assert(
+          validator.validateOptionsOnValidateValue !== true,
+          'Action sets its own validateOptionsOnValidateValue for each argument type'
+        );
+        validator.validateOptionsOnValidateValue = false;
+
+        // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
+        // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
+        !phetioTypeSuppliedByClient && Object.freeze( validator );
+
+        // validate the options passed in to validate each Action argument
+        ValidatorDef.validateValidator( validator );
+      } );
+
+      // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
+      // Don't assume we "own" the validator if it came from the TypeIO.
+      !phetioTypeSuppliedByClient && Object.freeze( validators );
     }
 
     /**
