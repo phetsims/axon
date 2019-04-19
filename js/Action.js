@@ -120,7 +120,7 @@ define( require => {
         !phetioTypeSupplied && Object.freeze( options.validators );
       }
 
-      assert && assert( typeof this._action === 'function', 'action should be a function' );
+      assert && assert( typeof action === 'function', 'action should be a function' );
 
       // @private {function}
       this._action = action;
