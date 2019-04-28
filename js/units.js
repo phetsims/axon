@@ -21,6 +21,7 @@ define( function( require ) {
       'kPa', // kilopascals
       'nm', // nanometers
       'ps', // picoseconds
+      'K', // Kelvin
 
       // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
