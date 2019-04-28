@@ -49,7 +49,7 @@ define( function( require ) {
   } );
 
   // Make sure that one Property can be in a transaction while another is not.
-  // TODO: add this test
+  // TODO #244 add this test
   // QUnit.test( 'Test two-Property transactions', function( assert ) {
   //   var p1 = new Property( 1 );
   //   var p2 = new Property( 2 );
