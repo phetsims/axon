@@ -15,13 +15,14 @@ define( function( require ) {
     values: [
 
       // NOTE: Abbreviations are preferred, see https://github.com/phetsims/phet-io/issues/530
+      'AMU', // atomic mass unit
       'atm', // atmospheres
       'cm', // centimeters
       '\u00B0C', // degrees Celsius
+      'K', // Kelvin
       'kPa', // kilopascals
       'nm', // nanometers
       'ps', // picoseconds
-      'K', // Kelvin
 
       // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
