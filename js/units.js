@@ -21,8 +21,13 @@ define( function( require ) {
       '\u00B0C', // degrees Celsius
       'K', // Kelvin
       'kPa', // kilopascals
+      'm', // meters
+      'm/s',
       'nm', // nanometers
+      'nm/ps',
+      'particles/ps',
       'ps', // picoseconds
+      's', // seconds
 
       // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
