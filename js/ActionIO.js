@@ -86,15 +86,15 @@ define( function( require ) {
         },
         documentation: 'Adds a listener which will be called when the emitter emits.'
       },
-      emit: {
+      execute: {
         returnType: VoidIO,
         parameterTypes: elementTypes,
 
-        // Match Emitter.emit's dynamic number of arguments
+        // Match `Action.execute`'s dynamic number of arguments
         implementation: function() {
-          this.instance.emit.apply( this.instance, arguments );
+          this.instance.execute.apply( this.instance, arguments );
         },
-        documentation: 'Emits a single event to all listeners.',
+        documentation: 'Executes the function the Action is wrapping.',
         invocableForReadOnlyElements: false
       }
     }, {
