@@ -64,28 +64,20 @@ define( require => {
         phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata
       }, options );
 
-      // Use a separate object so as to not mutate passed in options object.
-      const optionsSetByAction = {};
-
       // Use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
-        optionsSetByAction.validators = options.phetioType.validators;
+        options.validators = options.phetioType.validators;
       }
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
       if ( options.phetioPlayback ) {
-        optionsSetByAction.phetioEventMetadata = options.phetioEventMetadata || {};
+        options.phetioEventMetadata = options.phetioEventMetadata || {};
 
-        assert && assert( !optionsSetByAction.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
+        assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
           'dataKeys should be supplied by Action, not elsewhere' );
 
-        optionsSetByAction.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
-      }
-
-      // Extend options with values set by Action, only if there are any to set to save an object declaration.
-      if ( Object.keys( optionsSetByAction ).length > 0 ) {
-        options = _.extend( {}, options, optionsSetByAction );
+        options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
       }
 
       super( options );
