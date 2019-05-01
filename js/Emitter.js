@@ -53,6 +53,15 @@ define( require => {
     }
 
     /**
+     * Emit to notify listeners; implemented by executing the action of the parent class.
+     * @public
+     * @params {*}
+     */
+    emit() {
+      this.execute.apply( this, arguments );
+    }
+
+    /**
      * Disposes an Emitter. All listeners are removed.
      * @public
      * @override

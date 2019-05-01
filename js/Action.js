@@ -161,7 +161,7 @@ define( require => {
      * @params - expected parameters are based on options.validators, see constructor
      * @public
      */
-    emit() {
+    execute() {
       if ( assert && this.validationEnabled ) {
         assert( arguments.length === this.validators.length,
           `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
