@@ -26,6 +26,7 @@ define( function( require ) {
       'nm', // nanometers
       'nm/ps',
       'particles/ps',
+      'pm', // picometers
       'ps', // picoseconds
       's', // seconds
 
