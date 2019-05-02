@@ -11,10 +11,10 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const TinyEmitter = require( 'AXON/TinyEmitter' );
   const Multilink = require( 'AXON/Multilink' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
+  const TinyEmitter = require( 'AXON/TinyEmitter' );
   const units = require( 'AXON/units' );
   const validate = require( 'AXON/validate' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
