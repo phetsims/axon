@@ -2,7 +2,7 @@
 
 /**
  * An action that can be executed and sent to the PhET-iO data stream, and optionally recorded for playback. This type
- * will also validate the argument types passed to the action function
+ * will also validate the argument types passed to the action function.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -97,12 +97,12 @@ define( require => {
     }
 
     /**
-     * @private
      * @param {ValidatorDef[]} validators
      * @param {boolean} validatorsSuppliedByClient - true if the validators option was passed into the constructor via options,
      *                                               false if using the default from the options extend call
      * @param phetioTypeSuppliedByClient - true if the phetioType option was passed into the constructor via options,
      *                                     false if using the default from the options extend call
+     * @private
      */
     validateValidators( validators, validatorsSuppliedByClient, phetioTypeSuppliedByClient ) {
 
