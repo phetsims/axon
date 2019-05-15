@@ -140,7 +140,7 @@ define( require => {
      */
     getPhetioData() {
 
-      // null if there are no arguments.  dataStream.js omits null values for data
+      // null if there are no arguments. dataStream.js omits null values for data
       let data = null;
       if ( this.phetioType.elements.length > 0 ) {
 
