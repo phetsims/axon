@@ -36,8 +36,12 @@ define( require => {
 
         // Convert seconds to ms and see if item has timed out
         if ( elapsed * 1000 >= timeout ) {
-          listener();
-          this.removeListener( callback );
+
+          // make sure that this callback hasn't already been removed by another listener while emit() is in progress
+          if ( this.hasListener( callback ) ) {
+            listener();
+            this.removeListener( callback );
+          }
         }
       };
       this.addListener( callback );
