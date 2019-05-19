@@ -108,7 +108,7 @@ define( require => {
       // @private (unit-tests) - emit1 is called when the value changes (or on link)
       // Also used in ShapePlacementBoard.js at the moment
       // We are validating here in Property, so we don't need the sub-emitter to validate too.
-      this.changedEmitter = new TinyEmitter( );
+      this.changedEmitter = new TinyEmitter();
 
       // @private whether we are in the process of notifying listeners
       this.notifying = false;
@@ -233,7 +233,7 @@ define( require => {
      */
     _notifyListeners( oldValue ) {
 
-      this.phetioStartEvent( 'changed', () => {
+      this.phetioStartEvent( Property.CHANGED_EVENT_NAME, () => {
         return {
           oldValue: this.phetioType.elementType.toStateObject( oldValue ),
           newValue: this.phetioType.elementType.toStateObject( this.get() )
@@ -467,6 +467,9 @@ define( require => {
       multilink.dispose();
     }
   }
+
+  // static attributes
+  Property.CHANGED_EVENT_NAME = 'changed';
 
   return axon.register( 'Property', Property );
 } );
