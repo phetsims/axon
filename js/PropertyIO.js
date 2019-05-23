@@ -106,12 +106,6 @@ define( function( require ) {
 
       events: [ 'changed' ],
 
-      getAPI: function() {
-        return {
-          elementType: phetioEngine.getAPIForType( phetioValueType )
-        };
-      },
-
       /**
        * Encodes a Property instance to a state.
        * @param {Object} property
