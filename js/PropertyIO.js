@@ -18,9 +18,6 @@ define( function( require ) {
   var VoidIO = require( 'TANDEM/types/VoidIO' );
   var validate = require( 'AXON/validate' );
 
-  // ifphetio
-  var phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
-
   /**
    * An observable property that triggers notifications when the value changes.
    * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
