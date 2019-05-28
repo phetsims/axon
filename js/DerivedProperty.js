@@ -1,4 +1,4 @@
-// Copyright 2013-2016, University of Colorado Boulder
+// Copyright 2013-2019, University of Colorado Boulder
 
 /**
  * A DerivedProperty is computed based on other Properties.  This implementation inherits from Property to (a) simplify
@@ -31,6 +31,8 @@ define( require => {
         phetioType: null, // must be supplied by instantiations and must be of type DerivedPropertyIO
         phetioReadOnly: true // derived properties can be read but not set by PhET-iO
       }, options );
+
+      assert && assert( _.isEqual( dependencies, _.uniq( dependencies ) ), 'duplicate dependencies' );
 
       const initialValue = derivation.apply( null, dependencies.map( property => property.get() ) );
 

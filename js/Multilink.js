@@ -1,4 +1,4 @@
-// Copyright 2014-2016, University of Colorado Boulder
+// Copyright 2014-2019, University of Colorado Boulder
 
 /**
  * A Multilink is an instance that can be used to link to multiple properties.  It is very similar to a DerivedProperty,
@@ -25,12 +25,14 @@ define( function( require ) {
 
     this.dependencies = dependencies; // @private
 
+    assert && assert( _.isEqual( dependencies, _.uniq( dependencies ) ), 'duplicate dependencies' );
+
     var self = this;
 
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
 
-    //When a dependency value changes, update the list of dependencies and call back to the callback
+    // When a dependency value changes, update the list of dependencies and call back to the callback
     dependencies.forEach( function( dependency, i ) {
       var listener = function( value ) {
 
@@ -43,7 +45,7 @@ define( function( require ) {
       dependency.lazyLink( listener );
     } );
 
-    //Send initial call back but only if we are non-lazy
+    // Send initial call back but only if we are non-lazy
     if ( !lazy ) {
       callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
     }
