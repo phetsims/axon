@@ -25,7 +25,7 @@ define( function( require ) {
 
     this.dependencies = dependencies; // @private
 
-    assert && assert( _.isEqual( dependencies, _.uniq( dependencies ) ), 'duplicate dependencies' );
+    assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
     var self = this;
 

@@ -32,7 +32,7 @@ define( require => {
         phetioReadOnly: true // derived properties can be read but not set by PhET-iO
       }, options );
 
-      assert && assert( _.isEqual( dependencies, _.uniq( dependencies ) ), 'duplicate dependencies' );
+      assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
       const initialValue = derivation.apply( null, dependencies.map( property => property.get() ) );
 
