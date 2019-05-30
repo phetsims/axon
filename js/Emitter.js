@@ -53,12 +53,22 @@ define( require => {
     }
 
     /**
+     * Emitter instances should not be calling Action.execute, instead see Emitter.emit().
+     * See the second half of https://github.com/phetsims/axon/issues/243 for discussion.
+     * @override
+     * @public
+     */
+    execute() {
+      assert && assert( false, 'This should not be called, use Emitter.emit() instead.' );
+    }
+
+    /**
      * Emit to notify listeners; implemented by executing the action of the parent class.
      * @public
      * @params {*}
      */
     emit() {
-      this.execute.apply( this, arguments );
+      super.execute.apply( this, arguments );
     }
 
     /**
