@@ -47,6 +47,7 @@ define( require => {
      * @public
      */
     emit() {
+      assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
