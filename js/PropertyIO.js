@@ -12,11 +12,12 @@ define( function( require ) {
   // modules
   var axon = require( 'AXON/axon' );
   var FunctionIO = require( 'TANDEM/types/FunctionIO' );
+  var NullableIO = require( 'TANDEM/types/NullableIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var Property = require( 'AXON/Property' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
+  var Property = require( 'AXON/Property' );
   var validate = require( 'AXON/validate' );
+  var VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
    * An observable property that triggers notifications when the value changes.
@@ -62,7 +63,9 @@ define( function( require ) {
 
       link: {
         returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, phetioValueType ] ) ],
+
+        // oldValue will start as "null" the first time called
+        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
         implementation: function( listener ) {
           this.instance.link( listener );
         },
@@ -73,7 +76,9 @@ define( function( require ) {
 
       lazyLink: {
         returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, phetioValueType ] ) ],
+
+        // oldValue will start as "null" the first time called
+        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
         implementation: function( listener ) {
           this.instance.lazyLink( listener );
         },
