@@ -88,12 +88,12 @@ define( require => {
 
       // When running as phet-io, if the tandem is specified, the type must be specified.
       // This assertion helps in instrumenting code that has the tandem but not type
-      Tandem.validationEnabled() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType,
+      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType,
         'phetioType passed to Property must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
 
       // When running as phet-io, if the tandem is specified, the type must be specified.
       // This assertion helps in instrumenting code that has the tandem but not type
-      Tandem.validationEnabled() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType.elementType,
+      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType.elementType,
         'phetioType.elementType must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
 
       // @private - Store the internal value and the initial value
