@@ -30,7 +30,7 @@ define( function( require ) {
      * This type constructor is parameterized based on the phetioValueType.
      *
      * @param {DerivedProperty} derivedProperty
-     * @param {string} phetioID - the full unique tandem name for the instance
+     * @param {string} phetioID
      * @constructor
      */
     var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {

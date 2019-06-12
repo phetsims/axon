@@ -38,7 +38,7 @@ define( function( require ) {
     /**
      * This type constructor is parameterized based on the elementType
      * @param {ObservableArray} observableArray
-     * @param {string} phetioID - the full unique tandem name for the instance
+     * @param {string} phetioID
      * @constructor
      */
     var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
