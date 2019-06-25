@@ -40,6 +40,7 @@ define( function( require ) {
       'centimeters-squared',
       'coulombs',
       'degrees Celsius',
+      'degrees',
       'farads',
       'kilograms',
       'grams',
