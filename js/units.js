@@ -22,6 +22,7 @@ define( function( require ) {
       'K', // Kelvin
       'kPa', // kilopascals
       'm', // meters
+      'mm', //millimeters
       'm/s',
       'nm', // nanometers
       'nm/ps',
