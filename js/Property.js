@@ -110,7 +110,7 @@ define( require => {
       // We are validating here in Property, so we don't need the sub-emitter to validate too.
       this.changedEmitter = new TinyEmitter();
 
-      // @public (read-only) {boolean} - whether we are in the process of notifying listeners
+      // @private whether we are in the process of notifying listeners
       this.notifying = false;
 
       // @private whether to allow reentry of calls to set
