@@ -259,7 +259,7 @@ define( require => {
      * @public
      */
     notifyListenersStatic() {
-      this.changedEmitter.emit( this.get(), undefined, this );
+      this.changedEmitter.emit( this.get(), null, this );
     }
 
     /**
