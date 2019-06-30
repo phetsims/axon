@@ -56,7 +56,7 @@ define( function( require ) {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
           implementation: function( listener ) {
-            this.instance.addItemAddedListener( listener );
+            this.phetioObject.addItemAddedListener( listener );
           },
           documentation: 'Add a listener that is called when an item is added to the observable array.'
         },
@@ -70,7 +70,7 @@ define( function( require ) {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
           implementation: function( listener ) {
-            this.instance.addItemRemovedListener( listener );
+            this.phetioObject.addItemRemovedListener( listener );
           },
           documentation: 'Add a listener that is called when an item is removed from the observable array.'
         },
@@ -82,7 +82,7 @@ define( function( require ) {
           returnType: NumberIO,
           parameterTypes: [],
           implementation: function() {
-            return this.instance.length;
+            return this.phetioObject.length;
           },
           documentation: 'Get the number of elements in the observable array'
         }

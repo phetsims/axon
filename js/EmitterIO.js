@@ -58,7 +58,7 @@ define( function( require ) {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, elementTypes ) ],
         implementation: function( listener ) {
-          this.instance.addListener( listener );
+          this.phetioObject.addListener( listener );
         },
         documentation: 'Adds a listener which will be called when the emitter emits.'
       },
@@ -68,7 +68,7 @@ define( function( require ) {
 
         // Match `Emitter.emit`'s dynamic number of arguments
         implementation: function() {
-          this.instance.emit.apply( this.instance, arguments );
+          this.phetioObject.emit.apply( this.phetioObject, arguments );
         },
         documentation: 'Emits a single event to all listeners.',
         invocableForReadOnlyElements: false

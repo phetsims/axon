@@ -44,7 +44,7 @@ define( function( require ) {
         returnType: VoidIO,
         parameterTypes: [ phetioValueType ],
         implementation: function( value ) {
-          return this.instance.set( value );
+          return this.phetioObject.set( value );
         },
         documentation: 'Errors out when you try to set a derived property.',
         invocableForReadOnlyElements: false

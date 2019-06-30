@@ -45,7 +45,7 @@ define( function( require ) {
         returnType: phetioValueType,
         parameterTypes: [],
         implementation: function() {
-          return this.instance.get();
+          return this.phetioObject.get();
         },
         documentation: 'Gets the current value.'
       },
@@ -54,7 +54,7 @@ define( function( require ) {
         returnType: VoidIO,
         parameterTypes: [ phetioValueType ],
         implementation: function( value ) {
-          this.instance.set( value );
+          this.phetioObject.set( value );
         },
         documentation: 'Sets the value of the property. If the value differs from the previous value, listeners are ' +
                        'notified with the new value.',
@@ -67,7 +67,7 @@ define( function( require ) {
         // oldValue will start as "null" the first time called
         parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
         implementation: function( listener ) {
-          this.instance.link( listener );
+          this.phetioObject.link( listener );
         },
         documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
                        'also called with the current value. The listener takes two arguments, the new value and the ' +
@@ -80,7 +80,7 @@ define( function( require ) {
         // oldValue will start as "null" the first time called
         parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
         implementation: function( listener ) {
-          this.instance.lazyLink( listener );
+          this.phetioObject.lazyLink( listener );
         },
         documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
                        'without the current-value callback on registration. The listener takes two arguments, the new ' +
@@ -91,7 +91,7 @@ define( function( require ) {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType ] ) ],
         implementation: function( listener ) {
-          this.instance.unlink( listener );
+          this.phetioObject.unlink( listener );
         },
         documentation: 'Removes a listener.'
       }
@@ -109,7 +109,7 @@ define( function( require ) {
       events: [ 'changed' ],
 
       /**
-       * Encodes a Property instance to a state.
+       * Encodes a Property phetioObject to a state.
        * @param {Object} property
        * @returns {Object} - a state object
        */

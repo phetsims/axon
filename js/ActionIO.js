@@ -82,7 +82,7 @@ define( function( require ) {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, elementTypes ) ],
         implementation: function( listener ) {
-          this.instance.addListener( listener );
+          this.phetioObject.addListener( listener );
         },
         documentation: 'Adds a listener which will be called when the emitter emits.'
       },
@@ -92,7 +92,7 @@ define( function( require ) {
 
         // Match `Action.execute`'s dynamic number of arguments
         implementation: function() {
-          this.instance.execute.apply( this.instance, arguments );
+          this.phetioObject.execute.apply( this.phetioObject, arguments );
         },
         documentation: 'Executes the function the Action is wrapping.',
         invocableForReadOnlyElements: false
