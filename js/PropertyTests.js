@@ -9,10 +9,10 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var Property = require( 'AXON/Property' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
-  var Tandem = require( 'TANDEM/Tandem' );
+  const NumberProperty = require( 'AXON/NumberProperty' );
+  const NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
+  const Property = require( 'AXON/Property' );
+  const Tandem = require( 'TANDEM/Tandem' );
 
   QUnit.module( 'Property' );
 
@@ -231,7 +231,7 @@ define( function( require ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
       var done = assert.async();
       var tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
-      const phetioType = PropertyIO( ObjectIO ); // TODO: This should be a NumberProperty
+      const phetioType = NumberPropertyIO;
       const propertyValue = 123;
       const validValues = [ 0, 1, 2, 3, propertyValue ];
       tandem.addPhetioObject = function( instance, options ) {
@@ -248,14 +248,10 @@ define( function( require ) {
           done();
         }, 0 );
       };
-
-      new Property( propertyValue, { // eslint-disable-line
-        phetioType: phetioType,
+      new NumberProperty( propertyValue, { // eslint-disable-line
         tandem: tandem,
         validValues: validValues
       } );
-
-
     } );
   }
 } );
