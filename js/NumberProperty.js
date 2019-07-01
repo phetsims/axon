@@ -14,9 +14,11 @@ define( function( require ) {
   const NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   const Property = require( 'AXON/Property' );
   const Range = require( 'DOT/Range' );
+  const validate = require( 'AXON/validate' );
 
   // constants
   const VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
+  const VALID_INTEGER = { valueType: 'number', isValidValue: v => v % 1 === 0 };
 
   class NumberProperty extends Property {
 
@@ -28,7 +30,7 @@ define( function( require ) {
     constructor( value, options ) {
 
       options = _.extend( {
-        numberType: 'FloatingPoint', // {string} see VALID_VALUE_TYPES
+        numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
         // {Range|null} range
         range: null
@@ -57,11 +59,12 @@ define( function( require ) {
 
       // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
       this.assertNumberPropertyValidateValue = assert && ( value => {
-        if ( options.numberType === 'Integer' ) {
-          assert( value % 1 === 0, 'numberType was Integer but value was ' + value );
-        }
-        options.range && assert( value >= options.range.min && value <= options.range.max,
-          'value is out of range, value=' + value + ', range=[' + options.range.min + ',' + options.range.max + ']' );
+
+        // validate for integer
+        options.numberType === 'Integer' && validate( value, VALID_INTEGER );
+
+        // validate for range
+        options.range && validate( value, { isValidValue: v => options.range.contains( v ) } );
       } );
 
       // verify that validValues meet other NumberProperty-specific validation criteria
