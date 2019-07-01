@@ -123,7 +123,6 @@ define( require => {
     /**
      * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
      * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
-     * TODO: is this still necessary?
      * @returns {*}
      * @override
      * @public
