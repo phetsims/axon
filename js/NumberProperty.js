@@ -82,7 +82,7 @@ define( function( require ) {
      */
     set( value ) {
 
-      // TODO: should be handled in the super
+      // TODO: should be handled in the super, see https://github.com/phetsims/axon/issues/237
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
       super.set( value );
     }
