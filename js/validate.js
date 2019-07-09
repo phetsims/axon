@@ -15,9 +15,9 @@ define( require => {
 
   /**
    * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
-   * @param {Object|null} value
+   * @param {*} value
    * @param {ValidatorDef} validator
-   * @returns {Object|null} - returns the input value for chaining
+   * @returns {*} - returns the input value for chaining
    * @public
    */
   const validate = ( value, validator ) => {
@@ -28,6 +28,18 @@ define( require => {
       ValidatorDef.isValueValid( value, validator, { assertions: true } );
     }
     return value;
+  };
+
+  /**
+   * validate that the input is a string without any unfilled template variables, like `{{myVar}}`.
+   * @param {*} value to be validated
+   * @returns {*} - returns the input value for chaining
+   */
+  validate.stringWithoutTemplateVars = value => {
+    return validate( value, {
+      valueType: 'string',
+      isValidValue: v => !/\{\{\w*\}\}/.test( v )
+    } );
   };
 
   return axon.register( 'validate', validate );
