@@ -28,9 +28,11 @@ define( require => {
 
       options = _.extend( {
         tandem: Tandem.optional,
-        phetioType: null, // must be supplied by instantiations and must be of type DerivedPropertyIO
         phetioReadOnly: true // derived properties can be read but not set by PhET-iO
       }, options );
+
+      assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.outerType === DerivedPropertyIO,
+        'unsupported phetioType' );
 
       assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
