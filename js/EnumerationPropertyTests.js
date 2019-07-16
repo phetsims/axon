@@ -37,19 +37,25 @@ define( function( require ) {
 
     // superclass options that are not supported by EnumerationProperty
     window.assert && assert.throws( function() {
-      birdProperty = new EnumerationProperty( Birds.ROBIN, { validValues: Birds.VALUES } );
+      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { validValues: Birds.VALUES } );
     }, 'EnumerationProperty does not support validValues' );
     window.assert && assert.throws( function() {
-      birdProperty = new EnumerationProperty( Birds.ROBIN, { isValidValue: () => { return true; } } );
+      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { isValidValue: () => { return true; } } );
     }, 'EnumerationProperty does not support isValidValue' );
 
     // superclass options that are controlled by EnumerationProperty
     window.assert && assert.throws( function() {
-      birdProperty = new EnumerationProperty( Birds.ROBIN, { valueType: Birds } );
+      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { valueType: Birds } );
     }, 'EnumerationProperty sets valueType' );
     window.assert && assert.throws( function() {
-      birdProperty = new EnumerationProperty( Birds.ROBIN, { phetioType: EnumerationIO } );
+      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { phetioType: EnumerationIO } );
     }, 'EnumerationProperty sets phetioType' );
+    window.assert && assert.throws( function() {
+      birdProperty = new EnumerationProperty( Birds, { phetioType: EnumerationIO } );
+    }, 'Did not include initial value' );
+    window.assert && assert.throws( function() {
+      birdProperty = new EnumerationProperty( {} );
+    }, 'That is not an enumeration' );
 
     assert.ok( true, 'so we have at least 1 test in this set' );
   } );

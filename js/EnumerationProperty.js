@@ -10,6 +10,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const Enumeration = require( 'PHET_CORE/Enumeration' );
   const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
   const Property = require( 'AXON/Property' );
   const PropertyIO = require( 'AXON/PropertyIO' );
@@ -34,12 +35,15 @@ define( require => {
         assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
       }
 
+      assert && assert( enumeration instanceof Enumeration, 'incorrect initial value' );
+      assert && assert( enumeration.includes( initialValue ), 'incorrect initial value' );
+
       options = _.extend( {
         valueType: enumeration,
         phetioType: PropertyIO( EnumerationIO( enumeration ) )
       }, options );
 
-      super( initialValue, options);
+      super( initialValue, options );
 
       // @public (read-only)
       this.enumeration = enumeration;
