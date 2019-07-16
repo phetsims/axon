@@ -26,12 +26,12 @@ define( require => {
       if ( options ) {
 
         // client cannot specify superclass options that are not supported by EnumerationProperty
-        assert && assert( options.hasOwnProperty( 'validValues' ), 'EnumerationProperty does not support validValues' );
-        assert && assert( options.hasOwnProperty( 'isValidValue' ), 'EnumerationProperty does not support isValidValue' );
+        assert && assert( !options.hasOwnProperty( 'validValues' ), 'EnumerationProperty does not support validValues' );
+        assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'EnumerationProperty does not support isValidValue' );
 
         // client cannot specify superclass options that are controlled by EnumerationProperty
-        assert && assert( options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
-        assert && assert( options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
+        assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
+        assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
       }
 
       options = _.extend( {
