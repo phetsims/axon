@@ -24,6 +24,9 @@ define( require => {
      */
     constructor( enumeration, initialValue, options ) {
 
+      assert && assert( enumeration instanceof Enumeration, `invalid enumeration: ${enumeration}` );
+      assert && assert( enumeration.includes( initialValue ), `invalid initialValue: ${initialValue}` );
+
       if ( options ) {
 
         // client cannot specify superclass options that are not supported by EnumerationProperty
@@ -34,9 +37,6 @@ define( require => {
         assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
         assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
       }
-
-      assert && assert( enumeration instanceof Enumeration, 'incorrect initial value' );
-      assert && assert( enumeration.includes( initialValue ), 'incorrect initial value' );
 
       options = _.extend( {
         valueType: enumeration,
