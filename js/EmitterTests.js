@@ -51,7 +51,7 @@ define( require => {
     }
 
     const e3 = new Emitter( {
-      validators: [ { valueType: 'number' }, { isValidValue: v => v === null || typeof v === 'string' } ]
+      validators: [ { valueType: 'number' }, { valueType: [ 'string', null ] } ]
     } );
 
     e3.emit( 1, 'hi' );
