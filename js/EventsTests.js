@@ -1,4 +1,4 @@
-// Copyright 2013-2016, University of Colorado Boulder
+// Copyright 2017-2018, University of Colorado Boulder
 
 /**
  * QUnit Tests for Events
