@@ -15,7 +15,7 @@
  *
  * A validator that accepts any Object:
  * { valueType: Object }
- * 
+ *
  * A validator that accepts Enumeration values:
  * { valueType: MyEnumeration }
  * or
@@ -48,11 +48,15 @@ define( require => {
     // {function|string|null} type of the value.
     // If {function}, the function must be a constructor.
     // If {string}, the string must be one of the primitive types listed in TYPEOF_STRINGS.
+    // If {null|undefined}, the value must be null (which doesn't make sense until the next line of doc)
+    // If {Array.<string|function|null|undefined>}, each item must be a legal value as explained in the above doc
     // Unused if null.
     // Examples:
     // valueType: Vector2
     // valueType: 'string'
-    // valueType: 'number'
+    // valueType: 'number',
+    // valueType: [ 'number', null ]
+    // valueType: [ 'number', 'string', Node, null ]
     'valueType',
 
     // {*[]|null} valid values for this Property. Unused if null.
@@ -88,7 +92,7 @@ define( require => {
      * @returns {boolean}
      * @public
      */
-    isValidValidator: ( validator, options ) => {
+    isValidValidator( validator, options ) {
 
       options = options || ASSERTIONS_FALSE;// Poor man's extend
 
@@ -100,22 +104,19 @@ define( require => {
         return false;
       }
 
-      const valueType = validator.valueType;
-      if ( !( typeof valueType === 'function' ||
-              typeof valueType === 'string' ||
-              valueType instanceof Enumeration ||
-              valueType === null ||
-              valueType === undefined ) ) {
-        assert && options.assertions && assert( false,
-          `valueType must be {function|string|Enumeration|null|undefined}, valueType=${valueType}` );
-        return false;
-      }
+      if ( validator.hasOwnProperty( 'valueType' ) ) {
+        const valueType = validator.valueType;
+        if ( Array.isArray( valueType ) ) {
 
-      // {string} valueType must be one of the primitives in TYPEOF_STRINGS, for typeof comparison
-      if ( typeof valueType === 'string' ) {
-        if ( !_.includes( TYPEOF_STRINGS, valueType ) ) {
-          assert && options.assertions && assert( false, `valueType not a supported primitive types: ${valueType}` );
-          return false;
+          // If every valueType in the list is not valid, then return false, pass options through verbatum.
+          if ( !_.every( valueType.map( typeInArray => ValidatorDef.validateValueType( typeInArray, options ) ) ) ) {
+            return false;
+          }
+        }
+        else if ( valueType ) {
+          if ( !ValidatorDef.validateValueType( valueType, options ) ) {
+            return false;
+          }
         }
       }
 
@@ -149,11 +150,38 @@ define( require => {
     },
 
     /**
+     * @private
+     * @param valueType
+     * @param {Object} options - requried, options from isValidValidator
+     * @returns {boolean} - true if valid
+     */
+    validateValueType( valueType, options ) {
+      if ( !( typeof valueType === 'function' ||
+              typeof valueType === 'string' ||
+              valueType instanceof Enumeration ||
+              valueType === null ||
+              valueType === undefined ) ) {
+        assert && options.assertions && assert( false,
+          `valueType must be {function|string|Enumeration|null|undefined}, valueType=${valueType}` );
+        return false;
+      }
+
+      // {string} valueType must be one of the primitives in TYPEOF_STRINGS, for typeof comparison
+      if ( typeof valueType === 'string' ) {
+        if ( !_.includes( TYPEOF_STRINGS, valueType ) ) {
+          assert && options.assertions && assert( false, `valueType not a supported primitive types: ${valueType}` );
+          return false;
+        }
+      }
+      return true;
+    },
+
+    /**
      * Throws assertion errors if the validator is invalid.
      * @param {ValidatorDef} validator
      * @public
      */
-    validateValidator: validator => {
+    validateValidator( validator ) {
       if ( assert ) {
 
         // Specify that assertions should be thrown if there are problems during the validation check.
@@ -199,21 +227,19 @@ define( require => {
       // See https://github.com/phetsims/axon/issues/201
       if ( validator.hasOwnProperty( 'valueType' ) ) {
         const valueType = validator.valueType;
-        if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
-          assert && options.assertions && assert( false, `value should have typeof ${valueType}, value=${value}` );
-          return false;
+        if ( Array.isArray( valueType ) ) {
+
+          // Only one should be valid, so error out if none of them returned valid
+          // Hard code assertions false because most will fail, instead have a general assertion here.
+          if ( !_.some( valueType.map( typeInArray => ValidatorDef.isValueValidValueType( value, typeInArray, ASSERTIONS_FALSE ) ) ) ) {
+            assert && options.assertions && assert( false, `value not valid for any valueType in ${valueType}, value: ${value}` );
+            return false;
+          }
         }
-        else if ( valueType === Array && !Array.isArray( value ) ) {
-          assert && options.assertions && assert( false, `value should have been an array, value=${value}` );
-          return false;
-        }
-        else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
-          assert && assert( false, 'value is not a member of Enumeration ' + valueType );
-          return false;
-        }
-        else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor
-          assert && options.assertions && assert( false, `value should be instanceof ${valueType.name}, value=${value}` );
-          return false;
+        else if ( valueType ) {
+          if ( !ValidatorDef.isValueValidValueType( value, valueType, options ) ) {
+            return false;
+          }
         }
       }
       if ( validator.hasOwnProperty( 'validValues' ) && validator.validValues.indexOf( value ) === -1 ) {
@@ -222,6 +248,38 @@ define( require => {
       }
       if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue( value ) ) {
         assert && options.assertions && assert( false, `value failed isValidValue: ${value}` );
+        return false;
+      }
+      return true;
+    },
+
+    /**
+     * @param {Object|null} value
+     * @param {string|function|null|undefined} valueType - see above definition, Array is not allowed in this method
+     * @param {Object} options - not optional, should be passed in from isValidValue
+     * @returns {boolean} - whether the value is a validType
+     * @throws {Error} assertion error if not valid and options.assertions is true
+     * @private
+     */
+    isValueValidValueType( value, valueType, options ) {
+      if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
+        assert && options.assertions && assert( false, `value should have typeof ${valueType}, value=${value}` );
+        return false;
+      }
+      else if ( valueType === Array && !Array.isArray( value ) ) {
+        assert && options.assertions && assert( false, `value should have been an array, value=${value}` );
+        return false;
+      }
+      else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
+        assert && assert( false, 'value is not a member of Enumeration ' + valueType );
+        return false;
+      }
+      else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor
+        assert && options.assertions && assert( false, `value should be instanceof ${valueType.name}, value=${value}` );
+        return false;
+      }
+      if ( valueType === null && value !== null ) {
+        assert && options.assertions && assert( false, `value should be null, value=${value}` );
         return false;
       }
       return true;
