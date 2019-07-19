@@ -97,7 +97,7 @@ define( function( require ) {
           }
           return {
             array: observableArray.getArray().map( function( item ) {
-              return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined
+              return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined, https://github.com/phetsims/axon/issues/245
                      elementType.toStateObject( item );
             } )
           };
