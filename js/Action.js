@@ -53,9 +53,6 @@ define( require => {
         // {ValidatorDef[]}
         validators: EMPTY_ARRAY,
 
-        // {boolean} @deprecated, only to support legacy emit1, emit2, emit3 calls.
-        validationEnabled: true,
-
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
         phetioState: false,
@@ -86,9 +83,6 @@ define( require => {
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.validators = options.validators;
-
-      // @private - opt out of validation. Can be removed when deprecated emit functions are gone.
-      this.validationEnabled = options.validationEnabled;
 
       assert && assert( typeof action === 'function', 'action should be a function' );
 
@@ -162,7 +156,7 @@ define( require => {
      * @public
      */
     execute() {
-      if ( assert && this.validationEnabled ) {
+      if ( assert ) {
         assert( arguments.length === this.validators.length,
           `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
         );
