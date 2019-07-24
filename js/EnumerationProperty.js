@@ -40,7 +40,8 @@ define( require => {
 
       options = _.extend( {
         valueType: enumeration,
-        phetioType: PropertyIO( EnumerationIO( enumeration ) )
+        phetioType: PropertyIO( EnumerationIO( enumeration ) ),
+        validValues: enumeration.VALUES
       }, options );
 
       super( initialValue, options );
