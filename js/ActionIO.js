@@ -23,7 +23,6 @@ define( function( require ) {
   // modules
   var ValidatorDef = require( 'AXON/ValidatorDef' );
   var axon = require( 'AXON/axon' );
-  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
