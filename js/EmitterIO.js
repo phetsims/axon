@@ -38,7 +38,6 @@ define( function( require ) {
   function EmitterIO( argumentObjects ) {
 
     var elementTypes = argumentObjects.map( argumentObject => argumentObject.type );
-    var validators = argumentObjects.map( argumentObject => argumentObject.validator || argumentObject.type.validator );
 
     const ActionIOImpl = ActionIO( argumentObjects );
 
@@ -81,20 +80,9 @@ define( function( require ) {
         } ).join( '\n' ) + '</ol>' ),
 
       /**
-       * {Array.<ObjectIO>} - typeIOs
+       * {Array.<ObjectIO>} - typeIOs - signify to phetioInherit.typeName computation that this type is parametric
        */
       parameterTypes: elementTypes,
-
-      /**
-       * {Array.<Object>} - see constructor for details on object literal keys
-       */
-      elements: argumentObjects,
-
-      /**
-       * A list of validators, one for each argument that will be emitted.
-       * {ValidatorDef[]}
-       */
-      validators: validators,  // TODO: https://github.com/phetsims/axon/issues/241 Can this be supplied by the parent?
 
       validator: {
         isValidValue: v => {
