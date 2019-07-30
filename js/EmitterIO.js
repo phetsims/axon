@@ -38,7 +38,7 @@ define( function( require ) {
   function EmitterIO( argumentObjects ) {
 
     var elementTypes = argumentObjects.map( argumentObject => argumentObject.type );
-    // var validators = argumentObjects.map( argumentObject => argumentObject.validator || argumentObject.type.validator );
+    var validators = argumentObjects.map( argumentObject => argumentObject.validator || argumentObject.type.validator );
 
     const ActionIOImpl = ActionIO( argumentObjects );
 
@@ -79,6 +79,23 @@ define( function( require ) {
           const docText = element.documentation ? '. ' + element.documentation : '';
           return '<li>' + element.name + ': ' + element.type.typeName + docText + '</li>';
         } ).join( '\n' ) + '</ol>' ),
+
+      /**
+       * {Array.<ObjectIO>} - typeIOs
+       */
+      parameterTypes: elementTypes,
+
+      /**
+       * {Array.<Object>} - see constructor for details on object literal keys
+       */
+      elements: argumentObjects,
+
+      /**
+       * A list of validators, one for each argument that will be emitted.
+       * {ValidatorDef[]}
+       */
+      validators: validators,  // TODO: https://github.com/phetsims/axon/issues/241 Can this be supplied by the parent?
+
       validator: {
         isValidValue: v => {
           // constants
@@ -93,4 +110,3 @@ define( function( require ) {
 
   return EmitterIO;
 } );
-
