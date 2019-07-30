@@ -149,9 +149,7 @@ define( require => {
     }
 
     /**
-     * Emits a single event.  This method is called many times in a simulation and must be well-optimized.  Listeners
-     * are notified in the order they were added via addListener, though it is poor practice to rely on the order
-     * of listener notifications.
+     * Invokes the action.
      * @params - expected parameters are based on options.validators, see constructor
      * @public
      */

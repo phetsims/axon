@@ -78,14 +78,6 @@ define( function( require ) {
     };
 
     return phetioInherit( ObjectIO, 'ActionIO', ActionIOImpl, {
-      addListener: {
-        returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, elementTypes ) ],
-        implementation: function( listener ) {
-          this.phetioObject.addListener( listener );
-        },
-        documentation: 'Adds a listener which will be called when the emitter emits.'
-      },
       execute: {
         returnType: VoidIO,
         parameterTypes: elementTypes,
