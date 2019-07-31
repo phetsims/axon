@@ -30,7 +30,7 @@ define( function( require ) {
   // allowed keys
   var ELEMENT_KEYS = [
     'name', // {string}
-    'type', // {ObjectIO}
+    'type', // {function(new:ObjectIO)}
     'documentation', // {string}
     'validator' // {ValidatorDef} - This should be a complete validator, it will not be combined with type.validator.
   ];
@@ -98,7 +98,7 @@ define( function( require ) {
       events: [ 'emitted' ],
 
       /**
-       * {Array.<ObjectIO>} - typeIOs
+       * {function(new:ObjectIO)[]} - TypeIOs
        */
       parameterTypes: elementTypes,
 

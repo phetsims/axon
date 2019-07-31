@@ -86,7 +86,6 @@ define( function( require ) {
 
       validator: {
         isValidValue: v => {
-          // constants
           var Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
           return v instanceof Emitter;
         }
