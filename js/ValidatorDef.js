@@ -18,7 +18,7 @@
  *
  * A validator that accepts Enumeration values:
  * { valueType: MyEnumeration }
- * or
+ * and/or
  * { validValues: MyEnumeration.VALUES }
  *
  * A validator that accepts a string or a number greater than 2:

@@ -41,7 +41,7 @@ define( require => {
       options = _.extend( {
         valueType: enumeration,
         phetioType: PropertyIO( EnumerationIO( enumeration ) ),
-        validValues: enumeration.VALUES
+        validValues: enumeration.VALUES // for PhET-iO documentation and support
       }, options );
 
       super( initialValue, options );
