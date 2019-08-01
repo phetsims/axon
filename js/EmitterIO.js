@@ -27,6 +27,14 @@ define( function( require ) {
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
+  // constants
+  const EMITTER_IO_VALIDATOR = {
+    isValidValue: v => {
+      var Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
+      return v instanceof Emitter;
+    }
+  };
+
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
@@ -84,12 +92,7 @@ define( function( require ) {
        */
       parameterTypes: elementTypes,
 
-      validator: {
-        isValidValue: v => {
-          var Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
-          return v instanceof Emitter;
-        }
-      }
+      validator: EMITTER_IO_VALIDATOR
     } );
   }
 

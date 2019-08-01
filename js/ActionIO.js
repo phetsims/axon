@@ -35,11 +35,21 @@ define( function( require ) {
     'validator' // {ValidatorDef} - This should be a complete validator, it will not be combined with type.validator.
   ];
 
+  // Argument object keys involved in the definition of a unique ActionIO
+  const DEFINITION_KEYS = [ 'name', 'documentation' ];
+
+  const ACTION_IO_VALIDATOR = {
+    isValidValue: v => {
+      var Action = window.phet ? phet.axon.Action : axon.Action;
+      return v instanceof Action;
+    }
+  };
+
   /**
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
    *
-   * @param {Object[]} argumentObjects, each with {name:string, type: IO type, documentation: string}
+   * @param {function(new:ObjectIO)[]} argumentObjects, each with {name:string, type: IO type, documentation: string, [validator]:ValidatorDef}
    * @returns {ActionIOImpl} - the parameterized type
    * @constructor
    */
@@ -113,11 +123,32 @@ define( function( require ) {
        */
       validators: validators,
 
-      validator: {
-        isValidValue: v => {
-          var Action = window.phet ? phet.axon.Action : axon.Action;
-          return v instanceof Action;
+      validator: ACTION_IO_VALIDATOR,
+
+      /**
+       * @override
+       * @param {function(new:ObjectIO)} OtherActionIO
+       */
+      equals: function( OtherActionIO ) {
+        if ( this.typeName !== OtherActionIO.typeName ) {
+          return false;
         }
+        OtherActionIO.outerType === ActionIO;
+        if ( this.elements.length !== OtherActionIO.elements.length ) {
+          return false;
+        }
+
+        for ( let i = 0; i < this.elements.length; i++ ) {
+          const actionIO1Element = _.pick( this.elements[ i ], DEFINITION_KEYS );
+          const actionIO2Element = _.pick( OtherActionIO.elements[ i ], DEFINITION_KEYS );
+          if ( !_.isEqual( actionIO1Element, actionIO2Element ) ) {
+            return false;
+          }
+          if ( !this.elements[ i ].type.equals( OtherActionIO.elements[ i ].type ) ) {
+            return false;
+          }
+        }
+        return this.supertype.equals( OtherActionIO.supertype ) && OtherActionIO.supertype.equals( this.supertype );
       }
     } );
   }

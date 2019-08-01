@@ -159,6 +159,23 @@ define( function( require ) {
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
+      },
+
+      /**
+       * @override
+       * @param {function(new:ObjectIO)} OtherPropertyIO
+       */
+      equals: function( OtherPropertyIO ) {
+        if ( this.typeName !== OtherPropertyIO.typeName ) {
+          return false;
+        }
+        if ( !OtherPropertyIO.elementType ) {
+          return false;
+        }
+        if ( !this.elementType.equals( OtherPropertyIO.elementType ) ) {
+          return false;
+        }
+        return this.supertype.equals( OtherPropertyIO.supertype ) && OtherPropertyIO.supertype.equals( this.supertype );
       }
     } );
   }

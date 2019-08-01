@@ -15,6 +15,14 @@ define( function( require ) {
   var PropertyIO = require( 'AXON/PropertyIO' );
   var VoidIO = require( 'TANDEM/types/VoidIO' );
 
+  // constants
+  const PROPERTY_IO_VALIDATOR = {
+    isValidValue: v => {
+      var DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
+      return v instanceof DerivedProperty;
+    }
+  };
+
   /**
    * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.
    *
@@ -56,16 +64,12 @@ define( function( require ) {
       // Used to generate the unique parametric typename for each PropertyIO
       parameterTypes: [ phetioValueType ],
 
-      elementType: phetioValueType,
-      validator: {
-        isValidValue: v => {
-          var DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
-          return v instanceof DerivedProperty;
-        }
-      }
+      elementType: phetioValueType, // TODO: this is likely redundant, because PropertyIO sets the same thing
+      validator: PROPERTY_IO_VALIDATOR
     } );
 
     // @public - allow type checking for DerivedPropertyIOImpl
+    // TODO: move this to static properties
     DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
 
     return DerivedPropertyIOImpl;

@@ -117,6 +117,24 @@ define( function( require ) {
           observableArray.addAll( fromStateObject );
         },
 
+        /**
+         * @override
+         * @param {function(new:ObjectIO)} OtherObservableArrayIO
+         */
+        equals: function( OtherObservableArrayIO ) {
+          if ( this.typeName !== OtherObservableArrayIO.typeName ) {
+            return false;
+          }
+          if ( !OtherObservableArrayIO.elementType ) {
+            return false;
+          }
+          if ( !this.elementType.equals( OtherObservableArrayIO.elementType ) ) {
+            return false;
+          }
+          return this.supertype.equals( OtherObservableArrayIO.supertype ) &&
+                 OtherObservableArrayIO.supertype.equals( this.supertype );
+        },
+
         documentation: 'An array that sends notifications when its values have changed.',
         elementType: elementType,
         validator: {
