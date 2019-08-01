@@ -39,15 +39,13 @@ define( function( require ) {
    * IO type for Emitter
    * Emitter for 0, 1 or 2 args, or maybe 3.
    *
-   * @param {Object[]} argumentObjects, each with {name:string, type: IO type, documentation: string}
+   * @param {function(new:ObjectIO)[]} parameterTypes
    * @returns {EmitterIOImpl} - the parameterized type
    * @constructor
    */
-  function EmitterIO( argumentObjects ) {
+  function EmitterIO( parameterTypes ) {
 
-    var elementTypes = argumentObjects.map( argumentObject => argumentObject.type );
-
-    const ActionIOImpl = ActionIO( argumentObjects );
+    const ActionIOImpl = ActionIO( parameterTypes );
 
     /**
      * @param {Emitter} emitter
@@ -55,7 +53,7 @@ define( function( require ) {
      * @constructor
      */
     var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
-      assert && assert( argumentObjects, 'phetioArgumentTypes should be defined' );
+      assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
       ActionIOImpl.call( this, emitter, phetioID );
     };
@@ -63,7 +61,7 @@ define( function( require ) {
     return phetioInherit( ActionIOImpl, 'EmitterIO', EmitterIOImpl, {
       addListener: {
         returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, elementTypes ) ],
+        parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
         implementation: function( listener ) {
           this.phetioObject.addListener( listener );
         },
@@ -71,7 +69,7 @@ define( function( require ) {
       },
       emit: {
         returnType: VoidIO,
-        parameterTypes: elementTypes,
+        parameterTypes: parameterTypes,
 
         // Match `Emitter.emit`'s dynamic number of arguments
         implementation: function() {
@@ -81,16 +79,12 @@ define( function( require ) {
         invocableForReadOnlyElements: false
       }
     }, {
-      documentation: 'Emits when an event occurs. ' + ( argumentObjects.length === 0 ? 'No arguments.' : 'The arguments are:<br>' +
-                     '<ol>' + argumentObjects.map( function( element ) {
-          const docText = element.documentation ? '. ' + element.documentation : '';
-          return '<li>' + element.name + ': ' + element.type.typeName + docText + '</li>';
-        } ).join( '\n' ) + '</ol>' ),
+      documentation: 'Emits when an event occurs and calls added listeners.',
 
       /**
        * {Array.<ObjectIO>} - typeIOs - signify to phetioInherit.typeName computation that this type is parametric
        */
-      parameterTypes: elementTypes,
+      parameterTypes: parameterTypes,
 
       validator: EMITTER_IO_VALIDATOR
     } );

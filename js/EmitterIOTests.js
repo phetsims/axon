@@ -12,6 +12,7 @@ define( require => {
   const Emitter = require( 'AXON/Emitter' );
   const EmitterIO = require( 'AXON/EmitterIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   QUnit.module( 'EmitterIO' );
 
@@ -21,24 +22,31 @@ define( require => {
 
     if ( window.assert ) {
 
-      assert.throws( () => {
-        emitter = new Emitter( {
-          parameters: [ { valueType: 'number' } ],
-          phetioType: EmitterIO( [ { type: NumberIO } ] )
-        } );
-      }, 'cannot supply phetioType and validators' );
+      // TODO: right now this is allowed, and the only way to support hiding args from public data stream, https://github.com/phetsims/axon/issues/257
+      // assert.throws( () => {
+      //   emitter = new Emitter( {
+      //     parameters: [ { valueType: 'number', phetioType: NumberIO } ]
+      //   } );
+      // }, 'cannot supply phetioType and validators' );
 
       assert.throws( () => {
         emitter = new Emitter( {
           phetioType: EmitterIO( [] )
         } );
       }, 'cannot supply default EmitterIO type' );
+
+      assert.throws( () => {
+        emitter = new Emitter( {
+          phetioType: ObjectIO
+        } );
+      }, 'cannot supply any phetioType' );
     }
 
     emitter = new Emitter( {
-      phetioType: EmitterIO( [ { type: NumberIO } ] )
+      parameters: [
+        { phetioType: NumberIO }
+      ]
     } );
-    assert.ok( emitter.validators[ 0 ] === NumberIO.validator, 'should use NumberIO\'s validator' );
     emitter.emit( 4 );
     emitter.emit( 10 );
     window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string' );
@@ -47,11 +55,12 @@ define( require => {
 
     const validator = { isValidValue: v => v < 3 };
     emitter = new Emitter( {
-      phetioType: EmitterIO( [ { type: NumberIO, validator: validator } ] )
+      parameters: [ _.extend( { phetioType: NumberIO }, validator ) ]
     } );
-    assert.ok( emitter.validators[ 0 ] === validator, 'should use specified validator instead of NumberIO\'s' );
+    assert.ok( emitter.parameters[ 0 ].isValidValue === validator.isValidValue, 'should use specified validator instead of NumberIO\'s' );
     emitter.emit( 2 );
     window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string with validator' );
+    window.assert && assert.throws( () => emitter.emit( 'a' ), 'cannot emit string with  that validator' );
     window.assert && assert.throws( () => emitter.emit( 4 ), 'cannot emit incorrect number' );
   } );
 } );

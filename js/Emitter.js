@@ -17,9 +17,6 @@ define( require => {
   const axon = require( 'AXON/axon' );
   const TinyEmitter = require( 'AXON/TinyEmitter' );
 
-  // constants
-  const EmitterIOWithNoArgs = EmitterIO( [] );
-
   class Emitter extends Action {
 
     /**
@@ -27,16 +24,9 @@ define( require => {
      */
     constructor( options ) {
 
-      // If provided, make sure the phetioType is different from the default to save complexity/memory.
-      if ( assert && options && options.phetioType ) {
-        assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
-      }
-      // For the common case of creating an instrumented Emitter with no args, the phetioType is automatically supplied.
-      // If validators through parameters and/or phetioType are supplied, the parent will check via assertions that supplied options
-      // are correct.
-      if ( options && !options.parameters && !options.phetioType ) {
-        options = _.extend( { phetioType: EmitterIOWithNoArgs }, options );
-      }
+      options = _.extend( {
+        phetioOuterType: EmitterIO
+      }, options );
 
       super( function() {
         assert && assert( self.tinyEmitter instanceof TinyEmitter,

@@ -19,11 +19,19 @@ define( require => {
   const validate = require( 'AXON/validate' );
 
   // constants
-  const ActionIOWithNoArgs = ActionIO( [] );
-
   // Simulations have thousands of Emitters, so we re-use objects where possible.
   const EMPTY_ARRAY = [];
   assert && Object.freeze( EMPTY_ARRAY );
+
+  // TODO: Map that holds all the ActionIO types created so they can be reused when possible, https://github.com/phetsims/axon/issues/257
+  const TYPE_IO_MAP = {};
+
+  // allowed keys to options.parameters
+  const PARAMETER_KEYS = [
+    'name', // {string}
+    'phetioType', // {function(new:ObjectIO)}
+    'phetioDocumentation' // {string}
+  ].concat( ValidatorDef.VALIDATOR_KEYS );
 
   class Action extends PhetioObject {
 
@@ -32,40 +40,36 @@ define( require => {
      * @param {Object} [options]
      */
     constructor( action, options ) {
-
-      // It is important to know if the following options were provided by the client
-      const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' ); // TODO: this will be removed, https://github.com/phetsims/axon/issues/257
-      const validatorsSupplied = options && options.hasOwnProperty( 'parameters' );
-
-      // Important to be before super call. OK to supply either or one or the other, but not both. This is a NAND operator.
-      // TODO: this is not going to fly, https://github.com/phetsims/axon/issues/257
-      assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
-        'use either phetioType or parameters, not both, see EmitterIO to set parameters on an instrumented Action'
-      );
-
-      // ActionIO that have 0 args should use the built-in ActionIO([]) default.  But we must support EmitterIO([]),
-      // so we guard based on the type name.
-      if ( assert && phetioTypeSupplied && options.phetioType.typeName.indexOf( 'ActionIO' ) === 0 ) {
-        assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
-      }
-
       options = _.extend( {
 
-        // {ValidatorDef[]}
+        // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
         parameters: EMPTY_ARRAY,
 
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
+
+        // {function(new:ObjectIO) - override this to create a subtype of ActionIO as the phetioType instead of ActionIO.
+        phetioOuterType: ActionIO,
         phetioState: false,
-        phetioType: ActionIOWithNoArgs, // subtypes can override with ActionIO([...]), see ActionIO.js
         phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
-        phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata
+        phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
+        phetioDocumentation: 'A function that executes.'
       }, options );
 
-      // Use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
-      if ( phetioTypeSupplied ) {
-        options.parameters = options.phetioType.parameters;
+      assert && assert( options.phetioType === undefined,
+        'Action sets its own phetioType. Instead provide parameter phetioTypes through `options.parameters`' );
+      assert && assert( typeof action === 'function', 'action should be a function' );
+      if ( options.tandem.supplied ) {
+        assert && options.parameters.forEach( param => assert( param.phetioType, 'phetioType required for each parameter.' ) );
+
+        // TODO: create a map so that we don't create this for each Emitter, https://github.com/phetsims/axon/issues/257
+        // TODO: we should make sure to remove these items to prevent too large of a footprint, https://github.com/phetsims/axon/issues/257
+        // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
+        const uniqueKey = options.phetioOuterType.name + options.parameters.map( param => param.phetioType.typeName ).join( ',' );
+
+        options.phetioType = TYPE_IO_MAP[ uniqueKey ] ? TYPE_IO_MAP[ uniqueKey ] : options.phetioOuterType( options.parameters.map( param => param.phetioType ) );
       }
+      assert && Action.validateParameters( options.tandem.supplied, options.parameters );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -75,78 +79,113 @@ define( require => {
         assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
           'dataKeys should be supplied by Action, not elsewhere' );
 
-        options.phetioEventMetadata.dataKeys = options.phetioType.elements.map( element => element.name );
+        options.phetioEventMetadata.dataKeys = options.parameters.map( parmeter => parmeter.name );
       }
-
+      // We only need phetioDocumentation for instrumented instances
+      if ( options.tandem.supplied ) {
+        options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, options.parameters );
+      }
       super( options );
-
-      assert && this.validateValidators( options.parameters, validatorsSupplied, phetioTypeSupplied );
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
       this.parameters = options.parameters;
-
-      assert && assert( typeof action === 'function', 'action should be a function' );
 
       // @private {function}
       this._action = action;
     }
 
     /**
-     * @param {ValidatorDef[]} validators
-     * @param {boolean} validatorsSuppliedByClient - true if the validators option was passed into the constructor via options,
-     *                                               false if using the default from the options extend call
-     * @param phetioTypeSuppliedByClient - true if the phetioType option was passed into the constructor via options,
-     *                                     false if using the default from the options extend call
-     * @private
+     * @param {boolean} isPhetioInstrumented
+     * @param {object} parameters
      */
-    validateValidators( validators, validatorsSuppliedByClient, phetioTypeSuppliedByClient ) {
+    static validateParameters( isPhetioInstrumented, parameters ) {
 
-      // validate the validators object
-      validate( validators, { valueType: Array } );
+      // validate the parameters object
+      validate( parameters, { valueType: Array } );
 
-      this.isPhetioInstrumented() && assert( !validatorsSuppliedByClient, 'when specifying tandem, use phetioType instead of validators' );
-
-      // Iterate through each validator and make sure that it won't validate options on validating value. This is
-      // mainly done for performance
-      validators.forEach( validator => {
-        assert(
-          validator.validateOptionsOnValidateValue !== true,
+      for ( let i = 0; i < parameters.length; i++ ) {
+        const validator = parameters[ i ];
+        assert && assert( validator.validateOptionsOnValidateValue !== true,
           'Action sets its own validateOptionsOnValidateValue for each argument type'
         );
-        validator.validateOptionsOnValidateValue = false;
 
-        // Changing the validator options after construction indicates a logic error, except that many EmitterIOs
-        // are shared between instances. Don't assume we "own" the validator if it came from the TypeIO.
-        !phetioTypeSuppliedByClient && Object.freeze( validator );
+        assert && assert( Object.getPrototypeOf( validator ) === Object.prototype,
+          'Extra prototype on validator object is a code smell' );
+
+        var keys = Object.keys( validator );
+        for ( let i = 0; i < keys.length; i++ ) {
+          const key = keys[ i ];
+          assert && assert( PARAMETER_KEYS.indexOf( key ) >= 0, 'unrecognized parameter key: ' + key );
+        }
+
+        assert && isPhetioInstrumented && assert( validator.phetioType, 'instrumented Emitters must include phetioType for each parameter' );
+
+        assert && !validator.phetioType && assert( Object.keys( _.pick( validator, ValidatorDef.VALIDATOR_KEYS ) ).length > 0, 'if phetioType is not provided, validator must be specified' );
+
+        let containsValidatorKeys = false;
+        for ( var prop in validator ) {
+          if ( ValidatorDef.VALIDATOR_KEYS.includes( prop ) ) {
+            containsValidatorKeys = true;
+            break;
+          }
+        }
+
+        // TODO: this doesn't work now because of VoidIO workaround, do we want it to? https://github.com/phetsims/axon/issues/257
+        // assert && assert( !!validator.phetioType !== !!validator.valueType, 'Specify phetioType OR valueType, not both' );
+
+        // TODO: is this taking up too much memory? Does this create too much garbage? https://github.com/phetsims/axon/issues/257
+        parameters[ i ] = _.extend( {
+          validateOptionsOnValidateValue: false,
+          containsValidatorKeys: containsValidatorKeys
+        }, validator );
 
         // validate the options passed in to validate each Action argument
-        ValidatorDef.validateValidator( validator );
-      } );
+        // TODO: surely this is not the most efficient way to do this, https://github.com/phetsims/axon/issues/257
+        containsValidatorKeys && ValidatorDef.validateValidator( validator );
+      }
 
-      // Changing after construction indicates a logic error, except that many EmitterIOs are shared between instances.
-      // Don't assume we "own" the validator if it came from the TypeIO.
-      !phetioTypeSuppliedByClient && Object.freeze( validators );
+      // Changing after construction indicates a logic error.
+      Object.freeze( parameters );
     }
 
     /**
      * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
-     * @returns {*}
+     * @returns {Object} - the data, keys dependent on parameter metadata
      * @private
      */
     getPhetioData() {
 
       // null if there are no arguments. dataStream.js omits null values for data
       let data = null;
-      if ( this.phetioType.elements.length > 0 ) {
+      if ( this.parameters.length > 0 ) {
 
         // Enumerate named argsObject for the data stream.
         data = {};
-        for ( let i = 0; i < this.phetioType.elements.length; i++ ) {
-          const element = this.phetioType.elements[ i ];
-          data[ element.name ] = element.type.toStateObject( arguments[ i ] );
+        for ( let i = 0; i < this.parameters.length; i++ ) {
+          const element = this.parameters[ i ];
+          data[ element.name ] = element.phetioType.toStateObject( arguments[ i ] );
         }
       }
       return data;
+    }
+
+    /**
+     * Get the phetioDocumentation compiled from all the parameters
+     * @param {boolean} currentPhetioDocumentation
+     * @param {Object} parameters - see options.parameters
+     * @private
+     * @returns {string}
+     */
+    static getPhetioDocumentation( currentPhetioDocumentation, parameters ) {
+      const paramToDocString = param => {
+        var docText = param.phetioDocumentation ? '. ' + param.phetioDocumentation : '';
+
+        // TODO: are we gauranteed to have the name? We aren't asserting it right now, https://github.com/phetsims/axon/issues/257
+        return '<li>' + param.name + ': ' + param.phetioType.typeName + docText + '</li>';
+      };
+
+      return currentPhetioDocumentation + ( parameters.length === 0 ? ' No arguments.' : ' The arguments are:<br>' +
+             '<ol>' + parameters.map( paramToDocString ).join( '\n' ) + '</ol>' );
     }
 
     /**
@@ -160,7 +199,15 @@ define( require => {
           `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${arguments.length}`
         );
         for ( let i = 0; i < this.parameters.length; i++ ) {
-          validate( arguments[ i ], this.parameters[ i ] );
+          const parameter = this.parameters[ i ];
+          if ( parameter.containsValidatorKeys ) {
+            validate( arguments[ i ], parameter );
+          }
+
+          // valueType overrides the phetioType validator so we don't use that one if there is a valueType
+          if ( parameter.phetioType && !this.parameters.valueType ) {
+            validate( arguments[ i ], parameter.phetioType.validator );
+          }
         }
       }
 
