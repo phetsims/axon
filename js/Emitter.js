@@ -31,11 +31,10 @@ define( require => {
       if ( assert && options && options.phetioType ) {
         assert( options.phetioType.parameterTypes.length > 0, 'do not specify phetioType that is the same as the default' );
       }
-
       // For the common case of creating an instrumented Emitter with no args, the phetioType is automatically supplied.
-      // If validators and/or phetioType are supplied, the parent will check via assertions that supplied options
+      // If validators through parameters and/or phetioType are supplied, the parent will check via assertions that supplied options
       // are correct.
-      if ( options && !options.validators && !options.phetioType ) {
+      if ( options && !options.parameters && !options.phetioType ) {
         options = _.extend( { phetioType: EmitterIOWithNoArgs }, options );
       }
 

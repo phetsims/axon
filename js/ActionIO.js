@@ -3,6 +3,7 @@
 /**
  * IO type for Emitter.
  *
+ * TODO: this is going to change https://github.com/phetsims/axon/issues/257
  * Providing validators to instrumented Emitters:
  * Instrumented Emitters should have their `validators` for each argument passed via ActionIO (the phetioType).
  * To provide validators, there are two methods. First, by default each TypeIO has its own
@@ -121,7 +122,7 @@ define( function( require ) {
        * A list of validators, one for each argument that will be emitted.
        * {ValidatorDef[]}
        */
-      validators: validators,
+      parameters: validators,
 
       validator: ACTION_IO_VALIDATOR,
 

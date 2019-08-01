@@ -34,12 +34,13 @@ define( require => {
     constructor( action, options ) {
 
       // It is important to know if the following options were provided by the client
-      const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' );
-      const validatorsSupplied = options && options.hasOwnProperty( 'validators' );
+      const phetioTypeSupplied = options && options.hasOwnProperty( 'phetioType' ); // TODO: this will be removed, https://github.com/phetsims/axon/issues/257
+      const validatorsSupplied = options && options.hasOwnProperty( 'parameters' );
 
       // Important to be before super call. OK to supply either or one or the other, but not both. This is a NAND operator.
+      // TODO: this is not going to fly, https://github.com/phetsims/axon/issues/257
       assert && assert( !( phetioTypeSupplied && validatorsSupplied ),
-        'use either phetioType or validators, not both, see EmitterIO to set validators on an instrumented Action'
+        'use either phetioType or parameters, not both, see EmitterIO to set parameters on an instrumented Action'
       );
 
       // ActionIO that have 0 args should use the built-in ActionIO([]) default.  But we must support EmitterIO([]),
@@ -51,7 +52,7 @@ define( require => {
       options = _.extend( {
 
         // {ValidatorDef[]}
-        validators: EMPTY_ARRAY,
+        parameters: EMPTY_ARRAY,
 
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
@@ -63,7 +64,7 @@ define( require => {
 
       // Use the phetioType's validators if provided, we know we aren't overwriting here because of the above assertion
       if ( phetioTypeSupplied ) {
-        options.validators = options.phetioType.validators;
+        options.parameters = options.phetioType.parameters;
       }
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
@@ -79,10 +80,10 @@ define( require => {
 
       super( options );
 
-      assert && this.validateValidators( options.validators, validatorsSupplied, phetioTypeSupplied );
+      assert && this.validateValidators( options.parameters, validatorsSupplied, phetioTypeSupplied );
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
-      this.validators = options.validators;
+      this.parameters = options.parameters;
 
       assert && assert( typeof action === 'function', 'action should be a function' );
 
@@ -150,16 +151,16 @@ define( require => {
 
     /**
      * Invokes the action.
-     * @params - expected parameters are based on options.validators, see constructor
+     * @params - expected parameters are based on options.parameters, see constructor
      * @public
      */
     execute() {
       if ( assert ) {
-        assert( arguments.length === this.validators.length,
-          `Emitted unexpected number of args. Expected: ${this.validators.length} and received ${arguments.length}`
+        assert( arguments.length === this.parameters.length,
+          `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${arguments.length}`
         );
-        for ( let i = 0; i < this.validators.length; i++ ) {
-          validate( arguments[ i ], this.validators[ i ] );
+        for ( let i = 0; i < this.parameters.length; i++ ) {
+          validate( arguments[ i ], this.parameters[ i ] );
         }
       }
 

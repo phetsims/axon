@@ -23,7 +23,7 @@ define( require => {
 
       assert.throws( () => {
         emitter = new Emitter( {
-          validators: [ { valueType: 'number' } ],
+          parameters: [ { valueType: 'number' } ],
           phetioType: EmitterIO( [ { type: NumberIO } ] )
         } );
       }, 'cannot supply phetioType and validators' );
