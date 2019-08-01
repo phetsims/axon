@@ -12,11 +12,12 @@ define( require => {
 
   // modules
   const ActionIO = require( 'AXON/ActionIO' );
+  const assertMutuallyExclusiveOptions = require( 'PHET_CORE/assertMutuallyExclusiveOptions' );
   const axon = require( 'AXON/axon' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
-  const ValidatorDef = require( 'AXON/ValidatorDef' );
   const validate = require( 'AXON/validate' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // constants
   // Simulations have thousands of Emitters, so we re-use objects where possible.
@@ -30,8 +31,18 @@ define( require => {
   const PARAMETER_KEYS = [
     'name', // {string}
     'phetioType', // {function(new:ObjectIO)}
-    'phetioDocumentation' // {string}
+    'phetioDocumentation', // {string}
+
+    // {boolean} - specify this to keep the parameter private to the phet-io api. To support emitting and executing over
+    // the phet-io api, phetioPrivate parameters must not ever be before a public one. For example
+    // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
+    'phetioPrivate'
+
   ].concat( ValidatorDef.VALIDATOR_KEYS );
+
+  // helper closures
+  const paramToPhetioType = param => param.phetioType;
+  const paramToTypeName = param => param.phetioType.typeName;
 
   class Action extends PhetioObject {
 
@@ -56,20 +67,25 @@ define( require => {
         phetioDocumentation: 'A function that executes.'
       }, options );
 
+      // TODO: do we need the supplied check here? https://github.com/phetsims/axon/issues/257
+      assert && Action.validateParameters( options.tandem.supplied, options.parameters );
+      assert && assert( typeof action === 'function', 'action should be a function' );
       assert && assert( options.phetioType === undefined,
         'Action sets its own phetioType. Instead provide parameter phetioTypes through `options.parameters`' );
-      assert && assert( typeof action === 'function', 'action should be a function' );
+
+      // {Object[]} - list of parameters, see options.parameters. Filter out phetioPrivate parameters, all `phetioPrivate`
+      // parameters will not have a `phetioType`, see `validateParameters`.
+      const phetioPublicParameters = options.parameters.filter( paramToPhetioType );
+
+      // TODO: do we need the supplied check here? https://github.com/phetsims/axon/issues/257
       if ( options.tandem.supplied ) {
-        assert && options.parameters.forEach( param => assert( param.phetioType, 'phetioType required for each parameter.' ) );
 
         // TODO: create a map so that we don't create this for each Emitter, https://github.com/phetsims/axon/issues/257
         // TODO: we should make sure to remove these items to prevent too large of a footprint, https://github.com/phetsims/axon/issues/257
         // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
-        const uniqueKey = options.phetioOuterType.name + options.parameters.map( param => param.phetioType.typeName ).join( ',' );
-
-        options.phetioType = TYPE_IO_MAP[ uniqueKey ] ? TYPE_IO_MAP[ uniqueKey ] : options.phetioOuterType( options.parameters.map( param => param.phetioType ) );
+        const uniqueKey = options.phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
+        options.phetioType = TYPE_IO_MAP[ uniqueKey ] ? TYPE_IO_MAP[ uniqueKey ] : options.phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) );
       }
-      assert && Action.validateParameters( options.tandem.supplied, options.parameters );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -83,7 +99,7 @@ define( require => {
       }
       // We only need phetioDocumentation for instrumented instances
       if ( options.tandem.supplied ) {
-        options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, options.parameters );
+        options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, phetioPublicParameters );
       }
       super( options );
 
@@ -103,45 +119,56 @@ define( require => {
       // validate the parameters object
       validate( parameters, { valueType: Array } );
 
+      // Action only supports phetioPrivate parameters at the end of the emit call, so once we hit the first phetioPrivate
+      // parameter, then assert that the rest of them afterwards are as well.
+      let reachedPhetioPrivate = false;
       for ( let i = 0; i < parameters.length; i++ ) {
-        const validator = parameters[ i ];
-        assert && assert( validator.validateOptionsOnValidateValue !== true,
+        const parameter = parameters[ i ]; // metadata about a single parameter
+
+        assert && assert( parameter.validateOptionsOnValidateValue !== true,
           'Action sets its own validateOptionsOnValidateValue for each argument type'
         );
+        assert && assert( Object.getPrototypeOf( parameter ) === Object.prototype,
+          'Extra prototype on parameter object is a code smell' );
 
-        assert && assert( Object.getPrototypeOf( validator ) === Object.prototype,
-          'Extra prototype on validator object is a code smell' );
+        reachedPhetioPrivate = reachedPhetioPrivate || parameter.phetioPrivate;
+        assert && reachedPhetioPrivate && assert( parameter.phetioPrivate,
+          'after first phetioPrivate parameter, all subsequenct parameters must be phetioPrivate' );
 
-        var keys = Object.keys( validator );
+        var keys = Object.keys( parameter );
         for ( let i = 0; i < keys.length; i++ ) {
           const key = keys[ i ];
-          assert && assert( PARAMETER_KEYS.indexOf( key ) >= 0, 'unrecognized parameter key: ' + key );
+          assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
         }
 
-        assert && isPhetioInstrumented && assert( validator.phetioType, 'instrumented Emitters must include phetioType for each parameter' );
+        assert && isPhetioInstrumented && assert( parameter.phetioType || parameter.phetioPrivate,
+          'instrumented Emitters must include phetioType for each parameter or be marked as `phetioPrivate`.' );
 
-        assert && !validator.phetioType && assert( Object.keys( _.pick( validator, ValidatorDef.VALIDATOR_KEYS ) ).length > 0, 'if phetioType is not provided, validator must be specified' );
+        assert && assertMutuallyExclusiveOptions( parameter, [ 'phetioPrivate' ], [
+          'name', 'phetioType', 'phetioDocumentation'
+        ] );
+
+        // TODO: get rid of phetioTYpe check once ValidatorDef supports phetioType
+        assert && !parameter.phetioType && assert( Object.keys( _.pick( parameter, ValidatorDef.VALIDATOR_KEYS ) ).length > 0,
+          'if phetioType is not provided, parameter must be specified' );
 
         let containsValidatorKeys = false;
-        for ( var prop in validator ) {
+        for ( var prop in parameter ) {
           if ( ValidatorDef.VALIDATOR_KEYS.includes( prop ) ) {
             containsValidatorKeys = true;
             break;
           }
         }
 
-        // TODO: this doesn't work now because of VoidIO workaround, do we want it to? https://github.com/phetsims/axon/issues/257
-        // assert && assert( !!validator.phetioType !== !!validator.valueType, 'Specify phetioType OR valueType, not both' );
-
         // TODO: is this taking up too much memory? Does this create too much garbage? https://github.com/phetsims/axon/issues/257
         parameters[ i ] = _.extend( {
           validateOptionsOnValidateValue: false,
           containsValidatorKeys: containsValidatorKeys
-        }, validator );
+        }, parameter );
 
         // validate the options passed in to validate each Action argument
         // TODO: surely this is not the most efficient way to do this, https://github.com/phetsims/axon/issues/257
-        containsValidatorKeys && ValidatorDef.validateValidator( validator );
+        containsValidatorKeys && ValidatorDef.validateValidator( parameter );
       }
 
       // Changing after construction indicates a logic error.
@@ -163,7 +190,9 @@ define( require => {
         data = {};
         for ( let i = 0; i < this.parameters.length; i++ ) {
           const element = this.parameters[ i ];
-          data[ element.name ] = element.phetioType.toStateObject( arguments[ i ] );
+          if ( !element.phetioPrivate ) {
+            data[ element.name ] = element.phetioType.toStateObject( arguments[ i ] );
+          }
         }
       }
       return data;
