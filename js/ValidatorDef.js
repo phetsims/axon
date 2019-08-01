@@ -67,7 +67,10 @@ define( require => {
     // {function|null} function that validates the value. Single argument is the value, returns boolean. Unused if null.
     // Example:
     // isValidValue: function( value ) { return Util.isInteger( value ) && value >= 0; }
-    'isValidValue'
+    'isValidValue',
+
+    // {function(PhetioType is a
+    'phetioType'
 
     /**************************************
      * Additionally, validation will always check the validator itself.  However, for types like Property and Emitter,
@@ -96,9 +99,15 @@ define( require => {
 
       options = options || ASSERTIONS_FALSE;// Poor man's extend
 
+      if ( !( validator instanceof Object ) ) {
+        assert && options.assertions && assert( false,
+          'validator must be an Object' );
+        return false;
+      }
       if ( !( validator.hasOwnProperty( 'isValidValue' ) ||
               validator.hasOwnProperty( 'valueType' ) ||
-              validator.hasOwnProperty( 'validValues' ) ) ) {
+              validator.hasOwnProperty( 'validValues' ) ||
+              validator.hasOwnProperty( 'phetioType' ) ) ) {
         assert && options.assertions && assert( false,
           'validator must have at least one of: isValidValue, valueType, validValues' );
         return false;
@@ -145,6 +154,14 @@ define( require => {
             }
           }
         }
+      }
+
+      if ( validator.hasOwnProperty( 'phetioType' ) ) {
+        if ( !( validator.phetioType && validator.phetioType.validator ) ) {
+          assert && options.assertions && assert( false, 'validator needed for phetioType: ' + ( validator.phetioType && validator.phetioType.typeName ) );
+          return false;
+        }
+        return ValidatorDef.isValidValidator( validator.phetioType.validator, options );
       }
       return true;
     },
@@ -248,6 +265,13 @@ define( require => {
       }
       if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue( value ) ) {
         assert && options.assertions && assert( false, `value failed isValidValue: ${value}` );
+        return false;
+      }
+      if ( validator.hasOwnProperty( 'phetioType' ) &&
+
+           // Never assert, instead handling it here for the better assertion message.
+           !ValidatorDef.isValueValid( value, validator.phetioType.validator, ASSERTIONS_FALSE ) ) {
+        assert && options.assertions && assert( false, `value failed phetioType validator: ${value}` );
         return false;
       }
       return true;

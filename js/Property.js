@@ -58,7 +58,15 @@ define( require => {
       if ( !ValidatorDef.containsValidatorKey( options ) ) {
         options.isValidValue = () => true;
       }
-      assert && ValidatorDef.validateValidator( options );
+
+      const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+
+      // Validate the valueType's phetioType of the Property, not the PropertyIO itself.
+      if ( validator.phetioType ) {
+        assert && assert( validator.phetioType.parameterTypes.length === 1, 'unexpected number of parameters for Property' );
+        validator.phetioType = validator.phetioType.parameterTypes[ 0 ];
+      }
+      assert && ValidatorDef.validateValidator( validator );
 
       assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
       if ( options.units ) {
@@ -81,7 +89,7 @@ define( require => {
       this.useDeepEquality = options.useDeepEquality;
 
       // @private {function|false} - closure over options for validation in set()
-      this.validate = assert && ( value => validate( value, options ) );
+      this.validate = assert && ( value => validate( value, validator ) );
 
       // validate the initial value
       assert && this.validate( value );

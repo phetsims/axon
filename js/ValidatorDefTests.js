@@ -9,10 +9,13 @@ define( require => {
   'use strict';
 
   // modules
+  const Emitter = require( 'AXON/Emitter' );
+  const EmitterIO = require( 'AXON/EmitterIO' );
   const Enumeration = require( 'PHET_CORE/Enumeration' );
-  const ValidatorDef = require( 'AXON/ValidatorDef' );
-  const validate = require( 'AXON/validate' );
   const Node = require( 'SCENERY/nodes/Node' );
+  const StringIO = require( 'TANDEM/types/StringIO' );
+  const validate = require( 'AXON/validate' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // constants
   const ASSERTIONS_TRUE = { assertions: true };
@@ -110,5 +113,32 @@ define( require => {
     assert.ok( ValidatorDef.isValidValidator( { valueType: Birds } ), 'good valueType' );
     assert.ok( ValidatorDef.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
     window.assert && assert.throws( () => ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );
+  } );
+
+  QUnit.test( 'Test phetioType', assert => {
+    assert.ok( ValidatorDef.isValidValidator( { phetioType: { validator: { valueType: 'number' } } } ), 'good phetioType' );
+    assert.ok( ValidatorDef.isValidValidator( { phetioType: { validator: { isValidValue: () => true } } } ), 'good phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: { notValidator: { isValidValue: () => true } } } ), 'bad phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: { isValidValue: 'number' } } } ), 'bad phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: {} } } ), 'bad phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: null } } ), 'bad phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: 'null' } ), 'bad phetioType' );
+    assert.ok( !ValidatorDef.isValidValidator( { phetioType: null } ), 'bad phetioType' );
+
+
+    assert.ok( ValidatorDef.isValueValid( 'hello', { phetioType: StringIO } ), 'string valid' );
+    assert.ok( !ValidatorDef.isValueValid( null, { phetioType: StringIO } ), 'null not valid' );
+    assert.ok( !ValidatorDef.isValueValid( undefined, { phetioType: StringIO } ), 'undefined not valid' );
+    assert.ok( ValidatorDef.isValueValid( 'oh hi', { phetioType: StringIO } ), 'string valid' );
+    assert.ok( ValidatorDef.isValueValid( 'oh no', {
+      phetioType: StringIO,
+      isValidValue: v => v.startsWith( 'o' )
+    } ), 'string valid' );
+    assert.ok( !ValidatorDef.isValueValid( 'ho on', {
+      phetioType: StringIO,
+      isValidValue: v => v.startsWith( 'o' )
+    } ), 'string not valid' );
+
+    assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: EmitterIO( [] ) } ), 'emitter is valid' );
   } );
 } );
