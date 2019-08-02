@@ -24,8 +24,9 @@ define( require => {
   const EMPTY_ARRAY = [];
   assert && Object.freeze( EMPTY_ARRAY );
 
-  // TODO: Map that holds all the ActionIO types created so they can be reused when possible, https://github.com/phetsims/axon/issues/257
-  const TYPE_IO_MAP = {};
+  // {Object.<uniqueKey:string, {count:number, phetioType:function(new:ObjectIO)} - uniqueKey is created from outer and
+  // parameter types
+  const TYPE_IO_CACHE = {};
 
   // allowed keys to options.parameters
   const PARAMETER_KEYS = [
@@ -58,8 +59,9 @@ define( require => {
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
 
-        // {function(new:ObjectIO) - The non parameterized TypeIO, because passing in parameters. Override this to create
-        // a subtype of ActionIO as the phetioType instead of a parameterized ActionIO Type.
+        // {function(new:function(new:ObjectIO),...function(new:ObjectIO))} - The non parameterized TypeIO, because
+        // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a
+        // parameterized ActionIO Type.
         phetioOuterType: ActionIO,
         phetioState: false,
         phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
@@ -77,10 +79,7 @@ define( require => {
       // parameters will not have a `phetioType`, see `validateParameters`.
       const phetioPublicParameters = options.parameters.filter( paramToPhetioType );
 
-      // TODO: we should make sure to remove these items to prevent too large of a footprint, https://github.com/phetsims/axon/issues/257
-      // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
-      const uniqueTypeNameKey = options.phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
-      options.phetioType = TYPE_IO_MAP[ uniqueTypeNameKey ] ? TYPE_IO_MAP[ uniqueTypeNameKey ] : options.phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) );
+      options.phetioType = getActionIOFromCache( options.phetioOuterType, phetioPublicParameters );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -97,10 +96,13 @@ define( require => {
       super( options );
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
-      this.parameters = options.parameters;
+      this._parameters = options.parameters;
 
       // @private {function}
       this._action = action;
+
+      // @private - only needed for dispose, see options for doc
+      this._phetioOuterType = options.phetioOuterType
     }
 
     /**
@@ -178,12 +180,12 @@ define( require => {
 
       // null if there are no arguments. dataStream.js omits null values for data
       let data = null;
-      if ( this.parameters.length > 0 ) {
+      if ( this._parameters.length > 0 ) {
 
         // Enumerate named argsObject for the data stream.
         data = {};
-        for ( let i = 0; i < this.parameters.length; i++ ) {
-          const element = this.parameters[ i ];
+        for ( let i = 0; i < this._parameters.length; i++ ) {
+          const element = this._parameters[ i ];
           if ( !element.phetioPrivate ) {
             data[ element.name ] = element.phetioType.toStateObject( arguments[ i ] );
           }
@@ -211,23 +213,36 @@ define( require => {
     }
 
     /**
+     * @override
+     * @public
+     */
+    dispose() {
+
+      // recompute public parameters instead of storing them on each emitter. This tradeoff assumes that dispose happens
+      // relatively infrequently compared to the space needed to store another array on each Action instance.
+      removeActionIOFromCache( this._phetioOuterType, this._parameters.filter( paramToPhetioType ) );
+
+      super.dispose();
+    }
+
+    /**
      * Invokes the action.
      * @params - expected parameters are based on options.parameters, see constructor
      * @public
      */
     execute() {
       if ( assert ) {
-        assert( arguments.length === this.parameters.length,
-          `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${arguments.length}`
+        assert( arguments.length === this._parameters.length,
+          `Emitted unexpected number of args. Expected: ${this._parameters.length} and received ${arguments.length}`
         );
-        for ( let i = 0; i < this.parameters.length; i++ ) {
-          const parameter = this.parameters[ i ];
+        for ( let i = 0; i < this._parameters.length; i++ ) {
+          const parameter = this._parameters[ i ];
           if ( parameter.containsValidatorKeys ) {
             validate( arguments[ i ], parameter );
           }
 
           // valueType overrides the phetioType validator so we don't use that one if there is a valueType
-          if ( parameter.phetioType && !this.parameters.valueType ) {
+          if ( parameter.phetioType && !this._parameters.valueType ) {
             validate( arguments[ i ], parameter.phetioType.validator );
           }
         }
@@ -241,6 +256,56 @@ define( require => {
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
   }
+
+  /**
+   *
+   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
+   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
+   * @returns {string} - unique id to access the cache and get the right TypeIO
+   */
+  const getUniqueTypeName = ( phetioOuterType, phetioPublicParameters ) => {
+
+    // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
+    return phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
+  };
+
+  /**
+   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
+   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
+   * @returns {function(new:ObjectIO)} - phetioType
+   */
+  const getActionIOFromCache = ( phetioOuterType, phetioPublicParameters ) => {
+
+    // This is not the name passed to the parameter, but instead of function constructor name.
+    const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
+
+    if ( TYPE_IO_CACHE[ uniqueTypeNameKey ] ) {
+      TYPE_IO_CACHE[ uniqueTypeNameKey ].count += 1;
+    }
+    else {
+
+      // set a new object on that key
+      TYPE_IO_CACHE[ uniqueTypeNameKey ] = {
+        count: 0,
+        phetioType: phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) )
+      };
+    }
+    return TYPE_IO_CACHE[ uniqueTypeNameKey ].phetioType;
+  };
+
+  /**
+   * Remove a phetioType from the cache
+   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
+   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
+   */
+  const removeActionIOFromCache = ( phetioOuterType, phetioPublicParameters ) => {
+    const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
+    assert && assert( TYPE_IO_CACHE[ uniqueTypeNameKey ], `type name key is not in cache: ${uniqueTypeNameKey}` )
+    TYPE_IO_CACHE[ uniqueTypeNameKey ].count -= 1;
+    if ( TYPE_IO_CACHE[ uniqueTypeNameKey ].count === 0 ) {
+      delete TYPE_IO_CACHE[ uniqueTypeNameKey ];
+    }
+  };
 
   return axon.register( 'Action', Action );
 } );
