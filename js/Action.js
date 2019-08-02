@@ -278,7 +278,6 @@ define( require => {
 
     // This is not the name passed to the parameter, but instead of function constructor name.
     const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
-
     if ( TYPE_IO_CACHE[ uniqueTypeNameKey ] ) {
       TYPE_IO_CACHE[ uniqueTypeNameKey ].count += 1;
     }
@@ -286,7 +285,7 @@ define( require => {
 
       // set a new object on that key
       TYPE_IO_CACHE[ uniqueTypeNameKey ] = {
-        count: 0,
+        count: 1, // This is already the first one
         phetioType: phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) )
       };
     }
