@@ -125,10 +125,12 @@ define( function( require ) {
           if ( this.typeName !== OtherObservableArrayIO.typeName ) {
             return false;
           }
-          if ( !OtherObservableArrayIO.elementType ) {
+
+          // The length must be one because that data is in the typeName
+          if ( !OtherObservableArrayIO.parameterTypes[ 0 ] ) {
             return false;
           }
-          if ( !this.elementType.equals( OtherObservableArrayIO.elementType ) ) {
+          if ( !this.parameterTypes[ 0 ].equals( OtherObservableArrayIO.parameterTypes[ 0 ] ) ) {
             return false;
           }
           return this.supertype.equals( OtherObservableArrayIO.supertype ) &&
@@ -137,6 +139,7 @@ define( function( require ) {
 
         documentation: 'An array that sends notifications when its values have changed.',
         elementType: elementType,
+        parameterTypes: [ elementType ],
         validator: {
           isValidValue: v => {
             var ObservableArray = window.phet ? phet.axon.ObservableArray : axon.ObservableArray;
