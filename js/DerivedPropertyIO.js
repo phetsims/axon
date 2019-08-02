@@ -26,23 +26,23 @@ define( function( require ) {
   /**
    * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.
    *
-   * @param {function} phetioValueType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
+   * @param {function} parameterType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    */
-  function DerivedPropertyIO( phetioValueType ) {
+  function DerivedPropertyIO( parameterType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-    var PropertyIOImpl = PropertyIO( phetioValueType );
+    var PropertyIOImpl = PropertyIO( parameterType );
 
     /**
-     * This type constructor is parameterized based on the phetioValueType.
+     * This type constructor is parameterized based on the parameterType.
      *
      * @param {DerivedProperty} derivedProperty
      * @param {string} phetioID
      * @constructor
      */
     var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
-      assert && assert( !!phetioValueType, 'DerivedPropertyIO needs phetioValueType' );
+      assert && assert( !!parameterType, 'DerivedPropertyIO needs parameterType' );
 
       PropertyIOImpl.call( this, derivedProperty, phetioID );
     };
@@ -50,7 +50,7 @@ define( function( require ) {
 
       setValue: {
         returnType: VoidIO,
-        parameterTypes: [ phetioValueType ],
+        parameterTypes: [ parameterType ],
         implementation: function( value ) {
           return this.phetioObject.set( value );
         },
@@ -62,9 +62,8 @@ define( function( require ) {
                      'instances',
 
       // Used to generate the unique parametric typename for each PropertyIO
-      parameterTypes: [ phetioValueType ],
+      parameterTypes: [ parameterType ],
 
-      elementType: phetioValueType, // TODO: this is likely redundant, because PropertyIO sets the same thing
       validator: PROPERTY_IO_VALIDATOR
     } );
 

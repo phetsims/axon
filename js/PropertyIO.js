@@ -21,11 +21,11 @@ define( function( require ) {
 
   /**
    * An observable property that triggers notifications when the value changes.
-   * @param {function} phetioValueType - If loaded by phet (not phet-io) it will be the function returned by the
+   * @param {function} parameterType - If loaded by phet (not phet-io) it will be the function returned by the
    *                                     'ifphetio!' plugin.
    * @module PropertyIO
    */
-  function PropertyIO( phetioValueType ) {
+  function PropertyIO( parameterType ) {
 
     /**
      * @param {Property} property
@@ -33,7 +33,7 @@ define( function( require ) {
      * @constructor
      */
     var PropertyIOImpl = function PropertyIOImpl( property, phetioID ) {
-      assert && assert( !!phetioValueType, 'PropertyIO needs phetioValueType' );
+      assert && assert( !!parameterType, 'PropertyIO needs parameterType' );
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
@@ -42,7 +42,7 @@ define( function( require ) {
 
     return phetioInherit( ObjectIO, 'PropertyIO', PropertyIOImpl, {
       getValue: {
-        returnType: phetioValueType,
+        returnType: parameterType,
         parameterTypes: [],
         implementation: function() {
           return this.phetioObject.get();
@@ -52,7 +52,7 @@ define( function( require ) {
 
       setValue: {
         returnType: VoidIO,
-        parameterTypes: [ phetioValueType ],
+        parameterTypes: [ parameterType ],
         implementation: function( value ) {
           this.phetioObject.set( value );
         },
@@ -65,7 +65,7 @@ define( function( require ) {
         returnType: VoidIO,
 
         // oldValue will start as "null" the first time called
-        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
+        parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
         implementation: function( listener ) {
           this.phetioObject.link( listener );
         },
@@ -78,7 +78,7 @@ define( function( require ) {
         returnType: VoidIO,
 
         // oldValue will start as "null" the first time called
-        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType, NullableIO( phetioValueType ) ] ) ],
+        parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
         implementation: function( listener ) {
           this.phetioObject.lazyLink( listener );
         },
@@ -89,7 +89,7 @@ define( function( require ) {
 
       unlink: {
         returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, [ phetioValueType ] ) ],
+        parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
         implementation: function( listener ) {
           this.phetioObject.unlink( listener );
         },
@@ -100,11 +100,10 @@ define( function( require ) {
                      'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
       methodOrder: [ 'link', 'lazyLink' ],
-      elementType: phetioValueType,
       validator: { valueType: Property },
 
-      // Used to generate the unique parametric typename for each PropertyIO
-      parameterTypes: [ phetioValueType ],
+      // Used to generate the unique parametric typename for each PropertyIO as well as accessing the TypeIO
+      parameterTypes: [ parameterType ],
 
       events: [ 'changed' ],
 
@@ -115,15 +114,15 @@ define( function( require ) {
        */
       toStateObject: function( property ) {
         validate( property, this.validator );
-        assert && assert( phetioValueType.toStateObject, 'toStateObject doesnt exist for ' + phetioValueType.typeName );
+        assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
         var stateObject = {
-          value: phetioValueType.toStateObject( property.value )
+          value: parameterType.toStateObject( property.value )
         };
 
         // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
         if ( property.validValues ) {
           stateObject.validValues = property.validValues.map( function( v ) {
-            return phetioValueType.toStateObject( v );
+            return parameterType.toStateObject( v );
           } );
         }
 
@@ -142,9 +141,9 @@ define( function( require ) {
       fromStateObject: function( stateObject ) {
         return {
           units: stateObject.units,
-          value: phetioValueType.fromStateObject( stateObject.value ),
+          value: parameterType.fromStateObject( stateObject.value ),
           validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
-            return phetioValueType.fromStateObject( v );
+            return parameterType.fromStateObject( v );
           } )
         };
       },
@@ -169,10 +168,10 @@ define( function( require ) {
         if ( this.typeName !== OtherPropertyIO.typeName ) {
           return false;
         }
-        if ( !OtherPropertyIO.elementType ) {
+        if ( !OtherPropertyIO.parameterTypes[ 0 ] ) {
           return false;
         }
-        if ( !this.elementType.equals( OtherPropertyIO.elementType ) ) {
+        if ( !this.parameterTypes[ 0 ].equals( OtherPropertyIO.parameterTypes[ 0 ] ) ) {
           return false;
         }
         return this.supertype.equals( OtherPropertyIO.supertype ) && OtherPropertyIO.supertype.equals( this.supertype );

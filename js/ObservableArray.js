@@ -22,7 +22,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
-  var ObservableArrayIOType = ObservableArrayIO( ObjectIO );
+  var DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );
 
   /**
    * @param {Object[]} [array]
@@ -39,9 +39,12 @@ define( function( require ) {
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
-      phetioType: ObservableArrayIOType,
+      phetioType: DefaultObservableArrayIOType,
       tandem: Tandem.optional
     }, options );
+
+    assert && assert( options.phetioType && options.phetioType.parameterTypes && options.phetioType.parameterTypes.length === 1,
+      'ObservableArray\'s phetioType should only have one parameterType' );
 
     this.allowDuplicates = options.allowDuplicates; // @private
 
@@ -137,7 +140,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
       var self = this;
       this.phetioStartEvent( 'itemAdded', function() {
-        return self.phetioType.elementType.toStateObject( item );
+        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
       } );
 
       //Signify that an item was added to the list
@@ -153,7 +156,7 @@ define( function( require ) {
     _fireItemRemoved: function( item ) {
       var self = this;
       this.phetioStartEvent( 'itemRemoved', function() {
-        return self.phetioType.elementType.toStateObject( item );
+        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
       } );
 
       //Signify that an item was removed from the list

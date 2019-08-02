@@ -25,9 +25,8 @@ define( function( require ) {
 
   /**
    * IO type for Emitter
-   * Emitter for 0, 1 or 2 args, or maybe 3.
    *
-   * @param {function(new:ObjectIO)[]} parameterTypes, each with {name:string, type: IO type, documentation: string, [validator]:ValidatorDef}
+   * @param {function(new:ObjectIO)[]} parameterTypes
    * @returns {ActionIOImpl} - the parameterized type
    * @constructor
    */

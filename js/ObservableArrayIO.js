@@ -24,25 +24,25 @@ define( function( require ) {
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
-   * @param {function(new:ObjectIO)} elementType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
+   * @param {function(new:ObjectIO)} parameterType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @param {Object} options
    * @constructor
    */
-  function ObservableArrayIO( elementType, options ) {
+  function ObservableArrayIO( parameterType, options ) {
 
     options = _.extend( {
       isReferenceType: true
     }, options );
 
     /**
-     * This type constructor is parameterized based on the elementType
+     * This type constructor is parameterized based on the parameterType
      * @param {ObservableArray} observableArray
      * @param {string} phetioID
      * @constructor
      */
     var ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
-      assert && assert( typeof ( elementType ) === 'function', 'element type should be defined' );
+      assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
       ObjectIO.call( this, observableArray, phetioID );
     };
     return phetioInherit( ObjectIO, 'ObservableArrayIO', ObservableArrayIOImpl, {
@@ -54,7 +54,7 @@ define( function( require ) {
          */
         addItemAddedListener: {
           returnType: VoidIO,
-          parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
+          parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
           implementation: function( listener ) {
             this.phetioObject.addItemAddedListener( listener );
           },
@@ -68,7 +68,7 @@ define( function( require ) {
          */
         addItemRemovedListener: {
           returnType: VoidIO,
-          parameterTypes: [ FunctionIO( VoidIO, [ elementType ] ) ],
+          parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
           implementation: function( listener ) {
             this.phetioObject.addItemRemovedListener( listener );
           },
@@ -98,15 +98,15 @@ define( function( require ) {
           return {
             array: observableArray.getArray().map( function( item ) {
               return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined, https://github.com/phetsims/axon/issues/245
-                     elementType.toStateObject( item );
+                     parameterType.toStateObject( item );
             } )
           };
         },
 
         fromStateObject: function( stateObject ) {
           var tempArray = [];
-          stateObject.array.forEach( function( elementTypePhetioID ) {
-            tempArray.push( phetioEngine.getPhetioObject( elementTypePhetioID ) );
+          stateObject.array.forEach( function( parameterTypePhetioID ) {
+            tempArray.push( phetioEngine.getPhetioObject( parameterTypePhetioID ) );
           } );
           return tempArray;
         },
@@ -138,8 +138,7 @@ define( function( require ) {
         },
 
         documentation: 'An array that sends notifications when its values have changed.',
-        elementType: elementType,
-        parameterTypes: [ elementType ],
+        parameterTypes: [ parameterType ],
         validator: {
           isValidValue: v => {
             var ObservableArray = window.phet ? phet.axon.ObservableArray : axon.ObservableArray;

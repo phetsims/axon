@@ -44,9 +44,6 @@ define( function( require ) {
       }
     },
 
-    // Export the value type from the parent so clients can read it from this type
-    elementType: NumberIO,
-
     /**
      * Encodes a NumberProperty instance to a state.
      * @param {Object} numberProperty

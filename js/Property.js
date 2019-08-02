@@ -61,7 +61,8 @@ define( require => {
 
       const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
 
-      // Validate the valueType's phetioType of the Property, not the PropertyIO itself.
+      // Validate the value type's phetioType of the Property, not the PropertyIO itself.
+      // So for PropertyIO( BooleanIO ), assign this validator's phetioType to be BooleanIO's validator.
       if ( validator.phetioType ) {
         assert && assert( validator.phetioType.parameterTypes.length === 1, 'unexpected number of parameters for Property' );
         validator.phetioType = validator.phetioType.parameterTypes[ 0 ];
@@ -101,8 +102,9 @@ define( require => {
 
       // When running as phet-io, if the tandem is specified, the type must be specified.
       // This assertion helps in instrumenting code that has the tandem but not type
-      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType.elementType,
-        'phetioType.elementType must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
+      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert(
+        options.phetioType.parameterTypes.length === 1,
+        'phetioType parameter type must be specified (only one). Tandem.phetioID: ' + this.tandem.phetioID );
 
       // @private - Store the internal value and the initial value
       this._value = value;
@@ -242,9 +244,10 @@ define( require => {
     _notifyListeners( oldValue ) {
 
       this.phetioStartEvent( Property.CHANGED_EVENT_NAME, () => {
+        const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
-          oldValue: this.phetioType.elementType.toStateObject( oldValue ),
-          newValue: this.phetioType.elementType.toStateObject( this.get() )
+          oldValue: parameterType.toStateObject( oldValue ),
+          newValue: parameterType.toStateObject( this.get() )
         };
       } );
 
