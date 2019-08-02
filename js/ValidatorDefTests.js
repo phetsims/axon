@@ -63,7 +63,6 @@ define( require => {
 
     }, ASSERTIONS_TRUE ), 'validValues contains invalid value' );
 
-
     assert.ok( ValidatorDef.isValidValidator( { valueType: 'number' } ), 'good valueType' );
     assert.ok( !ValidatorDef.isValidValidator( { validValue: 'number' } ), 'no validator keys supplied' );
     assert.ok( !ValidatorDef.isValidValidator( { validValue: 4 } ), 'no validator keys supplied' );
@@ -77,17 +76,16 @@ define( require => {
     assert.ok( !ValidatorDef.isValidValidator( { valueType: [ 'numberf', null, Node ] } ), 'numberf is not a valid valueType' );
 
     window.assert && assert.throws( () => {
-      ValidatorDef.isValidValidator( undefined, { valueType: [ 'number', 'sstring' ] }, ASSERTIONS_TRUE );
+      ValidatorDef.isValueValid( undefined, { valueType: [ 'number', 'sstring' ] }, ASSERTIONS_TRUE );
     }, 'sstring is not a valid valueType' );
 
     window.assert && assert.throws( () => {
-      ValidatorDef.isValidValidator( undefined, { valueType: [ 7 ] }, ASSERTIONS_TRUE );
+      ValidatorDef.isValueValid( undefined, { valueType: [ 7 ] }, ASSERTIONS_TRUE );
     }, '7 is not a valid valueType' );
 
     window.assert && assert.throws( () => {
-      ValidatorDef.isValidValidator( undefined, { valueType: [ 'number', {} ] }, ASSERTIONS_TRUE );
+      ValidatorDef.isValueValid( undefined, { valueType: [ 'number', {} ] }, ASSERTIONS_TRUE );
     }, 'Object literal  is not a valid valueType' );
-
   } );
 
   QUnit.test( 'Test valueType: {Array.<number|null|string|function|Enumeration>}', assert => {

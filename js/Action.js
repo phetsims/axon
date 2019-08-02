@@ -29,15 +29,14 @@ define( require => {
 
   // allowed keys to options.parameters
   const PARAMETER_KEYS = [
-    'name', // {string}
-    'phetioType', // {function(new:ObjectIO)}
-    'phetioDocumentation', // {string}
+    'name', // {string} - required for phet-io instrumented Actions
+    'phetioType', // {function(new:ObjectIO)} - required for phet-io instrumented Actions
+    'phetioDocumentation', // {string} - optional, additional documentation for this specific parameter
 
-    // {boolean} - specify this to keep the parameter private to the phet-io api. To support emitting and executing over
+    // {boolean=true} - specify this to keep the parameter private to the phet-io api. To support emitting and executing over
     // the phet-io api, phetioPrivate parameters must not ever be before a public one. For example
     // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
     'phetioPrivate'
-
   ].concat( ValidatorDef.VALIDATOR_KEYS );
 
   // helper closures
@@ -59,7 +58,8 @@ define( require => {
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
 
-        // {function(new:ObjectIO) - override this to create a subtype of ActionIO as the phetioType instead of ActionIO.
+        // {function(new:ObjectIO) - The non parameterized TypeIO, because passing in parameters. Override this to create
+        // a subtype of ActionIO as the phetioType instead of a parameterized ActionIO Type.
         phetioOuterType: ActionIO,
         phetioState: false,
         phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
@@ -77,15 +77,10 @@ define( require => {
       // parameters will not have a `phetioType`, see `validateParameters`.
       const phetioPublicParameters = options.parameters.filter( paramToPhetioType );
 
-      // TODO: do we need the supplied check here? https://github.com/phetsims/axon/issues/257
-      if ( options.tandem.supplied ) {
-
-        // TODO: create a map so that we don't create this for each Emitter, https://github.com/phetsims/axon/issues/257
-        // TODO: we should make sure to remove these items to prevent too large of a footprint, https://github.com/phetsims/axon/issues/257
-        // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
-        const uniqueKey = options.phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
-        options.phetioType = TYPE_IO_MAP[ uniqueKey ] ? TYPE_IO_MAP[ uniqueKey ] : options.phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) );
-      }
+      // TODO: we should make sure to remove these items to prevent too large of a footprint, https://github.com/phetsims/axon/issues/257
+      // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
+      const uniqueTypeNameKey = options.phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
+      options.phetioType = TYPE_IO_MAP[ uniqueTypeNameKey ] ? TYPE_IO_MAP[ uniqueTypeNameKey ] : options.phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -97,10 +92,8 @@ define( require => {
 
         options.phetioEventMetadata.dataKeys = options.parameters.map( parmeter => parmeter.name );
       }
-      // We only need phetioDocumentation for instrumented instances
-      if ( options.tandem.supplied ) {
-        options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, phetioPublicParameters );
-      }
+      options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, phetioPublicParameters );
+
       super( options );
 
       // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
@@ -143,7 +136,8 @@ define( require => {
 
         assert && isPhetioInstrumented && assert( parameter.phetioType || parameter.phetioPrivate,
           'instrumented Emitters must include phetioType for each parameter or be marked as `phetioPrivate`.' );
-
+        assert && parameter.phetioType && assert( parameter.name,
+          '`name` is a required parameter for phet-io instrumented parameters.' );
         assert && assertMutuallyExclusiveOptions( parameter, [ 'phetioPrivate' ], [
           'name', 'phetioType', 'phetioDocumentation'
         ] );
@@ -209,8 +203,7 @@ define( require => {
       const paramToDocString = param => {
         var docText = param.phetioDocumentation ? '. ' + param.phetioDocumentation : '';
 
-        // TODO: are we gauranteed to have the name? We aren't asserting it right now, https://github.com/phetsims/axon/issues/257
-        return '<li>' + param.name + ': ' + param.phetioType.typeName + docText + '</li>';
+        return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
       };
 
       return currentPhetioDocumentation + ( parameters.length === 0 ? ' No arguments.' : ' The arguments are:<br>' +

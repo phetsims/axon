@@ -44,7 +44,7 @@ define( require => {
 
     emitter = new Emitter( {
       parameters: [
-        { phetioType: NumberIO }
+        { phetioType: NumberIO, name: 'myNumber' }
       ]
     } );
     emitter.emit( 4 );
@@ -55,7 +55,7 @@ define( require => {
 
     const validator = { isValidValue: v => v < 3 };
     emitter = new Emitter( {
-      parameters: [ _.extend( { phetioType: NumberIO }, validator ) ]
+      parameters: [ _.extend( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]
     } );
     assert.ok( emitter.parameters[ 0 ].isValidValue === validator.isValidValue, 'should use specified validator instead of NumberIO\'s' );
     emitter.emit( 2 );
