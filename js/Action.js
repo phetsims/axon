@@ -102,7 +102,7 @@ define( require => {
       this._action = action;
 
       // @private - only needed for dispose, see options for doc
-      this._phetioOuterType = options.phetioOuterType
+      this._phetioOuterType = options.phetioOuterType;
     }
 
     /**
@@ -300,7 +300,7 @@ define( require => {
    */
   const removeActionIOFromCache = ( phetioOuterType, phetioPublicParameters ) => {
     const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
-    assert && assert( TYPE_IO_CACHE[ uniqueTypeNameKey ], `type name key is not in cache: ${uniqueTypeNameKey}` )
+    assert && assert( TYPE_IO_CACHE[ uniqueTypeNameKey ], `type name key is not in cache: ${uniqueTypeNameKey}` );
     TYPE_IO_CACHE[ uniqueTypeNameKey ].count -= 1;
     if ( TYPE_IO_CACHE[ uniqueTypeNameKey ].count === 0 ) {
       delete TYPE_IO_CACHE[ uniqueTypeNameKey ];
