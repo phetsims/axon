@@ -69,8 +69,7 @@ define( require => {
         phetioDocumentation: 'A function that executes.'
       }, options );
 
-      // TODO: do we need the supplied check here? https://github.com/phetsims/axon/issues/257
-      assert && Action.validateParameters( options.tandem.supplied, options.parameters );
+      assert && Action.validateParameters( options.parameters, options.tandem.supplied );
       assert && assert( typeof action === 'function', 'action should be a function' );
       assert && assert( options.phetioType === undefined,
         'Action sets its own phetioType. Instead provide parameter phetioTypes through `options.parameters`' );
@@ -106,10 +105,11 @@ define( require => {
     }
 
     /**
-     * @param {boolean} isPhetioInstrumented
      * @param {object} parameters
+     * @param {boolean} tandemSupplied - proxy for whether the PhetioObject is instrumented.  We cannot call
+     *                                 - PhetioObject.isPhetioInstrumented() until after the supercall, so we use this beforehand.
      */
-    static validateParameters( isPhetioInstrumented, parameters ) {
+    static validateParameters( parameters, tandemSupplied ) {
 
       // validate the parameters object
       validate( parameters, { valueType: Array } );
@@ -128,7 +128,7 @@ define( require => {
 
         reachedPhetioPrivate = reachedPhetioPrivate || parameter.phetioPrivate;
         assert && reachedPhetioPrivate && assert( parameter.phetioPrivate,
-          'after first phetioPrivate parameter, all subsequenct parameters must be phetioPrivate' );
+          'after first phetioPrivate parameter, all subsequent parameters must be phetioPrivate' );
 
         var keys = Object.keys( parameter );
         for ( let i = 0; i < keys.length; i++ ) {
@@ -136,7 +136,7 @@ define( require => {
           assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
         }
 
-        assert && isPhetioInstrumented && assert( parameter.phetioType || parameter.phetioPrivate,
+        assert && tandemSupplied && Tandem.PHET_IO_ENABLED && assert( parameter.phetioType || parameter.phetioPrivate,
           'instrumented Emitters must include phetioType for each parameter or be marked as `phetioPrivate`.' );
         assert && parameter.phetioType && assert( parameter.name,
           '`name` is a required parameter for phet-io instrumented parameters.' );
