@@ -117,10 +117,12 @@ define( require => {
       // Action only supports phetioPrivate parameters at the end of the emit call, so once we hit the first phetioPrivate
       // parameter, then assert that the rest of them afterwards are as well.
       let reachedPhetioPrivate = false;
+
+      // we must iterate from the first parameter to the last parameter to support phetioPrivate
       for ( let i = 0; i < parameters.length; i++ ) {
         const parameter = parameters[ i ]; // metadata about a single parameter
 
-        assert && assert( parameter.validateOptionsOnValidateValue !== true,
+        assert && assert( parameter.validateOptionsOnValidateValue === undefined,
           'Action sets its own validateOptionsOnValidateValue for each argument type'
         );
         assert && assert( Object.getPrototypeOf( parameter ) === Object.prototype,
@@ -130,12 +132,6 @@ define( require => {
         assert && reachedPhetioPrivate && assert( parameter.phetioPrivate,
           'after first phetioPrivate parameter, all subsequent parameters must be phetioPrivate' );
 
-        var keys = Object.keys( parameter );
-        for ( let i = 0; i < keys.length; i++ ) {
-          const key = keys[ i ];
-          assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
-        }
-
         assert && tandemSupplied && Tandem.PHET_IO_ENABLED && assert( parameter.phetioType || parameter.phetioPrivate,
           'instrumented Emitters must include phetioType for each parameter or be marked as `phetioPrivate`.' );
         assert && parameter.phetioType && assert( parameter.name,
@@ -144,31 +140,27 @@ define( require => {
           'name', 'phetioType', 'phetioDocumentation'
         ] );
 
-        // TODO: get rid of phetioTYpe check once ValidatorDef supports phetioType
-        assert && !parameter.phetioType && assert( Object.keys( _.pick( parameter, ValidatorDef.VALIDATOR_KEYS ) ).length > 0,
-          'if phetioType is not provided, parameter must be specified' );
+        assert && assert( _.intersection( Object.keys( parameter ), ValidatorDef.VALIDATOR_KEYS ).length > 0,
+          `validator must be specified for parameter ${i}` );
 
-        let containsValidatorKeys = false;
-        for ( var prop in parameter ) {
-          if ( ValidatorDef.VALIDATOR_KEYS.includes( prop ) ) {
-            containsValidatorKeys = true;
-            break;
-          }
+        for ( const key in parameter ) {
+          assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
         }
 
         // TODO: is this taking up too much memory? Does this create too much garbage? https://github.com/phetsims/axon/issues/257
         parameters[ i ] = _.extend( {
-          validateOptionsOnValidateValue: false,
-          containsValidatorKeys: containsValidatorKeys
+          validateOptionsOnValidateValue: false
         }, parameter );
 
+        // Changing after construction indicates a logic error.
+        assert && Object.freeze( parameters[ i ] );
+
         // validate the options passed in to validate each Action argument
-        // TODO: surely this is not the most efficient way to do this, https://github.com/phetsims/axon/issues/257
-        containsValidatorKeys && ValidatorDef.validateValidator( parameter );
+        ValidatorDef.validateValidator( parameter );
       }
 
       // Changing after construction indicates a logic error.
-      Object.freeze( parameters );
+      assert && Object.freeze( parameters );
     }
 
     /**
@@ -237,9 +229,7 @@ define( require => {
         );
         for ( let i = 0; i < this._parameters.length; i++ ) {
           const parameter = this._parameters[ i ];
-          if ( parameter.containsValidatorKeys ) {
-            validate( arguments[ i ], parameter );
-          }
+          validate( arguments[ i ], parameter );
 
           // valueType overrides the phetioType validator so we don't use that one if there is a valueType
           if ( parameter.phetioType && !this._parameters.valueType ) {

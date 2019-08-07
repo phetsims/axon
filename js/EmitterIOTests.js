@@ -22,13 +22,6 @@ define( require => {
 
     if ( window.assert ) {
 
-      // TODO: right now this is allowed, and the only way to support hiding args from public data stream, https://github.com/phetsims/axon/issues/257
-      // assert.throws( () => {
-      //   emitter = new Emitter( {
-      //     parameters: [ { valueType: 'number', phetioType: NumberIO } ]
-      //   } );
-      // }, 'cannot supply phetioType and validators' );
-
       assert.throws( () => {
         emitter = new Emitter( {
           phetioType: EmitterIO( [] )
