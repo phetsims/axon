@@ -264,9 +264,7 @@ define( require => {
    * @returns {string} - unique id to access the cache and get the right TypeIO
    */
   const getUniqueTypeName = ( phetioOuterType, phetioPublicParameters ) => {
-
-    // TODO: the name in built mode will be minified, is that still ok? https://github.com/phetsims/axon/issues/257
-    return phetioOuterType.name + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
+    return phetioOuterType.outerTypeName + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
   };
 
   /**

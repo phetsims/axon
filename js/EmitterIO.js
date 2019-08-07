@@ -90,6 +90,13 @@ define( function( require ) {
     } );
   }
 
+  /**
+   * This has to be unique to other outerTypeName values, as these are used for caching in Action.js
+   * @public
+   * @type {string}
+   */
+  EmitterIO.outerTypeName = 'EmitterIO';
+
   axon.register( 'EmitterIO', EmitterIO );
 
   return EmitterIO;

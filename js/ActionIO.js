@@ -28,7 +28,6 @@ define( function( require ) {
    *
    * @param {function(new:ObjectIO)[]} parameterTypes
    * @returns {ActionIOImpl} - the parameterized type
-   * @constructor
    */
   function ActionIO( parameterTypes ) {
 
@@ -93,6 +92,13 @@ define( function( require ) {
       }
     } );
   }
+
+  /**
+   * This has to be unique to other outerTypeName values, as these are used for caching in Action.js
+   * @public
+   * @type {string}
+   */
+  ActionIO.outerTypeName = 'ActionIO';
 
   axon.register( 'ActionIO', ActionIO );
 
