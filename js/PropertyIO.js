@@ -6,26 +6,27 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  var NullableIO = require( 'TANDEM/types/NullableIO' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var Property = require( 'AXON/Property' );
-  var validate = require( 'AXON/validate' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
+  const axon = require( 'AXON/axon' );
+  const FunctionIO = require( 'TANDEM/types/FunctionIO' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const NullableIO = require( 'TANDEM/types/NullableIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const Property = require( 'AXON/Property' );
+  const validate = require( 'AXON/validate' );
+  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
    * An observable property that triggers notifications when the value changes.
-   * @param {function} parameterType - If loaded by phet (not phet-io) it will be the function returned by the
-   *                                     'ifphetio!' plugin.
-   * @module PropertyIO
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
    */
   function PropertyIO( parameterType ) {
+
+    const ParametricTypeIO = getParametricTypeIO( PropertyIO, 'PropertyIO', [ parameterType ] );
 
     /**
      * @param {Property} property
@@ -37,10 +38,10 @@ define( function( require ) {
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
-      ObjectIO.call( this, property, phetioID );
+      ParametricTypeIO.call( this, property, phetioID );
     };
 
-    return phetioInherit( ObjectIO, 'PropertyIO', PropertyIOImpl, {
+    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, PropertyIOImpl, {
       getValue: {
         returnType: parameterType,
         parameterTypes: [],
@@ -102,9 +103,6 @@ define( function( require ) {
       methodOrder: [ 'link', 'lazyLink' ],
       validator: { valueType: Property },
 
-      // Used to generate the unique parametric typename for each PropertyIO as well as accessing the TypeIO
-      parameterTypes: [ parameterType ],
-
       events: [ 'changed' ],
 
       /**
@@ -158,23 +156,6 @@ define( function( require ) {
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
-      },
-
-      /**
-       * @override
-       * @param {function(new:ObjectIO)} OtherPropertyIO
-       */
-      equals: function( OtherPropertyIO ) {
-        if ( this.typeName !== OtherPropertyIO.typeName ) {
-          return false;
-        }
-        if ( !OtherPropertyIO.parameterTypes[ 0 ] ) {
-          return false;
-        }
-        if ( !this.parameterTypes[ 0 ].equals( OtherPropertyIO.parameterTypes[ 0 ] ) ) {
-          return false;
-        }
-        return this.supertype.equals( OtherPropertyIO.supertype ) && OtherPropertyIO.supertype.equals( this.supertype );
       }
     } );
   }

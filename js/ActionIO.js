@@ -12,7 +12,7 @@ define( function( require ) {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
@@ -31,20 +31,21 @@ define( function( require ) {
    */
   function ActionIO( parameterTypes ) {
 
-    assert && assert( Array.isArray( parameterTypes ) );
+    const ParametricTypeIO = getParametricTypeIO( ActionIO, 'ActionIO',  parameterTypes );
 
     /**
      * @param {Emitter} emitter
      * @param {string} phetioID
      * @constructor
+     * @extends {ParametricTypeIO}
      */
     const ActionIOImpl = function ActionIOImpl( emitter, phetioID ) {
       assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
-      ObjectIO.call( this, emitter, phetioID );
+      ParametricTypeIO.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( ObjectIO, 'ActionIO', ActionIOImpl, {
+    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, ActionIOImpl, {
       execute: {
         returnType: VoidIO,
         parameterTypes: parameterTypes,
@@ -61,35 +62,7 @@ define( function( require ) {
 
       events: [ 'emitted' ],
 
-      /**
-       * {function(new:ObjectIO)[]} - TypeIOs
-       */
-      parameterTypes: parameterTypes,
-
-      validator: ACTION_IO_VALIDATOR,
-
-      /**
-       * @override
-       * @param {function(new:ObjectIO)} OtherActionIO
-       */
-      equals: function( OtherActionIO ) {
-        if ( this.typeName !== OtherActionIO.typeName ) {
-          return false;
-        }
-        if ( this.parameterTypes.length !== OtherActionIO.parameterTypes.length ) {
-          return false;
-        }
-        for ( let i = 0; i < this.parameterTypes.length; i++ ) {
-          const thisParameterType = this.parameterTypes[ i ];
-          const otherParameterType = OtherActionIO.parameterTypes[ i ];
-
-          // TODO: is having the reciprocal here overkill?  https://github.com/phetsims/phet-io/issues/1534
-          if ( !thisParameterType.equals( otherParameterType ) || !otherParameterType.equals( thisParameterType ) ) {
-            return false;
-          }
-        }
-        return this.supertype.equals( OtherActionIO.supertype ) && OtherActionIO.supertype.equals( this.supertype );
-      }
+      validator: ACTION_IO_VALIDATOR
     } );
   }
 

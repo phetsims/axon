@@ -17,20 +17,21 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var ActionIO = require( 'AXON/ActionIO' );
-  var axon = require( 'AXON/axon' );
-  var FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
+  const ActionIO = require( 'AXON/ActionIO' );
+  const axon = require( 'AXON/axon' );
+  const FunctionIO = require( 'TANDEM/types/FunctionIO' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // constants
   const EMITTER_IO_VALIDATOR = {
     isValidValue: v => {
-      var Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
+      const Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
       return v instanceof Emitter;
     }
   };
@@ -47,18 +48,20 @@ define( function( require ) {
 
     const ActionIOImpl = ActionIO( parameterTypes );
 
+    const typeName = getParametricTypeIO.getDefaultParametricTypeName( 'EmitterIO', parameterTypes );
+
     /**
      * @param {Emitter} emitter
      * @param {string} phetioID
      * @constructor
      */
-    var EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
+    const EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
       assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
       ActionIOImpl.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( ActionIOImpl, 'EmitterIO', EmitterIOImpl, {
+    return phetioInherit( ActionIOImpl, typeName, EmitterIOImpl, {
       addListener: {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],

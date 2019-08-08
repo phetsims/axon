@@ -6,19 +6,20 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
-  var VoidIO = require( 'TANDEM/types/VoidIO' );
+  const axon = require( 'AXON/axon' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const PropertyIO = require( 'AXON/PropertyIO' );
+  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // constants
   const PROPERTY_IO_VALIDATOR = {
     isValidValue: v => {
-      var DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
+      const DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
       return v instanceof DerivedProperty;
     }
   };
@@ -32,7 +33,9 @@ define( function( require ) {
   function DerivedPropertyIO( parameterType ) {
 
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-    var PropertyIOImpl = PropertyIO( parameterType );
+    const PropertyIOImpl = PropertyIO( parameterType );
+
+    const typeName = getParametricTypeIO.getDefaultParametricTypeName( 'DerivedPropertyIO', [ parameterType ] );
 
     /**
      * This type constructor is parameterized based on the parameterType.
@@ -41,12 +44,12 @@ define( function( require ) {
      * @param {string} phetioID
      * @constructor
      */
-    var DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
+    const DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
       assert && assert( !!parameterType, 'DerivedPropertyIO needs parameterType' );
 
       PropertyIOImpl.call( this, derivedProperty, phetioID );
     };
-    phetioInherit( PropertyIOImpl, 'DerivedPropertyIO', DerivedPropertyIOImpl, {
+    phetioInherit( PropertyIOImpl, typeName, DerivedPropertyIOImpl, {
 
       setValue: {
         returnType: VoidIO,
@@ -60,9 +63,6 @@ define( function( require ) {
     }, {
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
-
-      // Used to generate the unique parametric typename for each PropertyIO
-      parameterTypes: [ parameterType ],
 
       validator: PROPERTY_IO_VALIDATOR
     } );

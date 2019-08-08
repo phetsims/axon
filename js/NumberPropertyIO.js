@@ -6,23 +6,22 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var NumberIO = require( 'TANDEM/types/NumberIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var PropertyIO = require( 'AXON/PropertyIO' );
-  var RangeIO = require( 'DOT/RangeIO' );
-  var validate = require( 'AXON/validate' );
+  const axon = require( 'AXON/axon' );
+  const NumberIO = require( 'TANDEM/types/NumberIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const PropertyIO = require( 'AXON/PropertyIO' );
+  const RangeIO = require( 'DOT/RangeIO' );
+  const validate = require( 'AXON/validate' );
 
   // constants
-  var VALUE_TYPE = NumberIO; // It's a NumberProperty.
-  var PropertyIOImpl = PropertyIO( VALUE_TYPE );
+  const PropertyIOImpl = PropertyIO( NumberIO );
 
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
-  var VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
+  const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
   /**
    * @param {NumberProperty} numberProperty
@@ -39,7 +38,7 @@ define( function( require ) {
 
     validator: {
       isValidValue: v => {
-        var NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
+        const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
         return v instanceof NumberProperty;
       }
     },
@@ -53,7 +52,7 @@ define( function( require ) {
     toStateObject: function( numberProperty ) {
       validate( numberProperty, this.validator );
 
-      var parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
+      const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
       // conditionals to avoid keys with value "null" in state objects
       if ( numberProperty.numberType ) {
@@ -73,7 +72,7 @@ define( function( require ) {
      * @override
      */
     fromStateObject: function( stateObject ) {
-      var fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
+      const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.numberType = stateObject.numberType;
 
       // Create Range instance if defined, otherwise preserve value of null or undefined.
