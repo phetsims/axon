@@ -195,13 +195,13 @@ define( require => {
      */
     static getPhetioDocumentation( currentPhetioDocumentation, parameters ) {
       const paramToDocString = param => {
-        var docText = param.phetioDocumentation ? '. ' + param.phetioDocumentation : '';
+        var docText = param.phetioDocumentation && !_.endsWith( param.phetioDocumentation, '.' ) ? '. ' + param.phetioDocumentation : '';
 
         return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
       };
 
-      return currentPhetioDocumentation + ( parameters.length === 0 ? ' No arguments.' : ' The arguments are:<br>' +
-             '<ol>' + parameters.map( paramToDocString ).join( '\n' ) + '</ol>' );
+      return currentPhetioDocumentation + ( parameters.length === 0 ? ' No arguments.' : ' The arguments are:<br/>' +
+             '<ol>' + parameters.map( paramToDocString ).join( '<br/>' ) + '</ol>' );
     }
 
     /**
