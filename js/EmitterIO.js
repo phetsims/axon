@@ -24,7 +24,7 @@ define( require => {
   const ActionIO = require( 'AXON/ActionIO' );
   const axon = require( 'AXON/axon' );
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
@@ -48,7 +48,7 @@ define( require => {
 
     const ActionIOImpl = ActionIO( parameterTypes );
 
-    const typeName = getParametricTypeIO.getDefaultParametricTypeName( 'EmitterIO', parameterTypes );
+    const typeName = ParametricTypeIO.getDefaultParametricTypeName( 'EmitterIO', parameterTypes );
 
     /**
      * @param {Emitter} emitter

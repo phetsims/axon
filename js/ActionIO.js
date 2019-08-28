@@ -12,7 +12,7 @@ define( function( require ) {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
@@ -31,21 +31,21 @@ define( function( require ) {
    */
   function ActionIO( parameterTypes ) {
 
-    const ParametricTypeIO = getParametricTypeIO( ActionIO, 'ActionIO',  parameterTypes );
+    const ParametricTypeImplIO = ParametricTypeIO( ActionIO, 'ActionIO',  parameterTypes );
 
     /**
      * @param {Emitter} emitter
      * @param {string} phetioID
      * @constructor
-     * @extends {ParametricTypeIO}
+     * @extends {ParametricTypeImplIO}
      */
     const ActionIOImpl = function ActionIOImpl( emitter, phetioID ) {
       assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
-      ParametricTypeIO.call( this, emitter, phetioID );
+      ParametricTypeImplIO.call( this, emitter, phetioID );
     };
 
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, ActionIOImpl, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ActionIOImpl, {
       execute: {
         returnType: VoidIO,
         parameterTypes: parameterTypes,

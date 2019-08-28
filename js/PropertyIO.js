@@ -12,7 +12,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const NullableIO = require( 'TANDEM/types/NullableIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const Property = require( 'AXON/Property' );
@@ -26,7 +26,7 @@ define( require => {
    */
   function PropertyIO( parameterType ) {
 
-    const ParametricTypeIO = getParametricTypeIO( PropertyIO, 'PropertyIO', [ parameterType ] );
+    const ParametricTypeImplIO = ParametricTypeIO( PropertyIO, 'PropertyIO', [ parameterType ] );
 
     /**
      * @param {Property} property
@@ -38,10 +38,10 @@ define( require => {
       assert && assert( property, 'Property should exist' );
       assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
-      ParametricTypeIO.call( this, property, phetioID );
+      ParametricTypeImplIO.call( this, property, phetioID );
     };
 
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, PropertyIOImpl, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, PropertyIOImpl, {
       getValue: {
         returnType: parameterType,
         parameterTypes: [],

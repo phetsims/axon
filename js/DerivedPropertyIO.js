@@ -11,7 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
@@ -35,7 +35,7 @@ define( require => {
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
     const PropertyIOImpl = PropertyIO( parameterType );
 
-    const typeName = getParametricTypeIO.getDefaultParametricTypeName( 'DerivedPropertyIO', [ parameterType ] );
+    const typeName = ParametricTypeIO.getDefaultParametricTypeName( 'DerivedPropertyIO', [ parameterType ] );
 
     /**
      * This type constructor is parameterized based on the parameterType.
