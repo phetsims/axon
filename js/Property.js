@@ -121,6 +121,9 @@ define( require => {
       // @private {boolean} whether a deferred value has been set
       this.hasDeferredValue = false;
 
+      // @private {function|null} - closure over options for validation in set(), filled in below when assertions enabled
+      this.validate = null;
+
       // Assertions regarding value validation
       if ( assert ) {
         const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
@@ -133,16 +136,10 @@ define( require => {
         }
         ValidatorDef.validateValidator( validator );
 
-        // @private {function|null} - closure over options for validation in set()
         this.validate = value => validate( value, validator );
 
         // validate the initial value
         this.validate( value );
-      }
-      else {
-
-        // @private {function|null} - closure over options for validation in set()
-        this.validate = null;
       }
     }
 
