@@ -59,16 +59,6 @@ define( require => {
         options.isValidValue = () => true;
       }
 
-      const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
-
-      // Validate the value type's phetioType of the Property, not the PropertyIO itself.
-      // So for PropertyIO( BooleanIO ), assign this validator's phetioType to be BooleanIO's validator.
-      if ( validator.phetioType ) {
-        assert && assert( validator.phetioType.parameterTypes.length === 1, 'unexpected number of parameters for Property' );
-        validator.phetioType = validator.phetioType.parameterTypes[ 0 ];
-      }
-      assert && ValidatorDef.validateValidator( validator );
-
       assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
       if ( options.units ) {
         options.phetioEventMetadata = options.phetioEventMetadata || {};
@@ -88,12 +78,6 @@ define( require => {
       // useDeepEquality: true => Use the `equals` method on the values
       // useDeepEquality: false => Use === for equality test
       this.useDeepEquality = options.useDeepEquality;
-
-      // @private {function|false} - closure over options for validation in set()
-      this.validate = assert && ( value => validate( value, validator ) );
-
-      // validate the initial value
-      assert && this.validate( value );
 
       // When running as phet-io, if the tandem is specified, the type must be specified.
       // This assertion helps in instrumenting code that has the tandem but not type
@@ -136,6 +120,30 @@ define( require => {
 
       // @private {boolean} whether a deferred value has been set
       this.hasDeferredValue = false;
+
+      // Assertions regarding value validation
+      if ( assert ) {
+        const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+
+        // Validate the value type's phetioType of the Property, not the PropertyIO itself.
+        // For example, for PropertyIO( BooleanIO ), assign this validator's phetioType to be BooleanIO's validator.
+        if ( validator.phetioType ) {
+          assert( validator.phetioType.parameterTypes.length === 1, 'unexpected number of parameters for Property' );
+          validator.phetioType = validator.phetioType.parameterTypes[ 0 ];
+        }
+        ValidatorDef.validateValidator( validator );
+
+        // @private {function|null} - closure over options for validation in set()
+        this.validate = value => validate( value, validator );
+
+        // validate the initial value
+        this.validate( value );
+      }
+      else {
+
+        // @private {function|null} - closure over options for validation in set()
+        this.validate = null;
+      }
     }
 
     /**
