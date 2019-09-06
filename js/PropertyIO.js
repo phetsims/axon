@@ -12,9 +12,8 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const NullableIO = require( 'TANDEM/types/NullableIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const Property = require( 'AXON/Property' );
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
@@ -26,22 +25,80 @@ define( require => {
    */
   function PropertyIO( parameterType ) {
 
-    const ParametricTypeImplIO = ParametricTypeIO( PropertyIO, 'PropertyIO', [ parameterType ] );
-
     /**
      * @param {Property} property
      * @param {string} phetioID
      * @constructor
      */
-    var PropertyIOImpl = function PropertyIOImpl( property, phetioID ) {
-      assert && assert( !!parameterType, 'PropertyIO needs parameterType' );
-      assert && assert( property, 'Property should exist' );
-      assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
+    class PropertyIOImpl extends ObjectIO {
 
-      ParametricTypeImplIO.call( this, property, phetioID );
-    };
+      /**
+       * @param {Property} property
+       * @param {string} phetioID
+       */
+      constructor( property, phetioID ) {
+        assert && assert( !!parameterType, 'PropertyIO needs parameterType' );
+        assert && assert( property, 'Property should exist' );
+        assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
-    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, PropertyIOImpl, {
+        super( property, phetioID );
+      }
+
+      /**
+       * Encodes a Property phetioObject to a state.
+       * @param {Object} property
+       * @returns {Object} - a state object
+       */
+      static toStateObject( property ) {
+        validate( property, this.validator );
+        assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
+        var stateObject = {
+          value: parameterType.toStateObject( property.value )
+        };
+
+        // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
+        if ( property.validValues ) {
+          stateObject.validValues = property.validValues.map( function( v ) {
+            return parameterType.toStateObject( v );
+          } );
+        }
+
+        // Only supply units if they were specified, to avoid seeing "units: null" in so many properties, see https://github.com/phetsims/phet-io/issues/1315
+        if ( property.units ) {
+          stateObject.units = property.units;
+        }
+        return stateObject;
+      }
+
+      /**
+       * Decodes a state into a Property.
+       * @param {Object} stateObject
+       * @returns {Object}
+       */
+      static fromStateObject( stateObject ) {
+        return {
+          units: stateObject.units,
+          value: parameterType.fromStateObject( stateObject.value ),
+          validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
+            return parameterType.fromStateObject( v );
+          } )
+        };
+      }
+
+      /**
+       * Used to set the value when loading a state
+       * @param {Property} property
+       * @param {Object} fromStateObject
+       */
+      static setValue( property, fromStateObject ) {
+        validate( property, this.validator );
+        property.units = fromStateObject.units;
+        property.set( fromStateObject.value );
+        property.validValues = fromStateObject.validValues;
+      }
+    }
+
+    PropertyIOImpl.methods = {
       getValue: {
         returnType: parameterType,
         parameterTypes: [],
@@ -96,71 +153,20 @@ define( require => {
         },
         documentation: 'Removes a listener.'
       }
-    }, {
-      documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
-                     'traditional listener pattern in that added listeners also receive a callback with the current value ' +
-                     'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
-      methodOrder: [ 'link', 'lazyLink' ],
-      validator: { valueType: Property },
+    };
 
-      events: [ 'changed' ],
+    PropertyIOImpl.documentation = 'Observable values that send out notifications when the value changes. This differs from the ' +
+                                   'traditional listener pattern in that added listeners also receive a callback with the current value ' +
+                                   'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.';
+    PropertyIOImpl.methodOrder = [ 'link', 'lazyLink' ];
+    PropertyIOImpl.validator = { valueType: Property };
+    PropertyIOImpl.events = [ 'changed' ];
+    PropertyIOImpl.typeName = `PropertyIO.<${parameterType.typeName}>`;
+    PropertyIOImpl.parameterType = parameterType;
+    ObjectIO.validateSubtype( PropertyIOImpl );
 
-      /**
-       * Encodes a Property phetioObject to a state.
-       * @param {Object} property
-       * @returns {Object} - a state object
-       */
-      toStateObject: function( property ) {
-        validate( property, this.validator );
-        assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
-        var stateObject = {
-          value: parameterType.toStateObject( property.value )
-        };
-
-        // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-        if ( property.validValues ) {
-          stateObject.validValues = property.validValues.map( function( v ) {
-            return parameterType.toStateObject( v );
-          } );
-        }
-
-        // Only supply units if they were specified, to avoid seeing "units: null" in so many properties, see https://github.com/phetsims/phet-io/issues/1315
-        if ( property.units ) {
-          stateObject.units = property.units;
-        }
-        return stateObject;
-      },
-
-      /**
-       * Decodes a state into a Property.
-       * @param {Object} stateObject
-       * @returns {Object}
-       */
-      fromStateObject: function( stateObject ) {
-        return {
-          units: stateObject.units,
-          value: parameterType.fromStateObject( stateObject.value ),
-          validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
-            return parameterType.fromStateObject( v );
-          } )
-        };
-      },
-
-      /**
-       * Used to set the value when loading a state
-       * @param {Property} property
-       * @param {Object} fromStateObject
-       */
-      setValue: function( property, fromStateObject ) {
-        validate( property, this.validator );
-        property.units = fromStateObject.units;
-        property.set( fromStateObject.value );
-        property.validValues = fromStateObject.validValues;
-      }
-    } );
+    return PropertyIOImpl;
   }
 
-  axon.register( 'PropertyIO', PropertyIO );
-
-  return PropertyIO;
+  return axon.register( 'PropertyIO', PropertyIO );
 } );

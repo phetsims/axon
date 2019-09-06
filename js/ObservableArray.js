@@ -43,8 +43,8 @@ define( function( require ) {
       tandem: Tandem.optional
     }, options );
 
-    assert && assert( options.phetioType && options.phetioType.parameterTypes && options.phetioType.parameterTypes.length === 1,
-      'ObservableArray\'s phetioType should only have one parameterType' );
+    assert && assert( options.phetioType && options.phetioType.parameterType,
+      'ObservableArray\'s phetioType should have a parameterType' );
 
     this.allowDuplicates = options.allowDuplicates; // @private
 
@@ -140,7 +140,7 @@ define( function( require ) {
     _fireItemAdded: function( item ) {
       var self = this;
       this.phetioStartEvent( 'itemAdded', function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+        return self.phetioType.parameterType.toStateObject( item );
       } );
 
       //Signify that an item was added to the list
@@ -156,7 +156,7 @@ define( function( require ) {
     _fireItemRemoved: function( item ) {
       var self = this;
       this.phetioStartEvent( 'itemRemoved', function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+        return self.phetioType.parameterType.toStateObject( item );
       } );
 
       //Signify that an item was removed from the list

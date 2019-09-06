@@ -24,8 +24,7 @@ define( require => {
   const ActionIO = require( 'AXON/ActionIO' );
   const axon = require( 'AXON/axon' );
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // constants
@@ -45,23 +44,16 @@ define( require => {
    * @constructor
    */
   function EmitterIO( parameterTypes ) {
-
-    const ActionIOImpl = ActionIO( parameterTypes );
-
-    const typeName = ParametricTypeIO.getDefaultParametricTypeName( 'EmitterIO', parameterTypes );
+    assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
     /**
      * @param {Emitter} emitter
      * @param {string} phetioID
      * @constructor
      */
-    const EmitterIOImpl = function EmitterIOImpl( emitter, phetioID ) {
-      assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
+    class EmitterIOImpl extends ActionIO( parameterTypes ) {}
 
-      ActionIOImpl.call( this, emitter, phetioID );
-    };
-
-    return phetioInherit( ActionIOImpl, typeName, EmitterIOImpl, {
+    EmitterIOImpl.methods = {
       addListener: {
         returnType: VoidIO,
         parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
@@ -81,16 +73,15 @@ define( require => {
         documentation: 'Emits a single event to all listeners.',
         invocableForReadOnlyElements: false
       }
-    }, {
-      documentation: 'Emits when an event occurs and calls added listeners.',
+    };
 
-      /**
-       * {Array.<ObjectIO>} - typeIOs - signify to phetioInherit.typeName computation that this type is parametric
-       */
-      parameterTypes: parameterTypes,
+    EmitterIOImpl.documentation = 'Emits when an event occurs and calls added listeners.';
+    EmitterIOImpl.parameterTypes = parameterTypes;
+    EmitterIOImpl.validator = EMITTER_IO_VALIDATOR;
+    EmitterIOImpl.typeName = `EmitterIO.<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    ObjectIO.validateSubtype( EmitterIOImpl );
 
-      validator: EMITTER_IO_VALIDATOR
-    } );
+    return EmitterIOImpl;
   }
 
   /**
@@ -100,7 +91,5 @@ define( require => {
    */
   EmitterIO.outerTypeName = 'EmitterIO';
 
-  axon.register( 'EmitterIO', EmitterIO );
-
-  return EmitterIO;
+  return axon.register( 'EmitterIO', EmitterIO );
 } );

@@ -12,11 +12,10 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
-  const VoidIO = require( 'TANDEM/types/VoidIO' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const validate = require( 'AXON/validate' );
+  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // ifphetio
   const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
@@ -38,25 +37,42 @@ define( require => {
    * @constructor
    */
   function ObservableArrayIO( parameterType, options ) {
-
+    assert && assert( typeof parameterType === 'function', 'element type should be defined' );
     options = _.extend( {
       isReferenceType: true
     }, options );
 
-    const ParametricTypeImplIO = ParametricTypeIO( ObservableArrayIO, 'ObservableArrayIO', [ parameterType ] );
+    class ObservableArrayIOImpl extends ObjectIO {
 
-    /**
-     * This type constructor is parameterized based on the parameterType
-     * @param {ObservableArray} observableArray
-     * @param {string} phetioID
-     * @constructor
-     */
-    const ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
-      assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
-      ParametricTypeImplIO.call( this, observableArray, phetioID );
-    };
+      static toStateObject( observableArray ) {
+        validate( observableArray, this.validator );
+        if ( !observableArray ) {
+          return observableArray;
+        }
+        return {
+          array: observableArray.getArray().map( function( item ) {
+            return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined, https://github.com/phetsims/axon/issues/245
+                   parameterType.toStateObject( item );
+          } )
+        };
+      }
 
-    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ObservableArrayIOImpl, {
+      static fromStateObject( stateObject ) {
+        const tempArray = [];
+        stateObject.array.forEach( function( parameterTypePhetioID ) {
+          tempArray.push( phetioEngine.getPhetioObject( parameterTypePhetioID ) );
+        } );
+        return tempArray;
+      }
+
+      static setValue( observableArray, fromStateObject ) {
+        validate( observableArray, this.validator );
+        observableArray.clear();
+        observableArray.addAll( fromStateObject );
+      }
+    }
+
+    ObservableArrayIOImpl.methods = {
 
       /**
        * Adds a listener to the observable array.
@@ -97,43 +113,18 @@ define( require => {
         },
         documentation: 'Get the number of elements in the observable array'
       }
-    }, {
+    };
 
-      toStateObject: function( observableArray ) {
-        validate( observableArray, this.validator );
-        if ( !observableArray ) {
-          return observableArray;
-        }
-        return {
-          array: observableArray.getArray().map( function( item ) {
-            return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined, https://github.com/phetsims/axon/issues/245
-                   parameterType.toStateObject( item );
-          } )
-        };
-      },
+    ObservableArrayIOImpl.documentation = 'An array that sends notifications when its values have changed.';
+    ObservableArrayIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
+    ObservableArrayIOImpl.events = [ 'itemAdded', 'itemRemoved' ];
+    ObservableArrayIOImpl.typeName = `ObservableArrayIO.<${parameterType.typeName}>`;
+    ObservableArrayIOImpl.parameterType = parameterType;
+    ObjectIO.validateSubtype( ObservableArrayIOImpl );
 
-      fromStateObject: function( stateObject ) {
-        const tempArray = [];
-        stateObject.array.forEach( function( parameterTypePhetioID ) {
-          tempArray.push( phetioEngine.getPhetioObject( parameterTypePhetioID ) );
-        } );
-        return tempArray;
-      },
-
-      setValue: function( observableArray, fromStateObject ) {
-        validate( observableArray, this.validator );
-        observableArray.clear();
-        observableArray.addAll( fromStateObject );
-      },
-
-      documentation: 'An array that sends notifications when its values have changed.',
-      validator: OBSERVABLE_ARRAY_VALIDATOR,
-      events: [ 'itemAdded', 'itemRemoved' ]
-    } );
+    return ObservableArrayIOImpl;
   }
 
-  axon.register( 'ObservableArrayIO', ObservableArrayIO );
-
-  return ObservableArrayIO;
+  return axon.register( 'ObservableArrayIO', ObservableArrayIO );
 } );
 

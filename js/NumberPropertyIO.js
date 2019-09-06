@@ -12,7 +12,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const RangeIO = require( 'DOT/RangeIO' );
   const validate = require( 'AXON/validate' );
@@ -23,25 +23,7 @@ define( require => {
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
-  /**
-   * @param {NumberProperty} numberProperty
-   * @param {string} phetioID
-   * @constructor
-   */
-  function NumberPropertyIO( numberProperty, phetioID ) {
-    PropertyIOImpl.call( this, numberProperty, phetioID );
-  }
-
-  axon.register( 'NumberPropertyIO', NumberPropertyIO );
-
-  phetioInherit( PropertyIOImpl, 'NumberPropertyIO', NumberPropertyIO, {}, {
-
-    validator: {
-      isValidValue: v => {
-        const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
-        return v instanceof NumberProperty;
-      }
-    },
+  class NumberPropertyIO extends PropertyIOImpl {
 
     /**
      * Encodes a NumberProperty instance to a state.
@@ -49,7 +31,7 @@ define( require => {
      * @returns {Object} - a state object
      * @override
      */
-    toStateObject: function( numberProperty ) {
+    static toStateObject( numberProperty ) {
       validate( numberProperty, this.validator );
 
       const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
@@ -63,7 +45,7 @@ define( require => {
         parentStateObject.range = RangeIO.toStateObject( numberProperty.range );
       }
       return parentStateObject;
-    },
+    }
 
     /**
      * Decodes a state into a NumberProperty.
@@ -71,34 +53,43 @@ define( require => {
      * @returns {Object}
      * @override
      */
-    fromStateObject: function( stateObject ) {
+    fromStateObject( stateObject ) {
       const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.numberType = stateObject.numberType;
 
       // Create Range instance if defined, otherwise preserve value of null or undefined.
       fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) : stateObject.range;
       return fromParentStateObject;
-    },
+    }
 
     /**
      * @param {NumberProperty} numberProperty
      * @param {Object} fromStateObject
      * @override
      */
-    setValue: function( numberProperty, fromStateObject ) {
+    setValue( numberProperty, fromStateObject ) {
       validate( numberProperty, this.validator );
 
       PropertyIOImpl.setValue( numberProperty, fromStateObject );
       numberProperty.range = fromStateObject.range;
       numberProperty.numberType = fromStateObject.numberType;
-    },
+    }
+  }
 
-    documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
-                   VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )'
-  } );
+  NumberPropertyIO.validator = {
+    isValidValue: v => {
+      const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
+      return v instanceof NumberProperty;
+    }
+  };
+
+  NumberPropertyIO.typeName = 'NumberPropertyIO';
+  NumberPropertyIO.documentation = 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
+                                   VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )';
 
   // we need this attribute to be defined even if the brand is not phetio, so we cannot rely on phetio inherit
   NumberPropertyIO.VALID_NUMBER_TYPES = VALID_NUMBER_TYPES;
+  ObjectIO.validateSubtype( NumberPropertyIO );
 
-  return NumberPropertyIO;
+  return axon.register( 'NumberPropertyIO', NumberPropertyIO );
 } );

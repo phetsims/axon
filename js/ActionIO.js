@@ -12,8 +12,7 @@ define( function( require ) {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   const ACTION_IO_VALIDATOR = {
@@ -30,22 +29,12 @@ define( function( require ) {
    * @returns {ActionIOImpl} - the parameterized type
    */
   function ActionIO( parameterTypes ) {
+    assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
 
-    const ParametricTypeImplIO = ParametricTypeIO( ActionIO, 'ActionIO',  parameterTypes );
+    class ActionIOImpl extends ObjectIO {
+    }
 
-    /**
-     * @param {Emitter} emitter
-     * @param {string} phetioID
-     * @constructor
-     * @extends {ParametricTypeImplIO}
-     */
-    const ActionIOImpl = function ActionIOImpl( emitter, phetioID ) {
-      assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
-
-      ParametricTypeImplIO.call( this, emitter, phetioID );
-    };
-
-    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ActionIOImpl, {
+    ActionIOImpl.methods = {
       execute: {
         returnType: VoidIO,
         parameterTypes: parameterTypes,
@@ -57,13 +46,15 @@ define( function( require ) {
         documentation: 'Executes the function the Action is wrapping.',
         invocableForReadOnlyElements: false
       }
-    }, {
-      documentation: 'Executes when an event occurs.',
+    };
 
-      events: [ 'emitted' ],
+    ActionIOImpl.documentation = 'Executes when an event occurs.';
+    ActionIOImpl.events = [ 'emitted' ];
+    ActionIOImpl.validator = ACTION_IO_VALIDATOR;
+    ActionIOImpl.typeName = `ActionIO.<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    ObjectIO.validateSubtype( ActionIOImpl );
 
-      validator: ACTION_IO_VALIDATOR
-    } );
+    return ActionIOImpl;
   }
 
   /**
@@ -73,8 +64,6 @@ define( function( require ) {
    */
   ActionIO.outerTypeName = 'ActionIO';
 
-  axon.register( 'ActionIO', ActionIO );
-
-  return ActionIO;
+  return axon.register( 'ActionIO', ActionIO );
 } );
 

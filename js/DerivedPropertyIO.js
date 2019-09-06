@@ -11,8 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
@@ -31,11 +30,9 @@ define( require => {
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    */
   function DerivedPropertyIO( parameterType ) {
-
+    assert && assert( !!parameterType, 'DerivedPropertyIO needs parameterType' );
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
     const PropertyIOImpl = PropertyIO( parameterType );
-
-    const typeName = ParametricTypeIO.getDefaultParametricTypeName( 'DerivedPropertyIO', [ parameterType ] );
 
     /**
      * This type constructor is parameterized based on the parameterType.
@@ -44,12 +41,9 @@ define( require => {
      * @param {string} phetioID
      * @constructor
      */
-    const DerivedPropertyIOImpl = function DerivedPropertyIOImpl( derivedProperty, phetioID ) {
-      assert && assert( !!parameterType, 'DerivedPropertyIO needs parameterType' );
+    class DerivedPropertyIOImpl extends PropertyIOImpl {}
 
-      PropertyIOImpl.call( this, derivedProperty, phetioID );
-    };
-    phetioInherit( PropertyIOImpl, typeName, DerivedPropertyIOImpl, {
+    DerivedPropertyIOImpl.methods = {
 
       setValue: {
         returnType: VoidIO,
@@ -60,21 +54,18 @@ define( require => {
         documentation: 'Errors out when you try to set a derived property.',
         invocableForReadOnlyElements: false
       }
-    }, {
-      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
-                     'instances',
-
-      validator: PROPERTY_IO_VALIDATOR
-    } );
+    };
+    DerivedPropertyIOImpl.documentation = 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
+                                          'instances';
+    DerivedPropertyIOImpl.validator = PROPERTY_IO_VALIDATOR;
+    DerivedPropertyIOImpl.typeName = `DerivedPropertyIO.<${parameterType.typeName}>`;
 
     // @public - allow type checking for DerivedPropertyIOImpl
-    // TODO: move this to static properties
     DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
+    ObjectIO.validateSubtype( DerivedPropertyIOImpl );
 
     return DerivedPropertyIOImpl;
   }
 
-  axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
-
-  return DerivedPropertyIO;
+  return axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 } );
