@@ -33,11 +33,15 @@ define( function( require ) {
         numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
         // {Range|null} range
-        range: null
+        range: null,
+
+        // {number|null} step - used by PhET-iO Studio to control this Property
+        step: null
       }, options );
 
       assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
       assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
+      assert && options.step && assert( typeof options.step === 'number', 'options.step must be of type step:' + options.step );
 
       // client cannot specify superclass options that are controlled by NumberProperty
       assert && assert( !options.valueType, 'NumberProperty sets valueType' );
@@ -56,6 +60,10 @@ define( function( require ) {
 
       // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
       this.range = options.range;
+
+      // @public {number|null (read-only - If defined, provides a step that the NumberProperty can be
+      // incremented/decremented by.
+      this.step = options.step;
 
       // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
       this.assertNumberPropertyValidateValue = assert && ( value => {

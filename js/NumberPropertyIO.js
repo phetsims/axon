@@ -44,6 +44,9 @@ define( require => {
       if ( numberProperty.range ) {
         parentStateObject.range = RangeIO.toStateObject( numberProperty.range );
       }
+      if ( numberProperty.step ) {
+        parentStateObject.step = numberProperty.step;
+      }
       return parentStateObject;
     }
 
@@ -56,6 +59,7 @@ define( require => {
     fromStateObject( stateObject ) {
       const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.numberType = stateObject.numberType;
+      fromParentStateObject.step = stateObject.step;
 
       // Create Range instance if defined, otherwise preserve value of null or undefined.
       fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) : stateObject.range;
@@ -72,6 +76,7 @@ define( require => {
 
       PropertyIOImpl.setValue( numberProperty, fromStateObject );
       numberProperty.range = fromStateObject.range;
+      numberProperty.step = fromStateObject.step;
       numberProperty.numberType = fromStateObject.numberType;
     }
   }
