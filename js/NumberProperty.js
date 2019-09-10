@@ -61,8 +61,8 @@ define( function( require ) {
       // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
       this.range = options.range;
 
-      // @public {number|null (read-only - If defined, provides a step that the NumberProperty can be
-      // incremented/decremented by.
+      // @public {number|null} (read-only - If defined, provides a step that the NumberProperty can be
+      // incremented/decremented.
       this.step = options.step;
 
       // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
