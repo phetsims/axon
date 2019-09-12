@@ -25,17 +25,11 @@ define( function( require ) {
   var DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );
 
   /**
-   * @param {Object[]} [array]
    * @param {Object} [options]
    * @constructor
    */
-  function ObservableArray( array, options ) {
-
-    // Special case that the user supplied options but no array
-    if ( array instanceof Object && !( Array.isArray( array ) ) ) {
-      options = array;
-      array = null;
-    }
+  function ObservableArray( options ) {
+    assert && assert( !Array.isArray( options ), 'ObservableArray cannot be initialized with values' );
 
     options = _.extend( {
       allowDuplicates: false, // are duplicate items allowed in the array?
@@ -48,7 +42,9 @@ define( function( require ) {
 
     this.allowDuplicates = options.allowDuplicates; // @private
 
-    this._array = array || []; // @private internal, do not access directly
+    this._options = options; // @private, for creating internal ObservableArray copies, see map/filter
+
+    this._array = []; // @private internal, do not access directly
     this._addedListeners = []; // @private listeners called when an item is added
     this._removedListeners = []; // @private listeners called when an item is removed
 
@@ -58,9 +54,6 @@ define( function( require ) {
       tandem: options.tandem.createTandem( 'lengthProperty' ),
       phetioReadOnly: true
     } );
-
-    // @private Store the initial array, if any, for resetting, see #4
-    this.initialArray = array ? array.slice() : [];
 
     PhetioObject.call( this, options );
   }
@@ -82,13 +75,7 @@ define( function( require ) {
      * @public
      */
     reset: function() {
-      for ( var i = 0; i < this._array.length; i++ ) {
-        this._fireItemRemoved( this._array[ i ] );
-      }
-      this._array = this.initialArray.slice();
-      for ( i = 0; i < this._array.length; i++ ) {
-        this._fireItemAdded( this._array[ i ] );
-      }
+      this.clear();
     },
 
     // @public
@@ -313,22 +300,26 @@ define( function( require ) {
 
     /**
      * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
-     * @param mapFunction
+     * @param {function(element:*):*} mapFunction - from Observable array element to something else
      * @returns {ObservableArray}
      * @public
      */
     map: function( mapFunction ) {
-      return new ObservableArray( this._array.map( mapFunction ) );
+      const observableArray = new ObservableArray( this._options );
+      this._array.map( mapFunction ).forEach( item => observableArray.push( item ) );
+      return observableArray;
     },
 
     /**
      * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
-     * @param predicate
+     * @param {function(element):boolean} predicate
      * @returns {ObservableArray}
      * @public
      */
     filter: function( predicate ) {
-      return new ObservableArray( this._array.filter( predicate ) );
+      const observableArray = new ObservableArray( this._options );
+      this._array.filter( predicate ).forEach( item => observableArray.push( item ) );
+      return observableArray;
     },
 
     /**

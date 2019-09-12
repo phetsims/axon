@@ -14,7 +14,10 @@ define( function( require ) {
   QUnit.module( 'Observable Array' );
 
   QUnit.test( 'Test observable array', function( assert ) {
-    var array = new ObservableArray( [ 'a', 'b', 'c' ] );
+    var array = new ObservableArray();
+    array.push( 'a' );
+    array.push( 'b' );
+    array.push( 'c' );
     var dChecker = function( item ) {
       assert.equal( item, 'd' );
     };
@@ -30,7 +33,11 @@ define( function( require ) {
 
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
     var myFish = [ 'angel', 'clown', 'mandarin', 'surgeon' ];
-    var myFish2 = new ObservableArray( [ 'angel', 'clown', 'mandarin', 'surgeon' ] );
+    var myFish2 = new ObservableArray();
+    myFish2.push( 'angel' );
+    myFish2.push( 'clown' );
+    myFish2.push( 'mandarin' );
+    myFish2.push( 'surgeon' );
     var addedCount = 0;
     var removedCount = 0;
     var addedOrder = [ 'drum', 'trumpet', 'parrot', 'anemone', 'blue' ];
