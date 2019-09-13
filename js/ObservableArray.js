@@ -227,6 +227,8 @@ define( function( require ) {
      * @public
      */
     pop: function() {
+
+      // TODO: should we really pop if the length was 0?  Or maybe this is OK?
       var item = this._array.pop();
       if ( item !== undefined ) {
         this.lengthProperty.set( this._array.length );
