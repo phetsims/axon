@@ -26,10 +26,7 @@ define( function( require ) {
 
     array.removeItemAddedListener( dChecker );
     array.reset();
-    assert.equal( array.get( 0 ), 'a' );
-    assert.equal( array.get( 1 ), 'b' );
-    assert.equal( array.get( 2 ), 'c' );
-    assert.equal( array.length, 3 );
+    assert.equal( array.length, 0 );
 
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
     var myFish = [ 'angel', 'clown', 'mandarin', 'surgeon' ];
