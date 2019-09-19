@@ -51,7 +51,8 @@ define( function( require ) {
     ActionIOImpl.documentation = 'Executes when an event occurs.';
     ActionIOImpl.events = [ 'emitted' ];
     ActionIOImpl.validator = ACTION_IO_VALIDATOR;
-    ActionIOImpl.typeName = `ActionIO.<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    ActionIOImpl.typeName = `ActionIO<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    ActionIOImpl.parameterTypes = parameterTypes;
     ObjectIO.validateSubtype( ActionIOImpl );
 
     return ActionIOImpl;

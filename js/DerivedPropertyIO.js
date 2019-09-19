@@ -58,7 +58,7 @@ define( require => {
     DerivedPropertyIOImpl.documentation = 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                                           'instances';
     DerivedPropertyIOImpl.validator = PROPERTY_IO_VALIDATOR;
-    DerivedPropertyIOImpl.typeName = `DerivedPropertyIO.<${parameterType.typeName}>`;
+    DerivedPropertyIOImpl.typeName = `DerivedPropertyIO<${parameterType.typeName}>`;
 
     // @public - allow type checking for DerivedPropertyIOImpl
     DerivedPropertyIOImpl.outerType = DerivedPropertyIO;

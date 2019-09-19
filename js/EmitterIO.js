@@ -78,7 +78,7 @@ define( require => {
     EmitterIOImpl.documentation = 'Emits when an event occurs and calls added listeners.';
     EmitterIOImpl.parameterTypes = parameterTypes;
     EmitterIOImpl.validator = EMITTER_IO_VALIDATOR;
-    EmitterIOImpl.typeName = `EmitterIO.<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    EmitterIOImpl.typeName = `EmitterIO<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
     ObjectIO.validateSubtype( EmitterIOImpl );
 
     return EmitterIOImpl;
