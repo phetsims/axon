@@ -27,14 +27,14 @@ define( require => {
 
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    var self = this;
+    const self = this;
 
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
 
     // When a dependency value changes, update the list of dependencies and call back to the callback
     dependencies.forEach( function( dependency, i ) {
-      var listener = function( value ) {
+      const listener = function( value ) {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
         if ( !self.isDisposed ) {
@@ -63,8 +63,8 @@ define( require => {
       assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
 
       // Unlink from dependent properties
-      for ( var i = 0; i < this.dependencies.length; i++ ) {
-        var dependency = this.dependencies[ i ];
+      for ( let i = 0; i < this.dependencies.length; i++ ) {
+        const dependency = this.dependencies[ i ];
         if ( !dependency.isDisposed ) {
           dependency.unlink( this.dependencyListeners[ i ] );
         }

@@ -52,7 +52,7 @@ define( require => {
       static toStateObject( property ) {
         validate( property, this.validator );
         assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
-        var stateObject = {
+        const stateObject = {
           value: parameterType.toStateObject( property.value )
         };
 

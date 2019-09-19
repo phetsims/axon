@@ -17,10 +17,10 @@ define( require => {
   QUnit.module( 'Property' );
 
   QUnit.test( 'Test unlink', function( assert ) {
-    var p = new Property( 1 );
-    var a = function( a ) {};
-    var b = function( b ) {};
-    var c = function( c ) {};
+    const p = new Property( 1 );
+    const a = function( a ) {};
+    const b = function( b ) {};
+    const c = function( c ) {};
     p.link( a );
     p.link( b );
     p.link( c );
@@ -32,9 +32,9 @@ define( require => {
   } );
 
   QUnit.test( 'Test Property.multilink', function( assert ) {
-    var a = new Property( 1 );
-    var b = new Property( 2 );
-    var callbacks = 0;
+    const a = new Property( 1 );
+    const b = new Property( 2 );
+    let callbacks = 0;
     Property.multilink( [ a, b ], function( a, b ) {
       callbacks++;
       assert.equal( a, 1, 'first value should pass through' );
@@ -44,9 +44,9 @@ define( require => {
   } );
 
   QUnit.test( 'Test Property.lazyMultilink', function( assert ) {
-    var a = new Property( 1 );
-    var b = new Property( 2 );
-    var callbacks = 0;
+    const a = new Property( 1 );
+    const b = new Property( 2 );
+    let callbacks = 0;
     Property.lazyMultilink( [ a, b ], function( a, b ) {
       callbacks++;
       assert.equal( a, 1 );
@@ -56,8 +56,8 @@ define( require => {
   } );
 
   QUnit.test( 'Test defer', function( assert ) {
-    var property = new Property( 0 );
-    var callbacks = 0;
+    const property = new Property( 0 );
+    let callbacks = 0;
     property.lazyLink( function( newValue, oldValue ) {
       callbacks++;
       assert.equal( newValue, 2, 'newValue should be the final value after the transaction' );
@@ -67,7 +67,7 @@ define( require => {
     property.value = 1;
     property.value = 2;
     assert.equal( property.value, 0, 'should have original value' );
-    var update = property.setDeferred( false );
+    const update = property.setDeferred( false );
     assert.equal( callbacks, 0, 'should not call back while deferred' );
     assert.equal( property.value, 2, 'should have new value' );
     update();
@@ -80,8 +80,8 @@ define( require => {
   } );
 
   QUnit.test( 'Property link parameters', function( assert ) {
-    var p = new Property( 1 );
-    var calls = [];
+    const p = new Property( 1 );
+    const calls = [];
     p.link( function( newValue, oldValue, property ) {
       calls.push( {
         newValue: newValue,
@@ -106,9 +106,9 @@ define( require => {
    * Make sure linking attributes and unlinking attributes works on Property
    */
   QUnit.test( 'Property.linkAttribute', function( assert ) {
-    var property = new Property( 7 );
-    var state = { age: 99 };
-    var listener = property.linkAttribute( state, 'age' );
+    const property = new Property( 7 );
+    const state = { age: 99 };
+    const listener = property.linkAttribute( state, 'age' );
     assert.equal( state.age, 7, 'link should synchronize values' );
     property.value = 8;
     assert.equal( state.age, 8, 'link should update values' );
@@ -122,8 +122,8 @@ define( require => {
     // Type that is specific to valueType tests
     function TestType() {}
 
-    var property = null;
-    var options = {};
+    let property = null;
+    let options = {};
 
     // valueType is a primitive type (typeof validation)
     options = {
@@ -229,8 +229,8 @@ define( require => {
   // Tests that can only run in phet-io mode
   if ( window.phet.phetio ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
-      var done = assert.async();
-      var tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
+      const done = assert.async();
+      const tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
       const phetioType = NumberPropertyIO;
       const propertyValue = 123;
       const validValues = [ 0, 1, 2, 3, propertyValue ];
@@ -242,7 +242,7 @@ define( require => {
         setTimeout( () => {
 
           // Run in the next frame after the object finished getting constructed
-          var stateObject = phetioType.toStateObject( instance );
+          const stateObject = phetioType.toStateObject( instance );
           assert.equal( stateObject.value, propertyValue, 'toStateObject should match' );
           assert.deepEqual( stateObject.validValues, validValues, 'toStateObject should match' );
           done();

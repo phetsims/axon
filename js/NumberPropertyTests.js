@@ -18,7 +18,7 @@ define( require => {
 
   QUnit.test( 'Test NumberProperty', function( assert ) {
 
-    var p = null;
+    let p = null;
 
     // valueType
     window.assert && assert.throws( function() {

@@ -16,7 +16,7 @@ define( require => {
   QUnit.module( 'BooleanProperty' );
   QUnit.test( 'BooleanProperty', function( assert ) {
 
-    var p = null;
+    let p = null;
 
     // isValidValue
     window.assert && assert.throws( function() {

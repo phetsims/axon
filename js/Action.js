@@ -195,7 +195,7 @@ define( require => {
      */
     static getPhetioDocumentation( currentPhetioDocumentation, parameters ) {
       const paramToDocString = param => {
-        var docText = param.phetioDocumentation && !_.endsWith( param.phetioDocumentation, '.' ) ? '. ' + param.phetioDocumentation : '';
+        const docText = param.phetioDocumentation && !_.endsWith( param.phetioDocumentation, '.' ) ? '. ' + param.phetioDocumentation : '';
 
         return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
       };

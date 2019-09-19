@@ -22,7 +22,7 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
 
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
-  var DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );
+  const DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );
 
   /**
    * @param {Object} [options]
@@ -97,7 +97,7 @@ define( require => {
      * @public
      */
     removeItemAddedListener: function( listener ) {
-      var index = this._addedListeners.indexOf( listener );
+      const index = this._addedListeners.indexOf( listener );
       assert && assert( index !== -1 ); // listener is registered
       this._addedListeners.splice( index, 1 );
     },
@@ -118,21 +118,21 @@ define( require => {
      * @public
      */
     removeItemRemovedListener: function( listener ) {
-      var index = this._removedListeners.indexOf( listener );
+      const index = this._removedListeners.indexOf( listener );
       assert && assert( index !== -1, 'Listener is still registered after removal' ); // listener is registered
       this._removedListeners.splice( index, 1 );
     },
 
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
-      var self = this;
+      const self = this;
       this.phetioStartEvent( 'itemAdded', function() {
         return self.phetioType.parameterType.toStateObject( item );
       } );
 
       //Signify that an item was added to the list
-      var copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
-      for ( var i = 0; i < copy.length; i++ ) {
+      const copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
+      for ( let i = 0; i < copy.length; i++ ) {
         copy[ i ]( item, this );
       }
 
@@ -141,14 +141,14 @@ define( require => {
 
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
-      var self = this;
+      const self = this;
       this.phetioStartEvent( 'itemRemoved', function() {
         return self.phetioType.parameterType.toStateObject( item );
       } );
 
       //Signify that an item was removed from the list
-      var copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
-      for ( var i = 0; i < copy.length; i++ ) {
+      const copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
+      for ( let i = 0; i < copy.length; i++ ) {
         copy[ i ]( item, this );
       }
 
@@ -172,7 +172,7 @@ define( require => {
      * @public
      */
     addAll: function( items ) {
-      for ( var i = 0; i < items.length; i++ ) {
+      for ( let i = 0; i < items.length; i++ ) {
         this.add( items[ i ] );
       }
     },
@@ -185,7 +185,7 @@ define( require => {
      * @public
      */
     remove: function( item ) {
-      var index = this._array.indexOf( item );
+      const index = this._array.indexOf( item );
       if ( index !== -1 ) {
         this._array.splice( index, 1 );
         this.lengthProperty.set( this._array.length );
@@ -201,7 +201,7 @@ define( require => {
      */
     removeAll: function( array ) {
       assert && assert( _.isArray( array ), 'array should be an array' );
-      for ( var i = 0; i < array.length; i++ ) {
+      for ( let i = 0; i < array.length; i++ ) {
         this.remove( array[ i ] );
       }
     },
@@ -229,7 +229,7 @@ define( require => {
     pop: function() {
 
       // TODO: should we really pop if the length was 0?  Or maybe this is OK?
-      var item = this._array.pop();
+      const item = this._array.pop();
       if ( item !== undefined ) {
         this.lengthProperty.set( this._array.length );
         this._fireItemRemoved( item );
@@ -243,7 +243,7 @@ define( require => {
      * @public
      */
     shift: function() {
-      var item = this._array.shift();
+      const item = this._array.shift();
       if ( item !== undefined ) {
         this.lengthProperty.set( this._array.length );
         this._fireItemRemoved( item );
@@ -331,8 +331,8 @@ define( require => {
      * @public
      */
     count: function( predicate ) {
-      var count = 0;
-      for ( var i = 0; i < this._array.length; i++ ) {
+      let count = 0;
+      for ( let i = 0; i < this._array.length; i++ ) {
         if ( predicate( this._array[ i ] ) ) {
           count++;
         }
@@ -367,7 +367,7 @@ define( require => {
      * @public
      */
     reduce: function( value, combiner ) {
-      for ( var i = 0; i < this._array.length; i++ ) {
+      for ( let i = 0; i < this._array.length; i++ ) {
         value = combiner( value, this._array[ i ] );
       }
       return value;
@@ -393,13 +393,13 @@ define( require => {
      * @public
      */
     splice: function( start, deleteCount, item1, item2, etc ) {
-      var deleted = this._array.splice.apply( this._array, arguments );
-      var args = Array.prototype.slice.call( arguments );
-      for ( var i = 0; i < deleted.length; i++ ) {
+      const deleted = this._array.splice.apply( this._array, arguments );
+      const args = Array.prototype.slice.call( arguments );
+      for ( let i = 0; i < deleted.length; i++ ) {
         this._fireItemRemoved( deleted[ i ] );
       }
 
-      for ( var k = 2; k < args.length; k++ ) {
+      for ( let k = 2; k < args.length; k++ ) {
         this._fireItemAdded( args[ k ] );
       }
       return deleted;
@@ -414,7 +414,7 @@ define( require => {
       assert && assert( random, 'random must be supplied' );
 
       // preserve the same _array reference in case any clients got a reference to it with getArray()
-      var shuffled = random.shuffle( this._array );
+      const shuffled = random.shuffle( this._array );
       this._array.length = 0;
       Array.prototype.push.apply( this._array, shuffled );
     }

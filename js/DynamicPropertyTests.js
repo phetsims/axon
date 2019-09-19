@@ -15,10 +15,10 @@ define( require => {
   QUnit.module( 'DynamicProperty' );
 
   QUnit.test( 'Basics', function( assert ) {
-    var aProperty = new Property( 5 ); // eslint-disable-line no-undef
-    var bProperty = new Property( 2 ); // eslint-disable-line no-undef
-    var propertyProperty = new Property( aProperty ); // eslint-disable-line no-undef
-    var dynamicProperty = new DynamicProperty( propertyProperty ); // eslint-disable-line no-undef
+    const aProperty = new Property( 5 ); // eslint-disable-line no-undef
+    const bProperty = new Property( 2 ); // eslint-disable-line no-undef
+    const propertyProperty = new Property( aProperty ); // eslint-disable-line no-undef
+    const dynamicProperty = new DynamicProperty( propertyProperty ); // eslint-disable-line no-undef
 
     assert.equal( dynamicProperty.value, aProperty.value );
 
@@ -34,14 +34,14 @@ define( require => {
   } );
 
   QUnit.test( 'Derive (string)', function( assert ) {
-    var a = {
+    const a = {
       property: new Property( 5 ) // eslint-disable-line no-undef
     };
-    var b = {
+    const b = {
       property: new Property( 2 ) // eslint-disable-line no-undef
     };
-    var mainProperty = new Property( a ); // eslint-disable-line no-undef
-    var dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
+    const mainProperty = new Property( a ); // eslint-disable-line no-undef
+    const dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
       derive: 'property'
     } );
 
@@ -59,14 +59,14 @@ define( require => {
   } );
 
   QUnit.test( 'Derive (function)', function( assert ) {
-    var a = {
+    const a = {
       property: new Property( 5 ) // eslint-disable-line no-undef
     };
-    var b = {
+    const b = {
       property: new Property( 2 ) // eslint-disable-line no-undef
     };
-    var mainProperty = new Property( a ); // eslint-disable-line no-undef
-    var dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
+    const mainProperty = new Property( a ); // eslint-disable-line no-undef
+    const dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
       derive: function( ob ) {
         return ob.property;
       }
@@ -86,10 +86,10 @@ define( require => {
   } );
 
   QUnit.test( 'Bidirectional', function( assert ) {
-    var firstProperty = new Property( 5 ); // eslint-disable-line no-undef
-    var secondProperty = new Property( 10 ); // eslint-disable-line no-undef
-    var numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
-    var dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } ); // eslint-disable-line no-undef
+    const firstProperty = new Property( 5 ); // eslint-disable-line no-undef
+    const secondProperty = new Property( 10 ); // eslint-disable-line no-undef
+    const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
+    const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } ); // eslint-disable-line no-undef
 
     dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
     assert.equal( firstProperty.value, 2 );
@@ -103,10 +103,10 @@ define( require => {
   } );
 
   QUnit.test( 'Mapping (with bidirectional)', function( assert ) {
-    var firstProperty = new Property( 5 ); // eslint-disable-line no-undef
-    var secondProperty = new Property( 10 ); // eslint-disable-line no-undef
-    var numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
-    var dynamicProperty = new DynamicProperty( numberPropertyProperty, { // eslint-disable-line no-undef
+    const firstProperty = new Property( 5 ); // eslint-disable-line no-undef
+    const secondProperty = new Property( 10 ); // eslint-disable-line no-undef
+    const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
+    const dynamicProperty = new DynamicProperty( numberPropertyProperty, { // eslint-disable-line no-undef
       bidirectional: true,
       map: function( number ) {
         return '' + number;
@@ -131,9 +131,9 @@ define( require => {
   } );
 
   QUnit.test( 'Attempted setters to nonbidrectional', function( assert ) {
-    var property = new Property( 5 );
-    var propertyProperty = new Property( property );
-    var dynamicProperty = new DynamicProperty( propertyProperty );
+    const property = new Property( 5 );
+    const propertyProperty = new Property( property );
+    const dynamicProperty = new DynamicProperty( propertyProperty );
 
     window.assert && assert.throws( function() {
       dynamicProperty.value = 10;
@@ -147,17 +147,17 @@ define( require => {
   } );
 
   QUnit.test( 'Bidirectional prevention of pingponging', function( assert ) {
-    var callbackCount = 0;
+    let callbackCount = 0;
 
-    var sourceProperty = new Property( 0 );
+    const sourceProperty = new Property( 0 );
     sourceProperty.link( function() {
       if ( callbackCount++ > 500 ) {
         throw new Error( 'Infinite loop detected' );
       }
     } );
 
-    var wrapperProperty = new Property( sourceProperty );
-    var dynamicProperty = new DynamicProperty( wrapperProperty, {
+    const wrapperProperty = new Property( sourceProperty );
+    const dynamicProperty = new DynamicProperty( wrapperProperty, {
       bidirectional: true,
       // NOT a true inverse
       map: n => n + 2,

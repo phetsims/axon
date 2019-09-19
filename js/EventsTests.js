@@ -14,11 +14,11 @@ define( require => {
   QUnit.module( 'Events' );
 
   QUnit.test( 'Basics', function( assert ) {
-    var events = new Events(); // eslint-disable-line no-undef
+    const events = new Events(); // eslint-disable-line no-undef
 
     events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
-    var aCount = 0;
+    let aCount = 0;
 
     function incrementA() { aCount++; }
 
@@ -37,9 +37,9 @@ define( require => {
 
     assert.equal( events.hasListener( 'a', incrementA ), false, 'Should not have increment listener after off()' );
 
-    var person = new Events( { name: 'larry', age: '100' } );
-    var count = 0;
-    var listener = function( person ) {
+    const person = new Events( { name: 'larry', age: '100' } );
+    let count = 0;
+    const listener = function( person ) {
       count = count + 1;
     };
     person.on( 'reset-all', listener );
@@ -60,8 +60,8 @@ define( require => {
 
     assert.equal( count, 3, 'Triggering more events should not call back because we have removed the listener' );
 
-    var planetName = '?';
-    var planetRadius = '?';
+    let planetName = '?';
+    let planetRadius = '?';
     person.on( 'planet-discovered', function( name, radius ) {
       planetName = name;
       planetRadius = radius;
@@ -74,11 +74,11 @@ define( require => {
   } );
 
   QUnit.test( 'Static Basics', function( assert ) {
-    var events = new Events(); // eslint-disable-line no-undef
+    const events = new Events(); // eslint-disable-line no-undef
 
     events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
-    var aCount = 0;
+    let aCount = 0;
 
     function incrementA() { aCount++; }
 

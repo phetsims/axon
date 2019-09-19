@@ -14,11 +14,11 @@ define( require => {
   QUnit.module( 'Observable Array' );
 
   QUnit.test( 'Test observable array', function( assert ) {
-    var array = new ObservableArray();
+    const array = new ObservableArray();
     array.push( 'a' );
     array.push( 'b' );
     array.push( 'c' );
-    var dChecker = function( item ) {
+    const dChecker = function( item ) {
       assert.equal( item, 'd' );
     };
     array.addItemAddedListener( dChecker );
@@ -29,16 +29,16 @@ define( require => {
     assert.equal( array.length, 0 );
 
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-    var myFish = [ 'angel', 'clown', 'mandarin', 'surgeon' ];
-    var myFish2 = new ObservableArray();
+    const myFish = [ 'angel', 'clown', 'mandarin', 'surgeon' ];
+    const myFish2 = new ObservableArray();
     myFish2.push( 'angel' );
     myFish2.push( 'clown' );
     myFish2.push( 'mandarin' );
     myFish2.push( 'surgeon' );
-    var addedCount = 0;
-    var removedCount = 0;
-    var addedOrder = [ 'drum', 'trumpet', 'parrot', 'anemone', 'blue' ];
-    var removedOrder = [ 'mandarin', 'drum', 'angel', 'clown', 'blue', 'trumpet' ];
+    let addedCount = 0;
+    let removedCount = 0;
+    const addedOrder = [ 'drum', 'trumpet', 'parrot', 'anemone', 'blue' ];
+    const removedOrder = [ 'mandarin', 'drum', 'angel', 'clown', 'blue', 'trumpet' ];
     myFish2.addItemAddedListener( function( item ) {
       assert.equal( item, addedOrder[ addedCount ], 'wrong item added' );
       addedCount++;
@@ -51,8 +51,8 @@ define( require => {
     assert.deepEqual( myFish, myFish2.getArray(), 'arrays should match to start' );
 
     // removes 0 elements from index 2, and inserts 'drum'
-    var removed = myFish.splice( 2, 0, 'drum' );
-    var removed2 = myFish2.splice( 2, 0, 'drum' );
+    let removed = myFish.splice( 2, 0, 'drum' );
+    let removed2 = myFish2.splice( 2, 0, 'drum' );
     assert.deepEqual( myFish, myFish2.getArray(), 'arrays should match' );
     assert.deepEqual( removed, removed2, 'removed should be equal' );
 // myFish is ['angel', 'clown', 'drum', 'mandarin', 'surgeon']

@@ -16,7 +16,7 @@ define( require => {
   QUnit.module( 'StringProperty' );
   QUnit.test( 'Test StringProperty', function( assert ) {
 
-    var p = null;
+    let p = null;
 
     // valueType
     window.assert && assert.throws( function() {
