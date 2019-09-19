@@ -5,7 +5,7 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
@@ -14,7 +14,7 @@ define( function( require ) {
   const NumberIO = require( 'TANDEM/types/NumberIO' );
   const NumberProperty = require( 'AXON/NumberProperty' );
   const Tandem = require( 'TANDEM/Tandem' );
-  var Transaction = require( 'AXON/Transaction' );
+  const Transaction = require( 'AXON/Transaction' );
 
   QUnit.module( 'Transaction' );
 

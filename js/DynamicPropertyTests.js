@@ -5,12 +5,12 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var DynamicProperty = require( 'AXON/DynamicProperty' );
-  var Property = require( 'AXON/Property' );
+  const DynamicProperty = require( 'AXON/DynamicProperty' );
+  const Property = require( 'AXON/Property' );
 
   QUnit.module( 'DynamicProperty' );
 

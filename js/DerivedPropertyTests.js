@@ -5,12 +5,12 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var DerivedProperty = require( 'AXON/DerivedProperty' );
-  var Property = require( 'AXON/Property' );
+  const DerivedProperty = require( 'AXON/DerivedProperty' );
+  const Property = require( 'AXON/Property' );
 
   QUnit.module( 'DerivedProperty' );
 

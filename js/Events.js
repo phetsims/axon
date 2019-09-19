@@ -6,12 +6,12 @@
  * @deprecated - use Emitter.js instead
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var cleanArray = require( 'PHET_CORE/cleanArray' );
+  const axon = require( 'AXON/axon' );
+  const cleanArray = require( 'PHET_CORE/cleanArray' );
 
   /**
    * @constructor

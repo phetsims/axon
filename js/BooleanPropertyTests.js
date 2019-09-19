@@ -6,12 +6,12 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
   const BooleanIO = require( 'TANDEM/types/BooleanIO' );
-  var BooleanProperty = require( 'AXON/BooleanProperty' );
+  const BooleanProperty = require( 'AXON/BooleanProperty' );
 
   QUnit.module( 'BooleanProperty' );
   QUnit.test( 'BooleanProperty', function( assert ) {

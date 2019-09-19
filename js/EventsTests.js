@@ -5,11 +5,11 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var Events = require( 'AXON/Events' );
+  const Events = require( 'AXON/Events' );
 
   QUnit.module( 'Events' );
 

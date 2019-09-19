@@ -6,12 +6,12 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var StringIO = require( 'TANDEM/types/StringIO' );
-  var StringProperty = require( 'AXON/StringProperty' );
+  const StringIO = require( 'TANDEM/types/StringIO' );
+  const StringProperty = require( 'AXON/StringProperty' );
 
   QUnit.module( 'StringProperty' );
   QUnit.test( 'Test StringProperty', function( assert ) {

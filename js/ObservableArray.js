@@ -9,17 +9,17 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var NumberProperty = require( 'AXON/NumberProperty' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
-  var PhetioObject = require( 'TANDEM/PhetioObject' );
-  var Tandem = require( 'TANDEM/Tandem' );
+  const axon = require( 'AXON/axon' );
+  const inherit = require( 'PHET_CORE/inherit' );
+  const NumberProperty = require( 'AXON/NumberProperty' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
+  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Tandem = require( 'TANDEM/Tandem' );
 
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
   var DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );

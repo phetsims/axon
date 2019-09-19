@@ -5,11 +5,11 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var ObservableArray = require( 'AXON/ObservableArray' );
+  const ObservableArray = require( 'AXON/ObservableArray' );
 
   QUnit.module( 'Observable Array' );
 

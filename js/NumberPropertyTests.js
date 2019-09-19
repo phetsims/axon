@@ -6,13 +6,13 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var NumberIO = require( 'TANDEM/types/NumberIO' );
-  var NumberProperty = require( 'AXON/NumberProperty' );
-  var Range = require( 'DOT/Range' );
+  const NumberIO = require( 'TANDEM/types/NumberIO' );
+  const NumberProperty = require( 'AXON/NumberProperty' );
+  const Range = require( 'DOT/Range' );
 
   QUnit.module( 'NumberProperty' );
 

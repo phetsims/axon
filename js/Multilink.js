@@ -8,12 +8,12 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
-  var inherit = require( 'PHET_CORE/inherit' );
+  const axon = require( 'AXON/axon' );
+  const inherit = require( 'PHET_CORE/inherit' );
 
   /**
    * @param {Property[]} dependencies

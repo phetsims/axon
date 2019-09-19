@@ -5,11 +5,11 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var axon = require( 'AXON/axon' );
+  const axon = require( 'AXON/axon' );
 
   var units = {
     values: [
