@@ -40,7 +40,7 @@ define( function( require ) {
       birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { validValues: Birds.VALUES } );
     }, 'EnumerationProperty does not support validValues' );
     window.assert && assert.throws( function() {
-      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { isValidValue: () => { return true; } } );
+      birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { isValidValue: () => true } );
     }, 'EnumerationProperty does not support isValidValue' );
 
     // superclass options that are controlled by EnumerationProperty
