@@ -20,6 +20,8 @@ define( require => {
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // constants
+  const VALIDATE_OPTIONS_FALSE = { validateOptions: false };
+
   // Simulations have thousands of Emitters, so we re-use objects where possible.
   const EMPTY_ARRAY = [];
   assert && Object.freeze( EMPTY_ARRAY );
@@ -122,9 +124,6 @@ define( require => {
       for ( let i = 0; i < parameters.length; i++ ) {
         const parameter = parameters[ i ]; // metadata about a single parameter
 
-        assert && assert( parameter.validateOptionsOnValidateValue === undefined,
-          'Action sets its own validateOptionsOnValidateValue for each argument type'
-        );
         assert && assert( Object.getPrototypeOf( parameter ) === Object.prototype,
           'Extra prototype on parameter object is a code smell' );
 
@@ -146,11 +145,6 @@ define( require => {
         for ( const key in parameter ) {
           assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
         }
-
-        // TODO: is this taking up too much memory? Does this create too much garbage? https://github.com/phetsims/axon/issues/257
-        parameters[ i ] = _.extend( {
-          validateOptionsOnValidateValue: false
-        }, parameter );
 
         // Changing after construction indicates a logic error.
         assert && Object.freeze( parameters[ i ] );
@@ -229,11 +223,11 @@ define( require => {
         );
         for ( let i = 0; i < this._parameters.length; i++ ) {
           const parameter = this._parameters[ i ];
-          validate( arguments[ i ], parameter );
+          validate( arguments[ i ], parameter, VALIDATE_OPTIONS_FALSE );
 
           // valueType overrides the phetioType validator so we don't use that one if there is a valueType
           if ( parameter.phetioType && !this._parameters.valueType ) {
-            validate( arguments[ i ], parameter.phetioType.validator );
+            validate( arguments[ i ], parameter.phetioType.validator, VALIDATE_OPTIONS_FALSE );
           }
         }
       }

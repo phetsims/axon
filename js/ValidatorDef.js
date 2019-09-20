@@ -77,19 +77,6 @@ define( require => {
     // {function(new: ObjectIO)} - A TypeIO used to specify the public typeing for PhET-iO. Each TypeIO must have a
     // `validator` key specified that can be used for validation. See ObjectIO for an example.
     'phetioType'
-
-    /**************************************
-     * Additionally, validation will always check the validator itself.  However, for types like Property and Emitter,
-     * re-checking the validator every time the Property value changes or the Emitter emits wastes time. Hence cases like
-     * those can opt-out by specifying:
-     *
-     * validateOptionsOnValidateValue: false
-     *
-     * Note: this should not be a key in VALIDATOR_KEYS because the keys are reserved for checking the value itself,
-     * see implementation and usage of containsValidatorKey.  Our "definition" of a validator is the makeup of the keys
-     * above, validateOptionsOnValidateValue is more of a meta-option that is not for checking the value itself, but
-     * whether to check the validator at the same time.
-     *********************/
   ];
 
   const ValidatorDef = {
@@ -238,10 +225,19 @@ define( require => {
      */
     isValueValid( value, validator, options ) {
 
-      options = options || ASSERTIONS_FALSE;
+      options = _.extend( {
+
+        // {boolean} - By default validation will always check the validity of the  validator itself.  However, for types like
+        // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
+        // wastes cpu. Hence cases like those can opt-out
+        validateOptions: true,
+
+        // if true, throw an assertion "instead" of waiting to return a boolean
+        assertions: false
+      }, options );
 
       // Use the same policy for whether to throw assertions when checking the validator itself.
-      if ( validator.validateOptionsOnValidateValue !== false && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
+      if ( options.validateOptions !== false && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
         assert && options.assertions && assert( false, 'Invalid validator' );
         return false;
       }

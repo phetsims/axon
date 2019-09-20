@@ -165,7 +165,7 @@ define( require => {
     assert.ok( ValidatorDef.isValueValid( [ [], [], [], [] ], { arrayElementType: [ Array ] } ), 'array array' );
 
     window.assert && assert.throws( () => {
-      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ], }, ASSERTIONS_TRUE );
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ] }, ASSERTIONS_TRUE );
     }, 'undefined is not a valid arrayElementType' );
 
     window.assert && assert.throws( () => {

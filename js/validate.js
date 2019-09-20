@@ -17,15 +17,16 @@ define( require => {
    * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
    * @param {*} value
    * @param {ValidatorDef} validator
+   * @param {Object} [options] - see ValidatorDef.isValueValid()
    * @returns {*} - returns the input value for chaining
    * @public
    */
-  const validate = ( value, validator ) => {
+  const validate = ( value, validator, options ) => {
 
     if ( assert ) {
 
       // Throws an error if not valid
-      ValidatorDef.isValueValid( value, validator, { assertions: true } );
+      ValidatorDef.isValueValid( value, validator, _.extend( { assertions: true }, options ) );
     }
     return value;
   };

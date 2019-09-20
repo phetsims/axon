@@ -19,6 +19,9 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
+  // constants
+  const VALIDATE_OPTIONS_FALSE = { validateOptions: false };
+
   // variables
   let globalId = 0; // autoincremented for unique IDs
 
@@ -45,10 +48,6 @@ define( require => {
         // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
         // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
         reentrant: false,
-
-        // By default, check the options once in the constructor, not on each subsequent value validation, to improve
-        // performance in requirejs mode
-        validateOptionsOnValidateValue: false
 
         // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
@@ -136,7 +135,7 @@ define( require => {
         }
         ValidatorDef.validateValidator( validator );
 
-        this.validate = value => validate( value, validator );
+        this.validate = value => validate( value, validator, VALIDATE_OPTIONS_FALSE );
 
         // validate the initial value
         this.validate( value );
