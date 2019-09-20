@@ -284,7 +284,7 @@ define( require => {
           else {
 
             // if not an array, then just check the array element
-            return ValidatorDef.isValueValidValueType( arrayElement, validator.arrayElementType, options )
+            return ValidatorDef.isValueValidValueType( arrayElement, validator.arrayElementType, options );
           }
         } ) ) ) {
           return false; // if every element didn't pass, then return false

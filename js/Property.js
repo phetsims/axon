@@ -47,7 +47,7 @@ define( require => {
         // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
         // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
         // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
-        reentrant: false,
+        reentrant: false
 
         // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
