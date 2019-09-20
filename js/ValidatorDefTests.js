@@ -139,4 +139,65 @@ define( require => {
 
     assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: EmitterIO( [] ) } ), 'emitter is valid' );
   } );
+
+  QUnit.test( 'Test arrayElementType', assert => {
+
+
+    window.assert && assert.throws( () => ValidatorDef.validateValidator( {
+      valueType: Array,
+      arrayElementType: null
+    } ), 'arrayElementType expected should not have valueType' );
+
+    assert.ok( ValidatorDef.isValidValidator( { arrayElementType: 'number' } ), 'good valueType' );
+    assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 'number' } ), 'no validator keys supplied' );
+    assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 4 } ), 'no validator keys supplied' );
+    assert.ok( !ValidatorDef.isValidValidator( { arrayElementType: 'blaradysharady' } ), 'invalid valueType string' );
+
+    assert.ok( ValidatorDef.isValidValidator( { arrayElementType: null } ), 'null is valid' );
+    assert.ok( ValidatorDef.isValidValidator( { arrayElementType: [ 'number', null ] } ), 'array of null and number is valid' );
+    assert.ok( ValidatorDef.isValidValidator( { arrayElementType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
+    assert.ok( !ValidatorDef.isValidValidator( { arrayElementType: [ 'numberf', null, Node ] } ), 'numberf is not a valid arrayElementType' );
+    assert.ok( ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5 ], { arrayElementType: [ 'number' ] } ), 'number array ok' );
+    assert.ok( !ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number' ] } ), 'number array bad with null' );
+    assert.ok( ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number', null ] } ), 'number array ok with null' );
+    assert.ok( ValidatorDef.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'number', 'string', null ] } ), 'number and string array ok with null' );
+    assert.ok( !ValidatorDef.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'string', null ] } ), 'number and string array ok with null' );
+    assert.ok( ValidatorDef.isValueValid( [ [], [], [], [] ], { arrayElementType: [ Array ] } ), 'array array' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ], }, ASSERTIONS_TRUE );
+    }, 'undefined is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] }, ASSERTIONS_TRUE );
+    }, '7 is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] }, ASSERTIONS_TRUE );
+    }, 'Object literal  is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] }, ASSERTIONS_TRUE );
+    }, 'sstring is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] }, ASSERTIONS_TRUE );
+    }, 'sstring is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( [ 5 ], { arrayElementType: [ 'string' ] }, ASSERTIONS_TRUE );
+    }, 'sstring is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( [ null, 3, 4, 5, undefined ], { arrayElementType: [ 'number', null ] }, ASSERTIONS_TRUE );
+    }, 'sstring is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] }, ASSERTIONS_TRUE );
+    }, '7 is not a valid arrayElementType' );
+
+    window.assert && assert.throws( () => {
+      ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] }, ASSERTIONS_TRUE );
+    }, 'Object literal  is not a valid arrayElementType' );
+  } );
 } );

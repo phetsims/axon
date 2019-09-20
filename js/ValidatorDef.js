@@ -69,7 +69,13 @@ define( require => {
     // isValidValue: function( value ) { return Util.isInteger( value ) && value >= 0; }
     'isValidValue',
 
-    // {function(PhetioType is a
+    // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
+    // elements of an array. For this option to valid, `valueType` must be not also be provided. It is assumed that
+    // valueType is `Array`.
+    'arrayElementType',
+
+    // {function(new: ObjectIO)} - A TypeIO used to specify the public typeing for PhET-iO. Each TypeIO must have a
+    // `validator` key specified that can be used for validation. See ObjectIO for an example.
     'phetioType'
 
     /**************************************
@@ -106,6 +112,7 @@ define( require => {
       }
       if ( !( validator.hasOwnProperty( 'isValidValue' ) ||
               validator.hasOwnProperty( 'valueType' ) ||
+              validator.hasOwnProperty( 'arrayElementType' ) ||
               validator.hasOwnProperty( 'validValues' ) ||
               validator.hasOwnProperty( 'phetioType' ) ) ) {
         assert && options.assertions && assert( false,
@@ -113,19 +120,17 @@ define( require => {
         return false;
       }
 
-      if ( validator.hasOwnProperty( 'valueType' ) ) {
-        const valueType = validator.valueType;
-        if ( Array.isArray( valueType ) ) {
+      if ( validator.hasOwnProperty( 'valueType' ) && !validateValueOrElementType( validator.valueType, options ) ) {
+        return false;
+      }
 
-          // If every valueType in the list is not valid, then return false, pass options through verbatum.
-          if ( !_.every( valueType.map( typeInArray => ValidatorDef.validateValueType( typeInArray, options ) ) ) ) {
-            return false;
-          }
+      if ( validator.hasOwnProperty( 'arrayElementType' ) ) {
+        if ( validator.hasOwnProperty( 'valueType' ) ) {
+          assert && options.assertions && assert( false, 'valueType is redundant with arrayElementType. valueType is Array.' );
+          return false;
         }
-        else if ( valueType ) {
-          if ( !ValidatorDef.validateValueType( valueType, options ) ) {
-            return false;
-          }
+        if ( !validateValueOrElementType( validator.arrayElementType, options ) ) {
+          return false;
         }
       }
 
@@ -259,6 +264,37 @@ define( require => {
           }
         }
       }
+
+      if ( validator.hasOwnProperty( 'arrayElementType' ) ) {
+        const arrayElementType = validator.arrayElementType;
+
+        // If using arrayElementType, then the value should be an array. No need for assertions, because nested
+        // isValueValid will assert out if asserting.
+        if ( !ValidatorDef.isValueValid( value, { valueType: Array }, options ) ) {
+          return false;
+        }
+
+        // every element in the array should pass
+        if ( !_.every( value.map( arrayElement => {
+
+          // if the type is an array, then handle it like we did for valueType, with _.some
+          if ( Array.isArray( arrayElementType ) ) {
+            if ( !_.some( arrayElementType.map( typeInArray => ValidatorDef.isValueValidValueType( arrayElement, typeInArray, ASSERTIONS_FALSE ) ) ) ) {
+              assert && options.assertions && assert( false, `array element not valid for any arrayElementType in ${arrayElementType}, value: ${arrayElement}` );
+              return false;
+            }
+            return true;
+          }
+          else {
+
+            // if not an array, then just check the array element
+            return ValidatorDef.isValueValidValueType( arrayElement, validator.arrayElementType, options )
+          }
+        } ) ) ) {
+          return false; // if every element didn't pass, then return false
+        }
+      }
+
       if ( validator.hasOwnProperty( 'validValues' ) && validator.validValues.indexOf( value ) === -1 ) {
         assert && options.assertions && assert( false, `value not in validValues: ${value}` );
         return false;
@@ -308,6 +344,28 @@ define( require => {
       }
       return true;
     }
+  };
+
+  /**
+   * Validate a type that can be a type, or an array of multiple types.
+   * @param {*} type - see valueType documentation
+   * @param {Object} options - see isValidValidator
+   * @returns {boolean}
+   */
+  const validateValueOrElementType = ( type, options ) => {
+    if ( Array.isArray( type ) ) {
+
+      // If every type in the list is not valid, then return false, pass options through verbatum.
+      if ( !_.every( type.map( typeInArray => ValidatorDef.validateValueType( typeInArray, options ) ) ) ) {
+        return false;
+      }
+    }
+    else if ( type ) {
+      if ( !ValidatorDef.validateValueType( type, options ) ) {
+        return false;
+      }
+    }
+    return true;
   };
 
   ValidatorDef.VALIDATOR_KEYS = VALIDATOR_KEYS;
