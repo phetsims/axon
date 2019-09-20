@@ -109,7 +109,7 @@ define( require => {
       // @private whether to allow reentry of calls to set
       this.reentrant = options.reentrant;
 
-      // @private - while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
+      // @public (read-only) - while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
       // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
       // send notifications.
       this.isDeferred = false;
