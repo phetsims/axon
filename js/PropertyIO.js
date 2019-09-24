@@ -19,7 +19,7 @@ define( require => {
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   /**
-   * An observable property that triggers notifications when the value changes.
+   * An observable Property that triggers notifications when the value changes.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */
@@ -114,7 +114,7 @@ define( require => {
         implementation: function( value ) {
           this.phetioObject.set( value );
         },
-        documentation: 'Sets the value of the property. If the value differs from the previous value, listeners are ' +
+        documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
                        'notified with the new value.',
         invocableForReadOnlyElements: false
       },
