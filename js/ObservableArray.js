@@ -98,7 +98,7 @@ define( require => {
      */
     removeItemAddedListener: function( listener ) {
       const index = this._addedListeners.indexOf( listener );
-      assert && assert( index !== -1 ); // listener is registered
+      assert && assert( index !== -1, 'Listener is not found in item added listeners' ); // listener is registered
       this._addedListeners.splice( index, 1 );
     },
 
@@ -119,7 +119,7 @@ define( require => {
      */
     removeItemRemovedListener: function( listener ) {
       const index = this._removedListeners.indexOf( listener );
-      assert && assert( index !== -1, 'Listener is still registered after removal' ); // listener is registered
+      assert && assert( index !== -1, 'Listener is not found in item removed listeners' ); // listener is registered
       this._removedListeners.splice( index, 1 );
     },
 
