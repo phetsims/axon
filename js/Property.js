@@ -290,6 +290,7 @@ define( require => {
      * @public
      */
     setDeferred( isDeferred ) {
+      assert && assert( !this.isDisposed, 'cannot defer Property if already disposed.' );
       assert && assert( isDeferred || !isDeferred, 'bad value for isDeferred' );
       if ( isDeferred ) {
         assert && assert( !this.isDeferred, 'Property already deferred' );
@@ -310,7 +311,7 @@ define( require => {
         // If the value has changed, prepare to send out notifications (after all other Properties in this transaction
         // have their final values)
         if ( !this.equalsValue( oldValue ) ) {
-          return () => this._notifyListeners( oldValue );
+          return () => !this.isDisposed && this._notifyListeners( oldValue );
         }
       }
 
