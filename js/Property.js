@@ -154,24 +154,26 @@ define( require => {
     }
 
     /**
-     * Sets the value and notifies listeners, unless deferred. You can also use the es5 getter (property.value) but
-     * this means is provided for inner loops or internal code that must be fast. If the value hasn't changed, this is
-     * a no-op.
+     * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
+     * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
+     * hasn't changed, this is a no-op.
      *
      * @param {*} value
      * @returns {Property} this instance, for chaining.
      * @public
      */
     set( value ) {
-      this.validate && this.validate( value );
-      if ( this.isDeferred ) {
-        this.deferredValue = value;
-        this.hasDeferredValue = true;
-      }
-      else if ( !this.equalsValue( value ) ) {
-        const oldValue = this.get();
-        this.setPropertyValue( value );
-        this._notifyListeners( oldValue );
+      if ( !this.isDisposed ) {
+        this.validate && this.validate( value );
+        if ( this.isDeferred ) {
+          this.deferredValue = value;
+          this.hasDeferredValue = true;
+        }
+        else if ( !this.equalsValue( value ) ) {
+          const oldValue = this.get();
+          this.setPropertyValue( value );
+          this._notifyListeners( oldValue );
+        }
       }
       return this;
     }
