@@ -291,12 +291,12 @@ define( require => {
      */
     setDeferred( isDeferred ) {
       assert && assert( !this.isDisposed, 'cannot defer Property if already disposed.' );
-      assert && assert( isDeferred || !isDeferred, 'bad value for isDeferred' );
+      assert && assert( typeof isDeferred === 'boolean', 'bad value for isDeferred' );
       if ( isDeferred ) {
         assert && assert( !this.isDeferred, 'Property already deferred' );
         this.isDeferred = true;
       }
-      else if ( !isDeferred ) {
+      else {
         assert && assert( this.isDeferred, 'Property wasn\'t deferred' );
         this.isDeferred = false;
 
