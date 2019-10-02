@@ -17,9 +17,6 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
-  // ifphetio
-  const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
-
   // constants
   const OBSERVABLE_ARRAY_VALIDATOR = {
     isValidValue: v => {
@@ -38,37 +35,41 @@ define( require => {
    */
   function ObservableArrayIO( parameterType, options ) {
     assert && assert( typeof parameterType === 'function', 'element type should be defined' );
-    options = _.extend( {
-      isReferenceType: true
-    }, options );
 
     class ObservableArrayIOImpl extends ObjectIO {
 
+      /**
+       * @override
+       * @param {ObservableArray} observableArray
+       * @returns {{array: Array.<*>}}
+       * @public
+       */
       static toStateObject( observableArray ) {
         validate( observableArray, this.validator );
-        if ( !observableArray ) {
-          return observableArray;
-        }
         return {
-          array: observableArray.getArray().map( function( item ) {
-            return options.isReferenceType ? item.phetioID : // TODO: assert that phetioID is defined, https://github.com/phetsims/axon/issues/245
-                   parameterType.toStateObject( item );
-          } )
+          array: observableArray.getArray().map( item => parameterType.toStateObject( item ) )
         };
       }
 
+      /**
+       * @public
+       * @override
+       * @param {{array: Array.<*>}} stateObject - where each array value is the parameter type state object of the element
+       * @returns {Array{Object}}
+       */
       static fromStateObject( stateObject ) {
-        const tempArray = [];
-        stateObject.array.forEach( function( parameterTypePhetioID ) {
-          tempArray.push( phetioEngine.getPhetioObject( parameterTypePhetioID ) );
-        } );
-        return tempArray;
+        return stateObject.array.map( paramStateObject => parameterType.fromStateObject( paramStateObject ) );
       }
 
-      static setValue( observableArray, fromStateObject ) {
+      /**
+       * @public
+       * @param observableArray
+       * @param elementsFromStateObject
+       */
+      static setValue( observableArray, elementsFromStateObject ) {
         validate( observableArray, this.validator );
         observableArray.clear();
-        observableArray.addAll( fromStateObject );
+        observableArray.addAll( elementsFromStateObject );
       }
     }
 
@@ -120,7 +121,7 @@ define( require => {
     ObservableArrayIOImpl.events = [ 'itemAdded', 'itemRemoved' ];
     ObservableArrayIOImpl.typeName = `ObservableArrayIO<${parameterType.typeName}>`;
     ObservableArrayIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    ObservableArrayIOImpl.parameterTypes = [ parameterType];
+    ObservableArrayIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( ObservableArrayIOImpl );
 
     return ObservableArrayIOImpl;
