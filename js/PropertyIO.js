@@ -18,12 +18,28 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
+  const cache = {};
+
   /**
    * An observable Property that triggers notifications when the value changes.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */
   function PropertyIO( parameterType ) {
+
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a PropertyIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
 
     /**
      * @param {Property} property
@@ -165,11 +181,11 @@ define( require => {
     PropertyIOImpl.events = [ 'changed' ];
     PropertyIOImpl.typeName = `PropertyIO<${parameterType.typeName}>`;
     PropertyIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    PropertyIOImpl.parameterTypes = [ parameterType];
+    PropertyIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( PropertyIOImpl );
 
     return PropertyIOImpl;
-  }
+  };
 
   return axon.register( 'PropertyIO', PropertyIO );
 } );
