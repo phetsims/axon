@@ -40,7 +40,7 @@ define( require => {
         // useDeepEquality: false => Use === for equality test
         useDeepEquality: false,
 
-        // {string|null} units for the number, see units.js
+        // {string|null} units for the number, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
         units: null,
 
         // {boolean} Whether reentrant calls to 'set' are allowed.
