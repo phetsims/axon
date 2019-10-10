@@ -18,12 +18,15 @@ define( require => {
       'AMU', // atomic mass unit
       'atm', // atmospheres
       'cm', // centimeters
+      '\u00B0', // degress
       '\u00B0C', // degrees Celsius
       'K', // Kelvin
+      'kg',
       'kPa', // kilopascals
       'm', // meters
       'mm', //millimeters
-      'm/s',
+      'm/s', // meters/second
+      'm/s^2', // meters/seconds squared
       'nm', // nanometers
       'nm/ps',
       'particles/ps',
