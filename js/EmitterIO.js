@@ -35,21 +35,37 @@ define( require => {
     }
   };
 
+  // {Object.<typeName:string, function(new:ObjectIO)>} - cache each parameterized EmitterIO so that it is only created once
+  const cache = {};
+
   /**
-   * IO type for Emitter
-   * Emitter for 0, 1 or 2 args, or maybe 3.
-   *
+   * An notifier that fires listeners
    * @param {function(new:ObjectIO)[]} parameterTypes
-   * @returns {EmitterIOImpl} - the parameterized type
-   * @constructor
+   * @returns {function(new:ObjectIO)}
    */
   function EmitterIO( parameterTypes ) {
-    assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
+    assert && assert( parameterTypes, 'parameterTypes should be defined' );
+
+    const key = parameterTypes.map( typeIO => typeIO.typeName ).join( '' );
+    if ( !cache.hasOwnProperty( key ) ) {
+      cache[ key ] = create( parameterTypes );
+    }
+
+    return cache[ key ];
+  }
+
+  /**
+   * Creates an EmitterIOImpl
+   * @param {function(new:ObjectIO)[]} parameterTypes
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterTypes => {
 
     /**
-     * @param {Emitter} emitter
-     * @param {string} phetioID
-     * @constructor
+     * IO type for Emitter
+     *
+     * @param {function(new:ObjectIO)[]} parameterTypes
+     * @returns {{function(new:ObjectIO)} - the parameterized Emitter
      */
     class EmitterIOImpl extends ActionIO( parameterTypes ) {}
 
@@ -82,14 +98,7 @@ define( require => {
     ObjectIO.validateSubtype( EmitterIOImpl );
 
     return EmitterIOImpl;
-  }
-
-  /**
-   * This has to be unique to other outerTypeName values, as these are used for caching in Action.js
-   * @public
-   * @type {string}
-   */
-  EmitterIO.outerTypeName = 'EmitterIO';
+  };
 
   return axon.register( 'EmitterIO', EmitterIO );
 } );

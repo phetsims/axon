@@ -21,16 +21,41 @@ define( require => {
       return v instanceof Action;
     }
   };
+  const paramToTypeName = param => param.typeName;
+
+  // {Object.<typeName:string, function(new:ObjectIO)>} - cache each parameterized ActionIO so that it is only created once
+  const cache = {};
 
   /**
-   * IO type for Emitter
-   *
-   * @param {function(new:ObjectIO)[]} parameterTypes
-   * @returns {ActionIOImpl} - the parameterized type
+   * An observable Property that triggers notifications when the value changes.
+   * @param {function(new:ObjectIO)} parameterTypes
+   * @returns {function(new:ObjectIO)}
    */
   function ActionIO( parameterTypes ) {
-    assert && assert( parameterTypes, 'phetioArgumentTypes should be defined' );
+    assert && assert( parameterTypes, 'parameterTypes should be defined' );
 
+    const key = parameterTypes.map( paramToTypeName ).join( '' );
+
+    if ( !cache.hasOwnProperty( key ) ) {
+      cache[ key ] = create( parameterTypes );
+    }
+
+    return cache[ key ];
+  }
+
+  /**
+   * Creates a ActionIOImpl
+   * @param {function(new:ObjectIO)[]} parameterTypes
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterTypes => {
+
+    /**
+     * IO type for Action
+     *
+     * @param {function(new:ObjectIO)[]} parameterTypes
+     * @returns {{function(new:ObjectIO)} - the parameterized Action
+     */
     class ActionIOImpl extends ObjectIO {
     }
 
@@ -51,19 +76,12 @@ define( require => {
     ActionIOImpl.documentation = 'Executes when an event occurs.';
     ActionIOImpl.events = [ 'emitted' ];
     ActionIOImpl.validator = ACTION_IO_VALIDATOR;
-    ActionIOImpl.typeName = `ActionIO<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+    ActionIOImpl.typeName = `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`;
     ActionIOImpl.parameterTypes = parameterTypes;
     ObjectIO.validateSubtype( ActionIOImpl );
 
     return ActionIOImpl;
-  }
-
-  /**
-   * This has to be unique to other outerTypeName values, as these are used for caching in Action.js
-   * @public
-   * @type {string}
-   */
-  ActionIO.outerTypeName = 'ActionIO';
+  };
 
   return axon.register( 'ActionIO', ActionIO );
 } );

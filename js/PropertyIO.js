@@ -18,6 +18,7 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - cache each parameterized PropertyIO so that it is only created once
   const cache = {};
 
   /**

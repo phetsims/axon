@@ -26,10 +26,6 @@ define( require => {
   const EMPTY_ARRAY = [];
   assert && Object.freeze( EMPTY_ARRAY );
 
-  // {Object.<uniqueKey:string, {count:number, phetioType:function(new:ObjectIO)} - uniqueKey is created from outer and
-  // parameter types
-  const TYPE_IO_CACHE = {};
-
   // allowed keys to options.parameters
   const PARAMETER_KEYS = [
     'name', // {string} - required for phet-io instrumented Actions
@@ -44,7 +40,7 @@ define( require => {
 
   // helper closures
   const paramToPhetioType = param => param.phetioType;
-  const paramToTypeName = param => param.phetioType.typeName;
+  const paramToName = param => param.name;
 
   class Action extends PhetioObject {
 
@@ -61,7 +57,7 @@ define( require => {
         // phet-io - see PhetioObject.js for doc
         tandem: Tandem.optional,
 
-        // {function(new:function(new:ObjectIO),...function(new:ObjectIO))} - The non parameterized TypeIO, because
+        // {function(new:function(new:ObjectIO),parameterTypes:function(new:ObjectIO))[]} - The non parameterized TypeIO, because
         // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a
         // parameterized ActionIO Type.
         phetioOuterType: ActionIO,
@@ -80,7 +76,7 @@ define( require => {
       // parameters will not have a `phetioType`, see `validateParameters`.
       const phetioPublicParameters = options.parameters.filter( paramToPhetioType );
 
-      options.phetioType = getActionIOFromCache( options.phetioOuterType, phetioPublicParameters );
+      options.phetioType = options.phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) );
 
       // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
       // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
@@ -90,7 +86,7 @@ define( require => {
         assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
           'dataKeys should be supplied by Action, not elsewhere' );
 
-        options.phetioEventMetadata.dataKeys = options.parameters.map( parmeter => parmeter.name );
+        options.phetioEventMetadata.dataKeys = options.parameters.map( paramToName );
       }
       options.phetioDocumentation = Action.getPhetioDocumentation( options.phetioDocumentation, phetioPublicParameters );
 
@@ -203,11 +199,6 @@ define( require => {
      * @public
      */
     dispose() {
-
-      // recompute public parameters instead of storing them on each emitter. This tradeoff assumes that dispose happens
-      // relatively infrequently compared to the space needed to store another array on each Action instance.
-      removeActionIOFromCache( this._phetioOuterType, this._parameters.filter( paramToPhetioType ) );
-
       super.dispose();
     }
 
@@ -240,53 +231,6 @@ define( require => {
       this.isPhetioInstrumented() && this.phetioEndEvent();
     }
   }
-
-  /**
-   *
-   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
-   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
-   * @returns {string} - unique id to access the cache and get the right TypeIO
-   */
-  const getUniqueTypeName = ( phetioOuterType, phetioPublicParameters ) => {
-    return phetioOuterType.outerTypeName + '.' + phetioPublicParameters.map( paramToTypeName ).join( ',' );
-  };
-
-  /**
-   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
-   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
-   * @returns {function(new:ObjectIO)} - phetioType
-   */
-  const getActionIOFromCache = ( phetioOuterType, phetioPublicParameters ) => {
-
-    // This is not the name passed to the parameter, but instead of function constructor name.
-    const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
-    if ( TYPE_IO_CACHE[ uniqueTypeNameKey ] ) {
-      TYPE_IO_CACHE[ uniqueTypeNameKey ].count += 1;
-    }
-    else {
-
-      // set a new object on that key
-      TYPE_IO_CACHE[ uniqueTypeNameKey ] = {
-        count: 1, // This is already the first one
-        phetioType: phetioOuterType( phetioPublicParameters.map( paramToPhetioType ) )
-      };
-    }
-    return TYPE_IO_CACHE[ uniqueTypeNameKey ].phetioType;
-  };
-
-  /**
-   * Remove a phetioType from the cache
-   * @param {function} phetioOuterType - a un parameterized parametric TypeIO
-   * @param {Object[]} phetioPublicParameters - see options.parameters, but only the public ones (see phetioPrivate)
-   */
-  const removeActionIOFromCache = ( phetioOuterType, phetioPublicParameters ) => {
-    const uniqueTypeNameKey = getUniqueTypeName( phetioOuterType, phetioPublicParameters );
-    assert && assert( TYPE_IO_CACHE[ uniqueTypeNameKey ], `type name key is not in cache: ${uniqueTypeNameKey}` );
-    TYPE_IO_CACHE[ uniqueTypeNameKey ].count -= 1;
-    if ( TYPE_IO_CACHE[ uniqueTypeNameKey ].count === 0 ) {
-      delete TYPE_IO_CACHE[ uniqueTypeNameKey ];
-    }
-  };
 
   return axon.register( 'Action', Action );
 } );
