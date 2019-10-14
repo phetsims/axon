@@ -303,25 +303,21 @@ define( require => {
     /**
      * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
      * @param {function(element:*):*} mapFunction - from Observable array element to something else
-     * @returns {ObservableArray}
+     * @returns {Object[]}
      * @public
      */
     map: function( mapFunction ) {
-      const observableArray = new ObservableArray( this._options );
-      this._array.map( mapFunction ).forEach( item => observableArray.push( item ) );
-      return observableArray;
+      return this._array.map( mapFunction );
     },
 
     /**
      * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
      * @param {function(element):boolean} predicate
-     * @returns {ObservableArray}
+     * @returns {Object[]}
      * @public
      */
     filter: function( predicate ) {
-      const observableArray = new ObservableArray( this._options );
-      this._array.filter( predicate ).forEach( item => observableArray.push( item ) );
-      return observableArray;
+      return this._array.filter( predicate );
     },
 
     /**
