@@ -12,6 +12,9 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
 
+  // constants
+  const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
+
   class TinyEmitter {
     constructor() {
 
@@ -48,6 +51,12 @@ define( require => {
      */
     emit() {
       assert && assert( !this.isDisposed, 'should not be called if disposed' );
+
+      // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
+      // so it won't impact production performance.
+      if ( assert && shuffleListeners ) {
+        this.listeners = _.shuffle( this.listeners );
+      }
 
       // Notify wired-up listeners, if any
       if ( this.listeners.length > 0 ) {
