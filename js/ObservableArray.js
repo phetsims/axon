@@ -15,6 +15,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const inherit = require( 'PHET_CORE/inherit' );
+  const merge = require( 'PHET_CORE/merge' );
   const NumberProperty = require( 'AXON/NumberProperty' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
@@ -31,7 +32,7 @@ define( require => {
   function ObservableArray( options ) {
     assert && assert( !Array.isArray( options ), 'ObservableArray cannot be initialized with values' );
 
-    options = _.extend( {
+    options = merge( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       phetioType: DefaultObservableArrayIOType,
       tandem: Tandem.optional

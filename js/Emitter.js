@@ -13,8 +13,9 @@ define( require => {
 
   // modules
   const Action = require( 'AXON/Action' );
-  const EmitterIO = require( 'AXON/EmitterIO' );
   const axon = require( 'AXON/axon' );
+  const EmitterIO = require( 'AXON/EmitterIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const TinyEmitter = require( 'AXON/TinyEmitter' );
 
   class Emitter extends Action {
@@ -24,7 +25,7 @@ define( require => {
      */
     constructor( options ) {
 
-      options = _.extend( {
+      options = merge( {
         phetioOuterType: EmitterIO
       }, options );
 

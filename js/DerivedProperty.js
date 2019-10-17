@@ -14,6 +14,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const DerivedPropertyIO = require( 'AXON/DerivedPropertyIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const Property = require( 'AXON/Property' );
   const Tandem = require( 'TANDEM/Tandem' );
 
@@ -26,7 +27,7 @@ define( require => {
      */
     constructor( dependencies, derivation, options ) {
 
-      options = _.extend( {
+      options = merge( {
         tandem: Tandem.optional,
         phetioReadOnly: true // derived properties can be read but not set by PhET-iO
       }, options );

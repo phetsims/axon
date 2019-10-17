@@ -100,6 +100,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const Property = require( 'AXON/Property' );
 
   class DynamicProperty extends Property {
@@ -115,7 +116,7 @@ define( require => {
      */
     constructor( valuePropertyProperty, options ) {
 
-      options = _.extend( {
+      options = merge( {
         // {boolean} - If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the
         //             time) will also be made to derive( valuePropertyProperty.value ).
         bidirectional: false,

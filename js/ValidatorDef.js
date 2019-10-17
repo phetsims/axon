@@ -33,6 +33,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const Enumeration = require( 'PHET_CORE/Enumeration' );
+  const merge = require( 'PHET_CORE/merge' );
 
   // constants
   const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
@@ -225,19 +226,19 @@ define( require => {
      */
     isValueValid( value, validator, options ) {
 
-      options = _.extend( {
+      options = merge( {
 
         // {boolean} - By default validation will always check the validity of the  validator itself.  However, for types like
         // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
         // wastes cpu. Hence cases like those can opt-out
-        validateOptions: true,
+        validateValidator: true,
 
         // if true, throw an assertion "instead" of waiting to return a boolean
         assertions: false
       }, options );
 
       // Use the same policy for whether to throw assertions when checking the validator itself.
-      if ( options.validateOptions !== false && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
+      if ( options.validateValidator !== false && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
         assert && options.assertions && assert( false, 'Invalid validator' );
         return false;
       }

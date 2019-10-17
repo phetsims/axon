@@ -12,6 +12,7 @@ define( require => {
   const axon = require( 'AXON/axon' );
   const Enumeration = require( 'PHET_CORE/Enumeration' );
   const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const Property = require( 'AXON/Property' );
   const PropertyIO = require( 'AXON/PropertyIO' );
 
@@ -38,7 +39,7 @@ define( require => {
         assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
       }
 
-      options = _.extend( {
+      options = merge( {
         valueType: enumeration,
         phetioType: PropertyIO( EnumerationIO( enumeration ) ),
         validValues: enumeration.VALUES // for PhET-iO documentation and support

@@ -11,6 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const Multilink = require( 'AXON/Multilink' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
@@ -20,7 +21,7 @@ define( require => {
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // constants
-  const VALIDATE_OPTIONS_FALSE = { validateOptions: false };
+  const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
   // variables
   let globalId = 0; // autoincremented for unique IDs
@@ -32,7 +33,7 @@ define( require => {
      * @param {Object} [options] - options
      */
     constructor( value, options ) {
-      options = _.extend( {
+      options = merge( {
 
         tandem: Tandem.optional, // workaround for https://github.com/phetsims/tandem/issues/50
 

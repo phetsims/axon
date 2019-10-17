@@ -11,6 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   const Property = require( 'AXON/Property' );
   const Range = require( 'DOT/Range' );
@@ -29,7 +30,7 @@ define( require => {
      */
     constructor( value, options ) {
 
-      options = _.extend( {
+      options = merge( {
         numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
         // {Range|null} range
@@ -48,7 +49,7 @@ define( require => {
       assert && assert( !options.hasOwnProperty( 'phetioType' ), 'NumberProperty sets phetioType' );
 
       // Fill in superclass options that are controlled by NumberProperty.
-      options = _.extend( {
+      options = merge( {
         valueType: 'number',
         phetioType: NumberPropertyIO
       }, options );

@@ -11,6 +11,7 @@ define( require => {
   // modules
   const Emitter = require( 'AXON/Emitter' );
   const EmitterIO = require( 'AXON/EmitterIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
@@ -48,7 +49,7 @@ define( require => {
 
     const validator = { isValidValue: v => v < 3 };
     emitter = new Emitter( {
-      parameters: [ _.extend( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]
+      parameters: [ merge( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]
     } );
     assert.ok( emitter._parameters[ 0 ].isValidValue === validator.isValidValue, 'should use specified validator instead of NumberIO\'s' );
     emitter.emit( 2 );

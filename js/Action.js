@@ -14,13 +14,14 @@ define( require => {
   const ActionIO = require( 'AXON/ActionIO' );
   const assertMutuallyExclusiveOptions = require( 'PHET_CORE/assertMutuallyExclusiveOptions' );
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const validate = require( 'AXON/validate' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   // constants
-  const VALIDATE_OPTIONS_FALSE = { validateOptions: false };
+  const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
   // Simulations have thousands of Emitters, so we re-use objects where possible.
   const EMPTY_ARRAY = [];
@@ -49,7 +50,7 @@ define( require => {
      * @param {Object} [options]
      */
     constructor( action, options ) {
-      options = _.extend( {
+      options = merge( {
 
         // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
         parameters: EMPTY_ARRAY,

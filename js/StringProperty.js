@@ -11,6 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const Property = require( 'AXON/Property' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const StringIO = require( 'TANDEM/types/StringIO' );
@@ -34,7 +35,7 @@ define( require => {
       }
 
       // Fill in superclass options that are controlled by StringProperty.
-      options = _.extend( {
+      options = merge( {
         valueType: 'string',
         phetioType: StringPropertyIO
       }, options );

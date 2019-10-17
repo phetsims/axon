@@ -12,6 +12,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const BooleanIO = require( 'TANDEM/types/BooleanIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const Property = require( 'AXON/Property' );
   const PropertyIO = require( 'AXON/PropertyIO' );
 
@@ -39,7 +40,7 @@ define( require => {
       }
 
       // Fill in superclass options that are controlled by BooleanProperty.
-      options = _.extend( {
+      options = merge( {
         valueType: 'boolean',
         phetioType: BooleanPropertyIO
       }, options );

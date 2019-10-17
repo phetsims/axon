@@ -11,6 +11,7 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const merge = require( 'PHET_CORE/merge' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   /**
@@ -26,7 +27,7 @@ define( require => {
     if ( assert ) {
 
       // Throws an error if not valid
-      ValidatorDef.isValueValid( value, validator, _.extend( { assertions: true }, options ) );
+      ValidatorDef.isValueValid( value, validator, merge( { assertions: true }, options ) );
     }
     return value;
   };
