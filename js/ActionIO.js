@@ -23,7 +23,8 @@ define( require => {
   };
   const paramToTypeName = param => param.typeName;
 
-  // {Object.<typeName:string, function(new:ObjectIO)>} - cache each parameterized ActionIO so that it is only created once
+  // {Object.<parameterTypeNames:string, function(new:ObjectIO)>} - Cache each parameterized ActionIO so that it is
+  // only created once.
   const cache = {};
 
   /**

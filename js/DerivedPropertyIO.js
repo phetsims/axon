@@ -23,14 +23,33 @@ define( require => {
     }
   };
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized DerivedPropertyIO so that
+  // it is only created once.
+  const cache = {};
+
   /**
-   * Parametric IO type constructor.  Given an value type, this function returns an appropriate DerivedProperty IO type.
-   *
-   * @param {function} parameterType - phet-io type wrapper like StringIO, NumberIO, etc. If loaded by phet (not phet-io)
-   *                                    it will be the function returned by the 'ifphetio!' plugin.
+   * Parametric IO type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
+   * IO type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
    */
   function DerivedPropertyIO( parameterType ) {
-    assert && assert( !!parameterType, 'DerivedPropertyIO needs parameterType' );
+    assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );
+
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a ObservableArrayIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
+
     // The parent type is also parameterized, so we have to instantiate it before we can extend it.
     const PropertyIOImpl = PropertyIO( parameterType );
 
@@ -44,7 +63,6 @@ define( require => {
     class DerivedPropertyIOImpl extends PropertyIOImpl {}
 
     DerivedPropertyIOImpl.methods = {
-
       setValue: {
         returnType: VoidIO,
         parameterTypes: [ parameterType ],
@@ -65,7 +83,7 @@ define( require => {
     ObjectIO.validateSubtype( DerivedPropertyIOImpl );
 
     return DerivedPropertyIOImpl;
-  }
+  };
 
   return axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 } );

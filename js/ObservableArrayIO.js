@@ -25,17 +25,38 @@ define( require => {
     }
   };
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized ObservableArrayIO so that it
+  // is only created once.
+  const cache = {};
+
   /**
-   * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
-   * @param {function(new:ObjectIO)} parameterType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
-   *                                    it will be the function returned by the 'ifphetio!' plugin.
-   * @param {Object} options
+   * An observable array that triggers notifications when items are added or removed.
+   * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
-   * @constructor
    */
-  function ObservableArrayIO( parameterType, options ) {
+  function ObservableArrayIO( parameterType ) {
     assert && assert( typeof parameterType === 'function', 'element type should be defined' );
 
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a ObservableArrayIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
+
+    /**
+     * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
+     * @param {function(new:ObjectIO)} parameterType
+     * @returns {function(new:ObjectIO)}
+     * @constructor
+     */
     class ObservableArrayIOImpl extends ObjectIO {
 
       /**
@@ -125,7 +146,7 @@ define( require => {
     ObjectIO.validateSubtype( ObservableArrayIOImpl );
 
     return ObservableArrayIOImpl;
-  }
+  };
 
   return axon.register( 'ObservableArrayIO', ObservableArrayIO );
 } );

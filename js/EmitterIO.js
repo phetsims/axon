@@ -35,7 +35,8 @@ define( require => {
     }
   };
 
-  // {Object.<typeName:string, function(new:ObjectIO)>} - cache each parameterized EmitterIO so that it is only created once
+  // {Object.<parameterTypeNames:string, function(new:ObjectIO)>} - Cache each parameterized EmitterIO so
+  // that it is only created once.
   const cache = {};
 
   /**

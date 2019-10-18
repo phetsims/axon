@@ -18,7 +18,7 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
-  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - cache each parameterized PropertyIO so that it is only created once
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is only created once
   const cache = {};
 
   /**
@@ -27,6 +27,7 @@ define( require => {
    * @returns {function(new:ObjectIO)}
    */
   function PropertyIO( parameterType ) {
+    assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
     if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
       cache[ parameterType.typeName ] = create( parameterType );
