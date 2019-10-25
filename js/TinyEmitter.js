@@ -55,7 +55,7 @@ define( require => {
       // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
       // so it won't impact production performance.
       if ( assert && shuffleListeners ) {
-        this.listeners = _.shuffle( this.listeners );
+        this.listeners = _.shuffle( this.listeners ); // eslint-disable-line bad-sim-text
       }
 
       // Notify wired-up listeners, if any
