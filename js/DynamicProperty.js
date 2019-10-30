@@ -69,7 +69,7 @@
  *   const secondProperty = new Property( 10 );
  *   const numberPropertyProperty = new Property( firstProperty );
  *   const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } );
- *   dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
+ *   dynamicProperty.value = 2; // allowed now that it is bidirectional, otherwise prohibited
  *   firstProperty.value; // 2
  *   numberPropertyProperty.value = secondProperty; // change which Property is active
  *   dynamicProperty.value; // 10, from the new Property
