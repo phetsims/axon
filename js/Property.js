@@ -191,6 +191,16 @@ define( require => {
     }
 
     /**
+     * Stores the specified value as the initial value, which will be taken on reset.  Useful for PhET-iO customizations
+     * so that "Reset All" returns the sim to the configured state.
+     * @param {*} initialValue
+     * @public (PhetioStateEngine)
+     */
+    setInitialValue( initialValue ) {
+      this._initialValue = initialValue;
+    }
+
+    /**
      * Returns true if and only if the specified value equals the value of this property
      * @param {Object} value
      * @returns {boolean}

@@ -107,12 +107,17 @@ define( require => {
        * Used to set the value when loading a state
        * @param {Property} property
        * @param {Object} fromStateObject
+       * @public
        */
       static setValue( property, fromStateObject ) {
         validate( property, this.validator );
         property.units = fromStateObject.units;
         property.set( fromStateObject.value );
         property.validValues = fromStateObject.validValues;
+
+        // Also take this as the initial value so that resetting the property, say during "reset all" or "reset scene",
+        // will return to this initial condition
+        property.setInitialValue( fromStateObject.value );
       }
     }
 
