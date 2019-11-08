@@ -29,7 +29,7 @@ define( require => {
      * @returns {function} an internally-wrapped listener which can be removed with clearTimeout
      * @public
      */
-    setTimeout( listener, timeout ) {
+    setTimeout( listener, timeout ) { // eslint-disable-line bad-sim-text
       let elapsed = 0;
       const callback = dt => {
         elapsed += dt;
@@ -68,7 +68,7 @@ define( require => {
      * @returns {function} an internally-wrapped listener which can be removed with clearInterval
      * @public
      */
-    setInterval( listener, interval ) {
+    setInterval( listener, interval ) { // eslint-disable-line bad-sim-text
       let elapsed = 0;
       const callback = dt => {
         elapsed += dt;
