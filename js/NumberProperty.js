@@ -33,7 +33,7 @@ define( require => {
       options = merge( {
         numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
-        // {Range|null} range
+        // {Range|Property.<Range>|null} range
         range: null,
 
         // {number|null} step - used by PhET-iO Studio to control this Property
@@ -41,7 +41,9 @@ define( require => {
       }, options );
 
       assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-      assert && options.range && assert( options.range instanceof Range, 'options.range must be of type Range:' + options.range );
+      assert && options.range && assert( options.range instanceof Range ||
+                                         ( options.range instanceof Property && options.range.value instanceof Range ),
+        'options.range must be of type Range or Property.<Range>:' + options.range );
       assert && options.step && assert( typeof options.step === 'number', 'options.step must be of type step:' + options.step );
 
       // client cannot specify superclass options that are controlled by NumberProperty
@@ -59,7 +61,7 @@ define( require => {
       // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
       this.numberType = options.numberType;
 
-      // @public {Range|null} (read-only) - If defined, provides the range of possible values (inclusive)
+      // @public {Range|Property.<Range>|null} (read-only) - if defined, provides the range of possible values (inclusive)
       this.range = options.range;
 
       // @public {number|null} (read-only - If defined, provides a step that the NumberProperty can be
@@ -73,7 +75,11 @@ define( require => {
         options.numberType === 'Integer' && validate( value, VALID_INTEGER );
 
         // validate for range
-        options.range && validate( value, { isValidValue: v => options.range.contains( v ) } );
+        if ( options.range ) {
+          const currentRange = options.range instanceof Property ? options.range.value : options.range;
+          assert && assert( currentRange instanceof Range, `unexpected Range: ${currentRange}` );
+          validate( value, { isValidValue: v => currentRange.contains( v ) } );
+        }
       } );
 
       // verify that validValues meet other NumberProperty-specific validation criteria
@@ -81,8 +87,34 @@ define( require => {
         options.validValues.forEach( this.assertNumberPropertyValidateValue );
       }
 
+      // @private - {function|null} - only function if range is a Property. Keep track for disposal.
+      this.rangeChangeListener = null;
+      if ( options.range && options.range instanceof Property ) {
+        this.rangeChangeListener = () => {
+          this.assertNumberPropertyValidateValue( this.value );
+        };
+        options.range.link( this.rangeChangeListener );
+      }
+
       // validate initial value
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
+    }
+
+    /**
+     * @public
+     */
+    reset() {
+      this.range && this.range instanceof Property && this.range.reset();
+      super.reset();
+    }
+
+    /**
+     * @public
+     * @override
+     */
+    dispose() {
+      this.rangeChangeListener && this.range.unlink( this.rangeChangeListener );
+      super.dispose();
     }
 
     /**

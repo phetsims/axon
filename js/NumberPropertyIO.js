@@ -12,10 +12,14 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
+  const Property = require( 'AXON/Property' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const RangeIO = require( 'DOT/RangeIO' );
   const validate = require( 'AXON/validate' );
+
+  // ifphetio
+  const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   // constants
   const PropertyIOImpl = PropertyIO( NumberIO );
@@ -42,7 +46,11 @@ define( require => {
       }
 
       if ( numberProperty.range ) {
-        parentStateObject.range = RangeIO.toStateObject( numberProperty.range );
+        const range = numberProperty.range instanceof Property ? numberProperty.range.value : numberProperty.range;
+        parentStateObject.range = RangeIO.toStateObject( range );
+      }
+      if ( numberProperty.range instanceof Property && numberProperty.isPhetioInstrumented() ) {
+        parentStateObject.rangePhetioID = numberProperty.range.tandem.phetioID;
       }
       if ( numberProperty.step ) {
         parentStateObject.step = numberProperty.step;
@@ -62,7 +70,9 @@ define( require => {
       fromParentStateObject.step = stateObject.step;
 
       // Create Range instance if defined, otherwise preserve value of null or undefined.
-      fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) : stateObject.range;
+      fromParentStateObject.range = stateObject.rangePhetioID ? phetioEngine.getPhetioObject( stateObject.rangePhetioID ) :
+                                    stateObject.range ? RangeIO.fromStateObject( stateObject.range ) :
+                                    stateObject.range;
       return fromParentStateObject;
     }
 
