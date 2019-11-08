@@ -104,8 +104,11 @@ define( require => {
      * @public
      */
     reset() {
-      this.range && this.range instanceof Property && this.range.reset();
       super.reset();
+
+      // reset this after the value has been reset, because this reset may change the range such that the value isn't
+      // valid anymore.
+      this.range && this.range instanceof Property && this.range.reset();
     }
 
     /**
