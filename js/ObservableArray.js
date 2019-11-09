@@ -228,8 +228,8 @@ define( require => {
      * @public
      */
     pop: function() {
+      assert && assert( this.length > 0, 'cannot pop from an empty ObservableArray' );
 
-      // TODO: should we really pop if the length was 0?  Or maybe this is OK?
       const item = this._array.pop();
       if ( item !== undefined ) {
         this.lengthProperty.set( this._array.length );
