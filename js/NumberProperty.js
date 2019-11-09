@@ -89,7 +89,7 @@ define( require => {
 
       // @private - {function|null} - only function if range is a Property. Keep track for disposal.
       this.rangeChangeListener = null;
-      if ( options.range && options.range instanceof Property ) {
+      if ( options.range && options.range instanceof Property && this.assertNumberPropertyValidateValue) {
         this.rangeChangeListener = () => {
           this.assertNumberPropertyValidateValue( this.value );
         };
