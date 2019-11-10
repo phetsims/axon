@@ -228,7 +228,7 @@ define( require => {
      * @public
      */
     pop: function() {
-      assert && assert( this.length > 0, 'cannot pop from an empty ObservableArray' );
+      assert && assert( this.length > 0, 'cannot pop an empty ObservableArray' );
 
       const item = this._array.pop();
       if ( item !== undefined ) {
@@ -244,6 +244,8 @@ define( require => {
      * @public
      */
     shift: function() {
+      assert && assert( this.length > 0, 'cannot shift an empty ObservableArray' );
+
       const item = this._array.shift();
       if ( item !== undefined ) {
         this.lengthProperty.set( this._array.length );
