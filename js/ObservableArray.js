@@ -88,7 +88,7 @@ define( require => {
      * @public
      */
     addItemAddedListener: function( listener ) {
-      assert && assert( this._addedListeners.indexOf( listener ) === -1 ); // listener is not already registered
+      assert && assert( this._addedListeners.indexOf( listener ) === -1, 'listener is already registered' );
       this._addedListeners.push( listener );
     },
 
@@ -99,7 +99,7 @@ define( require => {
      */
     removeItemAddedListener: function( listener ) {
       const index = this._addedListeners.indexOf( listener );
-      assert && assert( index !== -1, 'Listener is not found in item added listeners' ); // listener is registered
+      assert && assert( index !== -1, 'listener is not registered' );
       this._addedListeners.splice( index, 1 );
     },
 
@@ -109,7 +109,7 @@ define( require => {
      * @public
      */
     addItemRemovedListener: function( listener ) {
-      assert && assert( this._removedListeners.indexOf( listener ) === -1, 'Listener was already registered' ); // listener is not already registered
+      assert && assert( this._removedListeners.indexOf( listener ) === -1, 'listener is already registered' );
       this._removedListeners.push( listener );
     },
 
@@ -120,7 +120,7 @@ define( require => {
      */
     removeItemRemovedListener: function( listener ) {
       const index = this._removedListeners.indexOf( listener );
-      assert && assert( index !== -1, 'Listener is not found in item removed listeners' ); // listener is registered
+      assert && assert( index !== -1, 'listener is not registered' );
       this._removedListeners.splice( index, 1 );
     },
 
@@ -272,7 +272,7 @@ define( require => {
      * @public
      */
     get: function( index ) {
-      assert && assert( index >= 0 && index < this.length, 'index out of bounds' );
+      assert && assert( index >= 0 && index < this.length, `index out of bounds: ${index}` );
       return this._array[ index ];
     },
 
@@ -350,7 +350,8 @@ define( require => {
      * @public
      */
     find: function( predicate, fromIndex ) {
-      assert && typeof fromIndex === 'number' && assert( fromIndex >= 0 && fromIndex < this.length, 'fromIndex out of bounds' );
+      assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
+        `fromIndex out of bounds: ${fromIndex}` );
       return _.find( this._array, predicate, fromIndex );
     },
 
