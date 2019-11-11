@@ -267,10 +267,12 @@ define( require => {
     /**
      * Gets an item at the specified index.
      * @param index
-     * @returns {*} the item, or undefined if there is no item at the specified index
+     * @returns {*} the item
+     * @throws assertion Error if the index is out of bounds
      * @public
      */
     get: function( index ) {
+      assert && assert( index >= 0 && index < this.length, 'index out of bounds' );
       return this._array[ index ];
     },
 
@@ -343,8 +345,12 @@ define( require => {
      * Find the first element that matches the given predicate.
      * @param {function} predicate
      * @param {number} [fromIndex] - optional start index for the search
+     * @returns {*} the first element that matches the given predicate, or undefined if no matching item can be found
+     * @throws assertion Error if the fromIndex is specified and out of range
+     * @public
      */
     find: function( predicate, fromIndex ) {
+      assert && typeof fromIndex === 'number' && assert( fromIndex >= 0 && fromIndex < this.length, 'fromIndex out of bounds' );
       return _.find( this._array, predicate, fromIndex );
     },
 
