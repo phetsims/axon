@@ -350,6 +350,7 @@ define( require => {
      * @public
      */
     find: function( predicate, fromIndex ) {
+      assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
       assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
         `fromIndex out of bounds: ${fromIndex}` );
       return _.find( this._array, predicate, fromIndex );
