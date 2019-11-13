@@ -141,7 +141,6 @@ define( require => {
     ObservableArrayIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
     ObservableArrayIOImpl.events = [ 'itemAdded', 'itemRemoved' ];
     ObservableArrayIOImpl.typeName = `ObservableArrayIO<${parameterType.typeName}>`;
-    ObservableArrayIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
     ObservableArrayIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( ObservableArrayIOImpl );
 

@@ -187,7 +187,6 @@ define( require => {
     PropertyIOImpl.validator = { valueType: Property };
     PropertyIOImpl.events = [ 'changed' ];
     PropertyIOImpl.typeName = `PropertyIO<${parameterType.typeName}>`;
-    PropertyIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
     PropertyIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( PropertyIOImpl );
 
