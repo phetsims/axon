@@ -256,7 +256,7 @@ define( require => {
 
     /**
      * @param {*} oldValue
-     * @private
+     * @private - but note that a few sims are calling this even though they shouldn't
      */
     _notifyListeners( oldValue ) {
 
