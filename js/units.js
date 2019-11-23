@@ -22,6 +22,7 @@ define( require => {
       '\u00B0C', // degrees Celsius
       'K', // Kelvin
       'kg',
+      'kg/m^3', // kg/cubic meter
       'kPa', // kilopascals
       'm', // meters
       'mm', //millimeters
