@@ -30,6 +30,7 @@ define( require => {
   /**
    * Parametric IO type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
    * IO type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
+   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */

@@ -29,13 +29,14 @@ define( require => {
 
   /**
    * An observable Property that triggers notifications when the value changes.
+   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
    * @param {function(new:ObjectIO)} parameterTypes
    * @returns {function(new:ObjectIO)}
    */
   function ActionIO( parameterTypes ) {
     assert && assert( parameterTypes, 'parameterTypes should be defined' );
 
-    const key = parameterTypes.map( paramToTypeName ).join( '' );
+    const key = parameterTypes.map( paramToTypeName ).join( ',' );
 
     if ( !cache.hasOwnProperty( key ) ) {
       cache[ key ] = create( parameterTypes );

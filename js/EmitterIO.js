@@ -41,13 +41,14 @@ define( require => {
 
   /**
    * An notifier that fires listeners
+   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
    * @param {function(new:ObjectIO)[]} parameterTypes
    * @returns {function(new:ObjectIO)}
    */
   function EmitterIO( parameterTypes ) {
     assert && assert( parameterTypes, 'parameterTypes should be defined' );
 
-    const key = parameterTypes.map( typeIO => typeIO.typeName ).join( '' );
+    const key = parameterTypes.map( typeIO => typeIO.typeName ).join( ',' );
     if ( !cache.hasOwnProperty( key ) ) {
       cache[ key ] = create( parameterTypes );
     }

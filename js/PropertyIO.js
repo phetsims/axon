@@ -23,6 +23,7 @@ define( require => {
 
   /**
    * An observable Property that triggers notifications when the value changes.
+   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */
