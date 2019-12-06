@@ -93,7 +93,7 @@ define( require => {
     assert.ok( ValidatorDef.isValueValid( 7, { valueType: [ 'number', null ] } ), '7 is valid for null and number' );
     assert.ok( ValidatorDef.isValueValid( null, { valueType: [ 'number', null ] } ), 'null is valid for null and number' );
     assert.ok( ValidatorDef.isValueValid( new Node(), { valueType: [ 'number', null, Node ] } ), 'Node is valid' );
-    assert.ok( ValidatorDef.isValueValid( new Enumeration( [ 'ROBIN', 'JAY', 'WREN' ] ), { valueType: [ Enumeration, null, Node ] } ), 'Node is valid' );
+    assert.ok( ValidatorDef.isValueValid( Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] ), { valueType: [ Enumeration, null, Node ] } ), 'Node is valid' );
     assert.ok( !ValidatorDef.isValueValid( 'hello', { valueType: [ 'number', null, Node ] } ), 'string not valid' );
 
     window.assert && assert.throws( () => validate( true, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate boolean' );
@@ -101,13 +101,13 @@ define( require => {
     window.assert && assert.throws( () => validate( undefined, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
     window.assert && assert.throws( () => validate( () => {}, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
 
-    const Birds = new Enumeration( [ 'ROBIN', 'JAY', 'WREN' ] );
+    const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
     window.assert && assert.throws( () => validate( () => {}, { valueType: [ Birds, 'string' ] } ), 'number and string do not validate undefined' );
   } );
 
   QUnit.test( 'Test valueType: {Enumeration}', assert => {
 
-    const Birds = new Enumeration( [ 'ROBIN', 'JAY', 'WREN' ] );
+    const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
     assert.ok( ValidatorDef.isValidValidator( { valueType: Birds } ), 'good valueType' );
     assert.ok( ValidatorDef.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
     window.assert && assert.throws( () => ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );

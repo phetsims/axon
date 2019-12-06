@@ -16,7 +16,7 @@ define( require => {
   QUnit.module( 'EnumerationProperty' );
   QUnit.test( 'EnumerationProperty', function( assert ) {
 
-    const Birds = new Enumeration( [ 'ROBIN', 'JAY', 'WREN' ] );
+    const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
     let birdProperty = null;
 
     // constructor value
