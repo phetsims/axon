@@ -20,11 +20,11 @@ define( require => {
 
   QUnit.test( 'basic tests', function( assert ) {
     assert.ok( true, 'token test' );
-    const a = new NumberProperty( 0, { tandem: Tandem.generalTandem.createTandem( 'aProperty' ) } );
-    const b = new NumberProperty( 0, { tandem: Tandem.generalTandem.createTandem( 'bProperty' ) } );
+    const a = new NumberProperty( 0, { tandem: Tandem.GENERAL.createTandem( 'aProperty' ) } );
+    const b = new NumberProperty( 0, { tandem: Tandem.GENERAL.createTandem( 'bProperty' ) } );
     const sum = new DerivedProperty( [ a, b ], ( a, b ) => a + b, {
       phetioType: DerivedPropertyIO( NumberIO ),
-      tandem: Tandem.generalTandem.createTandem( 'sumProperty' )
+      tandem: Tandem.GENERAL.createTandem( 'sumProperty' )
     } );
 
     const transaction = new Transaction( [ a, b, sum ] ).start();

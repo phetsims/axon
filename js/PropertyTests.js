@@ -230,7 +230,7 @@ define( require => {
   if ( window.phet.phetio ) {
     QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
       const done = assert.async();
-      const tandem = Tandem.rootTandem.createTandem( 'testTandemProperty' );
+      const tandem = Tandem.ROOT.createTandem( 'testTandemProperty' );
       const phetioType = NumberPropertyIO;
       const propertyValue = 123;
       const validValues = [ 0, 1, 2, 3, propertyValue ];

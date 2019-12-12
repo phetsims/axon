@@ -35,7 +35,7 @@ define( require => {
     constructor( value, options ) {
       options = merge( {
 
-        tandem: Tandem.optional, // workaround for https://github.com/phetsims/tandem/issues/50
+        tandem: Tandem.OPTIONAL, // workaround for https://github.com/phetsims/tandem/issues/50
 
         // useDeepEquality: true => Use the `equals` method on the values
         // useDeepEquality: false => Use === for equality test

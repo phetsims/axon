@@ -56,7 +56,7 @@ define( require => {
         parameters: EMPTY_ARRAY,
 
         // phet-io - see PhetioObject.js for doc
-        tandem: Tandem.optional,
+        tandem: Tandem.OPTIONAL,
 
         // {function(new:function(new:ObjectIO),parameterTypes:function(new:ObjectIO))[]} - The non parameterized TypeIO, because
         // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a

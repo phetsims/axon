@@ -35,7 +35,7 @@ define( require => {
     options = merge( {
       allowDuplicates: false, // are duplicate items allowed in the array?
       phetioType: DefaultObservableArrayIOType,
-      tandem: Tandem.optional
+      tandem: Tandem.OPTIONAL
     }, options );
 
     assert && assert( options.phetioType && options.phetioType.parameterTypes, 'ObservableArray\'s phetioType should have a parameterType' );

@@ -28,7 +28,7 @@ define( require => {
     constructor( dependencies, derivation, options ) {
 
       options = merge( {
-        tandem: Tandem.optional,
+        tandem: Tandem.OPTIONAL,
         phetioReadOnly: true // derived properties can be read but not set by PhET-iO
       }, options );
 
