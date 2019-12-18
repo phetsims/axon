@@ -21,7 +21,7 @@ define( require => {
       '\u00B0', // degress
       '\u00B0C', // degrees Celsius
       'K', // Kelvin
-      'kg',
+      'kg', // kilograms
       'kg/m^3', // kg/cubic meter
       'kPa', // kilopascals
       'm', // meters
@@ -29,12 +29,14 @@ define( require => {
       'm/s', // meters/second
       'm/s^2', // meters/seconds squared
       'nm', // nanometers
-      'nm/ps',
-      'particles/ps',
+      'nm/ps', // nanometers/picosecond
+      'particles/ps', // particles/picosecond
       'pm', // picometers
-      'pm/ps',
+      'pm/ps', // picometers/picosecond
       'ps', // picoseconds
       's', // seconds
+      'N', // Newtons
+      'radians', // radians, note this has the same abbreviation as the radiation term "rad" so we use the full term
 
       // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
@@ -65,14 +67,12 @@ define( require => {
       'moles',
       'moles/liter',
       'nanometers',
-      'newtons',
       'newtons/meters',
       'newtons-second/meters',
       'ohms',
       'ohm-centimeters',
       'pascals',
       'percent',
-      'radians',
       'radians/second',
       'seconds',
       'siemens',
