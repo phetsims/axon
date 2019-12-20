@@ -1,4 +1,4 @@
-// Copyright 2015-2019, University of Colorado Boulder
+// Copyright 2019, University of Colorado Boulder
 
 /**
  * timer that calls a set of registered callbacks.
