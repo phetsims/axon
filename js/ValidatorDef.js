@@ -67,7 +67,7 @@ define( require => {
 
     // {function|null} function that validates the value. Single argument is the value, returns boolean. Unused if null.
     // Example:
-    // isValidValue: function( value ) { return Util.isInteger( value ) && value >= 0; }
+    // isValidValue: function( value ) { return Utils.isInteger( value ) && value >= 0; }
     'isValidValue',
 
     // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
