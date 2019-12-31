@@ -244,7 +244,7 @@ define( require => {
         return false;
       }
 
-      // See https://github.com/phetsims/axon/issues/201
+      // Check valueType, which can be an array, string, type, or null
       if ( validator.hasOwnProperty( 'valueType' ) ) {
         const valueType = validator.valueType;
         if ( Array.isArray( valueType ) ) {
