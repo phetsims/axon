@@ -162,7 +162,7 @@ define( require => {
     /**
      * @private
      * @param valueType
-     * @param {Object} options - requried, options from isValidValidator
+     * @param {Object} options - required, options from isValidValidator
      * @returns {boolean} - true if valid
      */
     validateValueType( valueType, options ) {
@@ -215,7 +215,8 @@ define( require => {
 
     /**
      * Determines whether a value is valid (returning a boolean value), and optionally throws an assertion error if the
-     * value is not valid.
+     * value is not valid.  The reason assertions are (optionally) thrown from this method is so that we can have more
+     * specific error messages.
      *
      * @param {Object|null} value
      * @param {ValidatorDef} validator
@@ -352,7 +353,7 @@ define( require => {
   const validateValueOrElementType = ( type, options ) => {
     if ( Array.isArray( type ) ) {
 
-      // If every type in the list is not valid, then return false, pass options through verbatum.
+      // If not every type in the list is valid, then return false, pass options through verbatim.
       if ( !_.every( type.map( typeInArray => ValidatorDef.validateValueType( typeInArray, options ) ) ) ) {
         return false;
       }
