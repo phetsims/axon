@@ -239,7 +239,7 @@ define( require => {
       }, options );
 
       // Use the same policy for whether to throw assertions when checking the validator itself.
-      if ( options.validateValidator !== false && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
+      if ( options.validateValidator && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
         assert && options.assertions && assert( false, 'Invalid validator' );
         return false;
       }
