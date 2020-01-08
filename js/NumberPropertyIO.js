@@ -64,7 +64,7 @@ define( require => {
      * @returns {Object}
      * @override
      */
-    fromStateObject( stateObject ) {
+    static fromStateObject( stateObject ) {
       const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
       fromParentStateObject.numberType = stateObject.numberType;
       fromParentStateObject.step = stateObject.step;
@@ -84,7 +84,7 @@ define( require => {
      * @param {Object} fromStateObject
      * @override
      */
-    setValue( numberProperty, fromStateObject ) {
+    static setValue( numberProperty, fromStateObject ) {
       validate( numberProperty, this.validator );
 
       // If range is a Property
