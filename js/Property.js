@@ -13,6 +13,7 @@ define( require => {
   const axon = require( 'AXON/axon' );
   const merge = require( 'PHET_CORE/merge' );
   const Multilink = require( 'AXON/Multilink' );
+  const NullableIO = require( 'TANDEM/types/NullableIO' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const TinyEmitter = require( 'AXON/TinyEmitter' );
@@ -263,7 +264,7 @@ define( require => {
       this.phetioStartEvent( Property.CHANGED_EVENT_NAME, () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
-          oldValue: parameterType.toStateObject( oldValue ),
+          oldValue: NullableIO( parameterType ).toStateObject( oldValue ),
           newValue: parameterType.toStateObject( this.get() )
         };
       } );
@@ -287,7 +288,7 @@ define( require => {
      * @public
      */
     notifyListenersStatic() {
-      this.changedEmitter.emit( this.get(), null, this );
+      this._notifyListeners( null );
     }
 
     /**
