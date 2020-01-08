@@ -89,7 +89,7 @@ define( require => {
 
       // @private - {function|null} - only function if range is a Property. Keep track for disposal.
       this.rangeChangeListener = null;
-      if ( options.range && options.range instanceof Property && this.assertNumberPropertyValidateValue) {
+      if ( options.range && options.range instanceof Property && this.assertNumberPropertyValidateValue ) {
         this.rangeChangeListener = () => {
           this.assertNumberPropertyValidateValue( this.value );
         };
@@ -132,6 +132,29 @@ define( require => {
       // TODO: should be handled in the super, see https://github.com/phetsims/axon/issues/253
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
       super.set( value );
+    }
+
+    /**
+     * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
+     * not fail after one but has been set not the other.
+     *
+     * To only be used when this.range is a Property (otherwise the range cannot change anyways)
+     * @param {Number} value
+     * @param {Range} range
+     * @public
+     */
+    setValueAndRange( value, range ) {
+      assert && assert( this.range instanceof Property, 'Range is only mutable when it is a Property.' );
+
+      // use mutation on the Property
+      this.range.value.setMinMax( range.min, range.max );
+      super.setPropertyValue( value );
+
+      // defer validation and notification
+      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
+      this.validate && this.validate( this.value );
+      this.range.notifyListenersStatic();
+      this.notifyListenersStatic();
     }
   }
 

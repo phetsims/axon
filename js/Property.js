@@ -121,7 +121,7 @@ define( require => {
       // @private {boolean} whether a deferred value has been set
       this.hasDeferredValue = false;
 
-      // @private {function|null} - closure over options for validation in set(), filled in below when assertions enabled
+      // @protected {function|null} (read-only) - closure over options for validation in set(), filled in below when assertions enabled
       this.validate = null;
 
       // Assertions regarding value validation

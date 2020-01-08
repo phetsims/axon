@@ -69,9 +69,12 @@ define( require => {
       fromParentStateObject.numberType = stateObject.numberType;
       fromParentStateObject.step = stateObject.step;
 
+      if ( stateObject.rangePhetioID ) {
+        fromParentStateObject.rangeProperty = phetioEngine.getPhetioObject( stateObject.rangePhetioID );
+      }
+
       // Create Range instance if defined, otherwise preserve value of null or undefined.
-      fromParentStateObject.range = stateObject.rangePhetioID ? phetioEngine.getPhetioObject( stateObject.rangePhetioID ) :
-                                    stateObject.range ? RangeIO.fromStateObject( stateObject.range ) :
+      fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) :
                                     stateObject.range;
       return fromParentStateObject;
     }
@@ -84,8 +87,14 @@ define( require => {
     setValue( numberProperty, fromStateObject ) {
       validate( numberProperty, this.validator );
 
-      PropertyIOImpl.setValue( numberProperty, fromStateObject );
-      numberProperty.range = fromStateObject.range;
+      // If range is a Property
+      if ( numberProperty.range instanceof Property ) {
+        numberProperty.setValueAndRange( fromStateObject.value, fromStateObject.range );
+      }
+      else {
+        PropertyIOImpl.setValue( numberProperty, fromStateObject );
+        numberProperty.range = fromStateObject.range; // TODO: changing this doesn't do anything! https://github.com/phetsims/axon/issues/278
+      }
       numberProperty.step = fromStateObject.step;
       numberProperty.numberType = fromStateObject.numberType;
     }
