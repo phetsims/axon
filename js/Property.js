@@ -81,15 +81,16 @@ define( require => {
       this.useDeepEquality = options.useDeepEquality;
 
       // When running as phet-io, if the tandem is specified, the type must be specified.
-      // This assertion helps in instrumenting code that has the tandem but not type
-      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert( !!options.phetioType,
-        'phetioType passed to Property must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
+      if ( Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() ) {
 
-      // When running as phet-io, if the tandem is specified, the type must be specified.
-      // This assertion helps in instrumenting code that has the tandem but not type
-      Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() && assert && assert(
-        !!options.phetioType.parameterTypes[ 0 ],
-        'phetioType parameter type must be specified (only one). Tandem.phetioID: ' + this.tandem.phetioID );
+        // This assertion helps in instrumenting code that has the tandem but not type
+        assert && assert( !!options.phetioType,
+          'phetioType passed to Property must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
+
+        // This assertion helps in instrumenting code that has the tandem but not type
+        assert && assert( !!options.phetioType.parameterTypes[ 0 ],
+          'phetioType parameter type must be specified (only one). Tandem.phetioID: ' + this.tandem.phetioID );
+      }
 
       // @private - Store the internal value and the initial value
       this._value = value;
@@ -276,7 +277,7 @@ define( require => {
       this.changedEmitter.emit( this.get(), oldValue, this );
       this.notifying = false;
 
-      this.isPhetioInstrumented() && this.phetioEndEvent();
+      this.phetioEndEvent();
     }
 
     /**
