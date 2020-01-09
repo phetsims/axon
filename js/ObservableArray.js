@@ -128,8 +128,10 @@ define( require => {
     // @private called when an item is added.
     _fireItemAdded: function( item ) {
       const self = this;
-      this.phetioStartEvent( 'itemAdded', function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+      this.phetioStartEvent( 'itemAdded', {
+        getData: function() {
+          return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+        }
       } );
 
       //Signify that an item was added to the list
@@ -144,8 +146,10 @@ define( require => {
     // @private called when an item is removed.
     _fireItemRemoved: function( item ) {
       const self = this;
-      this.phetioStartEvent( 'itemRemoved', function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+      this.phetioStartEvent( 'itemRemoved', {
+        getData: function() {
+          return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+        }
       } );
 
       //Signify that an item was removed from the list

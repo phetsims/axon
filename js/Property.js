@@ -262,12 +262,14 @@ define( require => {
      */
     _notifyListeners( oldValue ) {
 
-      this.phetioStartEvent( Property.CHANGED_EVENT_NAME, () => {
-        const parameterType = this.phetioType.parameterTypes[ 0 ];
-        return {
-          oldValue: NullableIO( parameterType ).toStateObject( oldValue ),
-          newValue: parameterType.toStateObject( this.get() )
-        };
+      this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
+        getData: () => {
+          const parameterType = this.phetioType.parameterTypes[ 0 ];
+          return {
+            oldValue: NullableIO( parameterType ).toStateObject( oldValue ),
+            newValue: parameterType.toStateObject( this.get() )
+          };
+        }
       } );
 
       // notify listeners, optionally detect loops where this Property is set again before this completes.
