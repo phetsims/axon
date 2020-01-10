@@ -262,7 +262,7 @@ define( require => {
      */
     _notifyListeners( oldValue ) {
 
-      this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
+      this.isPhetioInstrumented() && this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
         getData: () => {
           const parameterType = this.phetioType.parameterTypes[ 0 ];
           return {
@@ -279,7 +279,7 @@ define( require => {
       this.changedEmitter.emit( this.get(), oldValue, this );
       this.notifying = false;
 
-      this.phetioEndEvent();
+      this.isPhetioInstrumented() && this.phetioEndEvent();
     }
 
     /**
