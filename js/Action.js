@@ -225,7 +225,9 @@ define( require => {
       }
 
       // handle phet-io data stream for the emitted event
-      this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', this.getPhetioData.apply( this, arguments ) );
+      this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
+        data: this.getPhetioData.apply( this, arguments )
+      } );
 
       this._action.apply( null, arguments );
 
