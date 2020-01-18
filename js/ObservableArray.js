@@ -387,9 +387,9 @@ define( require => {
 
     /**
      * Return the underlying array.  Most clients should be able to use the ObservableArray functions for array access
-     * or filtering, mapping, etc.  If it is necessary to access the array directly, please document why it is necessary.
-     * Also note this is not a defensive copy, so the client will need to take care not to disturb the elements of the
-     * array.
+     * or filtering, mapping, etc. instead of this function.  If it is necessary to access the array directly (say, for
+     * performance reasons), please document why it is necessary. Also note this is not a defensive copy, so the client
+     * will need to take care not to disturb the elements of the array.
      * @returns {Array}
      * @public
      */
