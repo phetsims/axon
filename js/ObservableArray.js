@@ -1,7 +1,7 @@
 // Copyright 2013-2020, University of Colorado Boulder
 
 /**
- * An observable array of items.
+ * An observable array of items which sends notifications when items are added or removed.
  *
  * Because the array is observable, we must be careful about the possibility of concurrent-modification errors.
  * Any time we iterate over the array, we must iterate over a copy, because callback may be modifying the array.
@@ -386,7 +386,10 @@ define( require => {
     },
 
     /**
-     * Return the underlying array
+     * Return the underlying array.  Most clients should be able to use the ObservableArray functions for array access
+     * or filtering, mapping, etc.  If it is necessary to access the array directly, please document why it is necessary.
+     * Also note this is not a defensive copy, so the client will need to take care not to disturb the elements of the
+     * array.
      * @returns {Array}
      * @public
      */
