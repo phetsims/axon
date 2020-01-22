@@ -11,18 +11,16 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
+  const NullableIO = require( 'TANDEM/types/NullableIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
-  const Property = require( 'AXON/Property' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const RangeIO = require( 'DOT/RangeIO' );
   const validate = require( 'AXON/validate' );
 
-  // ifphetio
-  const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
-
   // constants
   const PropertyIOImpl = PropertyIO( NumberIO );
+  const NullableIORangeIO = NullableIO( RangeIO );
 
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -45,13 +43,9 @@ define( require => {
         parentStateObject.numberType = numberProperty.numberType;
       }
 
-      if ( numberProperty.range ) {
-        const range = numberProperty.range instanceof Property ? numberProperty.range.value : numberProperty.range;
-        parentStateObject.range = RangeIO.toStateObject( range );
-      }
-      if ( numberProperty.range instanceof Property && numberProperty.isPhetioInstrumented() ) {
-        parentStateObject.rangePhetioID = numberProperty.range.tandem.phetioID;
-      }
+      // always have a range, even if it is null. This is to support setting a range to null from something else, or vice versa
+      parentStateObject.range = NullableIORangeIO.toStateObject( numberProperty.range );
+
       if ( numberProperty.step ) {
         parentStateObject.step = numberProperty.step;
       }
@@ -69,13 +63,9 @@ define( require => {
       fromParentStateObject.numberType = stateObject.numberType;
       fromParentStateObject.step = stateObject.step;
 
-      if ( stateObject.rangePhetioID ) {
-        fromParentStateObject.rangeProperty = phetioEngine.getPhetioObject( stateObject.rangePhetioID );
-      }
-
       // Create Range instance if defined, otherwise preserve value of null or undefined.
-      fromParentStateObject.range = stateObject.range ? RangeIO.fromStateObject( stateObject.range ) :
-                                    stateObject.range;
+      fromParentStateObject.range = NullableIORangeIO.fromStateObject( stateObject.range );
+
       return fromParentStateObject;
     }
 
@@ -88,12 +78,12 @@ define( require => {
       validate( numberProperty, this.validator );
 
       // If range is a Property
-      if ( numberProperty.range instanceof Property ) {
+      if ( numberProperty.rangeProperty ) {
         numberProperty.setValueAndRange( fromStateObject.value, fromStateObject.range );
       }
       else {
         PropertyIOImpl.setValue( numberProperty, fromStateObject );
-        numberProperty.range = fromStateObject.range; // TODO: changing this doesn't do anything! https://github.com/phetsims/axon/issues/278
+        numberProperty.range = fromStateObject.range;
       }
       numberProperty.step = fromStateObject.step;
       numberProperty.numberType = fromStateObject.numberType;

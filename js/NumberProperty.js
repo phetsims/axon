@@ -95,6 +95,7 @@ define( require => {
       if ( options.range instanceof Property ) {
         this.rangeProperty = options.range;
         rangePropertyObserver = range => {
+          assert && assert( range instanceof Range, 'rangeProperty passed to NumberProperty should only take range instances' );
           this.range = range;
           this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
         };
