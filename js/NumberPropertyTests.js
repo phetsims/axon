@@ -129,13 +129,53 @@ define( require => {
     rangeProperty.value = new Range( 0, 10 );
     p.value = 2;
 
-
     p.setValueAndRange( 100, new Range( 99, 101 ) );
 
     const myRange = new Range( 5, 10 );
     p.setValueAndRange( 6, myRange );
 
-    // TODO: this should work, but doesn't, and should be fixed by https://github.com/phetsims/axon/issues/277
-    // assert.ok( myRange === p.rangeProperty.value, 'reference should be kept' );
+    assert.ok( myRange === p.rangeProperty.value, 'reference should be kept' );
+
+    p = new NumberProperty( 0, { range: new Range( 0, 1 ) } );
+    assert.ok( p.rangeProperty instanceof Property, 'created a rangeProperty from a range' );
+
+    // deferring ordering dependencies
+    ///////////////////////////////////////////////////////
+    p.setDeferred( true );
+    p.rangeProperty.setDeferred( true );
+    p.set( 3 );
+    p.rangeProperty.set( new Range( 2, 3 ) );
+    p.setDeferred( false );
+    p.rangeProperty.setDeferred( false );
+    /////////////////////////////////////////////////////////
+    p.setDeferred( true );
+    p.rangeProperty.setDeferred( true );
+    p.set( 6 );
+    p.rangeProperty.set( new Range( 6, 10 ) );
+    p.rangeProperty.setDeferred( false );
+    p.setDeferred( false );
+    /////////////////////////////////////////////////////////
+    p.setDeferred( true );
+    p.rangeProperty.setDeferred( true );
+    p.rangeProperty.set( new Range( 6, 10 ) );
+    p.set( 6 );
+    p.rangeProperty.setDeferred( false );
+    p.setDeferred( false );
+    /////////////////////////////////////////////////////////
+    p.setDeferred( true );
+    p.rangeProperty.setDeferred( true );
+    p.rangeProperty.set( new Range( 6, 10 ) );
+    p.set( 6 );
+    p.setDeferred( false );
+    p.rangeProperty.setDeferred( false );
+    /////////////////////////////////////////////////////////
+
+    p = new NumberProperty( 0 );
+    p.value = 4;
+    assert.ok( p.rangeProperty.value === null, 'rangeProperty should have been created' );
+    p.rangeProperty.value = new Range( 0, 4 );
+    window.assert && assert.throws( () => {
+      p.value = 5;
+    }, 'current value outside of range' );
   } );
 } );

@@ -11,16 +11,15 @@ define( require => {
 
   // modules
   const axon = require( 'AXON/axon' );
-  const NullableIO = require( 'TANDEM/types/NullableIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const PropertyIO = require( 'AXON/PropertyIO' );
   const RangeIO = require( 'DOT/RangeIO' );
+  const StringIO = require( 'TANDEM/types/StringIO' );
   const validate = require( 'AXON/validate' );
 
   // constants
   const PropertyIOImpl = PropertyIO( NumberIO );
-  const NullableIORangeIO = NullableIO( RangeIO );
 
   // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
   const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -43,11 +42,12 @@ define( require => {
         parentStateObject.numberType = numberProperty.numberType;
       }
 
-      // always have a range, even if it is null. This is to support setting a range to null from something else, or vice versa
-      parentStateObject.range = NullableIORangeIO.toStateObject( numberProperty.range );
-
+      if ( numberProperty.rangeProperty.value ) {
+        parentStateObject.range = RangeIO.toStateObject( numberProperty.rangeProperty.value );
+        parentStateObject.rangePhetioID = StringIO.toStateObject(numberProperty.rangeProperty.tandem.phetioID);
+      }
       if ( numberProperty.step ) {
-        parentStateObject.step = numberProperty.step;
+        parentStateObject.step = NumberIO.toStateObject(numberProperty.step);
       }
       return parentStateObject;
     }
@@ -63,9 +63,6 @@ define( require => {
       fromParentStateObject.numberType = stateObject.numberType;
       fromParentStateObject.step = stateObject.step;
 
-      // Create Range instance if defined, otherwise preserve value of null or undefined.
-      fromParentStateObject.range = NullableIORangeIO.fromStateObject( stateObject.range );
-
       return fromParentStateObject;
     }
 
@@ -77,14 +74,7 @@ define( require => {
     static setValue( numberProperty, fromStateObject ) {
       validate( numberProperty, this.validator );
 
-      // If range is a Property
-      if ( numberProperty.rangeProperty ) {
-        numberProperty.setValueAndRange( fromStateObject.value, fromStateObject.range );
-      }
-      else {
-        PropertyIOImpl.setValue( numberProperty, fromStateObject );
-        numberProperty.range = fromStateObject.range;
-      }
+      PropertyIOImpl.setValue( numberProperty, fromStateObject );
       numberProperty.step = fromStateObject.step;
       numberProperty.numberType = fromStateObject.numberType;
     }

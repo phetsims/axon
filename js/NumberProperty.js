@@ -12,9 +12,13 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
   const merge = require( 'PHET_CORE/merge' );
+  const NullableIO = require( 'TANDEM/types/NullableIO' );
   const NumberPropertyIO = require( 'AXON/NumberPropertyIO' );
   const Property = require( 'AXON/Property' );
+  const PropertyIO = require( 'AXON/PropertyIO' );
   const Range = require( 'DOT/Range' );
+  const RangeIO = require( 'DOT/RangeIO' );
+  const Tandem = require( 'TANDEM/Tandem' );
   const validate = require( 'AXON/validate' );
 
   // constants
@@ -37,7 +41,17 @@ define( require => {
         range: null,
 
         // {number|null} step - used by PhET-iO Studio to control this Property
-        step: null
+        step: null,
+
+        // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
+        rangePropertyOptions: {
+          phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
+          phetioType: PropertyIO( NullableIO( RangeIO ) ),
+          phetioReadOnly: true
+        },
+
+        // {Tandem}
+        tandem: Tandem.OPTIONAL
       }, options );
 
       assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
@@ -48,13 +62,11 @@ define( require => {
 
       // client cannot specify superclass options that are controlled by NumberProperty
       assert && assert( !options.valueType, 'NumberProperty sets valueType' );
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'NumberProperty sets phetioType' );
+      options.valueType = 'number';
+      assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
+      options.phetioType = NumberPropertyIO;
 
-      // Fill in superclass options that are controlled by NumberProperty.
-      options = merge( {
-        valueType: 'number',
-        phetioType: NumberPropertyIO
-      }, options );
+      const ownsRangeProperty = !( options.range instanceof Property );
 
       super( value, options );
 
@@ -71,47 +83,75 @@ define( require => {
         // validate for integer
         options.numberType === 'Integer' && validate( value, VALID_INTEGER );
 
-        // validate for range
-        if ( this.range ) {
-          const currentRange = this.range;
-          validate( value, { isValidValue: v => currentRange.contains( v ) } );
+        // validate for range if range is non-null
+        if ( this.rangeProperty.value && !this.isDeferred && !this.rangeProperty.isDeferred ) {
+          validate( value, { isValidValue: v => this.rangeProperty.value.contains( v ) } );
         }
       } );
 
-      // @public {Range|null} (read-only except NumberPropertyIO) - if defined, provides the range of possible values
-      // (inclusive)
-      this.range = null;
-
-      // @public (read-only) {Property.<Range>|null} - non null only if provided via options.range
+      // @public (read-only) {Property.<Range|null>}
       this.rangeProperty = null;
 
-      let rangePropertyObserver = null;
-
-      if ( options.range instanceof Property ) {
-        this.rangeProperty = options.range;
-        rangePropertyObserver = range => {
-          assert && assert( range instanceof Range, `rangeProperty passed to NumberProperty should only take range instances, unexpected Range: ${range}` );
-          this.range = range;
-          this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
-        };
-        this.rangeProperty.link( rangePropertyObserver );
+      if ( ownsRangeProperty ) {
+        this.rangeProperty = new Property( options.range, merge( {
+            tandem: options.tandem.createTandem( 'rangeProperty' )
+          }, options.rangePropertyOptions )
+        );
       }
       else {
-        this.range = options.range;
+        this.rangeProperty = options.range;
+        assert && Tandem.errorOnFailedValidation() && assert(
+          this.isPhetioInstrumented() === this.rangeProperty.isPhetioInstrumented(),
+          'provided rangeProperty should be instrumented if this NumberProperty is.' );
       }
+
+      const rangePropertyObserver = range => {
+        assert && assert( range instanceof Range || range === null,
+          `rangeProperty passed to NumberProperty should only take range instances, unexpected Range: ${range}` );
+        this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
+      };
+      this.rangeProperty.link( rangePropertyObserver );
 
       // verify that validValues meet other NumberProperty-specific validation criteria
       if ( options.validValues && this.assertNumberPropertyValidateValue ) {
-        options.validValues.forEach( this.assertNumberPropertyValidateValue );
+        options.validValues.forEach( validValue => this.assertNumberPropertyValidateValue( validValue ) );
       }
 
-      // validate initial value
-      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
+      // This puts validation at notification time instead of at value setting time. This is especially helpful as it
+      // pertains to Property.prototype.setDeferred(), and setting a range and value together.
+      this.assertNumberPropertyValidateValue && this.link( value => {
+        this.assertNumberPropertyValidateValue( value );
+      } );
 
       // @private
       this.disposeNumberProperty = () => {
-        rangePropertyObserver && this.rangeProperty.unlink( rangePropertyObserver );
+        if ( ownsRangeProperty ) {
+          this.rangeProperty.dispose();
+        }
+        else {
+          this.rangeProperty.unlink( rangePropertyObserver );
+        }
       };
+    }
+
+    /**
+     * @public
+     * @returns {Range|null}
+     */
+    get range() {
+      return this.rangeProperty.value;
+    }
+
+    /**
+     * Convenience function for setting the rangeProperty. Note: be careful using this function, as validation will occur
+     * immediately, and if the value is outside of this new Range an error will occur. See this.setValueAndRange() for
+     *  way to set both at once without assertion errors.
+     *
+     * @public
+     * @param {Range} range
+     */
+    set range( range ) {
+      this.rangeProperty.value = range;
     }
 
     /**
@@ -135,20 +175,6 @@ define( require => {
     }
 
     /**
-     * Performs value validation that is specific to NumberProperty.
-     * Then sets the value and notifies listeners.
-     * @param {*} value
-     * @public
-     * @override
-     */
-    set( value ) {
-
-      // TODO: should be handled in the super, see https://github.com/phetsims/axon/issues/253
-      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
-      super.set( value );
-    }
-
-    /**
      * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
      * not fail after one but has been set not the other.
      *
@@ -158,16 +184,12 @@ define( require => {
      * @public
      */
     setValueAndRange( value, range ) {
-
-      // use mutation on the Property
-      this.rangeProperty.value.setMinMax( range.min, range.max );
-      super.setPropertyValue( value );
-
-      // defer validation and notification
-      this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
-      this.validate && this.validate( this.value );
-      this.rangeProperty.notifyListenersStatic();
-      this.notifyListenersStatic();
+      this.setDeferred( true );
+      this.rangeProperty.setDeferred( true );
+      this.set( value );
+      this.rangeProperty.set( range );
+      this.setDeferred( false );
+      this.rangeProperty.setDeferred( false );
     }
   }
 
