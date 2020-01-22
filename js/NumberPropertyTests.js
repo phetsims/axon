@@ -12,6 +12,7 @@ define( require => {
   // modules
   const NumberIO = require( 'TANDEM/types/NumberIO' );
   const NumberProperty = require( 'AXON/NumberProperty' );
+  const Property = require( 'AXON/Property' );
   const Range = require( 'DOT/Range' );
 
   QUnit.module( 'NumberProperty' );
@@ -92,5 +93,49 @@ define( require => {
     window.assert && assert.throws( () => {
       p = new NumberProperty( 0, { phetioType: NumberIO } );
     }, 'EnumerationProperty sets phetioType' );
+  } );
+
+
+  QUnit.test( 'Test NumberProperty range option as Property', function( assert ) {
+
+    let rangeProperty = new Property( new Range( 0, 1 ) );
+    let p = null;
+
+    // valueType
+    window.assert && assert.throws( () => {
+      p = new NumberProperty( 0, { range: 'hi' } );
+    }, 'incorrect range type' );
+    p = new NumberProperty( 0, { range: rangeProperty } );
+    assert.ok( p.rangeProperty === rangeProperty, 'rangeProperty should be set' );
+    assert.ok( p.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
+    p.value = 1;
+    p.value = 0;
+    p.value = .5;
+    window.assert && assert.throws( () => {
+      p.value = 2;
+    }, 'larger than range' );
+    window.assert && assert.throws( () => {
+      p.value = -2;
+    }, 'smaller than range' );
+    window.assert && assert.throws( () => {
+      rangeProperty.value = new Range( 5, 10 );
+    }, 'current value outside of range' );
+
+    // reset from previous test setting to [5,10]
+    p.dispose();
+    rangeProperty.dispose();
+    rangeProperty = new Property( new Range( 0, 1 ) );
+    p = new NumberProperty( 0, { range: rangeProperty } );
+    rangeProperty.value = new Range( 0, 10 );
+    p.value = 2;
+
+
+    p.setValueAndRange( 100, new Range( 99, 101 ) );
+
+    const myRange = new Range( 5, 10 );
+    p.setValueAndRange( 6, myRange );
+
+    // TODO: this should work, but doesn't, and should be fixed by https://github.com/phetsims/axon/issues/277
+    // assert.ok( myRange === p.rangeProperty.value, 'reference should be kept' );
   } );
 } );

@@ -61,9 +61,6 @@ define( require => {
       // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
       this.numberType = options.numberType;
 
-      // @public {Range|Property.<Range>|null} (read-only) - if defined, provides the range of possible values (inclusive)
-      this.range = options.range;
-
       // @public {number|null} (read-only - If defined, provides a step that the NumberProperty can be
       // incremented/decremented.
       this.step = options.step;
@@ -76,7 +73,7 @@ define( require => {
 
         // validate for range
         if ( options.range ) {
-          const currentRange = options.range instanceof Property ? options.range.value : options.range;
+          const currentRange = this.range;
           assert && assert( currentRange instanceof Range, `unexpected Range: ${currentRange}` );
           validate( value, { isValidValue: v => currentRange.contains( v ) } );
         }
@@ -87,17 +84,30 @@ define( require => {
         options.validValues.forEach( this.assertNumberPropertyValidateValue );
       }
 
-      // @private - {function|null} - only function if range is a Property. Keep track for disposal.
-      this.rangeChangeListener = null;
-      if ( options.range && options.range instanceof Property && this.assertNumberPropertyValidateValue ) {
-        this.rangeChangeListener = () => {
-          this.assertNumberPropertyValidateValue( this.value );
+      // @public {Range|null} (read-only) - if defined, provides the range of possible values (inclusive)
+      this.range = options.range;
+
+      // @public (read-only) {Property.<Range>|null} - non null only if provided via options.range
+      this.rangeProperty = null;
+
+      let rangePropertyObserver = null;
+
+      if ( options.range instanceof Property ) {
+        this.rangeProperty = options.range;
+        rangePropertyObserver = range => {
+          this.range = range;
+          this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
         };
-        options.range.link( this.rangeChangeListener );
+        this.rangeProperty.link( rangePropertyObserver );
       }
 
       // validate initial value
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
+
+      // @private
+      this.disposeNumberProperty = () => {
+        rangePropertyObserver && this.rangeProperty.unlink( rangePropertyObserver );
+      };
     }
 
     /**
@@ -108,7 +118,7 @@ define( require => {
 
       // reset this after the value has been reset, because this reset may change the range such that the value isn't
       // valid anymore.
-      this.range && this.range instanceof Property && this.range.reset();
+      this.rangeProperty && this.rangeProperty.reset();
     }
 
     /**
@@ -116,7 +126,7 @@ define( require => {
      * @override
      */
     dispose() {
-      this.rangeChangeListener && this.range.unlink( this.rangeChangeListener );
+      this.disposeNumberProperty();
       super.dispose();
     }
 
@@ -144,16 +154,15 @@ define( require => {
      * @public
      */
     setValueAndRange( value, range ) {
-      assert && assert( this.range instanceof Property, 'Range is only mutable when it is a Property.' );
 
       // use mutation on the Property
-      this.range.value.setMinMax( range.min, range.max );
+      this.rangeProperty.value.setMinMax( range.min, range.max );
       super.setPropertyValue( value );
 
       // defer validation and notification
       this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( value );
       this.validate && this.validate( this.value );
-      this.range.notifyListenersStatic();
+      this.rangeProperty.notifyListenersStatic();
       this.notifyListenersStatic();
     }
   }
