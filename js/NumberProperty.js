@@ -72,20 +72,15 @@ define( require => {
         options.numberType === 'Integer' && validate( value, VALID_INTEGER );
 
         // validate for range
-        if ( options.range ) {
+        if ( this.range ) {
           const currentRange = this.range;
-          assert && assert( currentRange instanceof Range, `unexpected Range: ${currentRange}` );
           validate( value, { isValidValue: v => currentRange.contains( v ) } );
         }
       } );
 
-      // verify that validValues meet other NumberProperty-specific validation criteria
-      if ( options.validValues && this.assertNumberPropertyValidateValue ) {
-        options.validValues.forEach( this.assertNumberPropertyValidateValue );
-      }
-
-      // @public {Range|null} (read-only) - if defined, provides the range of possible values (inclusive)
-      this.range = options.range;
+      // @public {Range|null} (read-only except NumberPropertyIO) - if defined, provides the range of possible values
+      // (inclusive)
+      this.range = null;
 
       // @public (read-only) {Property.<Range>|null} - non null only if provided via options.range
       this.rangeProperty = null;
@@ -95,11 +90,19 @@ define( require => {
       if ( options.range instanceof Property ) {
         this.rangeProperty = options.range;
         rangePropertyObserver = range => {
-          assert && assert( range instanceof Range, 'rangeProperty passed to NumberProperty should only take range instances' );
+          assert && assert( range instanceof Range, `rangeProperty passed to NumberProperty should only take range instances, unexpected Range: ${range}` );
           this.range = range;
           this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
         };
         this.rangeProperty.link( rangePropertyObserver );
+      }
+      else {
+        this.range = options.range;
+      }
+
+      // verify that validValues meet other NumberProperty-specific validation criteria
+      if ( options.validValues && this.assertNumberPropertyValidateValue ) {
+        options.validValues.forEach( this.assertNumberPropertyValidateValue );
       }
 
       // validate initial value
