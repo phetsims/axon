@@ -94,7 +94,7 @@ define( require => {
       this.rangeProperty = null;
 
       if ( ownsRangeProperty ) {
-        this.rangeProperty = new Property( options.range || null, merge( {
+        this.rangeProperty = new Property( options.range, merge( {
             tandem: options.tandem.createTandem( 'rangeProperty' )
           }, options.rangePropertyOptions )
         );
