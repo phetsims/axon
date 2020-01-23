@@ -66,7 +66,8 @@ define( require => {
       assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
       options.phetioType = NumberPropertyIO;
 
-      const ownsRangeProperty = !( options.range instanceof Property );
+      const rangePropertyProvided = options.range && options.range instanceof Property;
+      const ownsRangeProperty = !rangePropertyProvided;
 
       super( value, options );
 
@@ -93,7 +94,7 @@ define( require => {
       this.rangeProperty = null;
 
       if ( ownsRangeProperty ) {
-        this.rangeProperty = new Property( options.range, merge( {
+        this.rangeProperty = new Property( options.range || null, merge( {
             tandem: options.tandem.createTandem( 'rangeProperty' )
           }, options.rangePropertyOptions )
         );
