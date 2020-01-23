@@ -66,7 +66,8 @@ define( require => {
       assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
       options.phetioType = NumberPropertyIO;
 
-      const ownsRangeProperty = !( options.range instanceof Property );
+      const rangePropertyProvided = options.range && options.range instanceof Property;
+      const ownsRangeProperty = !rangePropertyProvided;
 
       super( value, options );
 
