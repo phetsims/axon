@@ -93,6 +93,8 @@ define( require => {
     window.assert && assert.throws( () => {
       p = new NumberProperty( 0, { phetioType: NumberIO } );
     }, 'EnumerationProperty sets phetioType' );
+
+    assert.ok( true, 'one assertion for when assert is not enabled' );
   } );
 
 
