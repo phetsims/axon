@@ -144,34 +144,26 @@ define( require => {
 
     // deferring ordering dependencies
     ///////////////////////////////////////////////////////
+    let pCalled = 0;
+    let pRangeCalled = 0;
+    p.lazyLink( () => pCalled++ );
+    p.rangeProperty.lazyLink( () => pRangeCalled++ );
     p.setDeferred( true );
     p.rangeProperty.setDeferred( true );
     p.set( 3 );
+    assert.ok( pCalled === 0, 'p is still deferred, should not call listeners' );
     p.rangeProperty.set( new Range( 2, 3 ) );
-    p.setDeferred( false );
-    p.rangeProperty.setDeferred( false );
-    /////////////////////////////////////////////////////////
-    p.setDeferred( true );
-    p.rangeProperty.setDeferred( true );
-    p.set( 6 );
-    p.rangeProperty.set( new Range( 6, 10 ) );
-    p.rangeProperty.setDeferred( false );
-    p.setDeferred( false );
-    /////////////////////////////////////////////////////////
-    p.setDeferred( true );
-    p.rangeProperty.setDeferred( true );
-    p.rangeProperty.set( new Range( 6, 10 ) );
-    p.set( 6 );
-    p.rangeProperty.setDeferred( false );
-    p.setDeferred( false );
-    /////////////////////////////////////////////////////////
-    p.setDeferred( true );
-    p.rangeProperty.setDeferred( true );
-    p.rangeProperty.set( new Range( 6, 10 ) );
-    p.set( 6 );
-    p.setDeferred( false );
-    p.rangeProperty.setDeferred( false );
-    /////////////////////////////////////////////////////////
+    assert.ok( pRangeCalled === 0, 'p.rangeProperty is still deferred, should not call listeners' );
+    const notifyPListeners = p.setDeferred( false );
+    notifyPListeners();
+    assert.ok( pCalled === 1, 'p listeners should have been called' );
+    const notifyRangeListeners = p.rangeProperty.setDeferred( false );
+    notifyRangeListeners();
+    assert.ok( pRangeCalled === 1, 'p.rangeProperty is still deferred, should not call listeners' );
+
+    p.setValueAndRange( -100, new Range( -101, -99 ) );
+    assert.ok( pCalled === 2, 'p listeners should have been called again' );
+    assert.ok( pRangeCalled === 2, 'p.rangeProperty is still deferred, should not call listeners again' );
 
     p = new NumberProperty( 0 );
     p.value = 4;
