@@ -44,6 +44,7 @@ define( require => {
         step: null,
 
         // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
+        // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
         rangePropertyOptions: {
           phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
           phetioType: PropertyIO( NullableIO( RangeIO ) ),
@@ -59,6 +60,10 @@ define( require => {
                                          ( options.range instanceof Property && options.range.value instanceof Range ),
         'options.range must be of type Range or Property.<Range>:' + options.range );
       assert && options.step && assert( typeof options.step === 'number', 'options.step must be of type step:' + options.step );
+
+      assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
+      assert && options.rangePropertyOptions.tandem && assert( options.rangePropertyOptions.tandem.name === 'rangeProperty',
+        'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
 
       // client cannot specify superclass options that are controlled by NumberProperty
       assert && assert( !options.valueType, 'NumberProperty sets valueType' );
@@ -94,10 +99,7 @@ define( require => {
       this.rangeProperty = null;
 
       if ( ownsRangeProperty ) {
-        this.rangeProperty = new Property( options.range, merge( {
-            tandem: options.tandem.createTandem( 'rangeProperty' )
-          }, options.rangePropertyOptions )
-        );
+        this.rangeProperty = new Property( options.range, options.rangePropertyOptions );
       }
       else {
         this.rangeProperty = options.range;

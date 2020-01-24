@@ -14,6 +14,7 @@ define( require => {
   const NumberProperty = require( 'AXON/NumberProperty' );
   const Property = require( 'AXON/Property' );
   const Range = require( 'DOT/Range' );
+  const Tandem = require( 'TANDEM/Tandem' );
 
   QUnit.module( 'NumberProperty' );
 
@@ -98,7 +99,7 @@ define( require => {
   } );
 
 
-  QUnit.test( 'Test NumberProperty range option as Property', function( assert ) {
+  QUnit.test( 'Test NumberProperty range option as Property', assert => {
 
     let rangeProperty = new Property( new Range( 0, 1 ) );
     let p = null;
@@ -179,5 +180,24 @@ define( require => {
     window.assert && assert.throws( () => {
       p.value = 5;
     }, 'current value outside of range' );
+  } );
+  QUnit.test( 'Test NumberProperty phet-io options', assert => {
+
+    const rootTandem = Tandem.ROOT;
+    let p = new NumberProperty( 0, {
+      range: new Range( 0, 20 ),
+      tandem: rootTandem.createTandem( 'numberProperty' ),
+      rangePropertyOptions: { tandem: rootTandem.createTandem( 'rangeProperty' ) }
+    } );
+
+    assert.ok( p.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
+    assert.ok( p.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
+    window.assert && assert.throws( () => {
+      p = new NumberProperty( 0, {
+        range: new Range( 0, 20 ),
+        tandem: rootTandem.createTandem( 'numberProperty2' ),
+        rangePropertyOptions: { tandem: rootTandem.createTandem( 'rangePropertyfdsa' ) }
+      } );
+    }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
   } );
 } );
