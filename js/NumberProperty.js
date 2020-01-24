@@ -187,10 +187,16 @@ define( require => {
      * @public
      */
     setValueAndRange( value, range ) {
+
+      // defer notification of listeners
       this.setDeferred( true );
       this.rangeProperty.setDeferred( true );
+
+      // set values
       this.set( value );
       this.rangeProperty.set( range );
+
+      // notify listeners if the values have changed
       const notifyValueListeners = this.setDeferred( false );
       const notifyRangeListeners = this.rangeProperty.setDeferred( false );
       notifyValueListeners && notifyValueListeners();
