@@ -44,10 +44,12 @@ define( require => {
 
       if ( numberProperty.rangeProperty.value ) {
         parentStateObject.range = RangeIO.toStateObject( numberProperty.rangeProperty.value );
-        parentStateObject.rangePhetioID = StringIO.toStateObject(numberProperty.rangeProperty.tandem.phetioID);
+        if ( numberProperty.rangeProperty.isPhetioInstrumented() ) {
+          parentStateObject.rangePhetioID = StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID );
+        }
       }
       if ( numberProperty.step ) {
-        parentStateObject.step = NumberIO.toStateObject(numberProperty.step);
+        parentStateObject.step = NumberIO.toStateObject( numberProperty.step );
       }
       return parentStateObject;
     }
