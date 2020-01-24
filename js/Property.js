@@ -300,8 +300,8 @@ define( require => {
      * once other Properties have also taken their deferred values.
      *
      * @param {boolean} isDeferred - whether the Property should be deferred or not
-     * @returns {function|null} - action that can be used to send notifications after final setDeferred(false),
-     *                          - if the value changed
+     * @returns {function|null} - function to notify listeners after calling setDeferred(false),
+     *                          - null if isDeferred is true, or if the value is unchanged since calling setDeferred(true)
      * @public
      */
     setDeferred( isDeferred ) {
