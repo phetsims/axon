@@ -191,8 +191,10 @@ define( require => {
       this.rangeProperty.setDeferred( true );
       this.set( value );
       this.rangeProperty.set( range );
-      this.setDeferred( false );
-      this.rangeProperty.setDeferred( false );
+      const notifyValueListeners = this.setDeferred( false );
+      const notifyRangeListeners = this.rangeProperty.setDeferred( false );
+      notifyValueListeners && notifyValueListeners();
+      notifyRangeListeners && notifyRangeListeners();
     }
   }
 
