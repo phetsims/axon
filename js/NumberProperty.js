@@ -37,7 +37,7 @@ define( require => {
       options = merge( {
         numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
-        // {Range|Property.<Range>|null} range
+        // {Range|Property.<Range|null>|null} range
         range: null,
 
         // {number|null} step - used by PhET-iO Studio to control this Property
@@ -48,7 +48,8 @@ define( require => {
         rangePropertyOptions: {
           phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
           phetioType: PropertyIO( NullableIO( RangeIO ) ),
-          phetioReadOnly: true
+          phetioReadOnly: true,
+          tandem: Tandem.OPTIONAL // must be 'rangeProperty', see assertion below
         },
 
         // {Tandem}
@@ -56,13 +57,12 @@ define( require => {
       }, options );
 
       assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
-      assert && options.range && assert( options.range instanceof Range ||
-                                         ( options.range instanceof Property && options.range.value instanceof Range ),
-        'options.range must be of type Range or Property.<Range>:' + options.range );
-      assert && options.step && assert( typeof options.step === 'number', 'options.step must be of type step:' + options.step );
+      assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
+        'invalid range' + options.range );
+      assert && options.step && assert( typeof options.step === 'number', 'invalid step:' + options.step );
 
       assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
-      assert && options.rangePropertyOptions.tandem && assert( options.rangePropertyOptions.tandem.name === 'rangeProperty',
+      assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem.name === 'rangeProperty',
         'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
 
       // client cannot specify superclass options that are controlled by NumberProperty
@@ -83,47 +83,47 @@ define( require => {
       // incremented/decremented.
       this.step = options.step;
 
-      // @private {function|null} value validation that is specific to NumberProperty, null if assertions are disabled
-      this.assertNumberPropertyValidateValue = assert && ( value => {
+      // @private {function|null} validation for NumberProperty and its rangeProperty, null if assertions are disabled
+      this.validateNumberProperty = assert && ( value => {
+        if ( !this.isDeferred && !this.rangeProperty.isDeferred ) {
 
-        // validate for integer
-        options.numberType === 'Integer' && validate( value, VALID_INTEGER );
+          // validate for integer
+          ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
 
-        // validate for range if range is non-null
-        if ( this.rangeProperty.value && !this.isDeferred && !this.rangeProperty.isDeferred ) {
-          validate( value, { isValidValue: v => this.rangeProperty.value.contains( v ) } );
+          // validate range value type
+          validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
+
+          // validate that value and range are compatible
+          if ( this.rangeProperty.value ) {
+            validate( value, { isValidValue: value => this.rangeProperty.value.contains( value ) } );
+          }
         }
       } );
 
       // @public (read-only) {Property.<Range|null>}
       this.rangeProperty = null;
-
       if ( ownsRangeProperty ) {
         this.rangeProperty = new Property( options.range, options.rangePropertyOptions );
       }
       else {
         this.rangeProperty = options.range;
-        assert && Tandem.errorOnFailedValidation() && assert(
-          this.isPhetioInstrumented() === this.rangeProperty.isPhetioInstrumented(),
-          'provided rangeProperty should be instrumented if this NumberProperty is.' );
       }
+      assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
 
       const rangePropertyObserver = range => {
-        assert && assert( range instanceof Range || range === null,
-          `rangeProperty passed to NumberProperty should only take range instances, unexpected Range: ${range}` );
-        this.assertNumberPropertyValidateValue && this.assertNumberPropertyValidateValue( this.value );
+        this.validateNumberProperty && this.validateNumberProperty( this.value );
       };
       this.rangeProperty.link( rangePropertyObserver );
 
       // verify that validValues meet other NumberProperty-specific validation criteria
-      if ( options.validValues && this.assertNumberPropertyValidateValue ) {
-        options.validValues.forEach( validValue => this.assertNumberPropertyValidateValue( validValue ) );
+      if ( options.validValues && this.validateNumberProperty ) {
+        options.validValues.forEach( validValue => this.validateNumberProperty( validValue ) );
       }
 
       // This puts validation at notification time instead of at value setting time. This is especially helpful as it
       // pertains to Property.prototype.setDeferred(), and setting a range and value together.
-      this.assertNumberPropertyValidateValue && this.link( value => {
-        this.assertNumberPropertyValidateValue( value );
+      this.validateNumberProperty && this.link( value => {
+        this.validateNumberProperty( value );
       } );
 
       // @private
@@ -134,6 +134,11 @@ define( require => {
         else {
           this.rangeProperty.unlink( rangePropertyObserver );
         }
+      };
+
+      // @private
+      this.resetNumberProperty = () => {
+        ownsRangeProperty && this.rangeProperty.reset();
       };
     }
 
@@ -159,13 +164,14 @@ define( require => {
 
     /**
      * @public
+     * @overrides
      */
     reset() {
       super.reset();
 
-      // reset this after the value has been reset, because this reset may change the range such that the value isn't
-      // valid anymore.
-      this.rangeProperty && this.rangeProperty.reset();
+      // Do subclass-specific reset after the value has been reset, because this reset may change the range
+      // such that the value isn't valid anymore.
+      this.resetNumberProperty();
     }
 
     /**
