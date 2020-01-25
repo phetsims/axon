@@ -413,16 +413,22 @@ define( require => {
       this.unlink( listener );
     }
 
-    // @public Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
-    toString() {return 'Property#' + this.id + '{' + this.get() + '}'; }
+    /**
+     * Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
+     * @returns {string}
+     * @override
+     */
+    toString() {return `Property#${this.id}{${this.get()}}`; }
 
-    // @public
+    /**
+     * @returns {string}
+     */
     valueOf() {return this.toString();}
 
     /**
-     * Convenience function for debugging a property values.  It prints the new value on registration and when changed.
-     * @param name debug name to be printed on the console
-     * @returns {function} the handle to the linked listener in case it needs to be removed later
+     * Convenience function for debugging a Property's value. It prints the new value on registration and when changed.
+     * @param {string} name - debug name to be printed on the console
+     * @returns {function} - the handle to the linked listener in case it needs to be removed later
      * @public
      */
     debug( name ) {
