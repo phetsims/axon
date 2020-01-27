@@ -307,6 +307,8 @@ define( require => {
      * @public
      */
     forEach: function( callback ) {
+
+      // TODO: don't slice on forEach, see https://github.com/phetsims/axon/issues/283
       this._array.slice().forEach( callback ); // do this on a copy of the array, in case callbacks involve array modification
     },
 
