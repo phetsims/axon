@@ -11,7 +11,7 @@ define( require => {
   // modules
   const axon = require( 'AXON/axon' );
 
-  var units = {
+  const units = {
     values: [
 
       // NOTE: Abbreviations are preferred, see https://github.com/phetsims/phet-io/issues/530
@@ -37,6 +37,7 @@ define( require => {
       's', // seconds
       'N', // Newtons
       'radians', // radians, note this has the same abbreviation as the radiation term "rad" so we use the full term
+      'L/s',
 
       // NOTE: In time, these will be replaced with abbreviations, see above.
       'amperes',
