@@ -162,7 +162,7 @@ define( require => {
     /**
      * @private
      * @param valueType
-     * @param {Object} options - required, options from isValidValidator
+     * @param {Object} [options] - required, options from isValidValidator
      * @returns {boolean} - true if valid
      */
     validateValueType( valueType, options ) {
@@ -314,7 +314,7 @@ define( require => {
     /**
      * @param {Object|null} value
      * @param {string|function|null|undefined} valueType - see above definition, Array is not allowed in this method
-     * @param {Object} options - not optional, should be passed in from isValidValue
+     * @param {Object} [options] - not optional, should be passed in from isValidValue
      * @returns {boolean} - whether the value is a validType
      * @throws {Error} assertion error if not valid and options.assertions is true
      * @private
@@ -347,7 +347,7 @@ define( require => {
   /**
    * Validate a type that can be a type, or an array of multiple types.
    * @param {*} type - see valueType documentation
-   * @param {Object} options - see isValidValidator
+   * @param {Object} [options] - see isValidValidator
    * @returns {boolean}
    */
   const validateValueOrElementType = ( type, options ) => {
