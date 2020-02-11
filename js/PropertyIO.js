@@ -18,8 +18,8 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
 
-  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is only created once
-  const cache = {};
+  // {Map.<cacheKey:string|*, function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is only created once
+  const cache = new Map();
 
   /**
    * An observable Property that triggers notifications when the value changes.
@@ -30,11 +30,14 @@ define( require => {
   function PropertyIO( parameterType ) {
     assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
-    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-      cache[ parameterType.typeName ] = create( parameterType );
+    // use the cacheKey if applicable
+    const cacheKey = parameterType.cacheKey || parameterType.typeName;
+
+    if ( !cache.has( cacheKey ) ) {
+      cache.set( cacheKey, create( parameterType ) );
     }
 
-    return cache[ parameterType.typeName ];
+    return cache.get( cacheKey );
   }
 
   /**
