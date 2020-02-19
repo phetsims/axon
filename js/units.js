@@ -18,7 +18,6 @@ define( require => {
       'AMU', // atomic mass unit
       'atm', // atmospheres
       'cm', // centimeters
-      '\u00B0', // degress
       '\u00B0C', // degrees Celsius
       'K', // Kelvin
       'kg', // kilograms
