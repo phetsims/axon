@@ -197,14 +197,6 @@ define( require => {
     }
 
     /**
-     * @override
-     * @public
-     */
-    dispose() {
-      super.dispose();
-    }
-
-    /**
      * Invokes the action.
      * @params - expected parameters are based on options.parameters, see constructor
      * @public
