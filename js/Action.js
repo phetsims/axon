@@ -161,6 +161,8 @@ define( require => {
      */
     getPhetioData() {
 
+      assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
+
       // null if there are no arguments. dataStream.js omits null values for data
       let data = null;
       if ( this._parameters.length > 0 ) {
@@ -218,13 +220,13 @@ define( require => {
       }
 
       // handle phet-io data stream for the emitted event
-      this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
-        data: this.getPhetioData.apply( this, arguments )
+      this.phetioStartEvent( 'emitted', {
+        getData: () => this.getPhetioData.apply( this, arguments ) // put this in a closure so that it is only called in phet-io brand
       } );
 
       this._action.apply( null, arguments );
 
-      this.isPhetioInstrumented() && this.phetioEndEvent();
+      this.phetioEndEvent();
     }
   }
 
