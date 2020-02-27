@@ -8,70 +8,66 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const axon = require( 'AXON/axon' );
-  const inherit = require( 'PHET_CORE/inherit' );
+import inherit from '../../phet-core/js/inherit.js';
+import axon from './axon.js';
 
-  /**
-   * @param {Property[]} dependencies
-   * @param {function} callback function that expects args in the same order as dependencies
-   * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
-   * @constructor
-   */
-  function Multilink( dependencies, callback, lazy ) {
+/**
+ * @param {Property[]} dependencies
+ * @param {function} callback function that expects args in the same order as dependencies
+ * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
+ * @constructor
+ */
+function Multilink( dependencies, callback, lazy ) {
 
-    this.dependencies = dependencies; // @private
+  this.dependencies = dependencies; // @private
 
-    assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
+  assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    const self = this;
+  const self = this;
 
-    // @private Keep track of listeners so they can be detached
-    this.dependencyListeners = [];
+  // @private Keep track of listeners so they can be detached
+  this.dependencyListeners = [];
 
-    // When a dependency value changes, update the list of dependencies and call back to the callback
-    dependencies.forEach( function( dependency, i ) {
-      const listener = function( value ) {
+  // When a dependency value changes, update the list of dependencies and call back to the callback
+  dependencies.forEach( function( dependency, i ) {
+    const listener = function( value ) {
 
-        // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
-        if ( !self.isDisposed ) {
-          callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
-        }
-      };
-      self.dependencyListeners.push( listener );
-      dependency.lazyLink( listener );
-    } );
+      // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
+      if ( !self.isDisposed ) {
+        callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+      }
+    };
+    self.dependencyListeners.push( listener );
+    dependency.lazyLink( listener );
+  } );
 
-    // Send initial call back but only if we are non-lazy
-    if ( !lazy ) {
-      callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
-    }
-
-    // @private - whether the Multilink has been disposed
-    this.isDisposed = false;
+  // Send initial call back but only if we are non-lazy
+  if ( !lazy ) {
+    callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
   }
 
-  axon.register( 'Multilink', Multilink );
+  // @private - whether the Multilink has been disposed
+  this.isDisposed = false;
+}
 
-  return inherit( Object, Multilink, {
+axon.register( 'Multilink', Multilink );
 
-    // @public
-    dispose: function() {
-      assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
+export default inherit( Object, Multilink, {
 
-      // Unlink from dependent properties
-      for ( let i = 0; i < this.dependencies.length; i++ ) {
-        const dependency = this.dependencies[ i ];
-        if ( !dependency.isDisposed ) {
-          dependency.unlink( this.dependencyListeners[ i ] );
-        }
+  // @public
+  dispose: function() {
+    assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
+
+    // Unlink from dependent properties
+    for ( let i = 0; i < this.dependencies.length; i++ ) {
+      const dependency = this.dependencies[ i ];
+      if ( !dependency.isDisposed ) {
+        dependency.unlink( this.dependencyListeners[ i ] );
       }
-      this.dependencies = null;
-      this.dependencyListeners = null;
-      this.isDisposed = true;
     }
-  } );
+    this.dependencies = null;
+    this.dependencyListeners = null;
+    this.isDisposed = true;
+  }
 } );

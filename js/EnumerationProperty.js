@@ -5,52 +5,49 @@
  *
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const axon = require( 'AXON/axon' );
-  const Enumeration = require( 'PHET_CORE/Enumeration' );
-  const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
-  const merge = require( 'PHET_CORE/merge' );
-  const Property = require( 'AXON/Property' );
-  const PropertyIO = require( 'AXON/PropertyIO' );
+import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
+import merge from '../../phet-core/js/merge.js';
+import axon from './axon.js';
+import Property from './Property.js';
+import PropertyIO from './PropertyIO.js';
 
-  class EnumerationProperty extends Property {
+class EnumerationProperty extends Property {
 
-    /**
-     * @param {Enumeration} enumeration
-     * @param {*} initialValue - one of the values from enumeration
-     * @param {Object} [options]
-     */
-    constructor( enumeration, initialValue, options ) {
+  /**
+   * @param {Enumeration} enumeration
+   * @param {*} initialValue - one of the values from enumeration
+   * @param {Object} [options]
+   */
+  constructor( enumeration, initialValue, options ) {
 
-      assert && assert( enumeration instanceof Enumeration, `invalid enumeration: ${enumeration}` );
-      assert && assert( enumeration.includes( initialValue ), `invalid initialValue: ${initialValue}` );
+    assert && assert( enumeration instanceof Enumeration, `invalid enumeration: ${enumeration}` );
+    assert && assert( enumeration.includes( initialValue ), `invalid initialValue: ${initialValue}` );
 
-      if ( options ) {
+    if ( options ) {
 
-        // client cannot specify superclass options that are not supported by EnumerationProperty
-        assert && assert( !options.hasOwnProperty( 'validValues' ), 'EnumerationProperty does not support validValues' );
-        assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'EnumerationProperty does not support isValidValue' );
+      // client cannot specify superclass options that are not supported by EnumerationProperty
+      assert && assert( !options.hasOwnProperty( 'validValues' ), 'EnumerationProperty does not support validValues' );
+      assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'EnumerationProperty does not support isValidValue' );
 
-        // client cannot specify superclass options that are controlled by EnumerationProperty
-        assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
-        assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
-      }
-
-      options = merge( {
-        valueType: enumeration,
-        phetioType: PropertyIO( EnumerationIO( enumeration ) ),
-        validValues: enumeration.VALUES // for PhET-iO documentation and support
-      }, options );
-
-      super( initialValue, options );
-
-      // @public (read-only)
-      this.enumeration = enumeration;
+      // client cannot specify superclass options that are controlled by EnumerationProperty
+      assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
     }
-  }
 
-  return axon.register( 'EnumerationProperty', EnumerationProperty );
-} );
+    options = merge( {
+      valueType: enumeration,
+      phetioType: PropertyIO( EnumerationIO( enumeration ) ),
+      validValues: enumeration.VALUES // for PhET-iO documentation and support
+    }, options );
+
+    super( initialValue, options );
+
+    // @public (read-only)
+    this.enumeration = enumeration;
+  }
+}
+
+axon.register( 'EnumerationProperty', EnumerationProperty );
+export default EnumerationProperty;

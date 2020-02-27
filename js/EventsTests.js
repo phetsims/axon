@@ -5,97 +5,93 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const Events = require( 'AXON/Events' );
+import Events from './Events.js';
 
-  QUnit.module( 'Events' );
+QUnit.module( 'Events' );
 
-  QUnit.test( 'Basics', function( assert ) {
-    const events = new Events(); // eslint-disable-line no-undef
+QUnit.test( 'Basics', function( assert ) {
+  const events = new Events(); // eslint-disable-line no-undef
 
-    events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
+  events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
-    let aCount = 0;
+  let aCount = 0;
 
-    function incrementA() { aCount++; }
+  function incrementA() { aCount++; }
 
-    assert.equal( events.hasListener( 'a', incrementA ), false, 'No listener on unused event name' );
+  assert.equal( events.hasListener( 'a', incrementA ), false, 'No listener on unused event name' );
 
-    events.on( 'a', incrementA );
-    events.trigger( 'a' );
-    events.trigger( 'a' );
-    assert.equal( aCount, 2, 'on() works' );
+  events.on( 'a', incrementA );
+  events.trigger( 'a' );
+  events.trigger( 'a' );
+  assert.equal( aCount, 2, 'on() works' );
 
-    assert.equal( events.hasListener( 'a', incrementA ), true, 'Should have increment listener after on()' );
+  assert.equal( events.hasListener( 'a', incrementA ), true, 'Should have increment listener after on()' );
 
-    events.off( 'a', incrementA );
-    events.trigger( 'a' );
-    assert.equal( aCount, 2, 'off() works' );
+  events.off( 'a', incrementA );
+  events.trigger( 'a' );
+  assert.equal( aCount, 2, 'off() works' );
 
-    assert.equal( events.hasListener( 'a', incrementA ), false, 'Should not have increment listener after off()' );
+  assert.equal( events.hasListener( 'a', incrementA ), false, 'Should not have increment listener after off()' );
 
-    const person = new Events( { name: 'larry', age: '100' } );
-    let count = 0;
-    const listener = function( person ) {
-      count = count + 1;
-    };
-    person.on( 'reset-all', listener );
+  const person = new Events( { name: 'larry', age: '100' } );
+  let count = 0;
+  const listener = function( person ) {
+    count = count + 1;
+  };
+  person.on( 'reset-all', listener );
 
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
+  person.trigger( 'reset-all' );
+  person.trigger( 'reset-all' );
+  person.trigger( 'reset-all' );
 
-    assert.equal( count, 3, 'Trigger calls on' );
+  assert.equal( count, 3, 'Trigger calls on' );
 
-    //Unregister the listener
-    person.off( 'reset-all', listener );
+  //Unregister the listener
+  person.off( 'reset-all', listener );
 
-    //Triggering more events shouldn't call back because we have removed the listener
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
-    person.trigger( 'reset-all' );
+  //Triggering more events shouldn't call back because we have removed the listener
+  person.trigger( 'reset-all' );
+  person.trigger( 'reset-all' );
+  person.trigger( 'reset-all' );
 
-    assert.equal( count, 3, 'Triggering more events should not call back because we have removed the listener' );
+  assert.equal( count, 3, 'Triggering more events should not call back because we have removed the listener' );
 
-    let planetName = '?';
-    let planetRadius = '?';
-    person.on( 'planet-discovered', function( name, radius ) {
-      planetName = name;
-      planetRadius = radius;
-    } );
-
-    person.trigger( 'planet-discovered', 'pluto', 12345 );
-
-    assert.equal( planetName, 'pluto', 'argument should pass through event' );
-    assert.equal( planetRadius, 12345, 'argument should pass through event' );
+  let planetName = '?';
+  let planetRadius = '?';
+  person.on( 'planet-discovered', function( name, radius ) {
+    planetName = name;
+    planetRadius = radius;
   } );
 
-  QUnit.test( 'Static Basics', function( assert ) {
-    const events = new Events(); // eslint-disable-line no-undef
+  person.trigger( 'planet-discovered', 'pluto', 12345 );
 
-    events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
+  assert.equal( planetName, 'pluto', 'argument should pass through event' );
+  assert.equal( planetRadius, 12345, 'argument should pass through event' );
+} );
 
-    let aCount = 0;
+QUnit.test( 'Static Basics', function( assert ) {
+  const events = new Events(); // eslint-disable-line no-undef
 
-    function incrementA() { aCount++; }
+  events.trigger( 'doesNotExist', 1, 2, 3 ); // shouldn't error on non-existent event name
 
-    assert.equal( events.hasStaticListener( 'a', incrementA ), false, 'No listener on unused event name' );
+  let aCount = 0;
 
-    events.onStatic( 'a', incrementA );
-    events.trigger( 'a' );
-    events.trigger( 'a' );
-    assert.equal( aCount, 2, 'onStatic() works' );
+  function incrementA() { aCount++; }
 
-    assert.equal( events.hasStaticListener( 'a', incrementA ), true, 'Should have increment listener after onStatic()' );
+  assert.equal( events.hasStaticListener( 'a', incrementA ), false, 'No listener on unused event name' );
 
-    events.offStatic( 'a', incrementA );
-    events.trigger( 'a' );
-    assert.equal( aCount, 2, 'offStatic() works' );
+  events.onStatic( 'a', incrementA );
+  events.trigger( 'a' );
+  events.trigger( 'a' );
+  assert.equal( aCount, 2, 'onStatic() works' );
 
-    assert.equal( events.hasStaticListener( 'a', incrementA ), false, 'Should not have increment listener after offStatic()' );
+  assert.equal( events.hasStaticListener( 'a', incrementA ), true, 'Should have increment listener after onStatic()' );
 
-  } );
+  events.offStatic( 'a', incrementA );
+  events.trigger( 'a' );
+  assert.equal( aCount, 2, 'offStatic() works' );
+
+  assert.equal( events.hasStaticListener( 'a', incrementA ), false, 'Should not have increment listener after offStatic()' );
+
 } );

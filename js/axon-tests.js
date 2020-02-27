@@ -5,24 +5,20 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  require( 'AXON/DynamicPropertyTests' );
-  require( 'AXON/EmitterTests' );
-  require( 'AXON/TinyEmitterTests' );
-  require( 'AXON/EmitterIOTests' );
-  require( 'AXON/EnumerationPropertyTests' );
-  require( 'AXON/EventsTests' );
-  require( 'AXON/NumberPropertyTests' );
-  require( 'AXON/ObservableArrayTests' );
-  require( 'AXON/PropertyTests' );
-  require( 'AXON/BooleanPropertyTests' );
-  require( 'AXON/DerivedPropertyTests' );
-  require( 'AXON/StringPropertyTests' );
-  require( 'AXON/ValidatorDefTests' );
+import './BooleanPropertyTests.js';
+import './DerivedPropertyTests.js';
+import './DynamicPropertyTests.js';
+import './EmitterIOTests.js';
+import './EmitterTests.js';
+import './EnumerationPropertyTests.js';
+import './EventsTests.js';
+import './NumberPropertyTests.js';
+import './ObservableArrayTests.js';
+import './PropertyTests.js';
+import './StringPropertyTests.js';
+import './TinyEmitterTests.js';
+import './ValidatorDefTests.js';
 
-  // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
-  QUnit.start();
-} );
+// Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
+QUnit.start();

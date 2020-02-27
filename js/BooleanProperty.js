@@ -6,48 +6,45 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const axon = require( 'AXON/axon' );
-  const BooleanIO = require( 'TANDEM/types/BooleanIO' );
-  const merge = require( 'PHET_CORE/merge' );
-  const Property = require( 'AXON/Property' );
-  const PropertyIO = require( 'AXON/PropertyIO' );
+import merge from '../../phet-core/js/merge.js';
+import BooleanIO from '../../tandem/js/types/BooleanIO.js';
+import axon from './axon.js';
+import Property from './Property.js';
+import PropertyIO from './PropertyIO.js';
 
-  // constants
-  const BooleanPropertyIO = PropertyIO( BooleanIO );
+// constants
+const BooleanPropertyIO = PropertyIO( BooleanIO );
 
-  class BooleanProperty extends Property {
+class BooleanProperty extends Property {
 
-    /**
-     * @param {boolean} value - initial value
-     * @param {Object} [options]
-     * @constructor
-     */
-    constructor( value, options ) {
+  /**
+   * @param {boolean} value - initial value
+   * @param {Object} [options]
+   * @constructor
+   */
+  constructor( value, options ) {
 
-      if ( options ) {
+    if ( options ) {
 
-        // client cannot specify superclass options that are not supported by BooleanProperty
-        assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'BooleanProperty does not support isValidValue' );
-        assert && assert( !options.hasOwnProperty( 'validValues' ), 'BooleanProperty does not support validValues' );
+      // client cannot specify superclass options that are not supported by BooleanProperty
+      assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'BooleanProperty does not support isValidValue' );
+      assert && assert( !options.hasOwnProperty( 'validValues' ), 'BooleanProperty does not support validValues' );
 
-        // client cannot specify superclass options that are controlled by BooleanProperty
-        assert && assert( !options.hasOwnProperty( 'valueType' ), 'BooleanProperty sets valueType' );
-        assert && assert( !options.hasOwnProperty( 'phetioType' ), 'BooleanProperty sets phetioType' );
-      }
-
-      // Fill in superclass options that are controlled by BooleanProperty.
-      options = merge( {
-        valueType: 'boolean',
-        phetioType: BooleanPropertyIO
-      }, options );
-
-      super( value, options );
+      // client cannot specify superclass options that are controlled by BooleanProperty
+      assert && assert( !options.hasOwnProperty( 'valueType' ), 'BooleanProperty sets valueType' );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'BooleanProperty sets phetioType' );
     }
-  }
 
-  return axon.register( 'BooleanProperty', BooleanProperty );
-} );
+    // Fill in superclass options that are controlled by BooleanProperty.
+    options = merge( {
+      valueType: 'boolean',
+      phetioType: BooleanPropertyIO
+    }, options );
+
+    super( value, options );
+  }
+}
+
+axon.register( 'BooleanProperty', BooleanProperty );
+export default BooleanProperty;

@@ -17,90 +17,87 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const ActionIO = require( 'AXON/ActionIO' );
-  const axon = require( 'AXON/axon' );
-  const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  const VoidIO = require( 'TANDEM/types/VoidIO' );
+import FunctionIO from '../../tandem/js/types/FunctionIO.js';
+import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import VoidIO from '../../tandem/js/types/VoidIO.js';
+import ActionIO from './ActionIO.js';
+import axon from './axon.js';
 
-  // constants
-  const EMITTER_IO_VALIDATOR = {
-    isValidValue: v => {
-      const Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
-      return v instanceof Emitter;
-    }
-  };
+// constants
+const EMITTER_IO_VALIDATOR = {
+  isValidValue: v => {
+    const Emitter = window.phet ? phet.axon.Emitter : axon.Emitter;
+    return v instanceof Emitter;
+  }
+};
 
-  // {Object.<parameterTypeNames:string, function(new:ObjectIO)>} - Cache each parameterized EmitterIO so
-  // that it is only created once.
-  const cache = {};
+// {Object.<parameterTypeNames:string, function(new:ObjectIO)>} - Cache each parameterized EmitterIO so
+// that it is only created once.
+const cache = {};
 
-  /**
-   * An notifier that fires listeners
-   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
-   * @param {function(new:ObjectIO)[]} parameterTypes
-   * @returns {function(new:ObjectIO)}
-   */
-  function EmitterIO( parameterTypes ) {
-    assert && assert( parameterTypes, 'parameterTypes should be defined' );
+/**
+ * An notifier that fires listeners
+ * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * @param {function(new:ObjectIO)[]} parameterTypes
+ * @returns {function(new:ObjectIO)}
+ */
+function EmitterIO( parameterTypes ) {
+  assert && assert( parameterTypes, 'parameterTypes should be defined' );
 
-    const key = parameterTypes.map( typeIO => typeIO.typeName ).join( ',' );
-    if ( !cache.hasOwnProperty( key ) ) {
-      cache[ key ] = create( parameterTypes );
-    }
-
-    return cache[ key ];
+  const key = parameterTypes.map( typeIO => typeIO.typeName ).join( ',' );
+  if ( !cache.hasOwnProperty( key ) ) {
+    cache[ key ] = create( parameterTypes );
   }
 
+  return cache[ key ];
+}
+
+/**
+ * Creates an EmitterIOImpl
+ * @param {function(new:ObjectIO)[]} parameterTypes
+ * @returns {function(new:ObjectIO)}
+ */
+const create = parameterTypes => {
+
   /**
-   * Creates an EmitterIOImpl
+   * IO type for Emitter
+   *
    * @param {function(new:ObjectIO)[]} parameterTypes
-   * @returns {function(new:ObjectIO)}
+   * @returns {{function(new:ObjectIO)} - the parameterized Emitter
    */
-  const create = parameterTypes => {
+  class EmitterIOImpl extends ActionIO( parameterTypes ) {}
 
-    /**
-     * IO type for Emitter
-     *
-     * @param {function(new:ObjectIO)[]} parameterTypes
-     * @returns {{function(new:ObjectIO)} - the parameterized Emitter
-     */
-    class EmitterIOImpl extends ActionIO( parameterTypes ) {}
-
-    EmitterIOImpl.methods = {
-      addListener: {
-        returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-        implementation: function( listener ) {
-          this.phetioObject.addListener( listener );
-        },
-        documentation: 'Adds a listener which will be called when the emitter emits.'
+  EmitterIOImpl.methods = {
+    addListener: {
+      returnType: VoidIO,
+      parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+      implementation: function( listener ) {
+        this.phetioObject.addListener( listener );
       },
-      emit: {
-        returnType: VoidIO,
-        parameterTypes: parameterTypes,
+      documentation: 'Adds a listener which will be called when the emitter emits.'
+    },
+    emit: {
+      returnType: VoidIO,
+      parameterTypes: parameterTypes,
 
-        // Match `Emitter.emit`'s dynamic number of arguments
-        implementation: function() {
-          this.phetioObject.emit.apply( this.phetioObject, arguments );
-        },
-        documentation: 'Emits a single event to all listeners.',
-        invocableForReadOnlyElements: false
-      }
-    };
-
-    EmitterIOImpl.documentation = 'Emits when an event occurs and calls added listeners.';
-    EmitterIOImpl.parameterTypes = parameterTypes;
-    EmitterIOImpl.validator = EMITTER_IO_VALIDATOR;
-    EmitterIOImpl.typeName = `EmitterIO<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
-    ObjectIO.validateSubtype( EmitterIOImpl );
-
-    return EmitterIOImpl;
+      // Match `Emitter.emit`'s dynamic number of arguments
+      implementation: function() {
+        this.phetioObject.emit.apply( this.phetioObject, arguments );
+      },
+      documentation: 'Emits a single event to all listeners.',
+      invocableForReadOnlyElements: false
+    }
   };
 
-  return axon.register( 'EmitterIO', EmitterIO );
-} );
+  EmitterIOImpl.documentation = 'Emits when an event occurs and calls added listeners.';
+  EmitterIOImpl.parameterTypes = parameterTypes;
+  EmitterIOImpl.validator = EMITTER_IO_VALIDATOR;
+  EmitterIOImpl.typeName = `EmitterIO<${parameterTypes.map( param => param.typeName ).join( ', ' )}>`;
+  ObjectIO.validateSubtype( EmitterIOImpl );
+
+  return EmitterIOImpl;
+};
+
+axon.register( 'EmitterIO', EmitterIO );
+export default EmitterIO;
