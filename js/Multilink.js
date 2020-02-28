@@ -1,4 +1,4 @@
-// Copyright 2014-2019, University of Colorado Boulder
+// Copyright 2014-2020, University of Colorado Boulder
 
 /**
  * A Multilink is an instance that can be used to link to multiple properties.  It is very similar to a DerivedProperty,
