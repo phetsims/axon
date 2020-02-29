@@ -35,6 +35,8 @@ const units = {
     'radians', // radians, note this has the same abbreviation as the radiation term "rad" so we use the full term
     'L/s',
     'L',
+    'mol/L',
+    'mol',
 
     // NOTE: In time, these will be replaced with abbreviations, see above.
     'amperes',
