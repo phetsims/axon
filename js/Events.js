@@ -8,7 +8,10 @@
  */
 
 import cleanArray from '../../phet-core/js/cleanArray.js';
+import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import axon from './axon.js';
+
+assert && deprecationWarning( 'Events is deprecated, please use Emitter.js instead' );
 
 /**
  * @constructor
