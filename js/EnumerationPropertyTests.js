@@ -53,8 +53,6 @@ QUnit.test( 'EnumerationProperty', function( assert ) {
   window.assert && assert.throws( () => {
     birdProperty = new EnumerationProperty( {} );
   }, 'That is not an enumeration' );
-
-  assert.ok( true, 'so we have at least 1 test in this set' );
 } );
 
 QUnit.test( 'EnumerationIO validation', assert => {
@@ -66,7 +64,6 @@ QUnit.test( 'EnumerationIO validation', assert => {
     const birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
     const birdProperty2 = new EnumerationProperty( Birds2, Birds2.ROBIN );
 
-    assert.ok( true, 'so we have at least 1 test in this set' );
     // constructor value
     window.assert && assert.throws( () => {
       birdProperty.set( Birds2.ROBIN );
