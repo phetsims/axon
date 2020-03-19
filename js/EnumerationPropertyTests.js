@@ -34,9 +34,6 @@ QUnit.test( 'EnumerationProperty', function( assert ) {
 
   // superclass options that are not supported by EnumerationProperty
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { validValues: Birds.VALUES } );
-  }, 'EnumerationProperty does not support validValues' );
-  window.assert && assert.throws( () => {
     birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { isValidValue: () => true } );
   }, 'EnumerationProperty does not support isValidValue' );
 
@@ -75,3 +72,26 @@ QUnit.test( 'EnumerationIO validation', assert => {
     birdProperty2.set( Birds2.WREN );
   }
 );
+QUnit.test( 'validValues as a subset of Enumeration values', assert => {
+
+  const Birds1 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+  const Birds2 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
+  assert.ok( Birds1 !== Birds2, 'different Enumerations' );
+  assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
+
+
+  const enumerationProperty1 = new EnumerationProperty( Birds1, Birds1.ROBIN, { validValues: [ Birds1.ROBIN, Birds1.JAY ] } );
+
+  enumerationProperty1.value = Birds1.JAY;
+  assert.ok( enumerationProperty1.value === Birds1.JAY, 'basic test for when assertions are not enabled' );
+  assert.ok( enumerationProperty1.getInitialValue() === Birds1.ROBIN, 'basic test for when assertions are not enabled for initialValue' );
+
+  window.assert && assert.throws( () => {
+    enumerationProperty1.value = Birds1.WREN;
+  }, 'not a valid value' );
+
+  window.assert && assert.throws( () => {
+    enumerationProperty1.value = Birds2.ROBIN;
+  }, 'not a valid value, from a different Enumeration' );
+
+} );
