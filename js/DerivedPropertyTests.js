@@ -57,6 +57,34 @@ QUnit.test( 'DerivedProperty.valueEquals', function( assert ) {
   assert.equal( prop.value, true );
 } );
 
+QUnit.test( 'Test defer', function( assert ) {
+  const property1 = new Property( 0 );
+  const property2 = new Property( 2 );
+  const derivedProperty = new DerivedProperty( [ property1, property2 ], ( a, b ) => a + b );
+  assert.ok( derivedProperty.value === 2, 'base case, no defer' );
+
+  // test a dependency being deferred
+  property1.setDeferred( true );
+  assert.ok( derivedProperty.value === 2, 'same value even after defer' );
+  property1.value = 2;
+  assert.ok( derivedProperty.value === 2, 'same value even when set to new' );
+  const update = property1.setDeferred( false );
+  assert.ok( property1.value === 2, 'property has new value now' );
+  assert.ok( derivedProperty.value === 2, 'but the derivedProperty doesnt' );
+  update();
+  assert.ok( derivedProperty.value === 4, 'now derivedProperty was updated' );
+
+  // test the DerivedProperty being deferred
+  derivedProperty.setDeferred( true );
+  assert.ok( derivedProperty.value === 4, 'still 4' );
+  property1.value = 4;
+  assert.ok( derivedProperty.value === 4, 'still 4 after update' );
+  const updateAgain = derivedProperty.setDeferred( false );
+  assert.ok( derivedProperty.value === 6, 'now has the correct value' );
+  updateAgain();
+  assert.ok( derivedProperty.value === 6, 'nothing changed' );
+} );
+
 QUnit.test( 'DerivedProperty and/or', function( assert ) {
 
   const propA = new Property( false );
