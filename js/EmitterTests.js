@@ -92,8 +92,8 @@ QUnit.test( 'Test emit timing Emitter', assert => {
   };
 
   // No assertions here, but it can be nice to test how expensive emit calls are
-  testEmitter( e1, 10000000 );
-  testEmitter( e, 10000000 );
+  testEmitter( e1, 100000 );
+  testEmitter( e, 100000 );
 } );
 
 QUnit.test( 'Emitter Basics', assert => {
