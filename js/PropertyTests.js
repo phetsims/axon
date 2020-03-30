@@ -224,7 +224,7 @@ QUnit.test( 'Property value validation', function( assert ) {
 } );
 
 // Tests that can only run in phet-io mode
-if ( window.phet.phetio ) {
+if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
     const done = assert.async();
     const tandem = Tandem.ROOT.createTandem( 'testTandemProperty' );
