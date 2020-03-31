@@ -26,6 +26,7 @@ const units = {
     'm/s^2', // meters/seconds squared
     'nm', // nanometers
     'nm/ps', // nanometers/picosecond
+    '\u2126', // ohms, don't use the one in MathSymbols to prevent a dependency on scenery-phet
     'particles/ps', // particles/picosecond
     'pm', // picometers
     'pm/ps', // picometers/picosecond
