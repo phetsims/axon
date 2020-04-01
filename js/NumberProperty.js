@@ -203,6 +203,15 @@ class NumberProperty extends Property {
     notifyValueListeners && notifyValueListeners();
     notifyRangeListeners && notifyRangeListeners();
   }
+
+  /**
+   * Resets the value and range atomically.
+   * If you use setValueAndRange, you'll likely need to use this instead of reset.
+   * @public
+   */
+  resetValueAndRange() {
+    this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue );
+  }
 }
 
 axon.register( 'NumberProperty', NumberProperty );
