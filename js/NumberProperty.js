@@ -183,8 +183,6 @@ class NumberProperty extends Property {
   /**
    * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
    * not fail after one but has been set not the other.
-   *
-   * To only be used when this.range is a Property (otherwise the range cannot change anyways)
    * @param {Number} value
    * @param {Range} range
    * @public
