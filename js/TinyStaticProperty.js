@@ -1,35 +1,33 @@
 // Copyright 2013-2020, University of Colorado Boulder
 
 /**
- * An observable property which notifies listeners when the value changes.
+ * An observable stub which satisfies some of the Property interface, which can store a (static/constant) value
+ * and also notify listeners when that value has mutated.
  *
  * @author Sam Reid (PhET Interactive Simulations)
- * @author Chris Malley (PixelZoom, Inc.)
+ * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-// Use inheritance instead of composition to save even more MB
+// Inheritance saves memory
 class TinyStaticProperty extends TinyEmitter {
-
   /**
    * @param {*} value - the initial value of the property
    */
   constructor( value ) {
-
     super();
 
-    // @private - Store the internal value and the initial value
+    // @private {*} - Store the internal value
     this._value = value;
   }
 
   /**
    * Gets the value.
-   * You can also use the es5 getter (property.value) but this means is provided for inner loops
-   * or internal code that must be fast.
-   * @returns {*}
    * @public
+   *
+   * @returns {*}
    */
   get() {
     return this._value;
@@ -49,23 +47,12 @@ class TinyStaticProperty extends TinyEmitter {
   }
 
   /**
-   * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
-   * when setting the value.
+   * Directly notifies listeners of changes.
+   * @public
    *
-   * @param {*} value
-   * @protected - for overriding only
-   */
-  setPropertyValue( value ) {
-    throw new Error( 'Cannot set a TinyStaticProperty value' );
-  }
-
-  /**
    * @param {*} oldValue
-   * @private - but note that a few sims are calling this even though they shouldn't
    */
-  _notifyListeners( oldValue ) {
-
-    // notify listeners, optionally detect loops where this TinyStaticProperty is set again before this completes.
+  notifyListeners( oldValue ) {
     this.emit( this._value, oldValue, this );
   }
 
@@ -86,6 +73,7 @@ class TinyStaticProperty extends TinyEmitter {
    */
   link( listener ) {
     this.addListener( listener );
+
     listener( this._value, null, this ); // null should be used when an object is expected but unavailable
   }
 
@@ -145,16 +133,12 @@ class TinyStaticProperty extends TinyEmitter {
 
   // @public Ensures that the TinyStaticProperty is eligible for GC
   dispose() {
-
     // remove any listeners that are still attached to this property
     this.unlinkAll();
 
     super.dispose();
   }
 }
-
-// static attributes
-TinyStaticProperty.CHANGED_EVENT_NAME = 'changed';
 
 axon.register( 'TinyStaticProperty', TinyStaticProperty );
 export default TinyStaticProperty;

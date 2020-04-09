@@ -1,16 +1,17 @@
 // Copyright 2013-2020, University of Colorado Boulder
 
 /**
- * An observable property which notifies listeners when the value changes.
+ * A lightweight version of Property (that satisfies some of the interface), meant for high-performance applications
+ * where validation, phet-io support and other things are not needed.
  *
  * @author Sam Reid (PhET Interactive Simulations)
- * @author Chris Malley (PixelZoom, Inc.)
+ * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-// Use inheritance instead of composition to save even more MB
+// Inheritance saves memory
 class TinyProperty extends TinyEmitter {
 
   /**
@@ -18,13 +19,12 @@ class TinyProperty extends TinyEmitter {
    * @param {Object} [options] - options
    */
   constructor( value, options ) {
-
     super();
 
-    // @private - Store the internal value and the initial value
+    // @private {*} - Store the internal value
     this._value = value;
 
-    // TODO: better handling for this?
+    // @private {boolean} - Keeps some compatibility with the Property interface to have the options check here
     this.useDeepEquality = options && options.useDeepEquality;
   }
 
@@ -51,8 +51,10 @@ class TinyProperty extends TinyEmitter {
   set( value ) {
     if ( !this.equalsValue( value ) ) {
       const oldValue = this._value;
+
       this.setPropertyValue( value );
-      this._notifyListeners( oldValue );
+
+      this.notifyListeners( oldValue );
     }
     return this;
   }
@@ -60,9 +62,9 @@ class TinyProperty extends TinyEmitter {
   /**
    * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
    * when setting the value.
+   * @public
    *
    * @param {*} value
-   * @protected - for overriding only
    */
   setPropertyValue( value ) {
     this._value = value;
@@ -108,10 +110,12 @@ class TinyProperty extends TinyEmitter {
   }
 
   /**
+   * Directly notifies listeners of changes.
+   * @public
+   *
    * @param {*} oldValue
-   * @private - but note that a few sims are calling this even though they shouldn't
    */
-  _notifyListeners( oldValue ) {
+  notifyListeners( oldValue ) {
 
     // notify listeners, optionally detect loops where this TinyProperty is set again before this completes.
     this.emit( this._value, oldValue, this );
@@ -132,6 +136,7 @@ class TinyProperty extends TinyEmitter {
    */
   link( listener ) {
     this.addListener( listener );
+
     listener( this._value, null, this ); // null should be used when an object is expected but unavailable
   }
 
@@ -191,16 +196,12 @@ class TinyProperty extends TinyEmitter {
 
   // @public Ensures that the TinyProperty is eligible for GC
   dispose() {
-
     // remove any listeners that are still attached to this property
     this.unlinkAll();
 
     super.dispose();
   }
 }
-
-// static attributes
-TinyProperty.CHANGED_EVENT_NAME = 'changed';
 
 axon.register( 'TinyProperty', TinyProperty );
 export default TinyProperty;
