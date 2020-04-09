@@ -62,6 +62,10 @@ class NumberPropertyIO extends PropertyIOImpl {
     fromParentStateObject.numberType = stateObject.numberType;
     fromParentStateObject.step = stateObject.step;
 
+    if ( stateObject.range ) {
+      fromParentStateObject.range = RangeIO.fromStateObject( stateObject.range );
+    }
+
     return fromParentStateObject;
   }
 
@@ -73,6 +77,9 @@ class NumberPropertyIO extends PropertyIOImpl {
   static setValue( numberProperty, fromStateObject ) {
     validate( numberProperty, this.validator );
 
+    if ( fromStateObject.range && numberProperty.rangeProperty ) {
+      numberProperty.rangeProperty.value = fromStateObject.range;
+    }
     PropertyIOImpl.setValue( numberProperty, fromStateObject );
     numberProperty.step = fromStateObject.step;
     numberProperty.numberType = fromStateObject.numberType;
