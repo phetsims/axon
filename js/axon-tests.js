@@ -17,6 +17,7 @@ import './ObservableArrayTests.js';
 import './PropertyTests.js';
 import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
+import './TinyPropertyTests.js';
 import './ValidatorDefTests.js';
 
 // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
