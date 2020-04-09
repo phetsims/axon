@@ -84,6 +84,8 @@ class TinyEmitter {
     this.defendListeners();
 
     this.listeners.push( listener );
+
+    this.changeCount && this.changeCount( 1 );
   }
 
   /**
@@ -106,6 +108,8 @@ class TinyEmitter {
     this.defendListeners();
 
     this.listeners.splice( index, 1 );
+
+    this.changeCount && this.changeCount( -1 );
   }
 
   /**
@@ -113,9 +117,13 @@ class TinyEmitter {
    * @public
    */
   removeAllListeners() {
+    const length = this.listeners.length;
+
     while ( this.listeners.length > 0 ) {
       this.removeListener( this.listeners[ 0 ] );
     }
+
+    this.changeCount && this.changeCount( -length );
   }
 
   /**

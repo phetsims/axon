@@ -12,7 +12,6 @@ import './DynamicPropertyTests.js';
 import './EmitterIOTests.js';
 import './EmitterTests.js';
 import './EnumerationPropertyTests.js';
-import './EventsTests.js';
 import './NumberPropertyTests.js';
 import './ObservableArrayTests.js';
 import './PropertyTests.js';
