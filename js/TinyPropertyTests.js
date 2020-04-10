@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2020, University of Colorado Boulder
 
 /**
  * QUnit tests for Emitter

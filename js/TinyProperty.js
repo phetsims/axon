@@ -1,4 +1,4 @@
-// Copyright 2013-2020, University of Colorado Boulder
+// Copyright 2020, University of Colorado Boulder
 
 /**
  * A lightweight version of Property (that satisfies some of the interface), meant for high-performance applications
