@@ -190,8 +190,7 @@ class Property extends PhetioObject {
   }
 
   /**
-   * Stores the specified value as the initial value, which will be taken on reset.  Useful for PhET-iO customizations
-   * so that "Reset All" returns the sim to the configured state.
+   * Stores the specified value as the initial value, which will be taken on reset. Use sparingly!
    * @param {*} initialValue
    * @public (PhetioStateEngine)
    */
