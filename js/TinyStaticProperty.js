@@ -19,8 +19,15 @@ class TinyStaticProperty extends TinyEmitter {
   constructor( value ) {
     super();
 
-    // @private {*} - Store the internal value
+    // @public {*} - Store the internal value, made public technically for performance reasons
     this._value = value;
+
+    // @private {boolean|undefined} useDeepEquality - Keeps some compatibility with the Property interface to have the
+    // options check here. Not defining in the general case for memory usage, only using if we notice the option set.
+    // Forces use of the deep equality checks.
+
+    // @private {function|undefined} onAccessAttempt - Not defined for memory usage. When set, it will be called
+    // whenever there is an attempt to read the value of this TinyProperty.
   }
 
   /**
@@ -30,6 +37,7 @@ class TinyStaticProperty extends TinyEmitter {
    * @returns {*}
    */
   get() {
+    this.onAccessAttempt && this.onAccessAttempt();
     return this._value;
   }
 
@@ -57,7 +65,10 @@ class TinyStaticProperty extends TinyEmitter {
   }
 
   // @public
-  get value() { return this._value; }
+  get value() {
+    this.onAccessAttempt && this.onAccessAttempt();
+    return this._value;
+  }
 
   // @public
   set value( newValue ) {
