@@ -115,10 +115,6 @@ const create = parameterType => {
       property.units = fromStateObject.units;
       property.set( fromStateObject.value );
       property.validValues = fromStateObject.validValues;
-
-      // Also take this as the initial value so that resetting the property, say during "reset all" or "reset scene",
-      // will return to this initial condition
-      property.setInitialValue( fromStateObject.value );
     }
   }
 
