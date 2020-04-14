@@ -120,9 +120,6 @@ class Property extends PhetioObject {
     // @private {boolean} whether a deferred value has been set
     this.hasDeferredValue = false;
 
-    // @protected {function|null} (read-only) - closure over options for validation in set(), filled in below when assertions enabled
-    this.validate = null;
-
     // Assertions regarding value validation
     if ( assert ) {
       const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
@@ -135,10 +132,8 @@ class Property extends PhetioObject {
       }
       ValidatorDef.validateValidator( validator );
 
-      this.validate = value => validate( value, validator, VALIDATE_OPTIONS_FALSE );
-
-      // validate the initial value
-      this.validate( value );
+      // validate the initial value as well as any changes in the future
+      this.link( value => validate( value, validator, VALIDATE_OPTIONS_FALSE ) );
     }
   }
 
@@ -164,7 +159,6 @@ class Property extends PhetioObject {
    */
   set( value ) {
     if ( !this.isDisposed ) {
-      this.validate && this.validate( value );
       if ( this.isDeferred ) {
         this.deferredValue = value;
         this.hasDeferredValue = true;
