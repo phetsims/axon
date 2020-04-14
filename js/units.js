@@ -32,6 +32,7 @@ const units = {
     'pm/s', // picometers/second
     'pm/s^2', // picometers/second squared
     'pm/ps', // picometers/picosecond
+    'pm^3', // picometers cubed
     'ps', // picoseconds
     's', // seconds
     'N', // Newtons
