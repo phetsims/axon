@@ -22,6 +22,10 @@ class TinyEmitter {
     //                         - removal of listeners during emit()
     this.activeListenersStack = [];
 
+    // @public {function|undefined} changeCount - Not defined usually because of memory usage. If defined, this will be
+    // called when the listener count changes, e.g. changeCount( {number} listenersAddedQuantity ), with the number
+    // being negative for listeners removed.
+
     // for production memory concerns; no need to keep this around.
     if ( assert ) {
 

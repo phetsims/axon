@@ -24,8 +24,12 @@ class TinyProperty extends TinyEmitter {
     // @private {*} - Store the internal value
     this._value = value;
 
-    // @private {boolean} - Keeps some compatibility with the Property interface to have the options check here
-    this.useDeepEquality = options && options.useDeepEquality;
+    // @private {boolean|undefined} useDeepEquality - Keeps some compatibility with the Property interface to have the
+    // options check here. Not defining in the general case for memory usage, only using if we notice the option set.
+    // Forces use of the deep equality checks.
+
+    // @private {function|undefined} onAccessAttempt - Not defined for memory usage. When set, it will be called
+    // whenever there is an attempt to read the value of this TinyProperty.
   }
 
   /**
@@ -36,6 +40,7 @@ class TinyProperty extends TinyEmitter {
    * @public
    */
   get() {
+    this.onAccessAttempt && this.onAccessAttempt();
     return this._value;
   }
 
@@ -122,7 +127,10 @@ class TinyProperty extends TinyEmitter {
   }
 
   // @public
-  get value() { return this._value; }
+  get value() {
+    this.onAccessAttempt && this.onAccessAttempt();
+    return this._value;
+  }
 
   // @public
   set value( newValue ) { this.set( newValue ); }
