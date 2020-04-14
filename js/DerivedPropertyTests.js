@@ -22,14 +22,16 @@ QUnit.test( 'Test stale values in DerivedProperty', function( assert ) {
 QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
 
   const widthProperty = new Property( 2 );
+  const startingWidthListenerCount = widthProperty.changedEmitter.getListenerCount();
   const heightProperty = new Property( 3 );
+  const startingHeightListenerCount = heightProperty.changedEmitter.getListenerCount();
   const areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
     function( width, height ) { return width * height; } );
   const listener = function( area ) { /*console.log( 'area = ' + area );*/ };
   areaProperty.link( listener );
 
-  assert.equal( widthProperty.changedEmitter.getListenerCount(), 1 );
-  assert.equal( heightProperty.changedEmitter.getListenerCount(), 1 );
+  assert.equal( widthProperty.changedEmitter.getListenerCount(), 1 + startingWidthListenerCount );
+  assert.equal( heightProperty.changedEmitter.getListenerCount(), 1 + startingHeightListenerCount );
   assert.equal( areaProperty.dependencies.length, 2 );
   assert.equal( areaProperty.dependencyListeners.length, 2 );
 
@@ -37,9 +39,8 @@ QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
   areaProperty.unlink( listener );
   areaProperty.dispose();
 
-  assert.equal( widthProperty.changedEmitter.getListenerCount(), 0 );
-  assert.equal( heightProperty.changedEmitter.getListenerCount(), 0 );
-  assert.equal( heightProperty.changedEmitter.getListenerCount(), 0 );
+  assert.equal( widthProperty.changedEmitter.getListenerCount(), startingWidthListenerCount );
+  assert.equal( heightProperty.changedEmitter.getListenerCount(), startingHeightListenerCount );
 
   assert.equal( areaProperty.dependencies, null );
   assert.equal( areaProperty.dependencyListeners, null );

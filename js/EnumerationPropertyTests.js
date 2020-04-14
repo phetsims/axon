@@ -58,13 +58,16 @@ QUnit.test( 'EnumerationIO validation', assert => {
     const Birds2 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
     assert.ok( Birds1 !== Birds2, 'different Enumerations' );
     assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
-    const birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
+    let birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
     const birdProperty2 = new EnumerationProperty( Birds2, Birds2.ROBIN );
 
     // constructor value
     window.assert && assert.throws( () => {
       birdProperty.set( Birds2.ROBIN );
     }, 'cannot use same string value from other Enumeration instance' );
+
+    // new instance of birdProperty since it got messed up in the above assert.
+    birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
 
     birdProperty.set( Birds1.WREN );
 
