@@ -98,7 +98,7 @@ class Property extends PhetioObject {
     // @public (phet-io)
     this.validValues = options.validValues;
 
-    // @private (unit-tests) - emit1 is called when the value changes (or on link)
+    // @private (unit-tests) - emit is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
     // We are validating here in Property, so we don't need the sub-emitter to validate too.
     this.changedEmitter = new TinyEmitter();
