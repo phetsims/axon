@@ -75,6 +75,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
     birdProperty2.set( Birds2.WREN );
   }
 );
+
 QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 
   const Birds1 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
