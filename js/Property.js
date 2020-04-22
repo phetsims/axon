@@ -7,6 +7,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
+import Enumeration from '../../phet-core/js/Enumeration.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
@@ -339,13 +340,36 @@ class Property extends PhetioObject {
   set value( newValue ) { this.set( newValue ); }
 
   /**
+   * This function registers an order dependency between this Property and another. Basically this says that when
+   * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
+   * See Property.registerOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
+   * TODO: add a deregistrations, https://github.com/phetsims/axon/issues/276
+   * @param {Property[]} dependencies
+   * @private
+   */
+  addPhetioDependencies( dependencies ) {
+    assert && assert( Array.isArray( dependencies ), 'Array expected' );
+    for ( let i = 0; i < dependencies.length; i++ ) {
+      const dependency = dependencies[ i ];
+
+      // The dependency should undefer (taking deferred value) before this Property notifies.
+      Property.registerOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.NOTIFY );
+    }
+  }
+
+  /**
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    *
    * @param {function} listener a function of the form listener(newValue,oldValue)
+   * @param {Object} [options]
    * @public
    */
-  link( listener ) {
+  link( listener, options ) {
+    if ( options && options.phetioDependencies ) {
+      this.addPhetioDependencies( options.phetioDependencies );
+    }
+
     this.changedEmitter.addListener( listener );
     listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
   }
@@ -354,9 +378,13 @@ class Property extends PhetioObject {
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    * @param {function} listener - a function with a single argument, which is the current value of the Property.
+   * @param {Object} [options]
    * @public
    */
-  lazyLink( listener ) {
+  lazyLink( listener, options ) {
+    if ( options && options.phetioDependencies ) {
+      this.addPhetioDependencies( options.phetioDependencies );
+    }
     this.changedEmitter.addListener( listener );
   }
 
@@ -495,10 +523,41 @@ class Property extends PhetioObject {
   static unmultilink( multilink ) {
     multilink.dispose();
   }
+
+  /**
+   * Register that one Property must have a "Phase" applied for PhET-iO state before another Property's Phase. A Phase
+   * is an ending state in PhET-iO state set where Property values solidify, notifications for value changes are called.
+   * The PhET-iO state engine will always undefer a Property before it notifies its listeners. This is for registering
+   * two different Properties.
+   * @public
+   *
+   * @param {Property} beforeProperty - the object that must be set before the second
+   * @param {Property.Phase} beforePhase
+   * @param {Property} afterProperty
+   * @param {Property.Phase} afterPhase
+   */
+  static registerOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
+    assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
+
+    if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {
+      phet.phetio.phetioEngine.phetioStateEngine.registerOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
+    }
+  }
 }
 
 // static attributes
 Property.CHANGED_EVENT_NAME = 'changed';
+
+/**
+ * @public
+ * Describes different phases a Property can go through in its value setting and notification
+ * lifecycle.
+ *
+ * "Undefer" is the phase when `Propety.setDeferred(false)` is called and Property.value becomes accurate
+ * "Notify" is the phase when notifications are fired for Properties that have had a value change since becoming deferred.
+ * @type {Enumeration}
+ */
+Property.Phase = Enumeration.byKeys( [ 'UNDEFER', 'NOTIFY' ] );
 
 axon.register( 'Property', Property );
 export default Property;

@@ -38,19 +38,20 @@ class DerivedProperty extends Property {
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     super( initialValue, options );
 
-    this.dependencies = dependencies; // @private
-
-    // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
-    // See https://github.com/phetsims/axon/issues/193
-    this._initialValue = null;
-
     if ( this.isPhetioInstrumented() ) {
 
       // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
       assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
     }
 
-    const self = this;
+    this.dependencies = dependencies; // @private
+
+    // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
+    // See https://github.com/phetsims/axon/issues/193
+    this._initialValue = null;
+
+    // @private
+    this.derivation = derivation;
 
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
@@ -59,10 +60,22 @@ class DerivedProperty extends Property {
       const dependency = dependencies[ i ];
       ( dependency => {
         const listener = () => {
-          super.set( derivation.apply( null, dependencies.map( property => property.get() ) ) );
+
+          // Just mark that there is a deferred value, then calculate the derivation below when setDeferred() is called.
+          // This is in part supported by the PhET-iO state engine because it can account for intermediate states, such
+          // that this Property won't notify until after it is undeferred and has taken its final value.
+          if ( this.isDeferred ) {
+            this.hasDeferredValue = true;
+          }
+          else {
+            super.set( derivation.apply( null, dependencies.map( property => property.get() ) ) );
+          }
         };
-        self.dependencyListeners.push( listener );
+        this.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
+
+        // Dependencies should notify before the DerivedProperty undefers, so it will be sure to have the right value.
+        Property.registerOrderDependency( dependency, Property.Phase.NOTIFY, this, Property.Phase.UNDEFER );
       } )( dependency, i );
     }
   }
@@ -118,6 +131,23 @@ class DerivedProperty extends Property {
    * @returns {*}
    */
   getInitialValue() { throw new Error( 'Cannot get the initial value of a DerivedProperty' ); }
+
+  /**
+   * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
+   * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
+   * @override
+   * @public
+   *
+   * @param {boolean} isDeferred
+   * @returns {function|null}
+   */
+  setDeferred( isDeferred ) {
+    assert && assert( typeof isDeferred === 'boolean' );
+    if ( this.isDeferred && !isDeferred ) {
+      this.deferredValue = this.derivation.apply( null, this.dependencies.map( property => property.get() ) );
+    }
+    return super.setDeferred( isDeferred );
+  }
 
   /**
    * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property

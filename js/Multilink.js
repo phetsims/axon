@@ -39,7 +39,13 @@ function Multilink( dependencies, callback, lazy ) {
       }
     };
     self.dependencyListeners.push( listener );
-    dependency.lazyLink( listener );
+    dependency.lazyLink( listener, {
+
+      // All other dependencies should undefer (taking deferred value) before this dependency notifies. This is
+      // crucial to prevent this Multilink callback from firing with intermediate (buggy) states before all dependencies
+      // have taken their final value.
+      phetioDependencies: _.without( dependencies, dependency )
+    } );
   } );
 
   // Send initial call back but only if we are non-lazy
