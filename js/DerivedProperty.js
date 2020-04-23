@@ -74,8 +74,8 @@ class DerivedProperty extends Property {
         this.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
 
-        // Dependencies should notify before the DerivedProperty undefers, so it will be sure to have the right value.
-        Property.registerOrderDependency( dependency, Property.Phase.NOTIFY, this, Property.Phase.UNDEFER );
+        // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
+        Property.registerOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.UNDEFER );
       } )( dependency, i );
     }
   }
