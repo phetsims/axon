@@ -550,12 +550,12 @@ Property.CHANGED_EVENT_NAME = 'changed';
 
 /**
  * @public
- * Describes different phases a Property can go through in its value setting and notification
- * lifecycle.
- *
- * "Undefer" is the phase when `Propety.setDeferred(false)` is called and Property.value becomes accurate
- * "Notify" is the phase when notifications are fired for Properties that have had a value change since becoming deferred.
  * @type {Enumeration}
+ *
+ * Describes the phases that a Property can go through in its value setting and notification lifecycle.
+ *
+ * UNDEFER - the phase when `Property.setDeferred(false)` is called and Property.value becomes accurate
+ * NOTIFY - the phase when notifications are fired for Properties that have had a value change since becoming deferred
  */
 Property.Phase = Enumeration.byKeys( [ 'UNDEFER', 'NOTIFY' ] );
 
