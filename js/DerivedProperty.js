@@ -75,8 +75,8 @@ class DerivedProperty extends Property {
         dependency.lazyLink( listener );
 
         // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
-        // NOTE: do not mark the beforePhase as NOFITY, as this will potentially cause interdependence bugs when used
-        // with Multlinks. See Projectile Motion's use of MeasureingTapeNode for an example.
+        // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
+        // with Multlinks. See Projectile Motion's use of MeasuringTapeNode for an example.
         Property.registerOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.UNDEFER );
       } )( dependency, i );
     }
