@@ -469,6 +469,11 @@ class Property extends PhetioObject {
     // remove any listeners that are still attached to this property
     this.unlinkAll();
 
+    // unregister any order dependencies for this property from the PhetioStateEngine
+    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
+      phet.phetio.phetioEngine.phetioStateEngine.unregisterOrderDependenciesForProperty( this );
+    }
+
     super.dispose();
     this.changedEmitter.dispose();
   }
@@ -540,7 +545,7 @@ class Property extends PhetioObject {
     assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
 
     if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {
-      phet.phetio.phetioEngine.phetioStateEngine.registerOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
+      phet.phetio.phetioEngine.phetioStateEngine.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
     }
   }
 }
