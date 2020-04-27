@@ -397,6 +397,15 @@ export default inherit( PhetioObject, ObservableArray, {
   },
 
   /**
+   * Like getArray, but returns a copy of the array. Use this if you will be modifying the collection.
+   * @returns {Array}
+   * @public
+   */
+  getArrayCopy: function() {
+    return this._array.slice();
+  },
+
+  /**
    * Add/remove elements from any point in the array
    * @param {number} start - the index to start adding/removing items
    * @param {number} deleteCount - the number of items to delete
