@@ -41,7 +41,7 @@ function CallbackTimer( options ) {
 
 axon.register( 'CallbackTimer', CallbackTimer );
 
-export default inherit( Object, CallbackTimer, {
+inherit( Object, CallbackTimer, {
 
   // @public Is the timer running?
   isRunning: function() {
@@ -122,3 +122,5 @@ export default inherit( Object, CallbackTimer, {
     this.callbacks.length = 0;
   }
 } );
+
+export default CallbackTimer;

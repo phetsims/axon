@@ -59,7 +59,7 @@ function Multilink( dependencies, callback, lazy ) {
 
 axon.register( 'Multilink', Multilink );
 
-export default inherit( Object, Multilink, {
+inherit( Object, Multilink, {
 
   // @public
   dispose: function() {
@@ -77,3 +77,5 @@ export default inherit( Object, Multilink, {
     this.isDisposed = true;
   }
 } );
+
+export default Multilink;

@@ -59,7 +59,7 @@ function ObservableArray( options ) {
 
 axon.register( 'ObservableArray', ObservableArray );
 
-export default inherit( PhetioObject, ObservableArray, {
+inherit( PhetioObject, ObservableArray, {
 
   // @public
   dispose: function() {
@@ -442,3 +442,5 @@ export default inherit( PhetioObject, ObservableArray, {
     Array.prototype.push.apply( this._array, shuffled );
   }
 } );
+
+export default ObservableArray;
