@@ -228,7 +228,7 @@ QUnit.test( 'Property value validation', function( assert ) {
 if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
     const done = assert.async();
-    const tandem = Tandem.ROOT.createTandem( 'testTandemProperty' );
+    const tandem = Tandem.GENERAL.createTandem( 'testTandemProperty' );
     const phetioType = NumberPropertyIO;
     const propertyValue = 123;
     const validValues = [ 0, 1, 2, 3, propertyValue ];
