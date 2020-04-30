@@ -7,9 +7,11 @@
  */
 
 import Tandem from '../../tandem/js/Tandem.js';
+import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import NumberPropertyIO from './NumberPropertyIO.js';
 import Property from './Property.js';
+import PropertyIO from './PropertyIO.js';
 
 QUnit.module( 'Property' );
 
@@ -250,5 +252,47 @@ if ( Tandem.PHET_IO_ENABLED ) {
       tandem: tandem,
       validValues: validValues
     } );
+  } );
+
+  QUnit.test( 'Property.registerOrderDependency', assert => {
+    assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
+
+    const parentTandem = Tandem.GENERAL;
+
+    const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
+
+    const firstProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'firstProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+    const secondProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'secondProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+
+    Property.registerOrderDependency( firstProperty, Property.Phase.NOTIFY, secondProperty, Property.Phase.UNDEFER );
+
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 1, 'just added orderDependency' );
+    let orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
+    assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
+
+    firstProperty.dispose();
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'dispose removes order dependency' );
+
+    const thirdProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'thirdProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+    secondProperty.link( () => { thirdProperty.value = 2;}, {
+      phetioDependencies: [ thirdProperty ]
+    } );
+
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 1, 'just added orderDependency from phetioDependencies' );
+    orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
+    assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
+
+    secondProperty.dispose();
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'dispose removes order dependency' );
   } );
 }

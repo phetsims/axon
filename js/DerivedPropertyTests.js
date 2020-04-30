@@ -6,8 +6,12 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import Tandem from '../../tandem/js/Tandem.js';
+import NumberIO from '../../tandem/js/types/NumberIO.js';
 import DerivedProperty from './DerivedProperty.js';
+import DerivedPropertyIO from './DerivedPropertyIO.js';
 import Property from './Property.js';
+import PropertyIO from './PropertyIO.js';
 
 QUnit.module( 'DerivedProperty' );
 
@@ -124,3 +128,38 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
   window.assert && assert.throws( function() { propA.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );
+
+if ( Tandem.PHET_IO_ENABLED ) {
+  QUnit.test( 'Property.registerOrderDependency', assert => {
+    assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
+
+    const parentTandem = Tandem.GENERAL;
+
+    const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
+
+    const firstProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'firstProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+    const secondProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'secondProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+    const thirdProperty = new Property( 1, {
+      tandem: parentTandem.createTandem( 'thirdProperty' ),
+      phetioType: PropertyIO( NumberIO )
+    } );
+
+    const derivedProperty = new DerivedProperty( [ firstProperty, secondProperty, thirdProperty ], () => 3, {
+      tandem: parentTandem.createTandem( 'derivedProperty' ),
+      phetioType: DerivedPropertyIO( NumberIO )
+    } );
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 3, 'derivedProperty adds order dependency for each dependency' );
+
+    firstProperty.dispose();
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 2, 'dependency dispose only removes what it effects' );
+    derivedProperty.dispose();
+    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies after derivedProperty dispose' );
+  } );
+}
