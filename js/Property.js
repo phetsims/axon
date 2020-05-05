@@ -412,6 +412,7 @@ class Property extends PhetioObject {
    *
    * @param object
    * @param attributeName
+   * @returns {function}
    * @public
    */
   linkAttribute( object, attributeName ) {
