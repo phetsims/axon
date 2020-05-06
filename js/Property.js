@@ -410,13 +410,13 @@ class Property extends PhetioObject {
    * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
    * Example: modelVisibleProperty.linkAttribute(view,'visible');
    *
-   * @param object
-   * @param attributeName
+   * @param {*} object
+   * @param {string} attributeName
    * @returns {function}
    * @public
    */
   linkAttribute( object, attributeName ) {
-    const handle = value => {object[ attributeName ] = value;};
+    const handle = value => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
   }
@@ -467,7 +467,7 @@ class Property extends PhetioObject {
   // @public Ensures that the Property is eligible for GC
   dispose() {
 
-    // remove any listeners that are still attached to this property
+    // remove any listeners that are still attached to this Property
     this.unlinkAll();
 
     // unregister any order dependencies for this property from the PhetioStateEngine
