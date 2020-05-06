@@ -95,4 +95,6 @@ class Timer extends Emitter {
 }
 
 // Register and return a singleton
-export default axon.register( 'timer', new Timer( { parameters: [ { valueType: 'number' } ] } ) );
+const timer = new Timer( { parameters: [ { valueType: 'number' } ] } );
+axon.register( 'timer', timer );
+export default timer;
