@@ -104,6 +104,7 @@ class Action extends PhetioObject {
    * @param {object} parameters
    * @param {boolean} tandemSupplied - proxy for whether the PhetioObject is instrumented.  We cannot call
    *                                 - PhetioObject.isPhetioInstrumented() until after the supercall, so we use this beforehand.
+   * @private
    */
   static validateParameters( parameters, tandemSupplied ) {
 

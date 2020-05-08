@@ -28,6 +28,7 @@ class NumberPropertyIO extends PropertyIOImpl {
    * @param {Object} numberProperty
    * @returns {Object} - a state object
    * @override
+   * @public
    */
   static toStateObject( numberProperty ) {
     validate( numberProperty, this.validator );
@@ -56,6 +57,7 @@ class NumberPropertyIO extends PropertyIOImpl {
    * @param {Object} stateObject
    * @returns {Object}
    * @override
+   * @public
    */
   static fromStateObject( stateObject ) {
     const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
@@ -73,6 +75,7 @@ class NumberPropertyIO extends PropertyIOImpl {
    * @param {NumberProperty} numberProperty
    * @param {Object} fromStateObject
    * @override
+   * @public
    */
   static setValue( numberProperty, fromStateObject ) {
     validate( numberProperty, this.validator );

@@ -66,6 +66,7 @@ const create = parameterType => {
      * Encodes a Property phetioObject to a state.
      * @param {Object} property
      * @returns {Object} - a state object
+     * @public
      */
     static toStateObject( property ) {
       validate( property, this.validator );
@@ -92,6 +93,7 @@ const create = parameterType => {
      * Decodes a state into a Property.
      * @param {Object} stateObject
      * @returns {Object}
+     * @public
      */
     static fromStateObject( stateObject ) {
       return {

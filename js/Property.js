@@ -436,11 +436,13 @@ class Property extends PhetioObject {
    * Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
    * @returns {string}
    * @override
+   * @public
    */
   toString() {return `Property#${this.id}{${this.get()}}`; }
 
   /**
    * @returns {string}
+   * @public
    */
   valueOf() {return this.toString();}
 
@@ -504,7 +506,7 @@ class Property extends PhetioObject {
    * @param {Property[]} properties
    * @param {function} listener function that takes values from the properties and returns nothing
    * @returns {Multilink}
-   * @static
+   * @public
    */
   static multilink( properties, listener ) {
     return new Multilink( properties, listener, false );
@@ -515,7 +517,7 @@ class Property extends PhetioObject {
    * @param {Property[]} properties
    * @param {function} listener function that takes values from the properties and returns nothing
    * @returns {Multilink}
-   * @static
+   * @public
    */
   static lazyMultilink( properties, listener ) {
     return new Multilink( properties, listener, true );
@@ -524,7 +526,7 @@ class Property extends PhetioObject {
   /**
    * Unlinks an listener that was added with multilink or lazyMultilink.
    * @param {Multilink} multilink
-   * @static
+   * @public
    */
   static unmultilink( multilink ) {
     multilink.dispose();
