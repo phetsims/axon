@@ -129,10 +129,9 @@ inherit( PhetioObject, ObservableArray, {
    * @private
    */
   _fireItemAdded: function( item ) {
-    const self = this;
     this.phetioStartEvent( 'itemAdded', {
-      getData: function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+      getData: () => {
+        return this.phetioType.parameterTypes[ 0 ].toStateObject( item );
       }
     } );
 
@@ -147,10 +146,9 @@ inherit( PhetioObject, ObservableArray, {
    * @private
    */
   _fireItemRemoved: function( item ) {
-    const self = this;
     this.phetioStartEvent( 'itemRemoved', {
-      getData: function() {
-        return self.phetioType.parameterTypes[ 0 ].toStateObject( item );
+      getData: () => {
+        return this.phetioType.parameterTypes[ 0 ].toStateObject( item );
       }
     } );
 
@@ -301,7 +299,7 @@ inherit( PhetioObject, ObservableArray, {
 
   /**
    * Applies a callback function to each item in the array
-   * @param callback function(item)
+   * @param {function(item:*)} callback
    * @public
    */
   forEach: function( callback ) {
@@ -332,7 +330,7 @@ inherit( PhetioObject, ObservableArray, {
 
   /**
    * Count the number of items in this ObservableArray that satisfy the given Predicate.
-   * @param {function} predicate
+   * @param {function(item:*):boolean} predicate
    * @returns {number}
    * @public
    */
@@ -348,7 +346,7 @@ inherit( PhetioObject, ObservableArray, {
 
   /**
    * Find the first element that matches the given predicate.
-   * @param {function} predicate
+   * @param {function(item:*):boolean} predicate
    * @param {number} [fromIndex] - optional start index for the search
    * @returns {*} the first element that matches the given predicate, or undefined if no matching item can be found
    * @throws assertion Error if the fromIndex is specified and out of range
@@ -363,7 +361,7 @@ inherit( PhetioObject, ObservableArray, {
 
   /**
    * Returns true if some element in this ObservableArray matches the predicate.
-   * @param {function} predicate - the function to test elements
+   * @param {function(item:*):boolean} predicate
    * @returns {boolean}
    */
   some: function( predicate ) {
@@ -373,8 +371,8 @@ inherit( PhetioObject, ObservableArray, {
   /**
    * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
    * Same as foldLeft.  In underscore this is called _.reduce aka _.fold or _.inject
-   * @param value
-   * @param combiner
+   * @param {*} value - output of the reduction
+   * @param {function(value:*, item:*)} combiner
    * @returns {*}
    * @public
    */
