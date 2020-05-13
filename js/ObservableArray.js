@@ -16,6 +16,7 @@ import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import axon from './axon.js';
+import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ObservableArrayIO from './ObservableArrayIO.js';
 
@@ -44,8 +45,10 @@ function ObservableArray( options ) {
   this._options = options; // @private, for creating internal ObservableArray copies, see map/filter
 
   this._array = []; // @private internal, do not access directly
-  this._addedListeners = []; // @private listeners called when an item is added
-  this._removedListeners = []; // @private listeners called when an item is removed
+
+  // @private
+  this.itemAddedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue }, { valueType: ObservableArray } ] } );
+  this.itemRemovedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue }, { valueType: ObservableArray } ] } );
 
   // @public (read-only) observe this, but don't set it
   this.lengthProperty = new NumberProperty( this._array.length, {
@@ -82,23 +85,22 @@ inherit( PhetioObject, ObservableArray, {
 
   /**
    * Adds a listener that will be notified when an item is added to the list.
-   * @param listener function( item, observableArray )
+   * @param {function(item:*, ObservableArray)} listener
    * @public
    */
   addItemAddedListener: function( listener ) {
-    assert && assert( this._addedListeners.indexOf( listener ) === -1, 'listener is already registered' );
-    this._addedListeners.push( listener );
+    assert && assert( !this.itemAddedEmitter.hasListener( listener ), 'listener is already registered' );
+    this.itemAddedEmitter.addListener( listener );
   },
 
   /**
    * Removes a listener that was added via addItemAddedListener.
-   * @param listener
+   * @param {function(item:*, ObservableArray)} listener
    * @public
    */
   removeItemAddedListener: function( listener ) {
-    const index = this._addedListeners.indexOf( listener );
-    assert && assert( index !== -1, 'listener is not registered' );
-    this._addedListeners.splice( index, 1 );
+    assert && assert( this.itemAddedEmitter.hasListener( listener ), 'listener is not registered' );
+    this.itemAddedEmitter.removeListener( listener );
   },
 
   /**
@@ -107,8 +109,8 @@ inherit( PhetioObject, ObservableArray, {
    * @public
    */
   addItemRemovedListener: function( listener ) {
-    assert && assert( this._removedListeners.indexOf( listener ) === -1, 'listener is already registered' );
-    this._removedListeners.push( listener );
+    assert && assert( !this.itemRemovedEmitter.hasListener( listener ), 'listener is already registered' );
+    this.itemRemovedEmitter.addListener( listener );
   },
 
   /**
@@ -117,12 +119,15 @@ inherit( PhetioObject, ObservableArray, {
    * @public
    */
   removeItemRemovedListener: function( listener ) {
-    const index = this._removedListeners.indexOf( listener );
-    assert && assert( index !== -1, 'listener is not registered' );
-    this._removedListeners.splice( index, 1 );
+    assert && assert( this.itemRemovedEmitter.hasListener( listener ), 'listener is not registered' );
+    this.itemRemovedEmitter.removeListener( listener );
   },
 
-  // @private called when an item is added.
+  /**
+   * called when an item is added
+   * @param {*} item
+   * @private
+   */
   _fireItemAdded: function( item ) {
     const self = this;
     this.phetioStartEvent( 'itemAdded', {
@@ -131,16 +136,16 @@ inherit( PhetioObject, ObservableArray, {
       }
     } );
 
-    //Signify that an item was added to the list
-    const copy = this._addedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
-    for ( let i = 0; i < copy.length; i++ ) {
-      copy[ i ]( item, this );
-    }
+    this.itemAddedEmitter.emit( item, this );
 
     this.phetioEndEvent();
   },
 
-  // @private called when an item is removed.
+  /**
+   * called when an item is added
+   * @param {*} item
+   * @private
+   */
   _fireItemRemoved: function( item ) {
     const self = this;
     this.phetioStartEvent( 'itemRemoved', {
@@ -149,11 +154,7 @@ inherit( PhetioObject, ObservableArray, {
       }
     } );
 
-    //Signify that an item was removed from the list
-    const copy = this._removedListeners.slice( 0 ); // operate on a copy, firing could result in the listeners changing
-    for ( let i = 0; i < copy.length; i++ ) {
-      copy[ i ]( item, this );
-    }
+    this.itemRemovedEmitter.emit( item, this );
 
     this.phetioEndEvent();
   },
