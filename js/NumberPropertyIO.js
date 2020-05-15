@@ -12,7 +12,6 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import DerivedProperty from './DerivedProperty.js';
 import PropertyIO from './PropertyIO.js';
 import validate from './validate.js';
 
@@ -65,10 +64,6 @@ class NumberPropertyIO extends PropertyIOImpl {
     fromParentStateObject.numberType = stateObject.numberType;
     fromParentStateObject.step = stateObject.step;
 
-    if ( stateObject.range ) {
-      fromParentStateObject.range = RangeIO.fromStateObject( stateObject.range );
-    }
-
     return fromParentStateObject;
   }
 
@@ -81,10 +76,6 @@ class NumberPropertyIO extends PropertyIOImpl {
   static setValue( numberProperty, fromStateObject ) {
     validate( numberProperty, this.validator );
 
-    // Don't try to set if DerivedProperty, see https://github.com/phetsims/natural-selection/issues/78
-    if ( fromStateObject.range && numberProperty.rangeProperty && !( numberProperty.rangeProperty instanceof DerivedProperty ) ) {
-      numberProperty.rangeProperty.value = fromStateObject.range;
-    }
     PropertyIOImpl.setValue( numberProperty, fromStateObject );
     numberProperty.step = fromStateObject.step;
     numberProperty.numberType = fromStateObject.numberType;

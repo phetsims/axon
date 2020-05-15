@@ -82,18 +82,16 @@ class NumberProperty extends Property {
 
     // @private {function|null} validation for NumberProperty and its rangeProperty, null if assertions are disabled
     this.validateNumberProperty = assert && ( value => {
-      if ( !this.isDeferred && !this.rangeProperty.isDeferred ) {
 
-        // validate for integer
-        ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
+      // validate for integer
+      ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
 
-        // validate range value type
-        validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
+      // validate range value type
+      validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
 
-        // validate that value and range are compatible
-        if ( this.rangeProperty.value ) {
-          validate( value, { isValidValue: value => this.rangeProperty.value.contains( value ) } );
-        }
+      // validate that value and range are compatible
+      if ( this.rangeProperty.value ) {
+        validate( value, { isValidValue: value => this.rangeProperty.value.contains( value ) } );
       }
     } );
 
@@ -111,6 +109,10 @@ class NumberProperty extends Property {
       this.validateNumberProperty && this.validateNumberProperty( this.value );
     };
     this.rangeProperty.link( rangePropertyObserver );
+
+    // For PhET-iO State, make sure that both the range and this value are correct before firing notifications (where the assertions are).
+    this.rangeProperty.addPhetioDependencies( [ this ] );
+    this.addPhetioDependencies( [ this.rangeProperty ] );
 
     // verify that validValues meet other NumberProperty-specific validation criteria
     if ( options.validValues && this.validateNumberProperty ) {

@@ -345,7 +345,7 @@ class Property extends PhetioObject {
    * See Property.registerOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    * TODO: add a deregistrations, https://github.com/phetsims/axon/issues/276
    * @param {Property[]} dependencies
-   * @private
+   * @protected
    */
   addPhetioDependencies( dependencies ) {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
