@@ -152,9 +152,16 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   p.rangeProperty.set( new Range( 2, 3 ) );
   assert.ok( pRangeCalled === 0, 'p.rangeProperty is still deferred, should not call listeners' );
   const notifyPListeners = p.setDeferred( false );
+
+  if ( window.assert ) {
+    assert.throws( () => {
+      notifyPListeners();
+    }, 'rangeProperty is not yet undeferred and so has the wrong value' );
+    p.notifying = false; // since the above threw an error, reset
+  }
+  const notifyRangeListeners = p.rangeProperty.setDeferred( false );
   notifyPListeners();
   assert.ok( pCalled === 1, 'p listeners should have been called' );
-  const notifyRangeListeners = p.rangeProperty.setDeferred( false );
   notifyRangeListeners();
   assert.ok( pRangeCalled === 1, 'p.rangeProperty is still deferred, should not call listeners' );
 
