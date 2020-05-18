@@ -307,7 +307,7 @@ class ObservableArray extends PhetioObject {
   }
 
   /**
-   * Maps the values in this ObservableArray using the specified function, and returns a new ObservableArray for chaining.
+   * Maps the values in this ObservableArray using the specified function, and returns a new array for chaining.
    * @param {function(element:*):*} mapFunction - from Observable array element to something else
    * @returns {Object[]}
    * @public
@@ -317,7 +317,7 @@ class ObservableArray extends PhetioObject {
   }
 
   /**
-   * Filters the values in this ObservableArray using the predicate function, and returns a new ObservableArray for chaining.
+   * Filters the values in this ObservableArray using the predicate function, and returns a new array for chaining.
    * @param {function(element):boolean} predicate
    * @returns {Object[]}
    * @public
