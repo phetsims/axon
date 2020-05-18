@@ -195,4 +195,6 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
       rangePropertyOptions: { tandem: generalTandem.createTandem( 'rangePropertyfdsa' ) }
     } );
   }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
+
+  p.dispose();
 } );

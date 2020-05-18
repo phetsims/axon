@@ -258,9 +258,10 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
 
     const parentTandem = Tandem.GENERAL;
-
     const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
+
+    const originalOrderDependencyLength = phetioStateEngine.propertyOrderDependencies.length;
+    const getOrderDependencyLength = () => phetioStateEngine.propertyOrderDependencies.length - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -273,12 +274,12 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     Property.registerOrderDependency( firstProperty, Property.Phase.NOTIFY, secondProperty, Property.Phase.UNDEFER );
 
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 1, 'just added orderDependency' );
+    assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency' );
     let orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
 
     firstProperty.dispose();
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'dispose removes order dependency' );
+    assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
 
     const thirdProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'thirdProperty' ),
@@ -288,11 +289,11 @@ if ( Tandem.PHET_IO_ENABLED ) {
       phetioDependencies: [ thirdProperty ]
     } );
 
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 1, 'just added orderDependency from phetioDependencies' );
+    assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
     orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
 
     secondProperty.dispose();
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'dispose removes order dependency' );
+    assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
   } );
 }
