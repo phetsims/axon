@@ -15,9 +15,9 @@
  */
 
 import axon from './axon.js';
-import Emitter from './Emitter.js';
+import TinyEmitter from './TinyEmitter.js';
 
-class Timer extends Emitter {
+class Timer extends TinyEmitter {
 
   /**
    * Adds a listener to be called back once after the specified time in milliseconds
@@ -91,6 +91,15 @@ class Timer extends Emitter {
     if ( this.hasListener( listener ) ) {
       this.removeListener( listener );
     }
+  }
+
+  /**
+   * Run a callback on the next frame. This method is largely for clarity.
+   * @public
+   * @param {function()} listener
+   */
+  runOnNextFrame( listener ) {
+    this.setTimeout( listener, 0 );
   }
 }
 
