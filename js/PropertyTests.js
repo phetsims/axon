@@ -91,15 +91,15 @@ QUnit.test( 'Property link parameters', function( assert ) {
   } );
   p.value = 2;
 
-  assert.equal( calls.length, 2 );
+  assert.ok( calls.length === 2 );
 
-  assert.equal( calls[ 0 ].newValue, 1 );
-  assert.equal( calls[ 0 ].oldValue, undefined );
-  assert.equal( calls[ 0 ].property, p );
+  assert.ok( calls[ 0 ].newValue === 1 );
+  assert.ok( calls[ 0 ].oldValue === null );
+  assert.ok( calls[ 0 ].property === p );
 
-  assert.equal( calls[ 1 ].newValue, 2 );
-  assert.equal( calls[ 1 ].oldValue, 1 );
-  assert.equal( calls[ 1 ].property, p );
+  assert.ok( calls[ 1 ].newValue === 2 );
+  assert.ok( calls[ 1 ].oldValue === 1 );
+  assert.ok( calls[ 1 ].property === p );
 } );
 
 /**
