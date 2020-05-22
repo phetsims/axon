@@ -474,7 +474,7 @@ class Property extends PhetioObject {
 
     // unregister any order dependencies for this property from the PhetioStateEngine
     if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
-      phet.phetio.phetioEngine.phetioStateEngine.unregisterOrderDependenciesForProperty( this );
+      phet.phetio.phetioEngine.propertyStateHandler.unregisterOrderDependenciesForProperty( this );
     }
 
     super.dispose();
@@ -543,12 +543,13 @@ class Property extends PhetioObject {
    * @param {Property.Phase} beforePhase
    * @param {Property} afterProperty
    * @param {Property.Phase} afterPhase
+   * TODO: rename to registerPhetioOrderDependency?, https://github.com/phetsims/phet-io/issues/1668
    */
   static registerOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
     assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
 
     if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {
-      phet.phetio.phetioEngine.phetioStateEngine.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
+      phet.phetio.phetioEngine.propertyStateHandler.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
     }
   }
 }
