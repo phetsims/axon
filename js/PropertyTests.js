@@ -254,14 +254,14 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
   } );
 
-  QUnit.test( 'Property.registerOrderDependency', assert => {
+  QUnit.test( 'Property.registerPhetioOrderDependency', assert => {
     assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
 
     const parentTandem = Tandem.GENERAL;
-    const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
+    const propertyStateHandler = phet.phetio.phetioEngine.propertyStateHandler;
 
-    const originalOrderDependencyLength = phetioStateEngine.propertyOrderDependencies.length;
-    const getOrderDependencyLength = () => phetioStateEngine.propertyOrderDependencies.length - originalOrderDependencyLength;
+    const originalOrderDependencyLength = propertyStateHandler.propertyOrderDependencies.length;
+    const getOrderDependencyLength = () => propertyStateHandler.propertyOrderDependencies.length - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -272,10 +272,9 @@ if ( Tandem.PHET_IO_ENABLED ) {
       phetioType: PropertyIO( NumberIO )
     } );
 
-    Property.registerOrderDependency( firstProperty, Property.Phase.NOTIFY, secondProperty, Property.Phase.UNDEFER );
+    Property.registerPhetioOrderDependency( firstProperty, Property.Phase.NOTIFY, secondProperty, Property.Phase.UNDEFER );
 
-    assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency' );
-    let orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
+    let orderDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
 
     firstProperty.dispose();
@@ -290,7 +289,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
-    orderDependency = phetioStateEngine.propertyOrderDependencies[ 0 ];
+    orderDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
 
     secondProperty.dispose();

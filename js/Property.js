@@ -342,7 +342,7 @@ class Property extends PhetioObject {
   /**
    * This function registers an order dependency between this Property and another. Basically this says that when
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
-   * See Property.registerOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
+   * See Property.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    * TODO: add a deregistrations, https://github.com/phetsims/axon/issues/276
    * @param {Property[]} dependencies
    * @protected
@@ -353,7 +353,7 @@ class Property extends PhetioObject {
       const dependency = dependencies[ i ];
 
       // The dependency should undefer (taking deferred value) before this Property notifies.
-      Property.registerOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.NOTIFY );
+      Property.registerPhetioOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.NOTIFY );
     }
   }
 
@@ -545,7 +545,7 @@ class Property extends PhetioObject {
    * @param {Property.Phase} afterPhase
    * TODO: rename to registerPhetioOrderDependency?, https://github.com/phetsims/phet-io/issues/1668
    */
-  static registerOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
+  static registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
     assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
 
     if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {

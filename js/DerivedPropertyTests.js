@@ -130,13 +130,13 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
 } );
 
 if ( Tandem.PHET_IO_ENABLED ) {
-  QUnit.test( 'Property.registerOrderDependency', assert => {
+  QUnit.test( 'Property.registerPhetioOrderDependency', assert => {
     assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
 
     const parentTandem = Tandem.GENERAL;
 
-    const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
+    const propertyStateHandler = phet.phetio.phetioEngine.propertyStateHandler;
+    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -155,11 +155,11 @@ if ( Tandem.PHET_IO_ENABLED ) {
       tandem: parentTandem.createTandem( 'derivedProperty' ),
       phetioType: DerivedPropertyIO( NumberIO )
     } );
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 3, 'derivedProperty adds order dependency for each dependency' );
+    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 3, 'derivedProperty adds order dependency for each dependency' );
 
     firstProperty.dispose();
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 2, 'dependency dispose only removes what it effects' );
+    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'dependency dispose only removes what it effects' );
     derivedProperty.dispose();
-    assert.ok( phetioStateEngine.propertyOrderDependencies.length === 0, 'no orderDependencies after derivedProperty dispose' );
+    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'no orderDependencies after derivedProperty dispose' );
   } );
 }

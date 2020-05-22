@@ -77,7 +77,7 @@ class DerivedProperty extends Property {
         // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
         // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
         // with Multlinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-        Property.registerOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.UNDEFER );
+        Property.registerPhetioOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.UNDEFER );
       } )( dependency, i );
     }
   }
