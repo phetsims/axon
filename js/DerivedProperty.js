@@ -13,6 +13,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import DerivedPropertyIO from './DerivedPropertyIO.js';
 import Property from './Property.js';
+import PropertyStatePhase from './PropertyStatePhase.js';
 
 class DerivedProperty extends Property {
 
@@ -77,7 +78,7 @@ class DerivedProperty extends Property {
         // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
         // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
         // with Multlinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-        Property.registerPhetioOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.UNDEFER );
+        Property.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
       } )( dependency, i );
     }
   }

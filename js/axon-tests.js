@@ -15,6 +15,7 @@ import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
 import './ObservableArrayTests.js';
 import './PropertyTests.js';
+import './PropertyStateHandlerTests.js';
 import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
 import './TinyPropertyTests.js';

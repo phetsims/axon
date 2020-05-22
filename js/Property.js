@@ -7,13 +7,14 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import axon from './axon.js';
 import Multilink from './Multilink.js';
+import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
+import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyEmitter from './TinyEmitter.js';
 import units from './units.js';
 import validate from './validate.js';
@@ -353,7 +354,7 @@ class Property extends PhetioObject {
       const dependency = dependencies[ i ];
 
       // The dependency should undefer (taking deferred value) before this Property notifies.
-      Property.registerPhetioOrderDependency( dependency, Property.Phase.UNDEFER, this, Property.Phase.NOTIFY );
+      Property.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
     }
   }
 
@@ -474,7 +475,7 @@ class Property extends PhetioObject {
 
     // unregister any order dependencies for this Property for PhET-iO state
     if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
-      phet.phetio.phetioEngine.propertyStateHandler.unregisterOrderDependenciesForProperty( this );
+      propertyStateHandlerSingleton.unregisterOrderDependenciesForProperty( this );
     }
 
     super.dispose();
@@ -540,32 +541,21 @@ class Property extends PhetioObject {
    * @public
    *
    * @param {Property} beforeProperty - the object that must be set before the second
-   * @param {Property.Phase} beforePhase
+   * @param {PropertyStatePhase} beforePhase
    * @param {Property} afterProperty
-   * @param {Property.Phase} afterPhase
+   * @param {PropertyStatePhase} afterPhase
    */
   static registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
-    assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
+    assert && assert( PropertyStatePhase.includes( beforePhase ) && PropertyStatePhase.includes( afterPhase ), 'unexpected phase' );
 
     if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {
-      phet.phetio.phetioEngine.propertyStateHandler.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
+      propertyStateHandlerSingleton.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
     }
   }
 }
 
 // static attributes
 Property.CHANGED_EVENT_NAME = 'changed';
-
-/**
- * @public
- * @type {Enumeration}
- *
- * Describes the phases that a Property can go through in its value setting and notification lifecycle.
- *
- * UNDEFER - the phase when `Property.setDeferred(false)` is called and Property.value becomes accurate
- * NOTIFY - the phase when notifications are fired for Properties that have had a value change since becoming deferred
- */
-Property.Phase = Enumeration.byKeys( [ 'UNDEFER', 'NOTIFY' ] );
 
 axon.register( 'Property', Property );
 export default Property;

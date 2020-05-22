@@ -12,6 +12,8 @@ import NumberProperty from './NumberProperty.js';
 import NumberPropertyIO from './NumberPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
+import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
+import PropertyStatePhase from './PropertyStatePhase.js';
 
 QUnit.module( 'Property' );
 
@@ -258,10 +260,9 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
 
     const parentTandem = Tandem.GENERAL;
-    const propertyStateHandler = phet.phetio.phetioEngine.propertyStateHandler;
 
-    const originalOrderDependencyLength = propertyStateHandler.propertyOrderDependencies.length;
-    const getOrderDependencyLength = () => propertyStateHandler.propertyOrderDependencies.length - originalOrderDependencyLength;
+    const originalOrderDependencyLength = propertyStateHandlerSingleton.propertyOrderDependencies.length;
+    const getOrderDependencyLength = () => propertyStateHandlerSingleton.propertyOrderDependencies.length - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -272,9 +273,9 @@ if ( Tandem.PHET_IO_ENABLED ) {
       phetioType: PropertyIO( NumberIO )
     } );
 
-    Property.registerPhetioOrderDependency( firstProperty, Property.Phase.NOTIFY, secondProperty, Property.Phase.UNDEFER );
+    Property.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
 
-    let orderDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
+    let orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
 
     firstProperty.dispose();
@@ -289,7 +290,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
-    orderDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
+    orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
 
     secondProperty.dispose();

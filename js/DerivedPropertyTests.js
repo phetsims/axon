@@ -12,6 +12,7 @@ import DerivedProperty from './DerivedProperty.js';
 import DerivedPropertyIO from './DerivedPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
+import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 
 QUnit.module( 'DerivedProperty' );
 
@@ -130,13 +131,13 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
 } );
 
 if ( Tandem.PHET_IO_ENABLED ) {
-  QUnit.test( 'Property.registerPhetioOrderDependency', assert => {
+  QUnit.test( 'registerPhetioOrderDependency', assert => {
     assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
 
     const parentTandem = Tandem.GENERAL;
 
-    const propertyStateHandler = phet.phetio.phetioEngine.propertyStateHandler;
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'no orderDependencies when starting' );
+    const originalOrderDependencyLength = propertyStateHandlerSingleton.propertyOrderDependencies.length;
+    const getOrderDependencyLength = () => propertyStateHandlerSingleton.propertyOrderDependencies.length - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -155,11 +156,11 @@ if ( Tandem.PHET_IO_ENABLED ) {
       tandem: parentTandem.createTandem( 'derivedProperty' ),
       phetioType: DerivedPropertyIO( NumberIO )
     } );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 3, 'derivedProperty adds order dependency for each dependency' );
+    assert.ok( getOrderDependencyLength() === 3, 'derivedProperty adds order dependency for each dependency' );
 
     firstProperty.dispose();
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'dependency dispose only removes what it effects' );
+    assert.ok( getOrderDependencyLength() === 2, 'dependency dispose only removes what it effects' );
     derivedProperty.dispose();
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'no orderDependencies after derivedProperty dispose' );
+    assert.ok( getOrderDependencyLength() === 0, 'no orderDependencies after derivedProperty dispose' );
   } );
 }
