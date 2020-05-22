@@ -543,7 +543,6 @@ class Property extends PhetioObject {
    * @param {Property.Phase} beforePhase
    * @param {Property} afterProperty
    * @param {Property.Phase} afterPhase
-   * TODO: rename to registerPhetioOrderDependency?, https://github.com/phetsims/phet-io/issues/1668
    */
   static registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
     assert && assert( Property.Phase.includes( beforePhase ) && Property.Phase.includes( afterPhase ), 'unexpected phase' );
