@@ -31,6 +31,10 @@ class PropertyStateHandler {
     // values set and notifications sent.
     this.propertyOrderDependencies = [];
 
+    // @private {Object.<phetioID:string, boolean} - only populated with true values. A map of the Properties that are
+    // in this.propertyOrderDependencies.
+    this.propertiesInOrderDependencies = {};
+
     // @public (PropertyStateHandlerTests read-only)
     this.initialized = false;
   }
@@ -76,10 +80,18 @@ class PropertyStateHandler {
   /**
    * @private
    * @param {Property} property
+   */
+  validateInstrumentedProperty( property ) {
+    assert && assert( property instanceof Property && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
+  }
+
+  /**
+   * @private
+   * @param {Property} property
    * @param {PropertyStatePhase} phase
    */
   validatePropertyPhasePair( property, phase ) {
-    assert && assert( property instanceof Property && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
+    this.validateInstrumentedProperty( property );
     assert && assert( PropertyStatePhase.includes( phase ), `unexpected phase: ${phase}` );
   }
 
@@ -90,27 +102,42 @@ class PropertyStateHandler {
    * two different Properties.
    * @public
    *
-   * @param {Property} beforeProperty - the object that must be set before the second
+   * @param {Property} beforeProperty - the object that must be set before the secondk; must be instrumented for PhET-iO
    * @param {PropertyStatePhase} beforePhase
-   * @param {Property} afterProperty
+   * @param {Property} afterProperty - must be instrumented for PhET-iO
    * @param {PropertyStatePhase} afterPhase
    */
   registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
 
     this.validatePropertyPhasePair( beforeProperty, beforePhase );
     this.validatePropertyPhasePair( afterProperty, afterPhase );
+    assert && beforeProperty === afterProperty && assert( beforePhase !== afterPhase, 'cannot set same Property to same phase' );
+
+    this.propertiesInOrderDependencies[ beforeProperty.tandem.phetioID ] = true;
+    this.propertiesInOrderDependencies[ afterProperty.tandem.phetioID ] = true;
 
     this.propertyOrderDependencies.push( new OrderDependency( beforeProperty.tandem.phetioID, beforePhase, afterProperty.tandem.phetioID, afterPhase ) );
+  }
 
+  /**
+   * @param {Property} property - must be instrumented for PhET-iO
+   * @returns {boolean} - true if Property is in any order dependency
+   * @public
+   */
+  propertyInAnOrderDependency( property ) {
+    this.validateInstrumentedProperty( property );
+    return !!this.propertiesInOrderDependencies[ property.tandem.phetioID ];
   }
 
   /**
    * Unregisters all order dependencies for the given Property
-   * TODO: this should only be called on Properties that are order dependencies, perhaps keep a map and check on that with a `hasOrderDependency()` function, https://github.com/phetsims/phet-io/issues/1668
-   * @param {Property} property
+   * @param {Property} property - must be instrumented for PhET-iO
    * @public
    */
   unregisterOrderDependenciesForProperty( property ) {
+    this.validateInstrumentedProperty( property );
+    assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
+
     for ( let i = 0; i < this.propertyOrderDependencies.length; i++ ) {
       const propertyOrderDependency = this.propertyOrderDependencies[ i ];
 
@@ -119,6 +146,7 @@ class PropertyStateHandler {
         i--;
       }
     }
+    delete this.propertiesInOrderDependencies[ property.tandem.phetioID ];
   }
 
   /**

@@ -80,6 +80,20 @@ if ( Tandem.PHET_IO_ENABLED ) {
     propertyA.dispose();
     propertyB.dispose();
     propertyC.dispose();
+
+    if ( window.assert ) {
+      const uninstrumentedProperty = new Property( 2 );
+      const instrumentedProperty = new BooleanProperty( false, {
+        tandem: Tandem.GENERAL.createTandem( 'instrumentedProperty' )
+      } );
+      assert.throws( () => {
+        propertyStateHandler.registerPhetioOrderDependency( uninstrumentedProperty, PropertyStatePhase.UNDEFER, instrumentedProperty, PropertyStatePhase.UNDEFER );
+      }, 'cannot register with an uninstrumented Property' );
+
+      assert.throws( () => {
+        propertyStateHandler.registerPhetioOrderDependency( instrumentedProperty, PropertyStatePhase.UNDEFER, instrumentedProperty, PropertyStatePhase.UNDEFER );
+      }, 'same Property same phase. . . . no no.' );
+    }
   } );
 
 
