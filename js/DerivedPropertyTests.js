@@ -131,8 +131,7 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
 } );
 
 if ( Tandem.PHET_IO_ENABLED ) {
-  QUnit.test( 'registerPhetioOrderDependency', assert => {
-    assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
+  QUnit.test( 'propertyStateHandlerSingleton tests for DerivedProperty', assert => {
 
     const parentTandem = Tandem.GENERAL;
 

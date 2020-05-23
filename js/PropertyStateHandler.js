@@ -84,24 +84,29 @@ class PropertyStateHandler {
   }
 
   /**
-   * Register that one Property must be set for state before another one
+   * Register that one Property must have a "Phase" applied for PhET-iO state before another Property's Phase. A Phase
+   * is an ending state in PhET-iO state set where Property values solidify, notifications for value changes are called.
+   * The PhET-iO state engine will always undefer a Property before it notifies its listeners. This is for registering
+   * two different Properties.
    * @public
    *
-   * @param {Property} firstProperty - the object that must be set before the second
-   * @param {PropertyStatePhase} firstPhase
-   * @param {Property} secondProperty
-   * @param {PropertyStatePhase} secondPhase
+   * @param {Property} beforeProperty - the object that must be set before the second
+   * @param {PropertyStatePhase} beforePhase
+   * @param {Property} afterProperty
+   * @param {PropertyStatePhase} afterPhase
    */
-  registerPropertyOrderDependency( firstProperty, firstPhase, secondProperty, secondPhase ) {
-    this.validatePropertyPhasePair( firstProperty, firstPhase );
-    this.validatePropertyPhasePair( secondProperty, secondPhase );
+  registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
 
-    this.propertyOrderDependencies.push( new OrderDependency( firstProperty.tandem.phetioID, firstPhase, secondProperty.tandem.phetioID, secondPhase ) );
+    this.validatePropertyPhasePair( beforeProperty, beforePhase );
+    this.validatePropertyPhasePair( afterProperty, afterPhase );
+
+    this.propertyOrderDependencies.push( new OrderDependency( beforeProperty.tandem.phetioID, beforePhase, afterProperty.tandem.phetioID, afterPhase ) );
+
   }
 
   /**
    * Unregisters all order dependencies for the given Property
-   *
+   * TODO: this should only be called on Properties that are order dependencies, perhaps keep a map and check on that with a `hasOrderDependency()` function, https://github.com/phetsims/phet-io/issues/1668
    * @param {Property} property
    * @public
    */

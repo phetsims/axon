@@ -343,8 +343,7 @@ class Property extends PhetioObject {
   /**
    * This function registers an order dependency between this Property and another. Basically this says that when
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
-   * See Property.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
-   * TODO: add a deregistrations, https://github.com/phetsims/axon/issues/276
+   * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    * @param {Property[]} dependencies
    * @protected
    */
@@ -353,8 +352,12 @@ class Property extends PhetioObject {
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
 
-      // The dependency should undefer (taking deferred value) before this Property notifies.
-      Property.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
+      // only if running in PhET-iO brand and both Properties are instrumenting
+      if ( Tandem.PHET_IO_ENABLED && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+
+        // The dependency should undefer (taking deferred value) before this Property notifies.
+        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
+      }
     }
   }
 
@@ -531,26 +534,6 @@ class Property extends PhetioObject {
    */
   static unmultilink( multilink ) {
     multilink.dispose();
-  }
-
-  /**
-   * Register that one Property must have a "Phase" applied for PhET-iO state before another Property's Phase. A Phase
-   * is an ending state in PhET-iO state set where Property values solidify, notifications for value changes are called.
-   * The PhET-iO state engine will always undefer a Property before it notifies its listeners. This is for registering
-   * two different Properties.
-   * @public
-   *
-   * @param {Property} beforeProperty - the object that must be set before the second
-   * @param {PropertyStatePhase} beforePhase
-   * @param {Property} afterProperty
-   * @param {PropertyStatePhase} afterPhase
-   */
-  static registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
-    assert && assert( PropertyStatePhase.includes( beforePhase ) && PropertyStatePhase.includes( afterPhase ), 'unexpected phase' );
-
-    if ( Tandem.PHET_IO_ENABLED && beforeProperty.isPhetioInstrumented() && afterProperty.isPhetioInstrumented() ) {
-      propertyStateHandlerSingleton.registerPropertyOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase );
-    }
   }
 }
 

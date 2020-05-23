@@ -256,8 +256,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
   } );
 
-  QUnit.test( 'Property.registerPhetioOrderDependency', assert => {
-    assert.ok( phet.phetio.phetioEngine, 'phetioEngine expected for tests' );
+  QUnit.test( 'propertyStateHandlerSingleton tests for Property', assert => {
 
     const parentTandem = Tandem.GENERAL;
 

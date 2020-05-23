@@ -48,16 +48,16 @@ if ( Tandem.PHET_IO_ENABLED ) {
       tandem: Tandem.GENERAL.createTandem( 'cProperty' )
     } );
 
-    propertyStateHandler.registerPropertyOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
     assert.ok( propertyStateHandler.propertyOrderDependencies.length === 1, 'one expected' );
     const aToBDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
 
-    propertyStateHandler.registerPropertyOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
     assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'two expected' );
     assert.ok( propertyStateHandler.propertyOrderDependencies[ 0 ] === aToBDependency, 'push expected instead of unshift1' );
     const aToCDependency = propertyStateHandler.propertyOrderDependencies[ 1 ];
 
-    propertyStateHandler.registerPropertyOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
     assert.ok( propertyStateHandler.propertyOrderDependencies.length === 3, 'three expected' );
     assert.ok( propertyStateHandler.propertyOrderDependencies[ 0 ] === aToBDependency, 'push expected instead of unshift2' );
     assert.ok( propertyStateHandler.propertyOrderDependencies[ 1 ] === aToCDependency, 'push expected instead of unshift3' );
@@ -70,8 +70,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'none now' );
 
 
-    propertyStateHandler.registerPropertyOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.registerPropertyOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
     assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'none now' );
 
     propertyStateHandler.unregisterOrderDependenciesForProperty( propertyC );
@@ -105,7 +105,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     // This extra order dependency means that numberProperty won't be deferred as eagerly as rangeProperty.
     // NumberProperty should still handle this case for state without erroring validation.
-    propertyStateHandlerSingleton.registerPropertyOrderDependency(
+    propertyStateHandlerSingleton.registerPhetioOrderDependency(
       randomDependencyProperty, PropertyStatePhase.UNDEFER,
       numberProperty, PropertyStatePhase.UNDEFER
     );
