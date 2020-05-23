@@ -272,7 +272,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       phetioType: PropertyIO( NumberIO )
     } );
 
-    Property.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
+    propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
 
     let orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ 0 ];
     assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
