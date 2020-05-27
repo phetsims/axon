@@ -186,9 +186,12 @@ class Property extends PhetioObject {
   }
 
   /**
-   * Stores the specified value as the initial value, which will be taken on reset. Use sparingly!
+   * Stores the specified value as the initial value, which will be taken on reset. This is primarily for use by
+   * PhetioStateEngine.  Sims should use it sparingly, typically only in situations where the initial value is
+   * unknowable at instantiation.
+   *
    * @param {*} initialValue
-   * @public (PhetioStateEngine)
+   * @public
    */
   setInitialValue( initialValue ) {
     this._initialValue = initialValue;
