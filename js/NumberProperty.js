@@ -45,12 +45,18 @@ class NumberProperty extends Property {
       rangePropertyOptions: {
         phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
         phetioType: PropertyIO( NullableIO( RangeIO ) ),
-        phetioReadOnly: true,
-        tandem: Tandem.OPTIONAL // must be 'rangeProperty', see assertion below
+        phetioReadOnly: true
       },
 
       // {Tandem}
       tandem: Tandem.OPTIONAL
+    }, options );
+
+    // options that depend on other options
+    options = merge( {
+      rangePropertyOptions: {
+        tandem: options.tandem.createTandem( 'rangeProperty' ) // must be 'rangeProperty', see assertion below
+      }
     }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
