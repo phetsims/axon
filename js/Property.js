@@ -186,7 +186,7 @@ class Property extends PhetioObject {
   }
 
   /**
-   * Stores the specified value as the initial value, which will be taken on reset. Sims should use it sparingly,
+   * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
    * typically only in situations where the initial value is unknowable at instantiation.
    *
    * @param {*} initialValue
