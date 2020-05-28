@@ -274,7 +274,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
 
-    let orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ 0 ];
+    let orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ originalOrderDependencyLength ];
     assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
 
     firstProperty.dispose();
@@ -289,7 +289,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
-    orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ 0 ];
+    orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ originalOrderDependencyLength ];
     assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
 
     secondProperty.dispose();
