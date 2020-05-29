@@ -102,7 +102,7 @@ class PropertyStateHandler {
    * two different Properties.
    * @public
    *
-   * @param {Property} beforeProperty - the object that must be set before the secondk; must be instrumented for PhET-iO
+   * @param {Property} beforeProperty - the Property that needs to be set before the second; must be instrumented for PhET-iO
    * @param {PropertyStatePhase} beforePhase
    * @param {Property} afterProperty - must be instrumented for PhET-iO
    * @param {PropertyStatePhase} afterPhase
