@@ -36,7 +36,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     assert.ok( propertyStateHandler.initialized, 'should be initialized by phetioStateEngine' );
 
-    assert.ok( phetioStateEngine, 'to aviod eslint no new as side-effects' );
+    assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
     const propertyA = new BooleanProperty( false, {
       tandem: Tandem.GENERAL.createTandem( 'aProperty' )
