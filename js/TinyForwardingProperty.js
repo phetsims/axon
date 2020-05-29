@@ -9,8 +9,8 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TinyProperty from './TinyProperty.js';
 import axon from './axon.js';
+import TinyProperty from './TinyProperty.js';
 
 class TinyForwardingProperty extends TinyProperty {
   /**
@@ -28,7 +28,7 @@ class TinyForwardingProperty extends TinyProperty {
    * Sets (or unsets if `null` is provided) the Property that we use for forwarding changes.
    * @public
    *
-   * @param {Property.<*>|null} property
+   * @param {Property.<*>|null} property - null to "unset" forwarding.
    */
   setForwardingProperty( property ) {
     const oldValue = this.get();
@@ -101,14 +101,14 @@ class TinyForwardingProperty extends TinyProperty {
   }
 
   /**
-   * Directly notifies listeners of changes.
+   * Directly notifies listeners of changes. This needs to be an override to make sure that the value of the forwarding
+   * Property is used if it exists.
    * @public
    * @override
    *
    * @param {*} oldValue
    */
   notifyListeners( oldValue ) {
-    // notify listeners, optionally detect loops where this TinyForwardingProperty is set again before this completes.
     this.emit( this.get(), oldValue, this );
   }
 

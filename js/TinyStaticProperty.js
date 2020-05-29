@@ -22,14 +22,11 @@ class TinyStaticProperty extends TinyProperty {
   }
 
   /**
-   * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
-   * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
-   * hasn't changed, this is a no-op.
+   * Don't set the value of a TinyStaticProperty!
    * @public
-   * @override - Don't set the value of a TinyStaticProperty!
+   * @override
    *
    * @param {*} value
-   * @returns {TinyStaticProperty} this instance, for chaining.
    */
   set( value ) {
     throw new Error( 'Cannot set a TinyStaticProperty value' );

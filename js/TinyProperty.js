@@ -146,7 +146,6 @@ class TinyProperty extends TinyEmitter {
    * @param {*} oldValue
    */
   notifyListeners( oldValue ) {
-    // notify listeners, optionally detect loops where this TinyProperty is set again before this completes.
     this.emit( this._value, oldValue, this );
   }
 
