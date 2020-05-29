@@ -31,12 +31,13 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {Property.<*>|null} property - null to "unset" forwarding.
    */
   setForwardingProperty( property ) {
-    const oldValue = this.get();
 
     // Lazily set this value, it will be added as a listener to any forwardingProperty we have.
     this.forwardingListener = this.forwardingListener || ( ( value, oldValue, property ) => {
       this.notifyListeners( oldValue );
     } );
+
+    const oldValue = this.get();
 
     if ( this.forwardingProperty ) {
       this.forwardingProperty.unlink( this.forwardingListener );
