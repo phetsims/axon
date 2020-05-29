@@ -422,6 +422,7 @@ class ObservableArray extends PhetioObject {
     for ( let k = 2; k < args.length; k++ ) {
       this._fireItemAdded( args[ k ] );
     }
+    this.lengthProperty.set( this._array.length );
     return deleted;
   }
 
