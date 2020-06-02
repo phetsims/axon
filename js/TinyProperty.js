@@ -146,6 +146,7 @@ class TinyProperty extends TinyEmitter {
    * @param {*} oldValue
    */
   notifyListeners( oldValue ) {
+    // We use this._value here for performance, AND to avoid calling onAccessAttempt unnecessarily.
     this.emit( this._value, oldValue, this );
   }
 

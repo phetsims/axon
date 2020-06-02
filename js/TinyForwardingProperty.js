@@ -31,6 +31,10 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {Property.<*>|null} property - null to "unset" forwarding.
    */
   setForwardingProperty( property ) {
+    // no-op if we are already forwarding to that property OR if we still aren't forwarding
+    if ( this.forwardingProperty === property ) {
+      return;
+    }
 
     // Lazily set this value, it will be added as a listener to any forwardingProperty we have.
     this.forwardingListener = this.forwardingListener || ( ( value, oldValue, property ) => {
@@ -77,6 +81,7 @@ class TinyForwardingProperty extends TinyProperty {
       return this.forwardingProperty.value;
     }
     else {
+      // NOTE: This is not using super here, since we don't want to call onAccessAttempt twice()
       return this._value;
     }
   }
@@ -110,6 +115,8 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {*} oldValue
    */
   notifyListeners( oldValue ) {
+    // NOTE: This is overridden to use this.get(), since we need to hook up forwarding, and onAccessAttept being called
+    // is NOT a problem here due to the more specific usage.
     this.emit( this.get(), oldValue, this );
   }
 

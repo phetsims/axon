@@ -14,14 +14,6 @@ import axon from './axon.js';
 
 class TinyStaticProperty extends TinyProperty {
   /**
-   * @param {*} value - The initial value of the property
-   * @param {Object} [options] - options
-   */
-  constructor( value, options ) {
-    super( value, options );
-  }
-
-  /**
    * Don't set the value of a TinyStaticProperty!
    * @public
    * @override
