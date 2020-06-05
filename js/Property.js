@@ -349,7 +349,7 @@ class Property extends PhetioObject {
    * @param {Property[]} dependencies
    * @protected
    */
-  addPhetioDependencies( dependencies ) {
+  addPhetioStateDependencies( dependencies ) {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -373,7 +373,7 @@ class Property extends PhetioObject {
    */
   link( listener, options ) {
     if ( options && options.phetioDependencies ) {
-      this.addPhetioDependencies( options.phetioDependencies );
+      this.addPhetioStateDependencies( options.phetioDependencies );
     }
 
     this.changedEmitter.addListener( listener );
@@ -389,7 +389,7 @@ class Property extends PhetioObject {
    */
   lazyLink( listener, options ) {
     if ( options && options.phetioDependencies ) {
-      this.addPhetioDependencies( options.phetioDependencies );
+      this.addPhetioStateDependencies( options.phetioDependencies );
     }
     this.changedEmitter.addListener( listener );
   }

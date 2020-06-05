@@ -117,8 +117,8 @@ class NumberProperty extends Property {
     this.rangeProperty.link( rangePropertyObserver );
 
     // For PhET-iO State, make sure that both the range and this value are correct before firing notifications (where the assertions are).
-    this.rangeProperty.addPhetioDependencies( [ this ] );
-    this.addPhetioDependencies( [ this.rangeProperty ] );
+    this.rangeProperty.addPhetioStateDependencies( [ this ] );
+    this.addPhetioStateDependencies( [ this.rangeProperty ] );
 
     // verify that validValues meet other NumberProperty-specific validation criteria
     if ( options.validValues && this.validateNumberProperty ) {
