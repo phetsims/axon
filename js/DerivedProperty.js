@@ -202,6 +202,18 @@ class DerivedProperty extends Property {
   static or( properties, options ) {
     return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
   }
+
+  /**
+   * Creates a derived boolean Property whose value is the inverse of the provided property.
+   * @public
+   *
+   * @param {<Property.<boolean>>} propertyToInvert
+   * @param {Object} [options] - Forwarded to the DerivedProperty
+   * @returns {DerivedProperty.<boolean>}
+   */
+  static not( propertyToInvert, options ) {
+    return new DerivedProperty( [ propertyToInvert ], x => !x, options );
+  }
 }
 
 const equalsFunction = ( a, b ) => {
