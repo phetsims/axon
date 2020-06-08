@@ -4,8 +4,8 @@
  * Multilink is used to link to multiple properties.  It is very similar to a DerivedProperty, but has no value and
  * does not conform to the Property API because it is intended for use with callbacks that do not compute a value.
  *
- * For situations where a reference to the Multilink is not needed (for calling dispose), use convenience method
- * Property.multilink or Property.lazyLink to avoid these types of lint errors:
+ * For situations where a reference to the Multilink instance is not needed (for calling dispose), use convenience
+ * methods Property.multilink or Property.lazyLink to avoid these types of lint errors:
  *
  * // lint error: Do not use 'new' for side effects (no-new)
  * new Multilink( ... );
