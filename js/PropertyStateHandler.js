@@ -41,6 +41,7 @@ class PropertyStateHandler {
 
   /**
    * @param {PhetioStateEngine} phetioStateEngine
+   * @public
    */
   initialize( phetioStateEngine ) {
     assert && assert( !this.initialized, 'cannot initialize twice' );

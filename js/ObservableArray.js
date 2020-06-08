@@ -361,6 +361,7 @@ class ObservableArray extends PhetioObject {
    * Returns true if some element in this ObservableArray matches the predicate.
    * @param {function(item:*):boolean} predicate
    * @returns {boolean}
+   * @public
    */
   some( predicate ) {
     return _.some( this._array, predicate );
@@ -430,6 +431,7 @@ class ObservableArray extends PhetioObject {
    * Changes the ordering of elements in the array.  Requires a Random source so that shuffles can be reproducible.
    * No items are added or removed, and this method does not send out any notifications.
    * @param {Random} random - from dot
+   * @public
    */
   shuffle( random ) {
     assert && assert( random, 'random must be supplied' );
