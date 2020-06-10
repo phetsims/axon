@@ -8,6 +8,7 @@
  */
 
 import './Action.js';
+import axon from './axon.js';
 import './BooleanProperty.js';
 import './CallbackTimer.js';
 import './DerivedProperty.js';
@@ -19,17 +20,16 @@ import './NumberProperty.js';
 import './ObservableArray.js';
 import './Property.js';
 import './PropertyStateHandler.js';
+import './propertyStateHandlerSingleton.js';
 import './PropertyStatePhase.js';
 import './StringProperty.js';
+import './timer.js';
 import './TinyEmitter.js';
 import './TinyForwardingProperty.js';
 import './TinyProperty.js';
 import './TinyStaticProperty.js';
-import './ValidatorDef.js';
-import axon from './axon.js';
-import './propertyStateHandlerSingleton.js';
-import './timer.js';
 import './units.js';
 import './validate.js';
+import './ValidatorDef.js';
 
 export default axon;
