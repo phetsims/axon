@@ -69,9 +69,8 @@ class ObservableArray extends PhetioObject {
   }
 
   /**
-   * Restore the array back to its initial state
-   * Note: if an item is in the current array and original array, it is removed and added back
-   * This may or may not change in the future, see #4
+   * Resetting an ObservableArray is the same as clearing it.  This method is so that model reset functions will
+   * primarily call `reset` on Property and ObservableArray instances.
    * @public
    */
   reset() {
