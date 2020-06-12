@@ -4,7 +4,7 @@
  * Responsible for handling Property-specific logic associated with setting PhET-iO state. This file will defer Properties
  * from taking their final value, and notifying on that value until after state has been set on every Property. It is
  * also responsible for keeping track of order dependencies between different Properties, and making sure that undeferral
- * and notifications go out in the appropriate orders. See https://github.com/phetsims/axon/issues/276 for implemetation details.
+ * and notifications go out in the appropriate orders. See https://github.com/phetsims/axon/issues/276 for implementation details.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
