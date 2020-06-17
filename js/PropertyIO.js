@@ -111,7 +111,7 @@ const create = parameterType => {
      * @param {Object} fromStateObject
      * @public
      */
-    static setValue( property, fromStateObject ) {
+    static applyState( property, fromStateObject ) {
       validate( property, this.validator );
       property.units = fromStateObject.units;
       property.set( fromStateObject.value );

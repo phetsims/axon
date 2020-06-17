@@ -73,10 +73,10 @@ class NumberPropertyIO extends PropertyIOImpl {
    * @override
    * @public
    */
-  static setValue( numberProperty, fromStateObject ) {
+  static applyState( numberProperty, fromStateObject ) {
     validate( numberProperty, this.validator );
 
-    PropertyIOImpl.setValue( numberProperty, fromStateObject );
+    PropertyIOImpl.applyState( numberProperty, fromStateObject );
     numberProperty.step = fromStateObject.step;
     numberProperty.numberType = fromStateObject.numberType;
   }

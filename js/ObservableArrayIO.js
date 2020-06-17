@@ -85,7 +85,7 @@ const create = parameterType => {
      * @param observableArray
      * @param elementsFromStateObject
      */
-    static setValue( observableArray, elementsFromStateObject ) {
+    static applyState( observableArray, elementsFromStateObject ) {
       validate( observableArray, this.validator );
       observableArray.clear();
       observableArray.addAll( elementsFromStateObject );
