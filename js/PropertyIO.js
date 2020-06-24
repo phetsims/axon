@@ -15,7 +15,8 @@ import axon from './axon.js';
 import Property from './Property.js';
 import validate from './validate.js';
 
-// {Map.<cacheKey:function(new:ObjectIO), function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is only created once
+// {Map.<cacheKey:function(new:ObjectIO), function(new:ObjectIO)>} - Cache each parameterized PropertyIO based on
+// the parameter type, so that it is only created once
 const cache = new Map();
 
 /**
@@ -27,13 +28,11 @@ const cache = new Map();
 function PropertyIO( parameterType ) {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
-  const cacheKey = parameterType;
-
-  if ( !cache.has( cacheKey ) ) {
-    cache.set( cacheKey, create( parameterType ) );
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, create( parameterType ) );
   }
 
-  return cache.get( cacheKey );
+  return cache.get( parameterType );
 }
 
 /**
