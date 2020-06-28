@@ -334,6 +334,8 @@ class Property extends PhetioObject {
    */
   reset() {
     this.set( this._initialValue );
+
+    Tandem.PHET_IO_ENABLED && phet.phetio.phetioEngine.phetioStateEngine.restoreState( this );
   }
 
   // @public
