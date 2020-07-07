@@ -373,7 +373,7 @@ class ObservableArray extends PhetioObject {
    * @public
    */
   every( predicate ) {
-    return _.every( this._array, predicate );
+    return this._array.every( predicate );
   }
 
   /**
