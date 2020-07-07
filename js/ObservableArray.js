@@ -212,7 +212,7 @@ class ObservableArray extends PhetioObject {
    * @public
    */
   push( item ) {
-    if ( !this.allowDuplicates && this.contains( item ) ) {
+    if ( !this.allowDuplicates && this.includes( item ) ) {
       throw new Error( 'duplicates are not allowed' );
     }
     this._array.push( item );
@@ -252,14 +252,26 @@ class ObservableArray extends PhetioObject {
     return item;
   }
 
+  //TODO https://github.com/phetsims/axon/issues/306 delete this method
   /**
    * Does the array contain the specified item?
    * @param item
    * @returns {boolean}
    * @public
+   * @deprecated use includes
    */
   contains( item ) {
     return this.indexOf( item ) !== -1;
+  }
+
+  /**
+   * Does the array include the specified item?
+   * @param {*} item
+   * @returns {boolean}
+   * @public
+   */
+  includes( item ) {
+    return this._array.includes( item );
   }
 
   /**
