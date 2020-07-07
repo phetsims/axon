@@ -252,18 +252,6 @@ class ObservableArray extends PhetioObject {
     return item;
   }
 
-  //TODO https://github.com/phetsims/axon/issues/306 delete this method
-  /**
-   * Does the array contain the specified item?
-   * @param item
-   * @returns {boolean}
-   * @public
-   * @deprecated use includes
-   */
-  contains( item ) {
-    return this.indexOf( item ) !== -1;
-  }
-
   /**
    * Does the array include the specified item?
    * @param {*} item
