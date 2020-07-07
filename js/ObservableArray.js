@@ -367,6 +367,16 @@ class ObservableArray extends PhetioObject {
   }
 
   /**
+   * Returns true if every element in this ObservableArray matches the predicate.
+   * @param {function(item:*):boolean} predicate
+   * @returns {boolean}
+   * @public
+   */
+  every( predicate ) {
+    return _.every( this._array, predicate );
+  }
+
+  /**
    * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
    * Same as foldLeft.  In underscore this is called _.reduce aka _.fold or _.inject
    * @param {*} value - output of the reduction
