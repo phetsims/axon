@@ -348,7 +348,7 @@ class Property extends PhetioObject {
    * This function registers an order dependency between this Property and another. Basically this says that when
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
-   * @param {Property[]} dependencies
+   * @param {Array.<Property|TinyProperty>} dependencies
    * @protected
    */
   addPhetioStateDependencies( dependencies ) {
@@ -357,7 +357,7 @@ class Property extends PhetioObject {
       const dependency = dependencies[ i ];
 
       // only if running in PhET-iO brand and both Properties are instrumenting
-      if ( Tandem.PHET_IO_ENABLED && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+      if ( Tandem.PHET_IO_ENABLED && dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
@@ -369,7 +369,7 @@ class Property extends PhetioObject {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    *
-   * @param {function} listener a function of the form listener(newValue,oldValue)
+   * @param {function(newValue:*,oldValue:*,Property)} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */
@@ -385,7 +385,7 @@ class Property extends PhetioObject {
   /**
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
-   * @param {function} listener - a function with a single argument, which is the current value of the Property.
+   * @param {function(newValue:*,oldValue:*,Property)} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */

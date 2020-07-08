@@ -19,7 +19,7 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 class DerivedProperty extends Property {
 
   /**
-   * @param {Property[]} dependencies - Properties that this Property's value is derived from
+   * @param {Array.<Property|TinyProperty>} dependencies - Properties that this Property's value is derived from
    * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param {Object} [options] - see Property
    */
@@ -76,7 +76,7 @@ class DerivedProperty extends Property {
         this.dependencyListeners.push( listener );
         dependency.lazyLink( listener );
 
-        if ( this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
+        if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
 
           // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
           // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
