@@ -6,6 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import './AxonArrayTests.js';
 import './BooleanPropertyTests.js';
 import './DerivedPropertyTests.js';
 import './DynamicPropertyTests.js';
