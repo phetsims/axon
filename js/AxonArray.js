@@ -125,14 +125,6 @@ class AxonArray extends Array {
   }
 
   // @public
-  slice() {
-    const copy = super.slice();
-    const result = Array.prototype.slice.apply( this, arguments );
-    this.notifyChanges( copy );
-    return result;
-  }
-
-  // @public
   splice() {
     const copy = super.slice();
     const result = Array.prototype.splice.apply( this, arguments );
