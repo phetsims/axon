@@ -21,6 +21,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
+import ValidatorDef from './ValidatorDef.js';
 
 class AxonArray extends Array {
 
@@ -34,21 +35,26 @@ class AxonArray extends Array {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
-      validator: {
-        isValidValue: () => true
+      elementOptions: {
+        // Supports validator keys, including phetioType (for instrumented instances)
       }
     }, options );
+
+    // Gracefully support untyped values
+    if ( !ValidatorDef.isValidValidator( options.elementOptions ) ) {
+      options.elementOptions.isValidValue = () => true;
+    }
 
     // @public - notifies when an item has been added
     this.itemAddedEmitter = new Emitter( {
       tandem: options.tandem.createTandem( 'itemAddedEmitter' ),
-      parameters: [ merge( { name: 'value' }, options.validator ) ]
+      parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
     } );
 
     // @public - notifies when an item has been removed
     this.itemRemovedEmitter = new Emitter( {
       tandem: options.tandem.createTandem( 'itemRemovedEmitter' ),
-      parameters: [ merge( { name: 'value' }, options.validator ) ]
+      parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
     } );
 
     // @public (read-only) observe this, but don't set it.  Updated when array modifiers are called (except array.length=...)
