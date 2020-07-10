@@ -9,30 +9,54 @@
  *
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
  * state for the AxonArray.  Instead, please use setLengthAndNotify.
+ *
+ * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node.  We don't need
+ * any of the methods from ObservableArrayIO (they are handled by children) and we don't need any state from
+ * ObservableArray (those cases should use PhetioGroup).
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import merge from '../../phet-core/js/merge.js';
+import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 
 class AxonArray extends Array {
 
-  constructor() {
+  constructor( options ) {
     super();
 
-    // TODO: validator should be an option - see https://github.com/phetsims/axon/issues/308
-    // TODO: optional phet-io instrumentation for children - see https://github.com/phetsims/axon/issues/308
-    // TODO: do we need PhetioObject mixin? - see https://github.com/phetsims/axon/issues/308
+    // Support construction via slice(), which invokes the sub-constructor
+    if ( typeof options === 'number' ) {
+      return;
+    }
+
+    options = merge( {
+      tandem: Tandem.OPTIONAL,
+      validator: {
+        isValidValue: () => true
+      }
+    }, options );
+
+    // @public - notifies when an item has been added
     this.itemAddedEmitter = new Emitter( {
-      parameters: [ { isValidValue: x => true } ]
-    } );
-    this.itemRemovedEmitter = new Emitter( {
-      parameters: [ { isValidValue: x => true } ]
+      tandem: options.tandem.createTandem( 'itemAddedEmitter' ),
+      parameters: [ merge( { name: 'value' }, options.validator ) ]
     } );
 
-    // TODO: How to make this read-only? - see https://github.com/phetsims/axon/issues/308
-    this.lengthProperty = new NumberProperty( 0 ); // read-only
+    // @public - notifies when an item has been removed
+    this.itemRemovedEmitter = new Emitter( {
+      tandem: options.tandem.createTandem( 'itemRemovedEmitter' ),
+      parameters: [ merge( { name: 'value' }, options.validator ) ]
+    } );
+
+    // @public (read-only) observe this, but don't set it.  Updated when array modifiers are called (except array.length=...)
+    this.lengthProperty = new NumberProperty( 0, {
+      numberType: 'Integer',
+      tandem: options.tandem.createTandem( 'lengthProperty' ),
+      phetioReadOnly: true
+    } );
   }
 
   /**
