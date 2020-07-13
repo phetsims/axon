@@ -1,8 +1,10 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * Adds ability to observe when items are added or removed from an array. This was created as an alternative to
- * ObservableArray with the distinguishing change that this extends Array and hence uses the native Array API.
+ * AxonArray adds the ability to observe when items are added or removed from an array. This was created as an
+ * alternative to ObservableArray with the distinguishing change that this extends Array and hence uses the native
+ * Array API.
+ *
  * The only unsupported array mutation feature is:
  *
  * myArray.length = 0;
@@ -13,6 +15,7 @@
  * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node.  We don't need
  * any of the methods from ObservableArrayIO (they are handled by children) and we don't need any state from
  * ObservableArray (those cases should use PhetioGroup).
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
