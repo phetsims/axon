@@ -98,9 +98,7 @@ const create = parameterType => {
       return {
         units: stateObject.units,
         value: parameterType.fromStateObject( stateObject.value ),
-        validValues: stateObject.validValues && stateObject.validValues.map( function( v ) {
-          return parameterType.fromStateObject( v );
-        } )
+        validValues: stateObject.validValues && stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) )
       };
     }
 
