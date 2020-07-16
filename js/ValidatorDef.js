@@ -77,6 +77,15 @@ const VALIDATOR_KEYS = [
   'phetioType'
 ];
 
+/**
+ * @typedef {Object} ValidatorDef
+ * See above documentation for details
+ * @property {function} [isValidValue]
+ * @property {*} [valueType]
+ * @property {Array.<*>} [validValues]
+ * @property {Array.<*>} [arrayElementType]
+ * @property {function()} [phetioType] - IO Type
+ */
 const ValidatorDef = {
 
   /**
