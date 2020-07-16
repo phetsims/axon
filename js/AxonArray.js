@@ -5,9 +5,11 @@
  * alternative to ObservableArray with the distinguishing change that this extends Array and hence uses the native
  * Array API.
  *
- * The only unsupported Array mutation feature is:
+ * The unsupported Array mutation features are:
  *
- * myArray.length = 0;
+ * array.length = ...
+ * array.copyWithin(...)
+ * array.fill(...)
  *
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
  * state for the AxonArray. Instead, please use setLengthAndNotify.
