@@ -13,6 +13,7 @@
  * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node.  We don't need
  * any of the methods from ObservableArrayIO (they are handled by children) and we don't need any state from
  * ObservableArray (those cases should use PhetioGroup).
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
