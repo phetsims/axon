@@ -1,9 +1,9 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * Adds ability to observe when items are added or removed from an array. This was created as an alternative to
- * ObservableArray with the distinguishing change that this extends Array and hence uses the native Array API.
- * The only unsupported array mutation feature is:
+ * AxonArray adds the ability to observe when items are added or removed from an array. This was created as an
+ * alternative to ObservableArray with the distinguishing change that this extends Array and hence uses the native
+ * Array API. The only unsupported array mutation feature is:
  *
  * myArray.length = 0;
  *
