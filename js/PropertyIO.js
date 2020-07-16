@@ -41,6 +41,7 @@ function PropertyIO( parameterType ) {
  * @returns {function(new:ObjectIO)}
  */
 const create = parameterType => {
+  assert && assert( parameterType.fromStateObject, 'only data type serialization supported for parameterType.' );
 
   /**
    * @param {Property} property
@@ -66,6 +67,7 @@ const create = parameterType => {
      * @param {Object} property
      * @returns {Object} - a state object
      * @public
+     * @override
      */
     static toStateObject( property ) {
       validate( property, this.validator );
@@ -89,30 +91,20 @@ const create = parameterType => {
     }
 
     /**
-     * Decodes a state into a Property.
-     * @param {Object} stateObject
-     * @returns {Object}
-     * @public
-     */
-    static fromStateObject( stateObject ) {
-      return {
-        units: stateObject.units,
-        value: parameterType.fromStateObject( stateObject.value ),
-        validValues: stateObject.validValues && stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) )
-      };
-    }
-
-    /**
      * Used to set the value when loading a state
      * @param {Property} property
-     * @param {Object} fromStateObject
+     * @param {Object} stateObject
+     * @override
      * @public
      */
-    static applyState( property, fromStateObject ) {
+    static applyState( property, stateObject ) {
       validate( property, this.validator );
-      property.units = fromStateObject.units;
-      property.set( fromStateObject.value );
-      property.validValues = fromStateObject.validValues;
+      property.units = stateObject.units;
+      property.set( parameterType.fromStateObject( stateObject.value ) );
+
+      if ( stateObject.validValues ) {
+        property.validValues = stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) );
+      }
     }
   }
 

@@ -53,32 +53,17 @@ class NumberPropertyIO extends PropertyIOImpl {
   }
 
   /**
-   * Decodes a state into a NumberProperty.
-   * @param {Object} stateObject
-   * @returns {Object}
-   * @override
-   * @public
-   */
-  static fromStateObject( stateObject ) {
-    const fromParentStateObject = PropertyIOImpl.fromStateObject( stateObject );
-    fromParentStateObject.numberType = stateObject.numberType;
-    fromParentStateObject.step = stateObject.step;
-
-    return fromParentStateObject;
-  }
-
-  /**
    * @param {NumberProperty} numberProperty
-   * @param {Object} fromStateObject
+   * @param {Object} stateObject
    * @override
    * @public
    */
-  static applyState( numberProperty, fromStateObject ) {
+  static applyState( numberProperty, stateObject ) {
     validate( numberProperty, this.validator );
 
-    PropertyIOImpl.applyState( numberProperty, fromStateObject );
-    numberProperty.step = fromStateObject.step;
-    numberProperty.numberType = fromStateObject.numberType;
+    PropertyIOImpl.applyState( numberProperty, stateObject );
+    numberProperty.step = stateObject.step;
+    numberProperty.numberType = stateObject.numberType;
   }
 }
 

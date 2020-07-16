@@ -47,6 +47,7 @@ function ObservableArrayIO( parameterType ) {
  * @returns {function(new:ObjectIO)}
  */
 const create = parameterType => {
+  assert && assert( parameterType.fromStateObject, 'only data type serialization supported for parameterType.' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an ObservbleArray IO type.
@@ -72,23 +73,15 @@ const create = parameterType => {
 
     /**
      * @public
-     * @override
-     * @param {{array: Array.<*>}} stateObject - where each array value is the parameter type state object of the element
-     * @returns {Array{Object}}
-     */
-    static fromStateObject( stateObject ) {
-      return stateObject.array.map( paramStateObject => parameterType.fromStateObject( paramStateObject ) );
-    }
-
-    /**
-     * @public
      * @param observableArray
-     * @param elementsFromStateObject
+     * @param {Object} stateObject
+     * @overrride
      */
-    static applyState( observableArray, elementsFromStateObject ) {
+    static applyState( observableArray, stateObject ) {
       validate( observableArray, this.validator );
       observableArray.clear();
-      observableArray.addAll( elementsFromStateObject );
+      const elements = stateObject.array.map( paramStateObject => parameterType.fromStateObject( paramStateObject ) );
+      observableArray.addAll( elements );
     }
   }
 
