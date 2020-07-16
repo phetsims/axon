@@ -71,12 +71,8 @@ class AxonArray extends Array {
   }
 
   /**
-   * The only unsupported Array mutation feature is:
-   *
-   * myArray.length = 0;
-   *
-   * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
-   * state for the AxonArray. Instead, please use setLengthAndNotify.
+   * Array.length is not supported. The Array.length getter cannot be overridden, so we have no way to prevent its use.
+   * Using it this will lead to an inconsistent state for the AxonArray. Instead, please use setLengthAndNotify.
    * @param {number} length
    * @public
    */
