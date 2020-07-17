@@ -6,7 +6,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import PhetioObjectAPI from '../../../tandem/js/PhetioObjectAPI.js';
+import PhetioObjectAPI from '../../tandem/js/PhetioObjectAPI.js';
 import axon from './axon.js';
 
 class PropertyAPI extends PhetioObjectAPI {
