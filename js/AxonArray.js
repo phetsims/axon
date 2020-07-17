@@ -1,18 +1,23 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * Adds ability to observe when items are added or removed from an array. This was created as an alternative to
- * ObservableArray with the distinguishing change that this extends Array and hence uses the native Array API.
- * The only unsupported array mutation feature is:
+ * AxonArray adds the ability to observe when items are added or removed from an Array. This was created as an
+ * alternative to ObservableArray with the distinguishing change that this extends Array and hence uses the native
+ * Array API.
  *
- * myArray.length = 0;
+ * The unsupported Array mutation features are:
+ *
+ * array.length = ...
+ * array.copyWithin(...)
+ * array.fill(...)
  *
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
- * state for the AxonArray.  Instead, please use setLengthAndNotify.
+ * state for the AxonArray. Instead, please use setLengthAndNotify.
  *
- * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node.  We don't need
+ * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node. We don't need
  * any of the methods from ObservableArrayIO (they are handled by children) and we don't need any state from
  * ObservableArray (those cases should use PhetioGroup).
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
@@ -57,7 +62,7 @@ class AxonArray extends Array {
       parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
     } );
 
-    // @public (read-only) observe this, but don't set it.  Updated when array modifiers are called (except array.length=...)
+    // @public (read-only) observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
     this.lengthProperty = new NumberProperty( 0, {
       numberType: 'Integer',
       tandem: options.tandem.createTandem( 'lengthProperty' ),
@@ -66,12 +71,8 @@ class AxonArray extends Array {
   }
 
   /**
-   *  The only unsupported array mutation feature is:
-   *
-   * myArray.length = 0;
-   *
-   * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
-   * state for the AxonArray.  Instead, please use setLengthAndNotify.
+   * Array.length is not supported. The Array.length getter cannot be overridden, so we have no way to prevent its use.
+   * Using it this will lead to an inconsistent state for the AxonArray. Instead, please use setLengthAndNotify.
    * @param {number} length
    * @public
    */
