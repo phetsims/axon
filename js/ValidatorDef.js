@@ -372,7 +372,21 @@ const validateValueOrElementType = ( type, options ) => {
   return true;
 };
 
+/**
+ * @public
+ * @type {string[]}
+ */
 ValidatorDef.VALIDATOR_KEYS = VALIDATOR_KEYS;
+
+/**
+ * General validator for validating that a string doesn't have template variables in it.
+ * @public
+ * @type {ValidatorDef}
+ */
+ValidatorDef.STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR = {
+  valueType: 'string',
+  isValidValue: v => !/\{\{\w*\}\}/.test( v )
+};
 
 axon.register( 'ValidatorDef', ValidatorDef );
 export default ValidatorDef;

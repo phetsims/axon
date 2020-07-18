@@ -29,17 +29,6 @@ const validate = ( value, validator, options ) => {
   return value;
 };
 
-/**
- * validate that the input is a string without any unfilled template variables, like `{{myVar}}`.
- * @param {*} value to be validated
- * @returns {*} - returns the input value for chaining
- */
-validate.stringWithoutTemplateVars = value => {
-  return validate( value, {
-    valueType: 'string',
-    isValidValue: v => !/\{\{\w*\}\}/.test( v )
-  } );
-};
 
 axon.register( 'validate', validate );
 export default validate;
