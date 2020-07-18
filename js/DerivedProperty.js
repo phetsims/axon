@@ -40,7 +40,7 @@ class DerivedProperty extends Property {
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     super( initialValue, options );
 
-    if ( this.isPhetioInstrumented() ) {
+    if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
       assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );

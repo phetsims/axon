@@ -126,7 +126,7 @@ class Action extends PhetioObject {
       assert && reachedPhetioPrivate && assert( parameter.phetioPrivate,
         'after first phetioPrivate parameter, all subsequent parameters must be phetioPrivate' );
 
-      assert && tandemSupplied && Tandem.PHET_IO_ENABLED && assert( parameter.phetioType || parameter.phetioPrivate,
+      assert && tandemSupplied && Tandem.VALIDATION && assert( parameter.phetioType || parameter.phetioPrivate,
         'instrumented Emitters must include phetioType for each parameter or be marked as `phetioPrivate`.' );
       assert && parameter.phetioType && assert( parameter.name,
         '`name` is a required parameter for phet-io instrumented parameters.' );

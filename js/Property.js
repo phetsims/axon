@@ -80,7 +80,7 @@ class Property extends PhetioObject {
     this.useDeepEquality = options.useDeepEquality;
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
-    if ( Tandem.errorOnFailedValidation() && this.isPhetioInstrumented() ) {
+    if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // This assertion helps in instrumenting code that has the tandem but not type
       assert && assert( !!options.phetioType,

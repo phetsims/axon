@@ -10,6 +10,7 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
+import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Property from './Property.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
@@ -83,7 +84,7 @@ class PropertyStateHandler {
    * @param {Property} property
    */
   validateInstrumentedProperty( property ) {
-    assert && assert( property instanceof Property && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
+    assert && Tandem.VALIDATION && assert( property instanceof Property && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
   }
 
   /**
