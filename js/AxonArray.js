@@ -92,6 +92,7 @@ class AxonArray extends Array {
         this.itemAddedEmitter.emit( undefined );
       }
     }
+    this.lengthProperty.value = length;
   }
 
   // @public

@@ -28,6 +28,16 @@ QUnit.test( 'Test axon array length', function( assert ) {
   assert.equal( array.lengthProperty.value, 1, 'array length test' );
   array.pop();
   assert.equal( array.lengthProperty.value, 0, 'array length test' );
+  array.push( 1, 2, 3 );
+  assert.equal( array.lengthProperty.value, 3, 'array length test' );
+  array.shift();
+  assert.equal( array.lengthProperty.value, 2, 'array length test' );
+  array.splice( 0, 2, 'parrot', 'anemone', 'blue' );
+  assert.equal( array.lengthProperty.value, 3, 'array length test' );
+  array.unshift( 'qunit', 'test' );
+  assert.equal( array.lengthProperty.value, 5, 'array length test' );
+  array.setLengthAndNotify( 0 );
+  assert.equal( array.lengthProperty.value, 0, 'array length test after setLengthAndNotify' );
 } );
 
 QUnit.test( 'Test axon array', function( assert ) {
