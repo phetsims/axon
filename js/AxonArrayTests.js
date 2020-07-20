@@ -21,6 +21,15 @@ const testArrayEmitters = ( assert, modifier, expected ) => {
   assert.deepEqual( deltas, expected );
 };
 
+QUnit.test( 'Test axon array length', function( assert ) {
+
+  const array = new AxonArray();
+  array.push( 'hello' );
+  assert.equal( array.lengthProperty.value, 1, 'array length test' );
+  array.pop();
+  assert.equal( array.lengthProperty.value, 0, 'array length test' );
+} );
+
 QUnit.test( 'Test axon array', function( assert ) {
 
   testArrayEmitters( assert, array => {

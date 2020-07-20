@@ -100,6 +100,7 @@ class AxonArray extends Array {
     for ( let i = 0; i < arguments.length; i++ ) {
       this.itemAddedEmitter.emit( arguments[ i ] );
     }
+    this.lengthProperty.value = this.length;
     return result;
   }
 
@@ -120,6 +121,7 @@ class AxonArray extends Array {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.pop.apply( this, arguments );
     hasElement && this.itemRemovedEmitter.emit( removedElement );
+    this.lengthProperty.value = this.length;
     return removedElement;
   }
 
@@ -128,6 +130,7 @@ class AxonArray extends Array {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.shift.apply( this, arguments );
     hasElement && this.itemRemovedEmitter.emit( removedElement );
+    this.lengthProperty.value = this.length;
     return removedElement;
   }
 
@@ -139,6 +142,7 @@ class AxonArray extends Array {
       this.itemAddedEmitter.emit( arguments[ i ] );
     }
     deletedElements.forEach( deletedItem => this.itemRemovedEmitter.emit( deletedItem ) );
+    this.lengthProperty.value = this.length;
     return deletedElements;
   }
 
@@ -148,6 +152,7 @@ class AxonArray extends Array {
     for ( let i = 0; i < arguments.length; i++ ) {
       this.itemAddedEmitter.emit( arguments[ i ] );
     }
+    this.lengthProperty.value = this.length;
     return result;
   }
 }
