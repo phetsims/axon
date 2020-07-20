@@ -11,7 +11,14 @@
   },
   "phet": {
     "generatedUnitTests": true,
-    "requirejsNamespace": "AXON"
+    "requirejsNamespace": "AXON",
+    "supportedBrands": [
+      "phet",
+      "phet-io"
+    ],
+    "phet-io": {
+      "validation": true
+    }
   },
   "eslintConfig": {
     "extends": "../chipper/eslint/sim_eslintrc.js"
