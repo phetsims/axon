@@ -34,12 +34,14 @@ class AxonArray extends Array {
    * @param {Object|number} [options] - Support construction via splice(), which invokes the sub-constructor
    */
   constructor( options ) {
-    super();
 
-    // Support construction via splice(), which invokes the sub-constructor
+    // Support construction via Array.prototype.splice.apply(), etc., which invoke the sub-constructor
     if ( typeof options === 'number' ) {
+      super( options );
       return;
     }
+
+    super();
 
     if ( options && options.hasOwnProperty( 'length' ) ) {
       assert && assert( !options.hasOwnProperty( 'values' ), 'options.values and options.length are mutually exclusive' );
