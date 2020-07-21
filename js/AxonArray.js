@@ -30,15 +30,24 @@ import ValidatorDef from './ValidatorDef.js';
 
 class AxonArray extends Array {
 
+  /**
+   * @param {Object|number} [options] - Support construction via splice(), which invokes the sub-constructor
+   */
   constructor( options ) {
     super();
 
-    // Support construction via slice(), which invokes the sub-constructor
+    // Support construction via splice(), which invokes the sub-constructor
     if ( typeof options === 'number' ) {
       return;
     }
 
+    if ( options && options.hasOwnProperty( 'length' ) ) {
+      assert && assert( !options.hasOwnProperty( 'values' ), 'options.values and options.length are mutually exclusive' );
+    }
+
     options = merge( {
+      length: 0,
+      values: [],
       tandem: Tandem.OPTIONAL,
       elementOptions: {
         // Supports validator keys, including phetioType (for instrumented instances)
@@ -68,6 +77,14 @@ class AxonArray extends Array {
       tandem: options.tandem.createTandem( 'lengthProperty' ),
       phetioReadOnly: true
     } );
+
+    // These options are mutually exclusive, but that is guarded before the mutate
+    if ( options.length > 0 ) {
+      this.setLengthAndNotify( options.length );
+    }
+    if ( options.values.length > 0 ) {
+      AxonArray.prototype.push.apply( this, options.values );
+    }
   }
 
   /**
