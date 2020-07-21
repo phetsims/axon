@@ -15,8 +15,8 @@ QUnit.module( 'Axon Array' );
 const testArrayEmitters = ( assert, modifier, expected ) => {
   const array = new AxonArray();
   const deltas = [];
-  array.itemAddedEmitter.addListener( e => deltas.push( { type: 'added', value: e } ) );
-  array.itemRemovedEmitter.addListener( e => deltas.push( { type: 'removed', value: e } ) );
+  array.elementAddedEmitter.addListener( e => deltas.push( { type: 'added', value: e } ) );
+  array.elementRemovedEmitter.addListener( e => deltas.push( { type: 'removed', value: e } ) );
   modifier( array );
   assert.deepEqual( deltas, expected );
 };

@@ -1,7 +1,7 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * AxonArray adds the ability to observe when items are added or removed from an Array. This was created as an
+ * AxonArray adds the ability to observe when elements are added or removed from an Array. This was created as an
  * alternative to ObservableArray with the distinguishing change that this extends Array and hence uses the native
  * Array API.
  *
@@ -50,15 +50,15 @@ class AxonArray extends Array {
       options.elementOptions.isValidValue = () => true;
     }
 
-    // @public - notifies when an item has been added
-    this.itemAddedEmitter = new Emitter( {
-      tandem: options.tandem.createTandem( 'itemAddedEmitter' ),
+    // @public - notifies when an element has been added
+    this.elementAddedEmitter = new Emitter( {
+      tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
       parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
     } );
 
-    // @public - notifies when an item has been removed
-    this.itemRemovedEmitter = new Emitter( {
-      tandem: options.tandem.createTandem( 'itemRemovedEmitter' ),
+    // @public - notifies when an element has been removed
+    this.elementRemovedEmitter = new Emitter( {
+      tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
       parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
     } );
 
@@ -84,12 +84,12 @@ class AxonArray extends Array {
     else if ( length < originalLength ) {
       const removedElements = this.slice( length );
       this.length = length;
-      removedElements.forEach( removedElement => this.itemRemovedEmitter.emit( removedElement ) );
+      removedElements.forEach( removedElement => this.elementRemovedEmitter.emit( removedElement ) );
     }
     else if ( length > originalLength ) {
       this.length = length;
       for ( let i = 0; i < length - originalLength; i++ ) {
-        this.itemAddedEmitter.emit( undefined );
+        this.elementAddedEmitter.emit( undefined );
       }
     }
     this.lengthProperty.value = length;
@@ -99,7 +99,7 @@ class AxonArray extends Array {
   push() {
     const result = Array.prototype.push.apply( this, arguments );
     for ( let i = 0; i < arguments.length; i++ ) {
-      this.itemAddedEmitter.emit( arguments[ i ] );
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
     this.lengthProperty.value = this.length;
     return result;
@@ -121,7 +121,7 @@ class AxonArray extends Array {
     // Supports notifying for [...,undefined]
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.pop.apply( this, arguments );
-    hasElement && this.itemRemovedEmitter.emit( removedElement );
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     this.lengthProperty.value = this.length;
     return removedElement;
   }
@@ -130,7 +130,7 @@ class AxonArray extends Array {
   shift() {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.shift.apply( this, arguments );
-    hasElement && this.itemRemovedEmitter.emit( removedElement );
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     this.lengthProperty.value = this.length;
     return removedElement;
   }
@@ -140,9 +140,9 @@ class AxonArray extends Array {
     const deletedElements = Array.prototype.splice.apply( this, arguments );
 
     for ( let i = 2; i < arguments.length; i++ ) {
-      this.itemAddedEmitter.emit( arguments[ i ] );
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
-    deletedElements.forEach( deletedItem => this.itemRemovedEmitter.emit( deletedItem ) );
+    deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     this.lengthProperty.value = this.length;
     return deletedElements;
   }
@@ -151,7 +151,7 @@ class AxonArray extends Array {
   unshift() {
     const result = Array.prototype.push.apply( this, arguments );
     for ( let i = 0; i < arguments.length; i++ ) {
-      this.itemAddedEmitter.emit( arguments[ i ] );
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
     this.lengthProperty.value = this.length;
     return result;
