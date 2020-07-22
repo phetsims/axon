@@ -25,19 +25,26 @@ QUnit.test( 'Test axon array length', assert => {
 
   const array = new AxonArray();
   array.push( 'hello' );
-  assert.equal( array.lengthProperty.value, 1, 'array length test' );
+  assert.equal( array.lengthProperty.value, 1, 'array lengthProperty test' );
+  assert.equal( array.length, 1, 'array length test' );
   array.pop();
-  assert.equal( array.lengthProperty.value, 0, 'array length test' );
+  assert.equal( array.lengthProperty.value, 0, 'array lengthProperty test' );
+  assert.equal( array.length, 0, 'array length test' );
   array.push( 1, 2, 3 );
-  assert.equal( array.lengthProperty.value, 3, 'array length test' );
+  assert.equal( array.lengthProperty.value, 3, 'array lengthProperty test' );
+  assert.equal( array.length, 3, 'array length test' );
   array.shift();
-  assert.equal( array.lengthProperty.value, 2, 'array length test' );
+  assert.equal( array.lengthProperty.value, 2, 'array lengthProperty test' );
+  assert.equal( array.length, 2, 'array length test' );
   array.splice( 0, 2, 'parrot', 'anemone', 'blue' );
-  assert.equal( array.lengthProperty.value, 3, 'array length test' );
+  assert.equal( array.lengthProperty.value, 3, 'array lengthProperty test' );
+  assert.equal( array.length, 3, 'array length test' );
   array.unshift( 'qunit', 'test' );
-  assert.equal( array.lengthProperty.value, 5, 'array length test' );
+  assert.equal( array.lengthProperty.value, 5, 'array lengthProperty test' );
+  assert.equal( array.length, 5, 'array length test' );
   array.setLengthAndNotify( 0 );
-  assert.equal( array.lengthProperty.value, 0, 'array length test after setLengthAndNotify' );
+  assert.equal( array.lengthProperty.value, 0, 'array lengthProperty test after setLengthAndNotify' );
+  assert.equal( array.length, 0, 'array length test after setLengthAndNotify' );
 } );
 
 QUnit.test( 'Test axon array', assert => {
