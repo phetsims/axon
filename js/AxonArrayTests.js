@@ -159,6 +159,9 @@ QUnit.test( 'Test constructor arguments', assert => {
     elements: [ 'hi', 'there' ]
   } );
   assert.equal( a2.length, 2, 'array length test' );
+  assert.equal( a2[ 0 ], 'hi', 'first element correct' );
+  assert.equal( a2[ 1 ], 'there', 'second element correct' );
+  assert.equal( a2.length, 2, 'length correct' );
 
   let a3 = null;
   window.assert && assert.throws( () => {
