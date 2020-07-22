@@ -154,6 +154,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   assert.equal( a1.lengthProperty.value, 7, 'array length test' );
   a1.push( 'hello' );
   assert.equal( a1.lengthProperty.value, 8, 'array length test' );
+  assert.equal( a1[ 7 ], 'hello', 'for push, element should be added at the end of the array' );
 
   const a2 = new AxonArray( {
     elements: [ 'hi', 'there' ]
