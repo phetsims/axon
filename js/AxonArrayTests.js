@@ -21,7 +21,7 @@ const testArrayEmitters = ( assert, modifier, expected ) => {
   assert.deepEqual( deltas, expected );
 };
 
-QUnit.test( 'Test axon array length', function( assert ) {
+QUnit.test( 'Test axon array length', assert => {
 
   const array = new AxonArray();
   array.push( 'hello' );
@@ -40,7 +40,7 @@ QUnit.test( 'Test axon array length', function( assert ) {
   assert.equal( array.lengthProperty.value, 0, 'array length test after setLengthAndNotify' );
 } );
 
-QUnit.test( 'Test axon array', function( assert ) {
+QUnit.test( 'Test axon array', assert => {
 
   testArrayEmitters( assert, array => {
 
@@ -74,7 +74,7 @@ QUnit.test( 'Test axon array', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test axon array setLengthAndNotify', function( assert ) {
+QUnit.test( 'Test axon array setLengthAndNotify', assert => {
   testArrayEmitters( assert, array => {
     array.push( 'hello' );
     array.setLengthAndNotify( 0 );
@@ -89,7 +89,7 @@ QUnit.test( 'Test axon array setLengthAndNotify', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.push', function( assert ) {
+QUnit.test( 'Test AxonArray.push', assert => {
   testArrayEmitters( assert, array => {
     array.push( 'hello', 'there', 'old', undefined );
   }, [
@@ -100,7 +100,7 @@ QUnit.test( 'Test AxonArray.push', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.pop', function( assert ) {
+QUnit.test( 'Test AxonArray.pop', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7 );
     const popped = array.pop();
@@ -111,7 +111,7 @@ QUnit.test( 'Test AxonArray.pop', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.shift', function( assert ) {
+QUnit.test( 'Test AxonArray.shift', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7, 3 );
     const removed = array.shift();
@@ -123,7 +123,7 @@ QUnit.test( 'Test AxonArray.shift', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.unshift', function( assert ) {
+QUnit.test( 'Test AxonArray.unshift', assert => {
 
   // From this example: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
   testArrayEmitters( assert, array => {
@@ -139,7 +139,7 @@ QUnit.test( 'Test AxonArray.unshift', function( assert ) {
   ] );
 } );
 
-QUnit.test( 'Test constructor arguments', function( assert ) {
+QUnit.test( 'Test constructor arguments', assert => {
 
   const a1 = new AxonArray( {
     length: 7
@@ -154,8 +154,26 @@ QUnit.test( 'Test constructor arguments', function( assert ) {
   assert.equal( a2.length, 2, 'array length test' );
 
   let a3 = null;
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     a3 = new AxonArray( { elements: [ 3 ], length: 1 } );
   }, 'length and elements are mutually exclusive' );
   assert.equal( a3, null, 'should not have been assigned' );
+
+  // valid element types should succeed
+  const a4 = new AxonArray( {
+    elements: [ 'a', 'b' ],
+    elementOptions: {
+      valueType: 'string'
+    }
+  } );
+  assert.ok( !!a4, 'correct element types should succeed' );
+
+  // invalid element types should fail
+  window.assert && assert.throws( () => new AxonArray( {
+    elements: [ 'a', 'b' ],
+    elementOptions: {
+      valueType: 'number'
+    }
+  } ), 'should fail for invalid element types' );
+
 } );
