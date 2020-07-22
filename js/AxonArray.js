@@ -103,24 +103,25 @@ class AxonArray extends Array {
     else if ( length < originalLength ) {
       const removedElements = this.slice( length );
       this.length = length;
+      this.lengthProperty.value = length;
       removedElements.forEach( removedElement => this.elementRemovedEmitter.emit( removedElement ) );
     }
     else if ( length > originalLength ) {
       this.length = length;
+      this.lengthProperty.value = length;
       for ( let i = 0; i < length - originalLength; i++ ) {
         this.elementAddedEmitter.emit( undefined );
       }
     }
-    this.lengthProperty.value = length;
   }
 
   // @public
   push() {
     const result = Array.prototype.push.apply( this, arguments );
+    this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
     }
-    this.lengthProperty.value = this.length;
     return result;
   }
 
@@ -140,8 +141,8 @@ class AxonArray extends Array {
     // Supports notifying for [...,undefined]
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.pop.apply( this, arguments );
-    hasElement && this.elementRemovedEmitter.emit( removedElement );
     this.lengthProperty.value = this.length;
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
   }
 
@@ -149,30 +150,29 @@ class AxonArray extends Array {
   shift() {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.shift.apply( this, arguments );
-    hasElement && this.elementRemovedEmitter.emit( removedElement );
     this.lengthProperty.value = this.length;
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
   }
 
   // @public
   splice() {
     const deletedElements = Array.prototype.splice.apply( this, arguments );
-
+    this.lengthProperty.value = this.length;
     for ( let i = 2; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
     }
     deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
-    this.lengthProperty.value = this.length;
     return deletedElements;
   }
 
   // @public
   unshift() {
     const result = Array.prototype.push.apply( this, arguments );
+    this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
     }
-    this.lengthProperty.value = this.length;
     return result;
   }
 }

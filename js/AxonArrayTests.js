@@ -146,6 +146,16 @@ QUnit.test( 'Test AxonArray.unshift', assert => {
   ] );
 } );
 
+QUnit.test( 'Test that length is correct in emitter callbacks after push', assert => {
+  const a = new AxonArray();
+  a.elementAddedEmitter.addListener( element => {
+    assert.equal( a.length, 1 );
+    assert.equal( a.lengthProperty.value, 1 );
+    assert.equal( element, 'hello' );
+  } );
+  a.push( 'hello' );
+} );
+
 QUnit.test( 'Test constructor arguments', assert => {
 
   const a1 = new AxonArray( {
