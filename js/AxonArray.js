@@ -44,19 +44,19 @@ class AxonArray extends Array {
     super();
 
     if ( options && options.hasOwnProperty( 'length' ) ) {
-      assert && assert( !options.hasOwnProperty( 'values' ), 'options.values and options.length are mutually exclusive' );
+      assert && assert( !options.hasOwnProperty( 'elements' ), 'options.elements and options.length are mutually exclusive' );
     }
 
     options = merge( {
       length: 0,
-      values: [],
+      elements: [],
       tandem: Tandem.OPTIONAL,
       elementOptions: {
         // Supports validator keys, including phetioType (for instrumented instances)
       }
     }, options );
 
-    // Gracefully support untyped values
+    // Gracefully support untyped elements
     if ( !ValidatorDef.isValidValidator( options.elementOptions ) ) {
       options.elementOptions.isValidValue = () => true;
     }
@@ -84,8 +84,8 @@ class AxonArray extends Array {
     if ( options.length > 0 ) {
       this.setLengthAndNotify( options.length );
     }
-    if ( options.values.length > 0 ) {
-      AxonArray.prototype.push.apply( this, options.values );
+    if ( options.elements.length > 0 ) {
+      AxonArray.prototype.push.apply( this, options.elements );
     }
   }
 

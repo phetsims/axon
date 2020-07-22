@@ -149,13 +149,13 @@ QUnit.test( 'Test constructor arguments', function( assert ) {
   assert.equal( a1.lengthProperty.value, 8, 'array length test' );
 
   const a2 = new AxonArray( {
-    values: [ 'hi', 'there' ]
+    elements: [ 'hi', 'there' ]
   } );
   assert.equal( a2.length, 2, 'array length test' );
 
   let a3 = null;
   window.assert && assert.throws( function() {
-    a3 = new AxonArray( { values: [ 3 ], length: 1 } );
-  }, 'length and values are mutually exclusive' );
+    a3 = new AxonArray( { elements: [ 3 ], length: 1 } );
+  }, 'length and elements are mutually exclusive' );
   assert.equal( a3, null, 'should not have been assigned' );
 } );
