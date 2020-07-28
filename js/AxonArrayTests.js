@@ -136,6 +136,8 @@ QUnit.test( 'Test AxonArray.unshift', assert => {
   testArrayEmitters( assert, array => {
     array.push( 'angel', 'clown', 'drum', 'sturgeon' );
     array.unshift( 'trumpet', 'dino' );
+
+    assert.ok( array[ 0 ] === 'trumpet' );
   }, [
     { type: 'added', value: 'angel' },
     { type: 'added', value: 'clown' },

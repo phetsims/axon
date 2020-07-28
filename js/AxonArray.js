@@ -168,7 +168,7 @@ class AxonArray extends Array {
 
   // @public
   unshift() {
-    const result = Array.prototype.push.apply( this, arguments );
+    const result = Array.prototype.unshift.apply( this, arguments );
     this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
