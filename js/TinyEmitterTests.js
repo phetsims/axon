@@ -88,6 +88,9 @@ QUnit.test( 'TinyEmitter Basics', assert => {
   assert.equal( stack[ 1 ], 'b', 'true' );
 
   assert.equal( emitter.hasListener( b ), false, 'b should have been removed' );
+
+  emitter.dispose();
+  window.assert && assert.throws( () => emitter.addListener( () => {} ), 'should throw error when adding a listener to disposed' );
 } );
 
 QUnit.test( 'TinyEmitter Tricks', assert => {

@@ -79,7 +79,7 @@ class TinyEmitter {
    * @public
    */
   addListener( listener ) {
-
+    assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
     assert && assert( this.listeners.indexOf( listener ) === -1, 'Cannot add the same listener twice' );
 
     // If a listener is added during an emit(), we must make a copy of the current list of listeners--the newly added
