@@ -47,7 +47,7 @@ class PropertyStateHandler {
   initialize( phetioStateEngine ) {
     assert && assert( !this.initialized, 'cannot initialize twice' );
 
-    phetioStateEngine.onBeforeSetValueEmitter.addListener( phetioObject => {
+    phetioStateEngine.onBeforeApplyStateEmitter.addListener( phetioObject => {
 
       // withhold AXON/Property notifications until all values have been set to avoid inconsistent intermediate states,
       // see https://github.com/phetsims/phet-io-wrappers/issues/229
