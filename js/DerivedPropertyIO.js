@@ -58,7 +58,16 @@ const create = parameterType => {
    * @param {string} phetioID
    * @constructor
    */
-  class DerivedPropertyIOImpl extends PropertyIOImpl {}
+  class DerivedPropertyIOImpl extends PropertyIOImpl {
+
+    /**
+     * Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
+     * back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
+     * @override
+     * @public
+     */
+    static applyState() { }
+  }
 
   DerivedPropertyIOImpl.methods = {
     setValue: {
@@ -78,6 +87,7 @@ const create = parameterType => {
 
   // @public - allow type checking for DerivedPropertyIOImpl
   DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
+
   ObjectIO.validateSubtype( DerivedPropertyIOImpl );
 
   return DerivedPropertyIOImpl;
