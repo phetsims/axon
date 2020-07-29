@@ -10,6 +10,7 @@
  * array.length = ...
  * array.copyWithin(...)
  * array.fill(...)
+ * array[i]=...
  *
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
  * state for the AxonArray. Instead, please use setLengthAndNotify.
