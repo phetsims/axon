@@ -32,7 +32,7 @@ import ValidatorDef from './ValidatorDef.js';
 class AxonArray extends Array {
 
   /**
-   * @param {Object|number} [options] - Support construction via splice(), which invokes the sub-constructor
+   * @param {Object|number} [options] - {number} supports construction via splice(), which invokes the sub-constructor
    */
   constructor( options ) {
 
