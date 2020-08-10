@@ -38,7 +38,6 @@ class AxonArray extends Array {
 
     // Support construction via Array.prototype.splice.apply(), etc., which invoke the sub-constructor
     if ( typeof options === 'number' ) {
-      console.log( `calling constructor with ${options}` );
       super( options );
       return;
     }
