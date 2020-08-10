@@ -52,21 +52,21 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
   const e1 = new TinyEmitter();
   e1.addListener( () => {} );
 
-  const testEmitter = ( emitter, numberOfLoopings ) => {
-
-    const start = Date.now();
-
-    for ( let i = 0; i < numberOfLoopings; i++ ) {
-      emitter.emit();
-    }
-    const end = Date.now();
-    const totalTime = end - start;
-    console.log( `Time for ${numberOfLoopings}: `, totalTime, totalTime / numberOfLoopings );
-  };
-
-  // No assertions here, but it can be nice to test how expensive emit calls are
-  testEmitter( e1, 10000000 );
-  testEmitter( e, 10000000 );
+  // const testEmitter = ( emitter, numberOfLoopings ) => {
+  //
+  //   const start = Date.now();
+  //
+  //   for ( let i = 0; i < numberOfLoopings; i++ ) {
+  //     emitter.emit();
+  //   }
+  //   const end = Date.now();
+  //   const totalTime = end - start;
+  //   console.log( `Time for ${numberOfLoopings}: `, totalTime, totalTime / numberOfLoopings );
+  // };
+  //
+  // // No assertions here, but it can be nice to test how expensive emit calls are
+  // testEmitter( e1, 10000000 );
+  // testEmitter( e, 10000000 );
 } );
 
 QUnit.test( 'TinyEmitter Basics', assert => {
