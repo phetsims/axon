@@ -15,12 +15,11 @@ const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && ph
 class TinyEmitter {
   constructor() {
 
-    // @private {function[]} - the listeners that will be called on emit
-    this.listeners = [];
+    // @private {Set<function>} - the listeners that will be called on emit
+    this.listeners = new Set();
 
-    // @private {function[][]} - during emit() keep track of which listeners should receive events in order to manage
-    //                         - removal of listeners during emit()
-    this.activeListenersStack = [];
+    // @private {Object[]} - during emit() keep track of iteration progress and guard listeners if mutated during emit()
+    this.emitContexts = [];
 
     // @public {function|undefined} changeCount - Not defined usually because of memory usage. If defined, this will be
     // called when the listener count changes, e.g. changeCount( {number} listenersAddedQuantity ), with the number
@@ -39,7 +38,7 @@ class TinyEmitter {
    * @public
    */
   dispose() {
-    this.listeners.length = 0; // See https://github.com/phetsims/axon/issues/124
+    this.removeAllListeners();
 
     if ( assert ) {
       this.isDisposed = true;
@@ -56,20 +55,37 @@ class TinyEmitter {
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
     if ( assert && shuffleListeners ) {
-      this.listeners = _.shuffle( this.listeners ); // eslint-disable-line bad-sim-text
+      this.listeners = new Set( _.shuffle( Array.from( this.listeners ) ) ); // eslint-disable-line bad-sim-text
     }
 
     // Notify wired-up listeners, if any
-    if ( this.listeners.length > 0 ) {
-      this.activeListenersStack.push( this.listeners );
+    if ( this.listeners.size > 0 ) {
 
-      // Notify listeners--note the activeListenersStack could change as listeners are called, so we do this by index
-      const lastEntry = this.activeListenersStack.length - 1;
-      for ( let i = 0; i < this.activeListenersStack[ lastEntry ].length; i++ ) {
-        this.activeListenersStack[ lastEntry ][ i ].apply( null, arguments );
+      const emitContext = {
+        index: 0
+        // listenerArray: undefined // assigned if a mutation is made during emit
+      };
+      this.emitContexts.push( emitContext );
+
+      for ( const listener of this.listeners ) {
+        listener.apply( null, arguments );
+        emitContext.index++;
+
+        // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
+        // iterate over the guarded array
+        if ( emitContext.listenerArray ) {
+          break;
+        }
       }
 
-      this.activeListenersStack.pop();
+      // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
+      // listeners in order from where we left off.
+      if ( emitContext.listenerArray ) {
+        for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
+          emitContext.listenerArray[ i ].apply( null, arguments );
+        }
+      }
+      this.emitContexts.pop();
     }
   }
 
@@ -80,14 +96,13 @@ class TinyEmitter {
    */
   addListener( listener ) {
     assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
-    assert && assert( this.listeners.indexOf( listener ) === -1, 'Cannot add the same listener twice' );
+    assert && assert( !this.hasListener( listener ), 'Cannot add the same listener twice' );
 
     // If a listener is added during an emit(), we must make a copy of the current list of listeners--the newly added
     // listener will be available for the next emit() but not the one in progress.  This is to match behavior with
     // removeListener.
-    this.defendListeners();
-
-    this.listeners.push( listener );
+    this.guardListeners();
+    this.listeners.add( listener );
 
     this.changeCount && this.changeCount( 1 );
   }
@@ -99,19 +114,13 @@ class TinyEmitter {
    */
   removeListener( listener ) {
 
-    const index = this.listeners.indexOf( listener );
-
     // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
     // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
     if ( assert && !this.isDisposed ) {
-      assert( index !== -1, 'tried to removeListener on something that wasn\'t a listener' );
+      assert( this.listeners.has( listener ), 'tried to removeListener on something that wasn\'t a listener' );
     }
-
-    // If an emit is in progress, make a copy of the current list of listeners--the removed listener will remain in
-    // the list and be called for this emit call, see #72
-    this.defendListeners();
-
-    this.listeners.splice( index, 1 );
+    this.guardListeners();
+    this.listeners.delete( listener );
 
     this.changeCount && this.changeCount( -1 );
   }
@@ -121,36 +130,33 @@ class TinyEmitter {
    * @public
    */
   removeAllListeners() {
-    const length = this.listeners.length;
 
-    while ( this.listeners.length > 0 ) {
-      this.removeListener( this.listeners[ 0 ] );
-    }
+    const size = this.listeners.size;
 
-    this.changeCount && this.changeCount( -length );
+    this.guardListeners();
+    this.listeners.clear();
+
+    this.changeCount && this.changeCount( -size );
   }
 
   /**
-   * If addListener/removeListener is called while emit() is in progress, we must make a defensive copy of the array
-   * of listeners before changing the array, and use it for the rest of the notifications until the emit call has
-   * completed.
+   * If listeners are added/removed while emit() is in progress, we must make a defensive copy of the array of listeners
+   * before changing the array, and use it for the rest of the notifications until the emit call has completed.
    * @private
    */
-  defendListeners() {
+  guardListeners() {
 
-    for ( let i = this.activeListenersStack.length - 1; i >= 0; i-- ) {
+    for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
-      // Once we meet a level that was already defended, we can stop, since all previous levels are also defended
-      if ( this.activeListenersStack[ i ].defended ) {
+      // Once we meet a level that was already guarded, we can stop, since all previous levels were already guarded
+      if ( this.emitContexts[ i ].listenerArray ) {
         break;
       }
       else {
-        const defendedListeners = this.listeners.slice();
 
-        // Mark copies as 'defended' so that it will use the original listeners when emit started and not the modified
+        // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
         // list.
-        defendedListeners.defended = true;
-        this.activeListenersStack[ i ] = defendedListeners;
+        this.emitContexts[ i ].listenerArray = Array.from( this.listeners );
       }
     }
   }
@@ -163,7 +169,7 @@ class TinyEmitter {
    */
   hasListener( listener ) {
     assert && assert( arguments.length === 1, 'Emitter.hasListener should be called with 1 argument' );
-    return this.listeners.indexOf( listener ) >= 0;
+    return this.listeners.has( listener );
   }
 
   /**
@@ -173,7 +179,7 @@ class TinyEmitter {
    */
   hasListeners() {
     assert && assert( arguments.length === 0, 'Emitter.hasListeners should be called without arguments' );
-    return this.listeners.length > 0;
+    return this.listeners.size > 0;
   }
 
   /**
@@ -182,7 +188,7 @@ class TinyEmitter {
    * @public
    */
   getListenerCount() {
-    return this.listeners.length;
+    return this.listeners.size;
   }
 }
 
