@@ -161,5 +161,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( getOrderDependencyLength() === 2, 'dependency dispose only removes what it effects' );
     derivedProperty.dispose();
     assert.ok( getOrderDependencyLength() === 0, 'no orderDependencies after derivedProperty dispose' );
+
+    secondProperty.dispose();
+    thirdProperty.dispose();
   } );
 }

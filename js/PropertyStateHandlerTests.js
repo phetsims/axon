@@ -27,7 +27,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Register and unregister order dependency within state engine', assert => {
     window.assert && window.assert( _.hasIn( window, 'phet.phetio.PhetioStateEngine' ), 'state engine expected for this test' );
 
-
     const propertyStateHandler = new PropertyStateHandler();
     assert.ok( !propertyStateHandler.initialized, 'started not initialized' );
     const phetioStateEngine = new phet.phetio.PhetioStateEngine( phet.phetio.phetioEngine, {
@@ -96,11 +95,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
     }
   } );
 
-
   QUnit.test( 'Order dependency between NumberProperty and its Range', assert => {
     assert.ok( true, 'always pass' );
-
-    Tandem.launch();
     const rangeProperty = new Property( new Range( 0, 1 ), {
       tandem: Tandem.GENERAL.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
@@ -140,7 +136,5 @@ if ( Tandem.PHET_IO_ENABLED ) {
     rangeProperty.dispose();
     numberProperty.dispose();
     randomDependencyProperty.dispose();
-
-    Tandem.unlaunch();
   } );
 }

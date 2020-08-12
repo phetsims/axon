@@ -18,7 +18,7 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 class PropertyStateHandler {
 
   /**
-   * @param {PhetioStateEngine} phetioStateEngine
+   * @param {PhetioStateEngine} phetioStateEngine - not provided for tests
    */
   constructor( phetioStateEngine ) {
 

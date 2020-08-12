@@ -257,7 +257,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
   } );
 
   QUnit.test( 'propertyStateHandlerSingleton tests for Property', assert => {
-
     const parentTandem = Tandem.GENERAL;
 
     const originalOrderDependencyLength = propertyStateHandlerSingleton.propertyOrderDependencies.length;
@@ -294,5 +293,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     secondProperty.dispose();
     assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
+
+    thirdProperty.dispose();
   } );
 }

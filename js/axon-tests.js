@@ -6,6 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
 import './AxonArrayTests.js';
 import './BooleanPropertyTests.js';
 import './DerivedPropertyTests.js';
@@ -15,12 +16,11 @@ import './EmitterTests.js';
 import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
 import './ObservableArrayTests.js';
-import './PropertyTests.js';
 import './PropertyStateHandlerTests.js';
+import './PropertyTests.js';
 import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
 import './TinyPropertyTests.js';
 import './ValidatorDefTests.js';
-import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
 
 qunitStart();
