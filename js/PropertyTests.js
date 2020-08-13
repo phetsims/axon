@@ -259,8 +259,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'propertyStateHandlerSingleton tests for Property', assert => {
     const parentTandem = Tandem.GENERAL;
 
-    const originalOrderDependencyLength = propertyStateHandlerSingleton.propertyOrderDependencies.length;
-    const getOrderDependencyLength = () => propertyStateHandlerSingleton.propertyOrderDependencies.length - originalOrderDependencyLength;
+    const originalOrderDependencyLength = propertyStateHandlerSingleton.getNumberOfOrderDependencies();
+    const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies()  - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
@@ -272,9 +272,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
-
-    let orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ originalOrderDependencyLength ];
-    assert.ok( orderDependency.beforePhetioID === firstProperty.tandem.phetioID );
 
     firstProperty.dispose();
     assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
@@ -288,8 +285,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
-    orderDependency = propertyStateHandlerSingleton.propertyOrderDependencies[ originalOrderDependencyLength ];
-    assert.ok( orderDependency.beforePhetioID === thirdProperty.tandem.phetioID );
 
     secondProperty.dispose();
     assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );

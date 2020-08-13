@@ -47,34 +47,29 @@ if ( Tandem.PHET_IO_ENABLED ) {
       tandem: Tandem.GENERAL.createTandem( 'cProperty' )
     } );
 
+    const originalOrderDependencyLength = propertyStateHandler.getNumberOfOrderDependencies();
+    const getOrderDependencyLength = () => propertyStateHandler.getNumberOfOrderDependencies()  - originalOrderDependencyLength;
+
     propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 1, 'one expected' );
-    const aToBDependency = propertyStateHandler.propertyOrderDependencies[ 0 ];
+    assert.ok( getOrderDependencyLength() === 1, 'one expected' );
 
     propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'two expected' );
-    assert.ok( propertyStateHandler.propertyOrderDependencies[ 0 ] === aToBDependency, 'push expected instead of unshift1' );
-    const aToCDependency = propertyStateHandler.propertyOrderDependencies[ 1 ];
+    assert.ok( getOrderDependencyLength() === 2, 'two expected' );
 
     propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 3, 'three expected' );
-    assert.ok( propertyStateHandler.propertyOrderDependencies[ 0 ] === aToBDependency, 'push expected instead of unshift2' );
-    assert.ok( propertyStateHandler.propertyOrderDependencies[ 1 ] === aToCDependency, 'push expected instead of unshift3' );
-    const bToCDependency = propertyStateHandler.propertyOrderDependencies[ 2 ];
+    assert.ok( getOrderDependencyLength() === 3, 'three expected' );
 
     propertyStateHandler.unregisterOrderDependenciesForProperty( propertyA );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 1, 'a was in two' );
-    assert.ok( propertyStateHandler.propertyOrderDependencies[ 0 ] === bToCDependency, 'push expected instead of unshift3' );
+    assert.ok( getOrderDependencyLength() === 1, 'a was in two' );
     propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'none now' );
-
+    assert.ok( getOrderDependencyLength() === 0, 'none now' );
 
     propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
     propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 2, 'none now' );
+    assert.ok( getOrderDependencyLength() === 2, 'none now' );
 
     propertyStateHandler.unregisterOrderDependenciesForProperty( propertyC );
-    assert.ok( propertyStateHandler.propertyOrderDependencies.length === 0, 'none now' );
+    assert.ok( getOrderDependencyLength() === 0, 'none now' );
 
     propertyA.dispose();
     propertyB.dispose();

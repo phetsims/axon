@@ -135,8 +135,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const parentTandem = Tandem.GENERAL;
 
-    const originalOrderDependencyLength = propertyStateHandlerSingleton.propertyOrderDependencies.length;
-    const getOrderDependencyLength = () => propertyStateHandlerSingleton.propertyOrderDependencies.length - originalOrderDependencyLength;
+    const originalOrderDependencyLength = propertyStateHandlerSingleton.getNumberOfOrderDependencies();
+    const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies()  - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),

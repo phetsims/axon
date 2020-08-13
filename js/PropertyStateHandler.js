@@ -28,13 +28,66 @@ class PropertyStateHandler {
     // @private {PhaseCallback[]}
     this.phaseCallbacks = [];
 
-    // @private {OrderDependency} - Each constraint logs an order dependency in how Properties have to have their
-    // values set and notifications sent.
-    this.propertyOrderDependencies = [];
-
     // @private {Object.<phetioID:string, boolean} - only populated with true values. A map of the Properties that are
-    // in this.propertyOrderDependencies.
+    // in this.propertyOrderDependencies. TODO: we can probably get rid of this, or at least make it a Set, https://github.com/phetsims/axon/issues/316
     this.propertiesInOrderDependencies = {};
+
+    // @private
+    // OrderDependencyMap.<phetioID, phetioID[]> - values are a list of afterPhetioIDs that can be looked up in the corresponding "after Map"
+    // TODO: can this be a set to make things faster? https://github.com/phetsims/axon/issues/316
+    // TODO: can we link related map tuples (before/after pairs) to simplify some stuff, especially some usages of phasesToOrderDependencyMap before, https://github.com/phetsims/axon/issues/316
+    this.undeferBeforeUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER, 'undeferBeforeUndeferMap' );
+    this.undeferBeforeNotifyMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'undeferBeforeNotifyMap' );
+    this.notifyBeforeUndeferMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER, 'notifyBeforeUndeferMap' );
+    this.notifyBeforeNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY, 'notifyBeforeNotifyMap' );
+
+    // OrderDependencyMap.<phetioID, Set.<phetioID>> - we need a set here to improve unregistration time to O(1).
+    this.undeferAfterUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER, 'undeferAfterUndeferMap' );
+    this.undeferAfterNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER, 'undeferAfterNotifyMap' );
+    this.notifyAfterUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'notifyAfterUndeferMap' );
+    this.notifyAfterNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY, 'notifyAfterNotifyMap' );
+
+    // TODO: rename https://github.com/phetsims/axon/issues/316
+    // @private
+    this.afterMaps = [
+      this.undeferAfterUndeferMap,
+      this.undeferAfterNotifyMap,
+      this.notifyAfterUndeferMap,
+      this.notifyAfterNotifyMap
+    ];
+
+    // TODO: rename https://github.com/phetsims/axon/issues/316
+    // @private
+    this.beforeMaps = [
+      this.undeferBeforeUndeferMap,
+      this.undeferBeforeNotifyMap,
+      this.notifyBeforeUndeferMap,
+      this.notifyBeforeNotifyMap
+    ];
+
+    // @private - {Map.<PropertyStatePhase, Map.<PropertyStatePhase, {before: OrderDependencyMap, after: OrderDependencyMap}>>}
+    // To map from PropetyStatePhases to the appropriate OrderDependencyMap needed
+    this.phasesToOrderDependencyMap = new Map();
+    const undeferMap = new Map();
+    undeferMap.set( PropertyStatePhase.UNDEFER, {
+      before: this.undeferBeforeUndeferMap,
+      after: this.undeferAfterUndeferMap
+    } );
+    undeferMap.set( PropertyStatePhase.NOTIFY, {
+      before: this.undeferBeforeNotifyMap,
+      after: this.notifyAfterUndeferMap
+    } );
+    this.phasesToOrderDependencyMap.set( PropertyStatePhase.UNDEFER, undeferMap );
+    const notifyMap = new Map();
+    notifyMap.set( PropertyStatePhase.UNDEFER, {
+      before: this.notifyBeforeUndeferMap,
+      after: this.undeferAfterNotifyMap
+    } );
+    notifyMap.set( PropertyStatePhase.NOTIFY, {
+      before: this.notifyBeforeNotifyMap,
+      after: this.notifyAfterNotifyMap
+    } );
+    this.phasesToOrderDependencyMap.set( PropertyStatePhase.NOTIFY, notifyMap );
 
     // @public (PropertyStateHandlerTests read-only)
     this.initialized = false;
@@ -98,6 +151,18 @@ class PropertyStateHandler {
   }
 
   /**
+   * TODO: cleanup doc if this sticks around, https://github.com/phetsims/axon/issues/316
+   * @private
+   * @param beforeOrAfter - from which context, a map where keys are the beforePhetioIDs, or the afterPhetioIDs
+   * @param beforePhase
+   * @param afterPhase
+   * @returns {*}
+   */
+  getMapFromPhases( beforeOrAfter, beforePhase, afterPhase ) {
+    return this.phasesToOrderDependencyMap.get( beforePhase ).get( afterPhase )[ beforeOrAfter ];
+  }
+
+  /**
    * Register that one Property must have a "Phase" applied for PhET-iO state before another Property's Phase. A Phase
    * is an ending state in PhET-iO state set where Property values solidify, notifications for value changes are called.
    * The PhET-iO state engine will always undefer a Property before it notifies its listeners. This is for registering
@@ -118,7 +183,17 @@ class PropertyStateHandler {
     this.propertiesInOrderDependencies[ beforeProperty.tandem.phetioID ] = true;
     this.propertiesInOrderDependencies[ afterProperty.tandem.phetioID ] = true;
 
-    this.propertyOrderDependencies.push( new OrderDependency( beforeProperty.tandem.phetioID, beforePhase, afterProperty.tandem.phetioID, afterPhase ) );
+    const beforeMapToPopulate = this.getMapFromPhases( 'before', beforePhase, afterPhase );
+    if ( !beforeMapToPopulate.has( beforeProperty.tandem.phetioID ) ) {
+      beforeMapToPopulate.set( beforeProperty.tandem.phetioID, [] ); // TODO: wait should this be a Set? 40 minutes later, I really think so!
+    }
+    beforeMapToPopulate.get( beforeProperty.tandem.phetioID ).push( afterProperty.tandem.phetioID );
+
+    const afterMapToPopulate = this.getMapFromPhases( 'after', beforePhase, afterPhase );
+    if ( !afterMapToPopulate.has( afterProperty.tandem.phetioID ) ) {
+      afterMapToPopulate.set( afterProperty.tandem.phetioID, new Set() );// TODO: oh wait, maybe this one should this be a Set.
+    }
+    afterMapToPopulate.get( afterProperty.tandem.phetioID ).add( beforeProperty.tandem.phetioID );
   }
 
   /**
@@ -140,15 +215,46 @@ class PropertyStateHandler {
     this.validateInstrumentedProperty( property );
     assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
 
-    for ( let i = 0; i < this.propertyOrderDependencies.length; i++ ) {
-      const propertyOrderDependency = this.propertyOrderDependencies[ i ];
+    const phetioIDToRemove = property.tandem.phetioID;
 
-      if ( propertyOrderDependency.usesPhetioID( property.tandem.phetioID ) ) {
-        arrayRemove( this.propertyOrderDependencies, propertyOrderDependency );
-        i--;
+    this.beforeMaps.forEach( beforeMap => {
+      if ( beforeMap.has( phetioIDToRemove ) ) {
+        beforeMap.get( phetioIDToRemove ).forEach( phetioID => {
+          const setOfAfterMapIDs = this.getMapFromPhases( 'after', beforeMap.beforePhase, beforeMap.afterPhase ).get( phetioID );
+          setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
+        } );
       }
+    } );
+    this.beforeMaps.forEach( map => map.delete( phetioIDToRemove ) );
+
+    this.afterMaps.forEach( afterMap => {
+      if ( afterMap.has( phetioIDToRemove ) ) {
+        afterMap.get( phetioIDToRemove ).forEach( phetioID => {
+          const listOfBeforeMapIDs = this.getMapFromPhases( 'before', afterMap.beforePhase, afterMap.afterPhase ).get( phetioID );
+          listOfBeforeMapIDs && arrayRemove( listOfBeforeMapIDs, phetioIDToRemove );
+        } );
+      }
+    } );
+    this.afterMaps.forEach( map => map.delete( phetioIDToRemove ) );
+
+    // TODO: we may want to remove this for performance, even though it is hidden behind assert, https://github.com/phetsims/axon/issues/316
+    if ( assert ) {
+      this.beforeMaps.forEach( map => {
+        for ( const [ key, valuePhetioIDs ] of map ) {
+          assert && assert( key !== phetioIDToRemove, 'should not be a before key' );
+          assert && assert( !valuePhetioIDs.includes( phetioIDToRemove ), 'should not be in a before value list' );
+        }
+      } );
+
+      this.afterMaps.forEach( map => {
+        for ( const [ key, valuePhetioIDSet ] of map ) {
+          assert && assert( key !== phetioIDToRemove, 'should not be a before key' );
+          assert && assert( !valuePhetioIDSet.has( phetioIDToRemove ), 'should not be in a before value list' );
+        }
+      } );
     }
-    delete this.propertiesInOrderDependencies[ property.tandem.phetioID ];
+
+    delete this.propertiesInOrderDependencies[ phetioIDToRemove ];
   }
 
   /**
@@ -160,22 +266,6 @@ class PropertyStateHandler {
    */
   undeferAndNotifyProperties( phetioIDsInState ) {
     assert && assert( this.initialized, 'must be initialized before getting called' );
-
-    // Ignore order dependencies that do not apply to the list of phetioIDs that are getting set this time. This is because
-    // they do not apply to the list of phetioIDs passed in via state.
-    const orderDependenciesToIgnore = [];
-    for ( let j = 0; j < this.propertyOrderDependencies.length; j++ ) {
-      const orderDependency = this.propertyOrderDependencies[ j ];
-
-      // If either side of the order dependency is not in the state, then ignore the order dependency entirely
-      if ( phetioIDsInState.indexOf( orderDependency.beforePhetioID ) === -1 ||
-           phetioIDsInState.indexOf( orderDependency.afterPhetioID ) === -1 ) {
-        orderDependenciesToIgnore.push( orderDependency );
-      }
-    }
-
-    // {OrderDependency[]} - This list accounts for order dependencies the do not apply to the phetioIDs set in this setState() call
-    const orderDependenciesToLookAt = _.without( this.propertyOrderDependencies, ...orderDependenciesToIgnore );
 
     // {Object.<string,boolean>} - true if a phetioID + phase pair has been applied, keys are the combination of
     // phetioIDs and phase, see PhaseCallback.getTerm()
@@ -190,32 +280,48 @@ class PropertyStateHandler {
 
       // Error case logging
       if ( numberOfIterations > 5000 ) {
-        this.errorInUndeferAndNotifyStep( completedPhases, orderDependenciesToLookAt );
+        this.errorInUndeferAndNotifyStep( completedPhases );
       }
 
       // Try to undefer as much as possible before notifying
-      this.attemptToApplyPhases( PropertyStatePhase.UNDEFER, completedPhases, orderDependenciesToLookAt );
-      this.attemptToApplyPhases( PropertyStatePhase.NOTIFY, completedPhases, orderDependenciesToLookAt );
+      this.attemptToApplyPhases( PropertyStatePhase.UNDEFER, completedPhases, phetioIDsInState );
+      this.attemptToApplyPhases( PropertyStatePhase.NOTIFY, completedPhases, phetioIDsInState );
     }
   }
 
   /**
    * @param {Object.<string,boolean>} completedPhases
-   * @param {OrderDependency[]} orderDependencies
    * @private
    */
-  errorInUndeferAndNotifyStep( completedPhases, orderDependencies ) {
+  errorInUndeferAndNotifyStep( completedPhases ) {
 
     // combine phetioID and Phase into a single string to keep this process specific.
     const stillToDoIDPhasePairs = this.phaseCallbacks.map( item => item.phetioID + item.phase );
-    const relevantOrderDependencies = orderDependencies.filter( orderDependency => {
-      return stillToDoIDPhasePairs.indexOf( orderDependency.getBeforeTerm() ) >= 0 ||
-             stillToDoIDPhasePairs.indexOf( orderDependency.getAfterTerm() ) >= 0;
+
+    const relevantOrderDependencies = [];
+
+    this.beforeMaps.forEach( map => {
+      for ( const [ beforePhetioID, afterPhetioIDs ] of map ) {
+        afterPhetioIDs.forEach( afterPhetioID => {
+          const beforeTerm = beforePhetioID + map.beforePhase;
+          const afterTerm = afterPhetioID + map.afterPhase;
+          if ( stillToDoIDPhasePairs.includes( beforeTerm ) || stillToDoIDPhasePairs.includes( afterTerm ) ) {
+            relevantOrderDependencies.push( {
+              beforeTerm: beforeTerm,
+              afterTerm: afterTerm
+            } );
+          }
+        } );
+      }
     } );
+
     const completedPhasePairs = _.keys( completedPhases ).filter( completedID => {
       for ( let i = 0; i < relevantOrderDependencies.length; i++ ) {
         const relevantOrderDependency = relevantOrderDependencies[ i ];
-        if ( relevantOrderDependency.usesPhetioID( completedID ) ) {
+
+        // TODO: startsWith does not mean that it is the actual phetioID, it could be a parent. Perhaps we need to
+        // TODO: be able to split the term back in half, or be more OO. https://github.com/phetsims/axon/issues/316
+        if ( relevantOrderDependency.beforeTerm.startsWith( completedID ) || relevantOrderDependency.afterTerm.startsWith( completedID ) ) {
           return true;
         }
       }
@@ -228,7 +334,7 @@ class PropertyStateHandler {
     console.log( 'completed phase pairs that share phetioIDs', completedPhasePairs );
     console.log( 'order dependencies that apply to the still todos', relevantOrderDependencies );
     relevantOrderDependencies.forEach( orderDependency => {
-      string += `${orderDependency.getBeforeTerm()}\t${orderDependency.getAfterTerm()}\n`;
+      string += `${orderDependency.beforeTerm}\t${orderDependency.afterTerm}\n`;
     } );
     console.log( '\n\nin graphable form:\n\n', string );
 
@@ -242,15 +348,31 @@ class PropertyStateHandler {
   }
 
   /**
+   * Only for Testing!
+   * Get the number of order dependencies registered in this class
+   * @public
+   * @returns {number}
+   */
+  getNumberOfOrderDependencies() {
+    let count = 0;
+    this.afterMaps.forEach( map => {
+      for ( const [ , value ] of map ) {
+        count += value.size;
+      }
+    } );
+    return count;
+  }
+
+  /**
    * Go through all phases still to be applied, and apply them if the order dependencies allow it. Only apply for the
    * particular phase provided. In general UNDEFER must occur before the same phetioID gets NOTIFY.
    * @private
    *
    * @param {PropertyStatePhase} phase - only apply PhaseCallbacks for this particular PropertyStatePhase
    * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {OrderDependency[]} orderDependencies
+   * @param {string[]} phetioIDsInState
    */
-  attemptToApplyPhases( phase, completedPhases, orderDependencies ) {
+  attemptToApplyPhases( phase, completedPhases, phetioIDsInState ) {
 
     for ( let i = 0; i < this.phaseCallbacks.length; i++ ) {
       const phaseCallbackToPotentiallyApply = this.phaseCallbacks[ i ];
@@ -258,7 +380,7 @@ class PropertyStateHandler {
       // this.phaseCallbacks includes all phases, only try to
       // check the order dependencies to see if this has to be after something that is incomplete.
       if ( phaseCallbackToPotentiallyApply.phase === phase &&
-           this.phetioIDCanApplyPhase( phaseCallbackToPotentiallyApply.phetioID, phase, completedPhases, orderDependencies ) ) {
+           this.phetioIDCanApplyPhase( phaseCallbackToPotentiallyApply.phetioID, phase, completedPhases, phetioIDsInState ) ) {
 
         // Fire the listener;
         phaseCallbackToPotentiallyApply.listener();
@@ -276,27 +398,40 @@ class PropertyStateHandler {
 
   /**
    * @private
-   * @param {string} phetioID
+   * @param {string} phetioID - think of this as the "afterPhetioID" since there may be some phases that need to be applied before it has this phase done.
    * @param {PropertyStatePhase} phase
    * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {OrderDependency[]} orderDependencies
+   * @param {string[]} phetioIDsInState
    * @returns {boolean} - if the provided phase can be applied given the dependency order dependencies of the state engine.
    */
-  phetioIDCanApplyPhase( phetioID, phase, completedPhases, orderDependencies ) {
+  phetioIDCanApplyPhase( phetioID, phase, completedPhases, phetioIDsInState ) {
 
     // Undefer must happen before notify
     if ( phase === PropertyStatePhase.NOTIFY && !completedPhases[ phetioID + PropertyStatePhase.UNDEFER ] ) {
       return false;
     }
 
-    // check the order dependencies to see if this has to be after something that is incomplete.
-    // all must pass
-    for ( let i = 0; i < orderDependencies.length; i++ ) {
-      const orderDependency = orderDependencies[ i ];
-      if ( orderDependency.afterPhetioID === phetioID && orderDependency.afterPhase === phase ) {
+    let mapsToCheck = [ this.undeferAfterUndeferMap, this.undeferAfterNotifyMap ];
+    if ( phase === PropertyStatePhase.NOTIFY ) {
+      mapsToCheck = [ this.notifyAfterUndeferMap, this.notifyAfterNotifyMap ];
+    }
+
+    // O(2)
+    for ( let i = 0; i < mapsToCheck.length; i++ ) {
+      const mapToCheck = mapsToCheck[ i ];
+      if ( !mapToCheck.has( phetioID ) ) {
+        return true;
+      }
+      const setOfThingsThatShouldComeFirst = mapToCheck.get( phetioID );
+
+      // O(K) where K is the number of elements that should come before Property X
+      for ( const beforePhetioID of setOfThingsThatShouldComeFirst ) {
 
         // check if the before phase for this order dependency has already been completed
-        if ( !completedPhases[ orderDependency.getBeforeTerm() ] ) {
+        // Make sure that we only care about elements that were actually set during this state set
+        // TODO: Array.includes here is bad for performance, we may need to make this a map of some sort, https://github.com/phetsims/axon/issues/316
+        if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ] &&
+             phetioIDsInState.includes( beforePhetioID ) && phetioIDsInState.includes( phetioID ) ) {
           return false;
         }
       }
@@ -330,47 +465,18 @@ class PhaseCallback {
   }
 }
 
-// POJSO for an order dependency. See registerPropertyOrderDependency
-class OrderDependency {
+class OrderDependencyMap extends Map {
 
   /**
-   * @param {string} beforePhetioID
    * @param {PropertyStatePhase} beforePhase
-   * @param {string} afterPhetioID
    * @param {PropertyStatePhase} afterPhase
+   * @param {string} varName
    */
-  constructor( beforePhetioID, beforePhase, afterPhetioID, afterPhase ) {
-
-    // @public
-    this.beforePhetioID = beforePhetioID;
+  constructor( beforePhase, afterPhase, varName ) {
+    super();
     this.beforePhase = beforePhase;
-    this.afterPhetioID = afterPhetioID;
     this.afterPhase = afterPhase;
-  }
-
-  /**
-   * @public
-   * @returns {string} - unique term for the before id/phase pair
-   */
-  getBeforeTerm() {
-    return this.beforePhetioID + this.beforePhase;
-  }
-
-  /**
-   * @public
-   * @returns {string} - unique term for the before id/phase pair
-   */
-  getAfterTerm() {
-    return this.afterPhetioID + this.afterPhase;
-  }
-
-  /**
-   * @public
-   * @param {string} phetioID
-   * @returns {boolean} - if this order dependency uses the provided phetioID
-   */
-  usesPhetioID( phetioID ) {
-    return this.beforePhetioID === phetioID || this.afterPhetioID === phetioID;
+    this.varName = varName; // useful while in development
   }
 }
 
