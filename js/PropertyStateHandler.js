@@ -33,8 +33,7 @@ class PropertyStateHandler {
     this.propertiesInOrderDependencies = {};
 
     // @private
-    // OrderDependencyMap.<phetioID, phetioID[]> - values are a list of afterPhetioIDs that can be looked up in the corresponding "after Map"
-    // TODO: can this be a set to make things faster? https://github.com/phetsims/axon/issues/316
+    // OrderDependencyMap.<phetioID, Set.<phetioID> - values are a list of afterPhetioIDs that can be looked up in the corresponding "after Map"
     // TODO: can we link related map tuples (before/after pairs) to simplify some stuff, especially some usages of phasesToOrderDependencyMap before, https://github.com/phetsims/axon/issues/316
     this.undeferBeforeUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER, 'undeferBeforeUndeferMap' );
     this.undeferBeforeNotifyMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'undeferBeforeNotifyMap' );
@@ -197,13 +196,13 @@ class PropertyStateHandler {
 
     const beforeMapToPopulate = this.getMapFromPhases( 'before', beforePhase, afterPhase );
     if ( !beforeMapToPopulate.has( beforeProperty.tandem.phetioID ) ) {
-      beforeMapToPopulate.set( beforeProperty.tandem.phetioID, [] ); // TODO: wait should this be a Set? 40 minutes later, I really think so!
+      beforeMapToPopulate.set( beforeProperty.tandem.phetioID, new Set() );
     }
-    beforeMapToPopulate.get( beforeProperty.tandem.phetioID ).push( afterProperty.tandem.phetioID );
+    beforeMapToPopulate.get( beforeProperty.tandem.phetioID ).add( afterProperty.tandem.phetioID );
 
     const afterMapToPopulate = this.getMapFromPhases( 'after', beforePhase, afterPhase );
     if ( !afterMapToPopulate.has( afterProperty.tandem.phetioID ) ) {
-      afterMapToPopulate.set( afterProperty.tandem.phetioID, new Set() );// TODO: oh wait, maybe this one should this be a Set.
+      afterMapToPopulate.set( afterProperty.tandem.phetioID, new Set() );
     }
     afterMapToPopulate.get( afterProperty.tandem.phetioID ).add( beforeProperty.tandem.phetioID );
   }
@@ -233,7 +232,7 @@ class PropertyStateHandler {
       if ( beforeMap.has( phetioIDToRemove ) ) {
         beforeMap.get( phetioIDToRemove ).forEach( phetioID => {
           const setOfAfterMapIDs = beforeMap.otherMap.get( phetioID );
-          setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
+          setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
         } );
       }
     } );
@@ -242,8 +241,8 @@ class PropertyStateHandler {
     this.afterMaps.forEach( afterMap => {
       if ( afterMap.has( phetioIDToRemove ) ) {
         afterMap.get( phetioIDToRemove ).forEach( phetioID => {
-          const listOfBeforeMapIDs = afterMap.otherMap.get( phetioID );
-          listOfBeforeMapIDs && arrayRemove( listOfBeforeMapIDs, phetioIDToRemove );
+          const setOfBeforeMapIDs = afterMap.otherMap.get( phetioID );
+          setOfBeforeMapIDs && setOfBeforeMapIDs.delete( phetioIDToRemove );
         } );
       }
     } );
@@ -254,7 +253,7 @@ class PropertyStateHandler {
       this.beforeMaps.forEach( map => {
         for ( const [ key, valuePhetioIDs ] of map ) {
           assert && assert( key !== phetioIDToRemove, 'should not be a before key' );
-          assert && assert( !valuePhetioIDs.includes( phetioIDToRemove ), 'should not be in a before value list' );
+          assert && assert( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a before value list' );
         }
       } );
 
