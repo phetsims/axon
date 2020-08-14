@@ -25,8 +25,7 @@ class PropertyStateHandler {
     // at once. This keeps track of finalization actions (embodied in a PhaseCallback) that must take place after all
     // Property values have changed. This keeps track of both types of PropertyStatePhase: undeferring and notification.
     // @private {Set.<PhaseCallback>}
-    this.notifyPhaseCallbacksSet = new Set();
-    this.undeferPhaseCallbacksSet = new Set();
+    this.phaseCallbackSets = new PhaseCallbackSets();
 
     // @private {Set.<string>} - only populated with true values. A map of the Properties that are
     // in this.propertyOrderDependencies.
@@ -71,9 +70,9 @@ class PropertyStateHandler {
           const potentialListener = phetioObject.setDeferred( false );
 
           // Always add a PhaseCallback so that we can track the order dependency, even though setDeferred can return null.
-          this.notifyPhaseCallbacksSet.add( new PhaseCallback( phetioID, potentialListener, PropertyStatePhase.NOTIFY ) );
+          this.phaseCallbackSets.addNotifyPhaseCallback( new PhaseCallback( phetioID, potentialListener, PropertyStatePhase.NOTIFY ) );
         };
-        this.undeferPhaseCallbacksSet.add( new PhaseCallback( phetioID, listener, PropertyStatePhase.UNDEFER ) );
+        this.phaseCallbackSets.addUndeferPhaseCallback( new PhaseCallback( phetioID, listener, PropertyStatePhase.UNDEFER ) );
       }
     } );
 
@@ -84,10 +83,7 @@ class PropertyStateHandler {
     } );
 
     phetioStateEngine.isSettingStateProperty.lazyLink( isSettingState => {
-      if ( !isSettingState ) {
-        assert && assert( this.notifyPhaseCallbacksSet.size === 0, 'notify PhaseCallbacks should have all been applied' );
-        assert && assert( this.undeferPhaseCallbacksSet.size === 0, 'undefer PhaseCallbacks should have all been applied' );
-      }
+      assert && !isSettingState && assert( this.phaseCallbackSets.size === 0, 'PhaseCallbacks should have all been applied' );
     } );
 
     this.initialized = true;
@@ -224,7 +220,7 @@ class PropertyStateHandler {
     let numberOfIterations = 0;
 
     // Normally we would like to undefer things before notify, but make sure this is done in accordance with the order dependencies.
-    while ( this.notifyPhaseCallbacksSet.size > 0 || this.undeferPhaseCallbacksSet.size > 0 ) {
+    while ( this.phaseCallbackSets.size > 0 ) {
       numberOfIterations++;
 
       // Error case logging
@@ -246,8 +242,7 @@ class PropertyStateHandler {
 
     // combine phetioID and Phase into a single string to keep this process specific.
     const stillToDoIDPhasePairs = [];
-    this.undeferPhaseCallbacksSet.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
-    this.notifyPhaseCallbacksSet.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
+    this.phaseCallbackSets.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
 
     const relevantOrderDependencies = [];
 
@@ -281,8 +276,8 @@ class PropertyStateHandler {
     } );
 
     let string = '';
-    console.log( 'still to be undeferred', this.undeferPhaseCallbacksSet );
-    console.log( 'still to be notified', this.notifyPhaseCallbacksSet );
+    console.log( 'still to be undeferred', this.phaseCallbackSets.undeferSet );
+    console.log( 'still to be notified', this.phaseCallbackSets.notifySet );
     console.log( 'completed phase pairs that share phetioIDs', completedPhasePairs );
     console.log( 'order dependencies that apply to the still todos', relevantOrderDependencies );
     relevantOrderDependencies.forEach( orderDependency => {
@@ -326,7 +321,7 @@ class PropertyStateHandler {
    */
   attemptToApplyPhases( phase, completedPhases, phetioIDsInState ) {
 
-    const phaseCallbackSet = phase === PropertyStatePhase.NOTIFY ? this.notifyPhaseCallbacksSet : this.undeferPhaseCallbacksSet;
+    const phaseCallbackSet = this.phaseCallbackSets.getSetFromPhase( phase );
 
     for ( const phaseCallbackToPotentiallyApply of phaseCallbackSet ) {
 
@@ -447,6 +442,58 @@ class OrderDependencyMapPair {
 
     this.beforePhase = beforePhase;
     this.afterPhase = afterPhase;
+  }
+}
+
+// POJSO to keep track of PhaseCallbacks while providing O(1) lookup time because it is built on Set
+class PhaseCallbackSets {
+  constructor() {
+
+    // @public (read-only) {Set.<PhaseCallback>}
+    this.undeferSet = new Set();
+    this.notifySet = new Set();
+  }
+
+  /**
+   * @public
+   * @returns {number}
+   */
+  get size() {
+    return this.undeferSet.size + this.notifySet.size;
+  }
+
+  /**
+   * @public
+   * @param {function} callback
+   */
+  forEach( callback ) {
+    this.undeferSet.forEach( callback );
+    this.notifySet.forEach( callback );
+  }
+
+  /**
+   * @public
+   * @param {PhaseCallback} phaseCallback
+   */
+  addUndeferPhaseCallback( phaseCallback ) {
+    this.undeferSet.add( phaseCallback );
+  }
+
+  /**
+   * @public
+   * @param {PhaseCallback} phaseCallback
+   */
+  addNotifyPhaseCallback( phaseCallback ) {
+    this.notifySet.add( phaseCallback );
+  }
+
+  /**
+   * @public
+   * @param {PropertyStatePhase} phase
+   * @returns {Set.<PhaseCallback>}
+   */
+  getSetFromPhase( phase ) {
+    return phase === PropertyStatePhase.NOTIFY ? this.notifySet : this.undeferSet;
   }
 }
 
