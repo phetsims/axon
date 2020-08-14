@@ -28,9 +28,9 @@ class PropertyStateHandler {
     this.notifyPhaseCallbacksSet = new Set();
     this.undeferPhaseCallbacksSet = new Set();
 
-    // @private {Object.<phetioID:string, boolean} - only populated with true values. A map of the Properties that are
-    // in this.propertyOrderDependencies. TODO: we can probably get rid of this, or at least make it a Set, https://github.com/phetsims/axon/issues/316
-    this.propertiesInOrderDependencies = {};
+    // @private {Set.<string>} - only populated with true values. A map of the Properties that are
+    // in this.propertyOrderDependencies.
+    this.propertiesInOrderDependencies = new Set();
 
     // @private
     // OrderDependencyMap.<phetioID, Set.<phetioID> - values are a list of afterPhetioIDs that can be looked up in the corresponding "after Map"
@@ -194,8 +194,8 @@ class PropertyStateHandler {
     this.validatePropertyPhasePair( afterProperty, afterPhase );
     assert && beforeProperty === afterProperty && assert( beforePhase !== afterPhase, 'cannot set same Property to same phase' );
 
-    this.propertiesInOrderDependencies[ beforeProperty.tandem.phetioID ] = true;
-    this.propertiesInOrderDependencies[ afterProperty.tandem.phetioID ] = true;
+    this.propertiesInOrderDependencies.add( beforeProperty.tandem.phetioID );
+    this.propertiesInOrderDependencies.add( afterProperty.tandem.phetioID );
 
     const beforeMapToPopulate = this.getMapFromPhases( 'before', beforePhase, afterPhase );
     if ( !beforeMapToPopulate.has( beforeProperty.tandem.phetioID ) ) {
@@ -217,7 +217,7 @@ class PropertyStateHandler {
    */
   propertyInAnOrderDependency( property ) {
     this.validateInstrumentedProperty( property );
-    return !!this.propertiesInOrderDependencies[ property.tandem.phetioID ];
+    return this.propertiesInOrderDependencies.has( property.tandem.phetioID );
   }
 
   /**
@@ -267,7 +267,7 @@ class PropertyStateHandler {
       } );
     }
 
-    delete this.propertiesInOrderDependencies[ phetioIDToRemove ];
+    this.propertiesInOrderDependencies.delete( phetioIDToRemove );
   }
 
   /**
