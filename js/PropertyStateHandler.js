@@ -146,16 +146,7 @@ class PropertyStateHandler {
 
     const mapPair = this.getMapPairFromPhases( beforePhase, afterPhase );
 
-    // TODO: can this be factored out to the MapPair class? https://github.com/phetsims/axon/issues/316
-    if ( !mapPair.beforeMap.has( beforeProperty.tandem.phetioID ) ) {
-      mapPair.beforeMap.set( beforeProperty.tandem.phetioID, new Set() );
-    }
-    mapPair.beforeMap.get( beforeProperty.tandem.phetioID ).add( afterProperty.tandem.phetioID );
-
-    if ( !mapPair.afterMap.has( afterProperty.tandem.phetioID ) ) {
-      mapPair.afterMap.set( afterProperty.tandem.phetioID, new Set() );
-    }
-    mapPair.afterMap.get( afterProperty.tandem.phetioID ).add( beforeProperty.tandem.phetioID );
+    mapPair.addOrderDependency( beforeProperty.tandem.phetioID, afterProperty.tandem.phetioID );
   }
 
   /**
@@ -442,6 +433,25 @@ class OrderDependencyMapPair {
 
     this.beforePhase = beforePhase;
     this.afterPhase = afterPhase;
+  }
+
+  /**
+   * Register an order dependency between two phetioIDs. This will add data to maps in "both direction". If accessing
+   * with just the beforePhetioID, or with the afterPhetioID.
+   * @public
+   * @param {string} beforePhetioID
+   * @param {string} afterPhetioID
+   */
+  addOrderDependency( beforePhetioID, afterPhetioID ) {
+    if ( !this.beforeMap.has( beforePhetioID ) ) {
+      this.beforeMap.set( beforePhetioID, new Set() );
+    }
+    this.beforeMap.get( beforePhetioID ).add( afterPhetioID );
+
+    if ( !this.afterMap.has( afterPhetioID ) ) {
+      this.afterMap.set( afterPhetioID, new Set() );
+    }
+    this.afterMap.get( afterPhetioID ).add( beforePhetioID );
   }
 }
 
