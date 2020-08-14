@@ -48,7 +48,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
 
     const originalOrderDependencyLength = propertyStateHandler.getNumberOfOrderDependencies();
-    const getOrderDependencyLength = () => propertyStateHandler.getNumberOfOrderDependencies()  - originalOrderDependencyLength;
+    const getOrderDependencyLength = () => propertyStateHandler.getNumberOfOrderDependencies() - originalOrderDependencyLength;
 
     propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
     assert.ok( getOrderDependencyLength() === 1, 'one expected' );
@@ -131,5 +131,45 @@ if ( Tandem.PHET_IO_ENABLED ) {
     rangeProperty.dispose();
     numberProperty.dispose();
     randomDependencyProperty.dispose();
+  } );
+
+  QUnit.test( 'unregistering clears out the array', assert => {
+    assert.ok( true, 'always pass' );
+
+    const propertyStateHandler = new PropertyStateHandler();
+    assert.ok( !propertyStateHandler.initialized, 'started not initialized' );
+    const phetioStateEngine = new phet.phetio.PhetioStateEngine( phet.phetio.phetioEngine, {
+      propertyStateHandler: propertyStateHandler
+    } );
+    assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
+
+    const propertyA = new BooleanProperty( false, {
+      tandem: Tandem.GENERAL.createTandem( 'aProperty' )
+    } );
+    const propertyB = new BooleanProperty( true, {
+      tandem: Tandem.GENERAL.createTandem( 'bProperty' )
+    } );
+    const propertyC = new BooleanProperty( false, {
+      tandem: Tandem.GENERAL.createTandem( 'cProperty' )
+    } );
+
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
+    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyA );
+    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyC );
+    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+
+    propertyA.dispose();
+    propertyB.dispose();
+    propertyC.dispose();
   } );
 }

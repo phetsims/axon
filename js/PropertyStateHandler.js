@@ -104,11 +104,11 @@ class PropertyStateHandler {
   }
 
   /**
-   * TODO: cleanup doc if this sticks around, https://github.com/phetsims/axon/issues/316
+   * Get the MapPair associated with the proved PropertyStatePhases
    * @private
-   * @param beforePhase
-   * @param afterPhase
-   * @returns {*}
+   * @param {PropertyStatePhase} beforePhase
+   * @param {PropertyStatePhase} afterPhase
+   * @returns {OrderDependencyMapPair}
    */
   getMapPairFromPhases( beforePhase, afterPhase ) {
     for ( let i = 0; i < this.mapPairs.length; i++ ) {
@@ -171,7 +171,10 @@ class PropertyStateHandler {
           if ( map.has( phetioIDToRemove ) ) {
             map.get( phetioIDToRemove ).forEach( phetioID => {
               const setOfAfterMapIDs = map.otherMap.get( phetioID );
-              setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
+              setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
+
+              // Clear out empty entries to avoid having lots of empty Sets sitting around
+              setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
             } );
           }
           map.delete( phetioIDToRemove );
