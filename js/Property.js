@@ -479,7 +479,7 @@ class Property extends PhetioObject {
     this.unlinkAll();
 
     // unregister any order dependencies for this Property for PhET-iO state
-    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && propertyStateHandlerSingleton.propertyInAnOrderDependency( this ) ) {
+    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
       propertyStateHandlerSingleton.unregisterOrderDependenciesForProperty( this );
     }
 

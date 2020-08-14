@@ -27,10 +27,6 @@ class PropertyStateHandler {
     // @private {Set.<PhaseCallback>}
     this.phaseCallbackSets = new PhaseCallbackSets();
 
-    // @private {Set.<string>} - only populated with true values. A map of the Properties that are
-    // in this.propertyOrderDependencies.
-    this.propertiesInOrderDependencies = new Set();
-
     // @private - each pair has a Map optimized for looking up based on the "before phetioID" and the "after phetioID"
     // of the dependency. Having a data structure set up for both directions of look-up makes each operation O(1). See https://github.com/phetsims/axon/issues/316
     this.undeferBeforeUndeferMapPair = new OrderDependencyMapPair( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER );
@@ -141,9 +137,6 @@ class PropertyStateHandler {
     this.validatePropertyPhasePair( afterProperty, afterPhase );
     assert && beforeProperty === afterProperty && assert( beforePhase !== afterPhase, 'cannot set same Property to same phase' );
 
-    this.propertiesInOrderDependencies.add( beforeProperty.tandem.phetioID );
-    this.propertiesInOrderDependencies.add( afterProperty.tandem.phetioID );
-
     const mapPair = this.getMapPairFromPhases( beforePhase, afterPhase );
 
     mapPair.addOrderDependency( beforeProperty.tandem.phetioID, afterProperty.tandem.phetioID );
@@ -152,11 +145,11 @@ class PropertyStateHandler {
   /**
    * @param {Property} property - must be instrumented for PhET-iO
    * @returns {boolean} - true if Property is in any order dependency
-   * @public
+   * @private
    */
   propertyInAnOrderDependency( property ) {
     this.validateInstrumentedProperty( property );
-    return this.propertiesInOrderDependencies.has( property.tandem.phetioID );
+    return _.some( this.mapPairs, mapPair => mapPair.usesPhetioID( property.tandem.phetioID ) );
   }
 
   /**
@@ -166,31 +159,35 @@ class PropertyStateHandler {
    */
   unregisterOrderDependenciesForProperty( property ) {
     this.validateInstrumentedProperty( property );
-    assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
 
-    const phetioIDToRemove = property.tandem.phetioID;
+    // Be graceful if given a Property that is not registered in an order dependency.
+    if ( this.propertyInAnOrderDependency( property ) ) {
+      assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
 
-    this.mapPairs.forEach( mapPair => {
-      [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-        if ( map.has( phetioIDToRemove ) ) {
-          map.get( phetioIDToRemove ).forEach( phetioID => {
-            const setOfAfterMapIDs = map.otherMap.get( phetioID );
-            setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
-          } );
-        }
-        map.delete( phetioIDToRemove );
+      const phetioIDToRemove = property.tandem.phetioID;
+
+      this.mapPairs.forEach( mapPair => {
+        [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
+          if ( map.has( phetioIDToRemove ) ) {
+            map.get( phetioIDToRemove ).forEach( phetioID => {
+              const setOfAfterMapIDs = map.otherMap.get( phetioID );
+              setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
+            } );
+          }
+          map.delete( phetioIDToRemove );
+        } );
       } );
-    } );
 
-    // Look through every dependency and make sure the phetioID to remove has been completely removed.
-    assertSlow && this.mapPairs.forEach( mapPair => {
-      [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-        for ( const [ key, valuePhetioIDs ] of map ) {
-          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
-          assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
-        }
+      // Look through every dependency and make sure the phetioID to remove has been completely removed.
+      assertSlow && this.mapPairs.forEach( mapPair => {
+        [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
+          for ( const [ key, valuePhetioIDs ] of map ) {
+            assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
+            assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
+          }
+        } );
       } );
-    } );
+    }
   }
 
   /**
@@ -452,6 +449,15 @@ class OrderDependencyMapPair {
       this.afterMap.set( afterPhetioID, new Set() );
     }
     this.afterMap.get( afterPhetioID ).add( beforePhetioID );
+  }
+
+  /**
+   * @public
+   * @param {string} phetioID
+   * @returns {boolean}
+   */
+  usesPhetioID( phetioID ) {
+    return this.beforeMap.has( phetioID ) || this.afterMap.has( phetioID );
   }
 }
 
