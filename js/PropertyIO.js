@@ -57,7 +57,6 @@ const create = parameterType => {
     constructor( property, phetioID ) {
       assert && assert( !!parameterType, 'PropertyIO needs parameterType' );
       assert && assert( property, 'Property should exist' );
-      assert && assert( _.endsWith( phetioID, 'Property' ), 'PropertyIO instances should end with the "Property" suffix, for ' + phetioID );
 
       super( property, phetioID );
     }
