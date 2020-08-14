@@ -9,7 +9,6 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Property from './Property.js';
@@ -25,8 +24,9 @@ class PropertyStateHandler {
     // Properties support setDeferred(). We defer setting their values so all changes take effect
     // at once. This keeps track of finalization actions (embodied in a PhaseCallback) that must take place after all
     // Property values have changed. This keeps track of both types of PropertyStatePhase: undeferring and notification.
-    // @private {PhaseCallback[]}
-    this.phaseCallbacks = [];
+    // @private {Set.<PhaseCallback>}
+    this.notifyPhaseCallbacksSet = new Set();
+    this.undeferPhaseCallbacksSet = new Set();
 
     // @private {Object.<phetioID:string, boolean} - only populated with true values. A map of the Properties that are
     // in this.propertyOrderDependencies. TODO: we can probably get rid of this, or at least make it a Set, https://github.com/phetsims/axon/issues/316
@@ -124,9 +124,9 @@ class PropertyStateHandler {
           const potentialListener = phetioObject.setDeferred( false );
 
           // Always add a PhaseCallback so that we can track the order dependency, even though setDeferred can return null.
-          this.phaseCallbacks.push( new PhaseCallback( phetioID, potentialListener, PropertyStatePhase.NOTIFY ) );
+          this.notifyPhaseCallbacksSet.add( new PhaseCallback( phetioID, potentialListener, PropertyStatePhase.NOTIFY ) );
         };
-        this.phaseCallbacks.push( new PhaseCallback( phetioID, listener, PropertyStatePhase.UNDEFER ) );
+        this.undeferPhaseCallbacksSet.add( new PhaseCallback( phetioID, listener, PropertyStatePhase.UNDEFER ) );
       }
     } );
 
@@ -137,7 +137,10 @@ class PropertyStateHandler {
     } );
 
     phetioStateEngine.isSettingStateProperty.lazyLink( isSettingState => {
-      assert && !isSettingState && assert( this.phaseCallbacks.length === 0, 'phaseCallbacks should have all been applied' );
+      if ( !isSettingState ) {
+        assert && assert( this.notifyPhaseCallbacksSet.size === 0, 'notify PhaseCallbacks should have all been applied' );
+        assert && assert( this.undeferPhaseCallbacksSet.size === 0, 'undefer PhaseCallbacks should have all been applied' );
+      }
     } );
 
     this.initialized = true;
@@ -285,7 +288,7 @@ class PropertyStateHandler {
     let numberOfIterations = 0;
 
     // Normally we would like to undefer things before notify, but make sure this is done in accordance with the order dependencies.
-    while ( this.phaseCallbacks.length > 0 ) {
+    while ( this.notifyPhaseCallbacksSet.size > 0 || this.undeferPhaseCallbacksSet.size > 0 ) {
       numberOfIterations++;
 
       // Error case logging
@@ -306,7 +309,9 @@ class PropertyStateHandler {
   errorInUndeferAndNotifyStep( completedPhases ) {
 
     // combine phetioID and Phase into a single string to keep this process specific.
-    const stillToDoIDPhasePairs = this.phaseCallbacks.map( item => item.phetioID + item.phase );
+    const stillToDoIDPhasePairs = [];
+    this.undeferPhaseCallbacksSet.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
+    this.notifyPhaseCallbacksSet.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
 
     const relevantOrderDependencies = [];
 
@@ -339,8 +344,8 @@ class PropertyStateHandler {
     } );
 
     let string = '';
-    console.log( 'still to be undeferred', this.phaseCallbacks.filter( phaseCallback => phaseCallback.phase === PropertyStatePhase.UNDEFER ) );
-    console.log( 'still to be notified', this.phaseCallbacks.filter( phaseCallback => phaseCallback.phase === PropertyStatePhase.NOTIFY ) );
+    console.log( 'still to be undeferred', this.undeferPhaseCallbacksSet );
+    console.log( 'still to be notified', this.notifyPhaseCallbacksSet );
     console.log( 'completed phase pairs that share phetioIDs', completedPhasePairs );
     console.log( 'order dependencies that apply to the still todos', relevantOrderDependencies );
     relevantOrderDependencies.forEach( orderDependency => {
@@ -384,25 +389,23 @@ class PropertyStateHandler {
    */
   attemptToApplyPhases( phase, completedPhases, phetioIDsInState ) {
 
-    for ( let i = 0; i < this.phaseCallbacks.length; i++ ) {
-      const phaseCallbackToPotentiallyApply = this.phaseCallbacks[ i ];
+    const phaseCallbackSet = phase === PropertyStatePhase.NOTIFY ? this.notifyPhaseCallbacksSet : this.undeferPhaseCallbacksSet;
 
-      // this.phaseCallbacks includes all phases, only try to
-      // check the order dependencies to see if this has to be after something that is incomplete.
-      if ( phaseCallbackToPotentiallyApply.phase === phase &&
-           this.phetioIDCanApplyPhase( phaseCallbackToPotentiallyApply.phetioID, phase, completedPhases, phetioIDsInState ) ) {
+    for ( const phaseCallbackToPotentiallyApply of phaseCallbackSet ) {
+
+      assert && assert( phaseCallbackToPotentiallyApply.phase === phase, 'phaseCallbackSet should only include callbacks for provided phase' );
+
+      // only try to check the order dependencies to see if this has to be after something that is incomplete.
+      if ( this.phetioIDCanApplyPhase( phaseCallbackToPotentiallyApply.phetioID, phase, completedPhases, phetioIDsInState ) ) {
 
         // Fire the listener;
         phaseCallbackToPotentiallyApply.listener();
 
         // Remove it from the master list so that it doesn't get called again.
-        // TODO: make this.phaseCallbacks a map so that we don't need to remove at 0(N) time. There are a lot of phases! https://github.com/phetsims/axon/issues/316
-        arrayRemove( this.phaseCallbacks, phaseCallbackToPotentiallyApply );
+        phaseCallbackSet.delete( phaseCallbackToPotentiallyApply );
 
         // Keep track of all completed PhaseCallbacks
         completedPhases[ phaseCallbackToPotentiallyApply.getTerm() ] = true;
-
-        i--; // Account for the element that was just removed by decrementing.
       }
     }
   }
