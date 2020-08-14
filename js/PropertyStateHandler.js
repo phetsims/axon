@@ -75,7 +75,7 @@ class PropertyStateHandler {
     phetioStateEngine.stateSetEmitter.addListener( state => {
 
       // Properties set to final values and notify of any value changes.
-      this.undeferAndNotifyProperties( Object.keys( state ) );
+      this.undeferAndNotifyProperties( new Set( Object.keys( state ) ) );
     } );
 
     phetioStateEngine.isSettingStateProperty.lazyLink( isSettingState => {
@@ -195,7 +195,7 @@ class PropertyStateHandler {
    * correct values and have each notify their listeners.
    *
    * @private
-   * @param {string[]} phetioIDsInState - list of phetioIDs that were set in state
+   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
    */
   undeferAndNotifyProperties( phetioIDsInState ) {
     assert && assert( this.initialized, 'must be initialized before getting called' );
@@ -291,7 +291,7 @@ class PropertyStateHandler {
    *
    * @param {PropertyStatePhase} phase - only apply PhaseCallbacks for this particular PropertyStatePhase
    * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {string[]} phetioIDsInState
+   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
    */
   attemptToApplyPhases( phase, completedPhases, phetioIDsInState ) {
 
@@ -321,7 +321,7 @@ class PropertyStateHandler {
    * @param {string} phetioID - think of this as the "afterPhetioID" since there may be some phases that need to be applied before it has this phase done.
    * @param {PropertyStatePhase} phase
    * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {string[]} phetioIDsInState
+   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
    * @returns {boolean} - if the provided phase can be applied given the dependency order dependencies of the state engine.
    */
   phetioIDCanApplyPhase( phetioID, phase, completedPhases, phetioIDsInState ) {
@@ -354,9 +354,8 @@ class PropertyStateHandler {
 
         // check if the before phase for this order dependency has already been completed
         // Make sure that we only care about elements that were actually set during this state set
-        // TODO: Array.includes here is bad for performance, we may need to make this a map of some sort, https://github.com/phetsims/axon/issues/316
         if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ] &&
-             phetioIDsInState.includes( beforePhetioID ) && phetioIDsInState.includes( phetioID ) ) {
+             phetioIDsInState.has( beforePhetioID ) && phetioIDsInState.has( phetioID ) ) {
           return false;
         }
       }
