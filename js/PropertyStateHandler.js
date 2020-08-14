@@ -355,8 +355,8 @@ class PropertyStateHandler {
         // check if the before phase for this order dependency has already been completed
         // Make sure that we only care about elements that were actually set during this state set
         // TODO: Array.includes here is bad for performance, we may need to make this a map of some sort, https://github.com/phetsims/axon/issues/316
-        if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ]
-        ) {
+        if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ] &&
+             phetioIDsInState.includes( beforePhetioID ) && phetioIDsInState.includes( phetioID ) ) {
           return false;
         }
       }
