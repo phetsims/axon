@@ -250,23 +250,9 @@ class PropertyStateHandler {
       }
     } );
 
-    const completedPhasePairs = _.keys( completedPhases ).filter( completedID => {
-      for ( let i = 0; i < relevantOrderDependencies.length; i++ ) {
-        const relevantOrderDependency = relevantOrderDependencies[ i ];
-
-        // TODO: startsWith does not mean that it is the actual phetioID, it could be a parent. Perhaps we need to
-        // TODO: be able to split the term back in half, or be more OO. https://github.com/phetsims/axon/issues/316
-        if ( relevantOrderDependency.beforeTerm.startsWith( completedID ) || relevantOrderDependency.afterTerm.startsWith( completedID ) ) {
-          return true;
-        }
-      }
-      return false;
-    } );
-
     let string = '';
     console.log( 'still to be undeferred', this.phaseCallbackSets.undeferSet );
     console.log( 'still to be notified', this.phaseCallbackSets.notifySet );
-    console.log( 'completed phase pairs that share phetioIDs', completedPhasePairs );
     console.log( 'order dependencies that apply to the still todos', relevantOrderDependencies );
     relevantOrderDependencies.forEach( orderDependency => {
       string += `${orderDependency.beforeTerm}\t${orderDependency.afterTerm}\n`;
@@ -369,8 +355,8 @@ class PropertyStateHandler {
         // check if the before phase for this order dependency has already been completed
         // Make sure that we only care about elements that were actually set during this state set
         // TODO: Array.includes here is bad for performance, we may need to make this a map of some sort, https://github.com/phetsims/axon/issues/316
-        if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ] &&
-             phetioIDsInState.includes( beforePhetioID ) && phetioIDsInState.includes( phetioID ) ) {
+        if ( !completedPhases[ beforePhetioID + mapToCheck.beforePhase ]
+        ) {
           return false;
         }
       }
