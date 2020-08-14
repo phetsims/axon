@@ -248,19 +248,18 @@ class PropertyStateHandler {
     } );
     this.afterMaps.forEach( map => map.delete( phetioIDToRemove ) );
 
-    // TODO: we may want to remove this for performance, even though it is hidden behind assert, https://github.com/phetsims/axon/issues/316
-    if ( assert ) {
+    if ( assertSlow ) {
       this.beforeMaps.forEach( map => {
         for ( const [ key, valuePhetioIDs ] of map ) {
-          assert && assert( key !== phetioIDToRemove, 'should not be a before key' );
-          assert && assert( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a before value list' );
+          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a before key' );
+          assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a before value list' );
         }
       } );
 
       this.afterMaps.forEach( map => {
         for ( const [ key, valuePhetioIDSet ] of map ) {
-          assert && assert( key !== phetioIDToRemove, 'should not be a before key' );
-          assert && assert( !valuePhetioIDSet.has( phetioIDToRemove ), 'should not be in a before value list' );
+          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a before key' );
+          assertSlow && assertSlow( !valuePhetioIDSet.has( phetioIDToRemove ), 'should not be in a before value list' );
         }
       } );
     }
@@ -397,6 +396,7 @@ class PropertyStateHandler {
         phaseCallbackToPotentiallyApply.listener();
 
         // Remove it from the master list so that it doesn't get called again.
+        // TODO: make this.phaseCallbacks a map so that we don't need to remove at 0(N) time. There are a lot of phases! https://github.com/phetsims/axon/issues/316
         arrayRemove( this.phaseCallbacks, phaseCallbackToPotentiallyApply );
 
         // Keep track of all completed PhaseCallbacks
