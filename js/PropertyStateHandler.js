@@ -47,12 +47,24 @@ class PropertyStateHandler {
     this.notifyAfterUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'notifyAfterUndeferMap' );
     this.notifyAfterNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY, 'notifyAfterNotifyMap' );
 
+    // TODO: this is yet another data structure, do we need it? https://github.com/phetsims/axon/issues/316
+    // Create a link between each before/after map pair to make look ups a bit easier
+    this.undeferAfterUndeferMap.otherMap = this.undeferBeforeUndeferMap;
+    this.notifyAfterUndeferMap.otherMap = this.undeferBeforeNotifyMap;
+    this.undeferAfterNotifyMap.otherMap = this.notifyBeforeUndeferMap;
+    this.notifyAfterNotifyMap.otherMap = this.notifyBeforeNotifyMap;
+
+    this.undeferBeforeUndeferMap.otherMap = this.undeferAfterUndeferMap;
+    this.undeferBeforeNotifyMap.otherMap = this.notifyAfterUndeferMap;
+    this.notifyBeforeUndeferMap.otherMap = this.undeferAfterNotifyMap;
+    this.notifyBeforeNotifyMap.otherMap = this.notifyAfterNotifyMap;
+
     // TODO: rename https://github.com/phetsims/axon/issues/316
     // @private
     this.afterMaps = [
       this.undeferAfterUndeferMap,
-      this.undeferAfterNotifyMap,
       this.notifyAfterUndeferMap,
+      this.undeferAfterNotifyMap,
       this.notifyAfterNotifyMap
     ];
 
@@ -220,7 +232,7 @@ class PropertyStateHandler {
     this.beforeMaps.forEach( beforeMap => {
       if ( beforeMap.has( phetioIDToRemove ) ) {
         beforeMap.get( phetioIDToRemove ).forEach( phetioID => {
-          const setOfAfterMapIDs = this.getMapFromPhases( 'after', beforeMap.beforePhase, beforeMap.afterPhase ).get( phetioID );
+          const setOfAfterMapIDs = beforeMap.otherMap.get( phetioID );
           setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
         } );
       }
@@ -230,7 +242,7 @@ class PropertyStateHandler {
     this.afterMaps.forEach( afterMap => {
       if ( afterMap.has( phetioIDToRemove ) ) {
         afterMap.get( phetioIDToRemove ).forEach( phetioID => {
-          const listOfBeforeMapIDs = this.getMapFromPhases( 'before', afterMap.beforePhase, afterMap.afterPhase ).get( phetioID );
+          const listOfBeforeMapIDs = afterMap.otherMap.get( phetioID );
           listOfBeforeMapIDs && arrayRemove( listOfBeforeMapIDs, phetioIDToRemove );
         } );
       }
