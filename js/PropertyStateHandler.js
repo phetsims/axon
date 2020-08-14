@@ -32,73 +32,20 @@ class PropertyStateHandler {
     // in this.propertyOrderDependencies.
     this.propertiesInOrderDependencies = new Set();
 
-    // @private
-    // OrderDependencyMap.<phetioID, Set.<phetioID> - values are a list of afterPhetioIDs that can be looked up in the corresponding "after Map"
-    // TODO: can we link related map tuples (before/after pairs) to simplify some stuff, especially some usages of phasesToOrderDependencyMap before, https://github.com/phetsims/axon/issues/316
-    this.undeferBeforeUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER, 'undeferBeforeUndeferMap' );
-    this.undeferBeforeNotifyMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'undeferBeforeNotifyMap' );
-    this.notifyBeforeUndeferMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER, 'notifyBeforeUndeferMap' );
-    this.notifyBeforeNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY, 'notifyBeforeNotifyMap' );
+    // @private - each pair has a Map optimized for looking up based on the "before phetioID" and the "after phetioID"
+    // of the dependency. Having a data structure set up for both directions of look-up makes each operation O(1). See https://github.com/phetsims/axon/issues/316
+    this.undeferBeforeUndeferMapPair = new OrderDependencyMapPair( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER );
+    this.undeferBeforeNotifyMapPair = new OrderDependencyMapPair( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY );
+    this.notifyBeforeUndeferMapPair = new OrderDependencyMapPair( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER );
+    this.notifyBeforeNotifyMapPair = new OrderDependencyMapPair( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY );
 
-    // OrderDependencyMap.<phetioID, Set.<phetioID>> - we need a set here to improve unregistration time to O(1).
-    this.undeferAfterUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER, 'undeferAfterUndeferMap' );
-    this.undeferAfterNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER, 'undeferAfterNotifyMap' );
-    this.notifyAfterUndeferMap = new OrderDependencyMap( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY, 'notifyAfterUndeferMap' );
-    this.notifyAfterNotifyMap = new OrderDependencyMap( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY, 'notifyAfterNotifyMap' );
-
-    // TODO: this is yet another data structure, do we need it? https://github.com/phetsims/axon/issues/316
-    // Create a link between each before/after map pair to make look ups a bit easier
-    this.undeferAfterUndeferMap.otherMap = this.undeferBeforeUndeferMap;
-    this.notifyAfterUndeferMap.otherMap = this.undeferBeforeNotifyMap;
-    this.undeferAfterNotifyMap.otherMap = this.notifyBeforeUndeferMap;
-    this.notifyAfterNotifyMap.otherMap = this.notifyBeforeNotifyMap;
-
-    this.undeferBeforeUndeferMap.otherMap = this.undeferAfterUndeferMap;
-    this.undeferBeforeNotifyMap.otherMap = this.notifyAfterUndeferMap;
-    this.notifyBeforeUndeferMap.otherMap = this.undeferAfterNotifyMap;
-    this.notifyBeforeNotifyMap.otherMap = this.notifyAfterNotifyMap;
-
-    // TODO: rename https://github.com/phetsims/axon/issues/316
-    // @private
-    this.afterMaps = [
-      this.undeferAfterUndeferMap,
-      this.notifyAfterUndeferMap,
-      this.undeferAfterNotifyMap,
-      this.notifyAfterNotifyMap
+    // @private - keep a list of all map pairs for easier iteration
+    this.mapPairs = [
+      this.undeferBeforeUndeferMapPair,
+      this.undeferBeforeNotifyMapPair,
+      this.notifyBeforeUndeferMapPair,
+      this.notifyBeforeNotifyMapPair
     ];
-
-    // TODO: rename https://github.com/phetsims/axon/issues/316
-    // @private
-    this.beforeMaps = [
-      this.undeferBeforeUndeferMap,
-      this.undeferBeforeNotifyMap,
-      this.notifyBeforeUndeferMap,
-      this.notifyBeforeNotifyMap
-    ];
-
-    // @private - {Map.<PropertyStatePhase, Map.<PropertyStatePhase, {before: OrderDependencyMap, after: OrderDependencyMap}>>}
-    // To map from PropetyStatePhases to the appropriate OrderDependencyMap needed
-    this.phasesToOrderDependencyMap = new Map();
-    const undeferMap = new Map();
-    undeferMap.set( PropertyStatePhase.UNDEFER, {
-      before: this.undeferBeforeUndeferMap,
-      after: this.undeferAfterUndeferMap
-    } );
-    undeferMap.set( PropertyStatePhase.NOTIFY, {
-      before: this.undeferBeforeNotifyMap,
-      after: this.notifyAfterUndeferMap
-    } );
-    this.phasesToOrderDependencyMap.set( PropertyStatePhase.UNDEFER, undeferMap );
-    const notifyMap = new Map();
-    notifyMap.set( PropertyStatePhase.UNDEFER, {
-      before: this.notifyBeforeUndeferMap,
-      after: this.undeferAfterNotifyMap
-    } );
-    notifyMap.set( PropertyStatePhase.NOTIFY, {
-      before: this.notifyBeforeNotifyMap,
-      after: this.notifyAfterNotifyMap
-    } );
-    this.phasesToOrderDependencyMap.set( PropertyStatePhase.NOTIFY, notifyMap );
 
     // @public (PropertyStateHandlerTests read-only)
     this.initialized = false;
@@ -167,13 +114,17 @@ class PropertyStateHandler {
   /**
    * TODO: cleanup doc if this sticks around, https://github.com/phetsims/axon/issues/316
    * @private
-   * @param beforeOrAfter - from which context, a map where keys are the beforePhetioIDs, or the afterPhetioIDs
    * @param beforePhase
    * @param afterPhase
    * @returns {*}
    */
-  getMapFromPhases( beforeOrAfter, beforePhase, afterPhase ) {
-    return this.phasesToOrderDependencyMap.get( beforePhase ).get( afterPhase )[ beforeOrAfter ];
+  getMapPairFromPhases( beforePhase, afterPhase ) {
+    for ( let i = 0; i < this.mapPairs.length; i++ ) {
+      const mapPair = this.mapPairs[ i ];
+      if ( beforePhase === mapPair.beforePhase && afterPhase === mapPair.afterPhase ) {
+        return mapPair;
+      }
+    }
   }
 
   /**
@@ -197,17 +148,18 @@ class PropertyStateHandler {
     this.propertiesInOrderDependencies.add( beforeProperty.tandem.phetioID );
     this.propertiesInOrderDependencies.add( afterProperty.tandem.phetioID );
 
-    const beforeMapToPopulate = this.getMapFromPhases( 'before', beforePhase, afterPhase );
-    if ( !beforeMapToPopulate.has( beforeProperty.tandem.phetioID ) ) {
-      beforeMapToPopulate.set( beforeProperty.tandem.phetioID, new Set() );
-    }
-    beforeMapToPopulate.get( beforeProperty.tandem.phetioID ).add( afterProperty.tandem.phetioID );
+    const mapPair = this.getMapPairFromPhases( beforePhase, afterPhase );
 
-    const afterMapToPopulate = this.getMapFromPhases( 'after', beforePhase, afterPhase );
-    if ( !afterMapToPopulate.has( afterProperty.tandem.phetioID ) ) {
-      afterMapToPopulate.set( afterProperty.tandem.phetioID, new Set() );
+    // TODO: can this be factored out to the MapPair class? https://github.com/phetsims/axon/issues/316
+    if ( !mapPair.beforeMap.has( beforeProperty.tandem.phetioID ) ) {
+      mapPair.beforeMap.set( beforeProperty.tandem.phetioID, new Set() );
     }
-    afterMapToPopulate.get( afterProperty.tandem.phetioID ).add( beforeProperty.tandem.phetioID );
+    mapPair.beforeMap.get( beforeProperty.tandem.phetioID ).add( afterProperty.tandem.phetioID );
+
+    if ( !mapPair.afterMap.has( afterProperty.tandem.phetioID ) ) {
+      mapPair.afterMap.set( afterProperty.tandem.phetioID, new Set() );
+    }
+    mapPair.afterMap.get( afterProperty.tandem.phetioID ).add( beforeProperty.tandem.phetioID );
   }
 
   /**
@@ -231,43 +183,27 @@ class PropertyStateHandler {
 
     const phetioIDToRemove = property.tandem.phetioID;
 
-    this.beforeMaps.forEach( beforeMap => {
-      if ( beforeMap.has( phetioIDToRemove ) ) {
-        beforeMap.get( phetioIDToRemove ).forEach( phetioID => {
-          const setOfAfterMapIDs = beforeMap.otherMap.get( phetioID );
-          setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
-        } );
-      }
+    this.mapPairs.forEach( mapPair => {
+      [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
+        if ( map.has( phetioIDToRemove ) ) {
+          map.get( phetioIDToRemove ).forEach( phetioID => {
+            const setOfAfterMapIDs = map.otherMap.get( phetioID );
+            setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove ); // TODO: if the set is empty, delete it from the map? https://github.com/phetsims/axon/issues/316
+          } );
+        }
+        map.delete( phetioIDToRemove );
+      } );
     } );
-    this.beforeMaps.forEach( map => map.delete( phetioIDToRemove ) );
 
-    this.afterMaps.forEach( afterMap => {
-      if ( afterMap.has( phetioIDToRemove ) ) {
-        afterMap.get( phetioIDToRemove ).forEach( phetioID => {
-          const setOfBeforeMapIDs = afterMap.otherMap.get( phetioID );
-          setOfBeforeMapIDs && setOfBeforeMapIDs.delete( phetioIDToRemove );
-        } );
-      }
-    } );
-    this.afterMaps.forEach( map => map.delete( phetioIDToRemove ) );
-
-    if ( assertSlow ) {
-      this.beforeMaps.forEach( map => {
+    // Look through every dependency and make sure the phetioID to remove has been completely removed.
+    assertSlow && this.mapPairs.forEach( mapPair => {
+      [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
         for ( const [ key, valuePhetioIDs ] of map ) {
-          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a before key' );
-          assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a before value list' );
+          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
+          assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
         }
       } );
-
-      this.afterMaps.forEach( map => {
-        for ( const [ key, valuePhetioIDSet ] of map ) {
-          assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a before key' );
-          assertSlow && assertSlow( !valuePhetioIDSet.has( phetioIDToRemove ), 'should not be in a before value list' );
-        }
-      } );
-    }
-
-    this.propertiesInOrderDependencies.delete( phetioIDToRemove );
+    } );
   }
 
   /**
@@ -315,11 +251,12 @@ class PropertyStateHandler {
 
     const relevantOrderDependencies = [];
 
-    this.beforeMaps.forEach( map => {
-      for ( const [ beforePhetioID, afterPhetioIDs ] of map ) {
+    this.mapPairs.forEach( mapPair => {
+      const beforeMap = mapPair.beforeMap;
+      for ( const [ beforePhetioID, afterPhetioIDs ] of beforeMap ) {
         afterPhetioIDs.forEach( afterPhetioID => {
-          const beforeTerm = beforePhetioID + map.beforePhase;
-          const afterTerm = afterPhetioID + map.afterPhase;
+          const beforeTerm = beforePhetioID + beforeMap.beforePhase;
+          const afterTerm = afterPhetioID + beforeMap.afterPhase;
           if ( stillToDoIDPhasePairs.includes( beforeTerm ) || stillToDoIDPhasePairs.includes( afterTerm ) ) {
             relevantOrderDependencies.push( {
               beforeTerm: beforeTerm,
@@ -370,9 +307,9 @@ class PropertyStateHandler {
    */
   getNumberOfOrderDependencies() {
     let count = 0;
-    this.afterMaps.forEach( map => {
-      for ( const [ , value ] of map ) {
-        count += value.size;
+    this.mapPairs.forEach( mapPair => {
+      for ( const [ , valueSet ] of mapPair.afterMap ) { // either map would work here.
+        count += valueSet.size;
       }
     } );
     return count;
@@ -425,10 +362,15 @@ class PropertyStateHandler {
       return false;
     }
 
-    let mapsToCheck = [ this.undeferAfterUndeferMap, this.undeferAfterNotifyMap ];
-    if ( phase === PropertyStatePhase.NOTIFY ) {
-      mapsToCheck = [ this.notifyAfterUndeferMap, this.notifyAfterNotifyMap ];
-    }
+    // Get a list of the maps for this phase being applies.
+    const mapsToCheck = [];
+    this.mapPairs.forEach( mapPair => {
+      if ( mapPair.afterPhase === phase ) {
+
+        // Use the "afterMap" because below looks up what needs to come before.
+        mapsToCheck.push( mapPair.afterMap );
+      }
+    } );
 
     // O(2)
     for ( let i = 0; i < mapsToCheck.length; i++ ) {
@@ -479,18 +421,32 @@ class PhaseCallback {
   }
 }
 
-class OrderDependencyMap extends Map {
+class OrderDependencyMapPair {
 
   /**
    * @param {PropertyStatePhase} beforePhase
    * @param {PropertyStatePhase} afterPhase
-   * @param {string} varName
    */
-  constructor( beforePhase, afterPhase, varName ) {
-    super();
+  constructor( beforePhase, afterPhase ) {
+
+    // @public (read-only) - fields for mass consumption
+    this.beforeMap = new Map();
+    this.beforeMap.beforePhase = beforePhase;
+    this.beforeMap.afterPhase = beforePhase;
+
+    this.afterMap = new Map();
+    this.afterMap.beforePhase = beforePhase;
+    this.afterMap.afterPhase = afterPhase;
+
+    this.beforeMap.otherMap = this.afterMap;
+    this.afterMap.otherMap = this.beforeMap;
+
+    // Can be helpful while debugging
+    this.beforeMap.varName = `${beforePhase}Before${afterPhase}Map`;
+    this.afterMap.varName = `${afterPhase}After${beforePhase}Map`;
+
     this.beforePhase = beforePhase;
     this.afterPhase = afterPhase;
-    this.varName = varName; // useful while in development
   }
 }
 
