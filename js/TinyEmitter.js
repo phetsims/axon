@@ -63,7 +63,7 @@ class TinyEmitter {
 
       const emitContext = {
         index: 0
-        // listenerArray: undefined // assigned if a mutation is made during emit
+        // listenerArray: [] // {Array<function>|undefined} assigned if a mutation is made during emit
       };
       this.emitContexts.push( emitContext );
 
