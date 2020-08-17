@@ -228,6 +228,14 @@ class AxonArray extends Array {
     }
     return result;
   }
+
+  // @public
+  dispose() {
+    this.elementAddedEmitter.dispose();
+    this.elementRemovedEmitter.dispose();
+    this.lengthProperty.dispose();
+    this.axonArrayState.dispose();
+  }
 }
 
 axon.register( 'AxonArray', AxonArray );
