@@ -13,21 +13,23 @@
  * array[i]=...
  *
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
- * state for the AxonArray. Instead, please use setLengthAndNotify.
+ * state for the AxonArray. Instead, please use setLengthAndNotify() or clear()
  *
  * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node. We don't need
- * any of the methods from ObservableArrayIO (they are handled by children) and we don't need any state from
- * ObservableArray (those cases should use PhetioGroup).
+ * any of the methods from ObservableArrayIO (they are handled by children) and state is managed by a private
+ * "implementation-detail" component called AxonArrayState
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import axon from './axon.js';
+import AxonArrayState from './AxonArrayState.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
-import ValidatorDef from './ValidatorDef.js';
 
 class AxonArray extends Array {
 
@@ -48,30 +50,34 @@ class AxonArray extends Array {
       assert && assert( !options.hasOwnProperty( 'elements' ), 'options.elements and options.length are mutually exclusive' );
     }
 
+    // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
+    const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
+
     options = merge( {
       length: 0,
       elements: [],
       tandem: Tandem.OPTIONAL,
-      elementOptions: {
-        // Supports validator keys, including phetioType (for instrumented instances)
-      }
+      phetioElementType: ObjectIO,
+
+      // The elementAddedEmitter and elementRemoveEmitter use this validator to check the validity ef elements,
+      // Supports validator keys, like valueType, isValidValue, etc.  But we gracefully support untyped elements
+      validator: { isValidValue: () => true }
     }, options );
 
-    // Gracefully support untyped elements
-    if ( !ValidatorDef.isValidValidator( options.elementOptions ) ) {
-      options.elementOptions.isValidValue = () => true;
-    }
-
     // @public - notifies when an element has been added
+    const parameterOptions = merge( { name: 'value' }, options.validator );
+    if ( isPhetioElementTypeProvided ) {
+      parameterOptions.phetioType = options.phetioElementType;
+    }
     this.elementAddedEmitter = new Emitter( {
       tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
-      parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
+      parameters: [ parameterOptions ]
     } );
 
     // @public - notifies when an element has been removed
     this.elementRemovedEmitter = new Emitter( {
       tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
-      parameters: [ merge( { name: 'value' }, options.elementOptions ) ]
+      parameters: [ parameterOptions ]
     } );
 
     // @public (read-only) observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
@@ -88,6 +94,52 @@ class AxonArray extends Array {
     if ( options.elements.length > 0 ) {
       AxonArray.prototype.push.apply( this, options.elements );
     }
+
+    // @private - for managing state in phet-io
+    // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
+    this.axonArrayState = new AxonArrayState( this, options );
+
+    // @public (AxonArrayState,AxonArrayStateIO)
+    this.phetioElementType = options.phetioElementType;
+  }
+
+  /**
+   * Remove all elements from the array, this should be used instead of .length = 0 because that doesn't notify listeners
+   * @public
+   */
+  clear() {
+    this.setLengthAndNotify( 0 );
+  }
+
+  /**
+   * Remove the first occurrence of the specified element, if any.  This is provided for compatibility with ObservableArray.
+   * TODO: Should this be deprecated and eliminated?
+   * @param {Object} element
+   * @public
+   */
+  remove( element ) {
+    arrayRemove( this, element );
+  }
+
+  /**
+   * Gets the element at the specified index.  This is provided for compatibility with ObservableArray.
+   * TODO: Should this be deprecated and eliminated?
+   * @param {number} i
+   * @returns {Object}
+   * @public
+   */
+  get( i ) {
+    return this[ i ];
+  }
+
+  /**
+   * Adds all of the specified elements.  This is provided for compatibility with ObservableArray.
+   * TODO: Should this be deprecated and eliminated?
+   * @param {Object[]} elements
+   * @public
+   */
+  addAll( elements ) {
+    elements.forEach( e => this.push( e ) );
   }
 
   /**

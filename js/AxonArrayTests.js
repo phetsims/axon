@@ -185,7 +185,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   // valid element types should succeed
   const a4 = new AxonArray( {
     elements: [ 'a', 'b' ],
-    elementOptions: {
+    validator: {
       valueType: 'string'
     }
   } );
@@ -194,7 +194,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   // invalid element types should fail
   window.assert && assert.throws( () => new AxonArray( {
     elements: [ 'a', 'b' ],
-    elementOptions: {
+    validator: {
       valueType: 'number'
     }
   } ), 'should fail for invalid element types' );
