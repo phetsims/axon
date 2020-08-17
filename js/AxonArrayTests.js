@@ -158,6 +158,22 @@ QUnit.test( 'Test that length is correct in emitter callbacks after push', asser
   a.push( 'hello' );
 } );
 
+QUnit.test( 'Test return types', assert => {
+
+  assert.ok( true );
+  const a = new AxonArray();
+  // a.elementAddedEmitter.addListener( element => {
+  //   assert.equal( a.length, 1 );
+  //   assert.equal( a.lengthProperty.value, 1 );
+  //   assert.equal( element, 'hello' );
+  // } );
+  // a.push( 'hello' );
+
+  const x = a.slice();
+  x.unshift( 7 );
+  assert.ok( true, 'make sure it is safe to unshift on a sliced AxonArray' );
+} );
+
 QUnit.test( 'Test constructor arguments', assert => {
 
   const a1 = new AxonArray( {

@@ -171,9 +171,13 @@ class AxonArray extends Array {
   // @public
   push() {
     const result = Array.prototype.push.apply( this, arguments );
-    this.lengthProperty.value = this.length;
-    for ( let i = 0; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+
+    // Gracefully support values created by axonArray.slice(), etc.
+    if ( this.lengthProperty ) {
+      this.lengthProperty.value = this.length;
+      for ( let i = 0; i < arguments.length; i++ ) {
+        this.elementAddedEmitter.emit( arguments[ i ] );
+      }
     }
     return result;
   }
@@ -194,8 +198,12 @@ class AxonArray extends Array {
     // Supports notifying for [...,undefined]
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.pop.apply( this, arguments );
-    this.lengthProperty.value = this.length;
-    hasElement && this.elementRemovedEmitter.emit( removedElement );
+
+    // Gracefully support values created by axonArray.slice(), etc.
+    if ( this.lengthProperty ) {
+      this.lengthProperty.value = this.length;
+      hasElement && this.elementRemovedEmitter.emit( removedElement );
+    }
     return removedElement;
   }
 
@@ -203,28 +211,40 @@ class AxonArray extends Array {
   shift() {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.shift.apply( this, arguments );
-    this.lengthProperty.value = this.length;
-    hasElement && this.elementRemovedEmitter.emit( removedElement );
+
+    // Gracefully support values created by axonArray.slice(), etc.
+    if ( this.lengthProperty ) {
+      this.lengthProperty.value = this.length;
+      hasElement && this.elementRemovedEmitter.emit( removedElement );
+    }
     return removedElement;
   }
 
   // @public
   splice() {
     const deletedElements = Array.prototype.splice.apply( this, arguments );
-    this.lengthProperty.value = this.length;
-    for ( let i = 2; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+
+    // Gracefully support values created by axonArray.slice(), etc.
+    if ( this.lengthProperty ) {
+      this.lengthProperty.value = this.length;
+      for ( let i = 2; i < arguments.length; i++ ) {
+        this.elementAddedEmitter.emit( arguments[ i ] );
+      }
+      deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     }
-    deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     return deletedElements;
   }
 
   // @public
   unshift() {
     const result = Array.prototype.unshift.apply( this, arguments );
-    this.lengthProperty.value = this.length;
-    for ( let i = 0; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+
+    // Gracefully support values created by axonArray.slice(), etc.
+    if ( this.lengthProperty ) {
+      this.lengthProperty.value = this.length;
+      for ( let i = 0; i < arguments.length; i++ ) {
+        this.elementAddedEmitter.emit( arguments[ i ] );
+      }
     }
     return result;
   }
