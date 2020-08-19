@@ -403,7 +403,7 @@ class OrderDependencyMapPair {
     // @public (read-only) - fields for mass consumption
     this.beforeMap = new Map();
     this.beforeMap.beforePhase = beforePhase;
-    this.beforeMap.afterPhase = beforePhase;
+    this.beforeMap.afterPhase = afterPhase;
 
     this.afterMap = new Map();
     this.afterMap.beforePhase = beforePhase;
