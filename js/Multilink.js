@@ -16,60 +16,56 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import inherit from '../../phet-core/js/inherit.js';
 import axon from './axon.js';
 
-/**
- * @param {Array.<Property|TinyProperty>} dependencies
- * @param {function} callback function that expects args in the same order as dependencies
- * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
- * @constructor
- */
-function Multilink( dependencies, callback, lazy ) {
+class Multilink {
 
-  this.dependencies = dependencies; // @private
+  /**
+   * @param {Array.<Property|TinyProperty>} dependencies
+   * @param {function} callback function that expects args in the same order as dependencies
+   * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
+   */
+  constructor( dependencies, callback, lazy ) {
 
-  assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
+    this.dependencies = dependencies; // @private
 
-  const self = this;
+    assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-  // @private Keep track of listeners so they can be detached
-  this.dependencyListeners = [];
+    const self = this;
 
-  // When a dependency value changes, update the list of dependencies and call back to the callback
-  dependencies.forEach( function( dependency, i ) {
-    const listener = function( value ) {
+    // @private Keep track of listeners so they can be detached
+    this.dependencyListeners = [];
 
-      // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
-      if ( !self.isDisposed ) {
-        callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
-      }
-    };
-    self.dependencyListeners.push( listener );
-    dependency.lazyLink( listener, {
+    // When a dependency value changes, update the list of dependencies and call back to the callback
+    dependencies.forEach( function( dependency, i ) {
+      const listener = function( value ) {
 
-      // All other dependencies should undefer (taking deferred value) before this dependency notifies. This is
-      // crucial to prevent this Multilink callback from firing with intermediate (buggy) states before all dependencies
-      // have taken their final value.
-      phetioDependencies: _.without( dependencies, dependency )
+        // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
+        if ( !self.isDisposed ) {
+          callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+        }
+      };
+      self.dependencyListeners.push( listener );
+      dependency.lazyLink( listener, {
+
+        // All other dependencies should undefer (taking deferred value) before this dependency notifies. This is
+        // crucial to prevent this Multilink callback from firing with intermediate (buggy) states before all dependencies
+        // have taken their final value.
+        phetioDependencies: _.without( dependencies, dependency )
+      } );
     } );
-  } );
 
-  // Send initial call back but only if we are non-lazy
-  if ( !lazy ) {
-    callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+    // Send initial call back but only if we are non-lazy
+    if ( !lazy ) {
+      callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+    }
+
+    // @private - whether the Multilink has been disposed
+    this.isDisposed = false;
   }
 
-  // @private - whether the Multilink has been disposed
-  this.isDisposed = false;
-}
-
-axon.register( 'Multilink', Multilink );
-
-inherit( Object, Multilink, {
-
   // @public
-  dispose: function() {
+  dispose() {
     assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
 
     // Unlink from dependent properties
@@ -83,6 +79,8 @@ inherit( Object, Multilink, {
     this.dependencyListeners = null;
     this.isDisposed = true;
   }
-} );
+}
+
+axon.register( 'Multilink', Multilink );
 
 export default Multilink;
