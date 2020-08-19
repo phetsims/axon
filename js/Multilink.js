@@ -18,6 +18,9 @@
 
 import axon from './axon.js';
 
+// constants
+const GET_PROPERTY_VALUE = property => property.get();
+
 class Multilink {
 
   /**
@@ -31,21 +34,19 @@ class Multilink {
 
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    const self = this;
-
     // @private Keep track of listeners so they can be detached
     this.dependencyListeners = [];
 
     // When a dependency value changes, update the list of dependencies and call back to the callback
-    dependencies.forEach( function( dependency, i ) {
-      const listener = function( value ) {
+    dependencies.forEach( dependency => {
+      const listener = () => {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
-        if ( !self.isDisposed ) {
-          callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+        if ( !this.isDisposed ) {
+          callback.apply( null, dependencies.map( GET_PROPERTY_VALUE ) );
         }
       };
-      self.dependencyListeners.push( listener );
+      this.dependencyListeners.push( listener );
       dependency.lazyLink( listener, {
 
         // All other dependencies should undefer (taking deferred value) before this dependency notifies. This is
@@ -57,7 +58,7 @@ class Multilink {
 
     // Send initial call back but only if we are non-lazy
     if ( !lazy ) {
-      callback.apply( null, dependencies.map( function( property ) {return property.get();} ) );
+      callback.apply( null, dependencies.map( GET_PROPERTY_VALUE ) );
     }
 
     // @private - whether the Multilink has been disposed
