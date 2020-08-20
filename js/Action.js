@@ -192,7 +192,7 @@ class Action extends PhetioObject {
       return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
     };
 
-    return currentPhetioDocumentation + ( parameters.length === 0 ? ' No arguments.' : ' The arguments are:<br/>' +
+    return currentPhetioDocumentation + ( parameters.length === 0 ? '<br>No parameters.' : '<br>The parameters are:<br/>' +
            '<ol>' + parameters.map( paramToDocString ).join( '<br/>' ) + '</ol>' );
   }
 
