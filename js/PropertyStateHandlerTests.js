@@ -126,7 +126,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       'axon.general.rangeProperty': {
         value: { min: 4, max: 8 }
       }
-    }, _.stubTrue );
+    }, Tandem.ROOT );
 
     rangeProperty.dispose();
     numberProperty.dispose();
