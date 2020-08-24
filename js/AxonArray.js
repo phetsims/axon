@@ -33,16 +33,13 @@ import NumberProperty from './NumberProperty.js';
 
 class AxonArray extends Array {
 
+  // Overwrite species to the parent Array constructor, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/species
+  static get [ Symbol.species ]() { return Array; } // eslint-disable-line
+
   /**
    * @param {Object|number} [options] - {number} supports construction via splice(), which invokes the sub-constructor
    */
   constructor( options ) {
-
-    // Support construction via Array.prototype.splice.apply(), etc., which invoke the sub-constructor
-    if ( typeof options === 'number' ) {
-      super( options );
-      return;
-    }
 
     super();
 
@@ -173,11 +170,9 @@ class AxonArray extends Array {
     const result = Array.prototype.push.apply( this, arguments );
 
     // Gracefully support values created by axonArray.slice(), etc.
-    if ( this.lengthProperty ) {
-      this.lengthProperty.value = this.length;
-      for ( let i = 0; i < arguments.length; i++ ) {
-        this.elementAddedEmitter.emit( arguments[ i ] );
-      }
+    this.lengthProperty.value = this.length;
+    for ( let i = 0; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
     return result;
   }
@@ -200,10 +195,8 @@ class AxonArray extends Array {
     const removedElement = Array.prototype.pop.apply( this, arguments );
 
     // Gracefully support values created by axonArray.slice(), etc.
-    if ( this.lengthProperty ) {
-      this.lengthProperty.value = this.length;
-      hasElement && this.elementRemovedEmitter.emit( removedElement );
-    }
+    this.lengthProperty.value = this.length;
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
   }
 
@@ -213,10 +206,8 @@ class AxonArray extends Array {
     const removedElement = Array.prototype.shift.apply( this, arguments );
 
     // Gracefully support values created by axonArray.slice(), etc.
-    if ( this.lengthProperty ) {
-      this.lengthProperty.value = this.length;
-      hasElement && this.elementRemovedEmitter.emit( removedElement );
-    }
+    this.lengthProperty.value = this.length;
+    hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
   }
 
@@ -225,13 +216,11 @@ class AxonArray extends Array {
     const deletedElements = Array.prototype.splice.apply( this, arguments );
 
     // Gracefully support values created by axonArray.slice(), etc.
-    if ( this.lengthProperty ) {
-      this.lengthProperty.value = this.length;
-      for ( let i = 2; i < arguments.length; i++ ) {
-        this.elementAddedEmitter.emit( arguments[ i ] );
-      }
-      deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
+    this.lengthProperty.value = this.length;
+    for ( let i = 2; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
+    deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     return deletedElements;
   }
 
@@ -240,11 +229,9 @@ class AxonArray extends Array {
     const result = Array.prototype.unshift.apply( this, arguments );
 
     // Gracefully support values created by axonArray.slice(), etc.
-    if ( this.lengthProperty ) {
-      this.lengthProperty.value = this.length;
-      for ( let i = 0; i < arguments.length; i++ ) {
-        this.elementAddedEmitter.emit( arguments[ i ] );
-      }
+    this.lengthProperty.value = this.length;
+    for ( let i = 0; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
     }
     return result;
   }
