@@ -168,8 +168,6 @@ class AxonArray extends Array {
   // @public
   push() {
     const result = Array.prototype.push.apply( this, arguments );
-
-    // Gracefully support values created by axonArray.slice(), etc.
     this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
@@ -193,8 +191,6 @@ class AxonArray extends Array {
     // Supports notifying for [...,undefined]
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.pop.apply( this, arguments );
-
-    // Gracefully support values created by axonArray.slice(), etc.
     this.lengthProperty.value = this.length;
     hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
@@ -204,8 +200,6 @@ class AxonArray extends Array {
   shift() {
     const hasElement = this.length > 0;
     const removedElement = Array.prototype.shift.apply( this, arguments );
-
-    // Gracefully support values created by axonArray.slice(), etc.
     this.lengthProperty.value = this.length;
     hasElement && this.elementRemovedEmitter.emit( removedElement );
     return removedElement;
@@ -214,8 +208,6 @@ class AxonArray extends Array {
   // @public
   splice() {
     const deletedElements = Array.prototype.splice.apply( this, arguments );
-
-    // Gracefully support values created by axonArray.slice(), etc.
     this.lengthProperty.value = this.length;
     for ( let i = 2; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
@@ -227,8 +219,6 @@ class AxonArray extends Array {
   // @public
   unshift() {
     const result = Array.prototype.unshift.apply( this, arguments );
-
-    // Gracefully support values created by axonArray.slice(), etc.
     this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
       this.elementAddedEmitter.emit( arguments[ i ] );
