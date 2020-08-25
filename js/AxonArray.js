@@ -138,6 +138,31 @@ class AxonArray extends Array {
     elements.forEach( e => this.push( e ) );
   }
 
+  // @public - TODO: Should this be deprecated and eliminated?
+  addItemAddedListener( listener ) {
+    this.elementAddedEmitter.addListener( listener );
+  }
+
+  // @public - TODO: Should this be deprecated and eliminated?
+  addItemRemovedListener( listener ) {
+    this.elementRemovedEmitter.addListener( listener );
+  }
+
+  // @public - TODO: Should this be deprecated and eliminated?
+  removeItemAddedListener( listener ) {
+    this.elementAddedEmitter.removeListener( listener );
+  }
+
+  // @public - TODO: Should this be deprecated and eliminated?
+  removeItemRemovedListener( listener ) {
+    this.elementRemovedEmitter.removeListener( listener );
+  }
+
+  // @public - TODO: Should this be deprecated and eliminated?
+  add( element ) {
+    this.push( element );
+  }
+
   /**
    * Array.length is not supported. The Array.length getter cannot be overridden, so we have no way to prevent its use.
    * Using it this will lead to an inconsistent state for the AxonArray. Instead, please use setLengthAndNotify.
