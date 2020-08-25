@@ -15,19 +15,18 @@
  * The Array.length prototype getter/property cannot be overridden and hence using this will lead to an inconsistent
  * state for the AxonArray. Instead, please use setLengthAndNotify() or clear()
  *
- * There is no need to extend or mix-in PhetioObject since this is an uninstrumented intermediate node. We don't need
- * any of the methods from ObservableArrayIO (they are handled by children) and state is managed by a private
- * "implementation-detail" component called AxonArrayState
+ * PhET-iO support is provided by composition via a private inner class called called AxonArrayPhetioObject.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
+import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import axon from './axon.js';
-import AxonArrayState from './AxonArrayState.js';
+import AxonArrayIO from './AxonArrayIO.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 
@@ -94,9 +93,9 @@ class AxonArray extends Array {
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    this.axonArrayState = new AxonArrayState( this, options );
+    this.axonArrayPhetioObject = new AxonArrayPhetioObject( this, options );
 
-    // @public (AxonArrayState,AxonArrayStateIO)
+    // @public (AxonArrayPhetioObject,AxonArrayStateIO)
     this.phetioElementType = options.phetioElementType;
   }
 
@@ -227,13 +226,53 @@ class AxonArray extends Array {
   }
 
   // @public
+  toStateObject() {
+    return {
+      array: this.map( item => this.phetioElementType.toStateObject( item ) )
+    };
+  }
+
+  // @public
+  applyState( stateObject ) {
+    this.clear();
+    const elements = stateObject.array.map( paramStateObject => this.phetioElementType.fromStateObject( paramStateObject ) );
+    this.addAll( elements );
+  }
+
+  // @public
   dispose() {
     this.elementAddedEmitter.dispose();
     this.elementRemovedEmitter.dispose();
     this.lengthProperty.dispose();
-    this.axonArrayState.dispose();
+    this.axonArrayPhetioObject.dispose();
   }
 }
+
+/**
+ * Manages state save/load for AxonArray.  AxonArray extends Array and hence cannot be instrumented.  This type
+ * provides that functionality.
+ */
+class AxonArrayPhetioObject extends PhetioObject {
+
+  /**
+   * @param {AxonArray} axonArray
+   * @param {Object} [options] - same as the options to the parent AxonArray
+   */
+  constructor( axonArray, options ) {
+
+    options = merge( {
+      phetioType: AxonArrayIO
+    }, options );
+
+    super( options );
+
+    // @private
+    this.axonArray = axonArray;
+  }
+}
+
+// @public (read-only) (AxonArrayIO)
+AxonArray.AxonArrayPhetioObject = AxonArrayPhetioObject;
 
 axon.register( 'AxonArray', AxonArray );
 export default AxonArray;
