@@ -55,8 +55,8 @@ class DerivedProperty extends Property {
     // @private
     this.derivation = derivation;
 
-    // @private Keep track of listeners so they can be detached
-    this.dependencyListeners = [];
+    // @private {Map<Property,function>} Keep track of listeners so they can be detached
+    this.dependencyListeners = new Map();
 
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -73,7 +73,7 @@ class DerivedProperty extends Property {
             super.set( derivation.apply( null, dependencies.map( property => property.get() ) ) );
           }
         };
-        this.dependencyListeners.push( listener );
+        this.dependencyListeners.set( dependency, listener );
         dependency.lazyLink( listener );
 
         if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
@@ -93,11 +93,14 @@ class DerivedProperty extends Property {
     // Unlink from dependent Properties
     for ( let i = 0; i < this.dependencies.length; i++ ) {
       const dependency = this.dependencies[ i ];
-      if ( !dependency.isDisposed ) {
-        dependency.unlink( this.dependencyListeners[ i ] );
+      const listener = this.dependencyListeners.get( dependency );
+
+      if ( dependency.hasListener( listener ) ) {
+        dependency.unlink( listener );
       }
     }
     this.dependencies = null;
+    this.dependencyListeners.clear();
     this.dependencyListeners = null;
 
     super.dispose( this );

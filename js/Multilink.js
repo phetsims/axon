@@ -34,8 +34,8 @@ class Multilink {
 
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    // @private Keep track of listeners so they can be detached
-    this.dependencyListeners = [];
+    // @private {Map<Property,function>} Keep track of listeners so they can be detached
+    this.dependencyListeners = new Map();
 
     // When a dependency value changes, update the list of dependencies and call back to the callback
     dependencies.forEach( dependency => {
@@ -46,7 +46,7 @@ class Multilink {
           callback.apply( null, dependencies.map( GET_PROPERTY_VALUE ) );
         }
       };
-      this.dependencyListeners.push( listener );
+      this.dependencyListeners.set( dependency, listener );
       dependency.lazyLink( listener, {
 
         // All other dependencies should undefer (taking deferred value) before this dependency notifies. This is
@@ -72,11 +72,13 @@ class Multilink {
     // Unlink from dependent properties
     for ( let i = 0; i < this.dependencies.length; i++ ) {
       const dependency = this.dependencies[ i ];
-      if ( !dependency.isDisposed ) {
-        dependency.unlink( this.dependencyListeners[ i ] );
+      const listener = this.dependencyListeners.get( dependency );
+      if ( dependency.hasListener( listener ) ) {
+        dependency.unlink( listener );
       }
     }
     this.dependencies = null;
+    this.dependencyListeners.clear();
     this.dependencyListeners = null;
     this.isDisposed = true;
   }

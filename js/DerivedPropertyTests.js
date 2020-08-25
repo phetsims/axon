@@ -38,7 +38,7 @@ QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
   assert.equal( widthProperty.changedEmitter.getListenerCount(), 1 + startingWidthListenerCount );
   assert.equal( heightProperty.changedEmitter.getListenerCount(), 1 + startingHeightListenerCount );
   assert.equal( areaProperty.dependencies.length, 2 );
-  assert.equal( areaProperty.dependencyListeners.length, 2 );
+  assert.equal( areaProperty.dependencyListeners.size, 2 );
 
   // Unlink the listener
   areaProperty.unlink( listener );
@@ -136,7 +136,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const parentTandem = Tandem.GENERAL;
 
     const originalOrderDependencyLength = propertyStateHandlerSingleton.getNumberOfOrderDependencies();
-    const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies()  - originalOrderDependencyLength;
+    const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies() - originalOrderDependencyLength;
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
