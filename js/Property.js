@@ -359,7 +359,7 @@ class Property extends PhetioObject {
       const dependency = dependencies[ i ];
 
       // only if running in PhET-iO brand and both Properties are instrumenting
-      if ( Tandem.PHET_IO_ENABLED && dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+      if ( dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
@@ -483,7 +483,7 @@ class Property extends PhetioObject {
     this.unlinkAll();
 
     // unregister any order dependencies for this Property for PhET-iO state
-    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
+    if ( this.isPhetioInstrumented() ) {
       propertyStateHandlerSingleton.unregisterOrderDependenciesForProperty( this );
     }
 

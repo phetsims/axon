@@ -132,14 +132,16 @@ class PropertyStateHandler {
    * @param {PropertyStatePhase} afterPhase
    */
   registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
+    if ( Tandem.PHET_IO_ENABLED ) {
 
-    this.validatePropertyPhasePair( beforeProperty, beforePhase );
-    this.validatePropertyPhasePair( afterProperty, afterPhase );
-    assert && beforeProperty === afterProperty && assert( beforePhase !== afterPhase, 'cannot set same Property to same phase' );
+      this.validatePropertyPhasePair( beforeProperty, beforePhase );
+      this.validatePropertyPhasePair( afterProperty, afterPhase );
+      assert && beforeProperty === afterProperty && assert( beforePhase !== afterPhase, 'cannot set same Property to same phase' );
 
-    const mapPair = this.getMapPairFromPhases( beforePhase, afterPhase );
+      const mapPair = this.getMapPairFromPhases( beforePhase, afterPhase );
 
-    mapPair.addOrderDependency( beforeProperty.tandem.phetioID, afterProperty.tandem.phetioID );
+      mapPair.addOrderDependency( beforeProperty.tandem.phetioID, afterProperty.tandem.phetioID );
+    }
   }
 
   /**
@@ -158,38 +160,40 @@ class PropertyStateHandler {
    * @public
    */
   unregisterOrderDependenciesForProperty( property ) {
-    this.validateInstrumentedProperty( property );
+    if ( Tandem.PHET_IO_ENABLED ) {
+      this.validateInstrumentedProperty( property );
 
-    // Be graceful if given a Property that is not registered in an order dependency.
-    if ( this.propertyInAnOrderDependency( property ) ) {
-      assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
+      // Be graceful if given a Property that is not registered in an order dependency.
+      if ( this.propertyInAnOrderDependency( property ) ) {
+        assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
 
-      const phetioIDToRemove = property.tandem.phetioID;
+        const phetioIDToRemove = property.tandem.phetioID;
 
-      this.mapPairs.forEach( mapPair => {
-        [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-          if ( map.has( phetioIDToRemove ) ) {
-            map.get( phetioIDToRemove ).forEach( phetioID => {
-              const setOfAfterMapIDs = map.otherMap.get( phetioID );
-              setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
+        this.mapPairs.forEach( mapPair => {
+          [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
+            if ( map.has( phetioIDToRemove ) ) {
+              map.get( phetioIDToRemove ).forEach( phetioID => {
+                const setOfAfterMapIDs = map.otherMap.get( phetioID );
+                setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
 
-              // Clear out empty entries to avoid having lots of empty Sets sitting around
-              setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
-            } );
-          }
-          map.delete( phetioIDToRemove );
+                // Clear out empty entries to avoid having lots of empty Sets sitting around
+                setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
+              } );
+            }
+            map.delete( phetioIDToRemove );
+          } );
         } );
-      } );
 
-      // Look through every dependency and make sure the phetioID to remove has been completely removed.
-      assertSlow && this.mapPairs.forEach( mapPair => {
-        [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-          for ( const [ key, valuePhetioIDs ] of map ) {
-            assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
-            assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
-          }
+        // Look through every dependency and make sure the phetioID to remove has been completely removed.
+        assertSlow && this.mapPairs.forEach( mapPair => {
+          [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
+            for ( const [ key, valuePhetioIDs ] of map ) {
+              assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
+              assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
+            }
+          } );
         } );
-      } );
+      }
     }
   }
 
