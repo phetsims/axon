@@ -111,12 +111,9 @@ class PropertyStateHandler {
    * @returns {OrderDependencyMapPair}
    */
   getMapPairFromPhases( beforePhase, afterPhase ) {
-    for ( let i = 0; i < this.mapPairs.length; i++ ) {
-      const mapPair = this.mapPairs[ i ];
-      if ( beforePhase === mapPair.beforePhase && afterPhase === mapPair.afterPhase ) {
-        return mapPair;
-      }
-    }
+    const matchedPairs = this.mapPairs.filter( mapPair => beforePhase === mapPair.beforePhase && afterPhase === mapPair.afterPhase );
+    assert && assert( matchedPairs.length === 1, 'one and only one map should match the provided phases' );
+    return matchedPairs[ 0 ];
   }
 
   /**
@@ -187,10 +184,10 @@ class PropertyStateHandler {
         // Look through every dependency and make sure the phetioID to remove has been completely removed.
         assertSlow && this.mapPairs.forEach( mapPair => {
           [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-            for ( const [ key, valuePhetioIDs ] of map ) {
+            map.forEach( ( valuePhetioIDs, key ) => {
               assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
               assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
-            }
+            } );
           } );
         } );
       }
@@ -284,9 +281,7 @@ class PropertyStateHandler {
   getNumberOfOrderDependencies() {
     let count = 0;
     this.mapPairs.forEach( mapPair => {
-      for ( const [ , valueSet ] of mapPair.afterMap ) { // either map would work here.
-        count += valueSet.size;
-      }
+      mapPair.afterMap.forEach( valueSet => { count += valueSet.size; } );
     } );
     return count;
   }
@@ -415,10 +410,6 @@ class OrderDependencyMapPair {
 
     this.beforeMap.otherMap = this.afterMap;
     this.afterMap.otherMap = this.beforeMap;
-
-    // Can be helpful while debugging
-    this.beforeMap.varName = `${beforePhase}Before${afterPhase}Map`;
-    this.afterMap.varName = `${afterPhase}After${beforePhase}Map`;
 
     this.beforePhase = beforePhase;
     this.afterPhase = afterPhase;
