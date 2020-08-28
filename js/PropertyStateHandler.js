@@ -164,32 +164,7 @@ class PropertyStateHandler {
       if ( this.propertyInAnOrderDependency( property ) ) {
         assert && assert( this.propertyInAnOrderDependency( property ), 'Property must be registered in an order dependency to be unregistered' );
 
-        const phetioIDToRemove = property.tandem.phetioID;
-
-        this.mapPairs.forEach( mapPair => {
-          [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-            if ( map.has( phetioIDToRemove ) ) {
-              map.get( phetioIDToRemove ).forEach( phetioID => {
-                const setOfAfterMapIDs = map.otherMap.get( phetioID );
-                setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
-
-                // Clear out empty entries to avoid having lots of empty Sets sitting around
-                setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
-              } );
-            }
-            map.delete( phetioIDToRemove );
-          } );
-        } );
-
-        // Look through every dependency and make sure the phetioID to remove has been completely removed.
-        assertSlow && this.mapPairs.forEach( mapPair => {
-          [ mapPair.beforeMap, mapPair.afterMap ].forEach( map => {
-            map.forEach( ( valuePhetioIDs, key ) => {
-              assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
-              assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
-            } );
-          } );
-        } );
+        this.mapPairs.forEach( mapPair => mapPair.unregisterOrderDependenciesForProperty( property ) );
       }
     }
   }
@@ -432,6 +407,36 @@ class OrderDependencyMapPair {
       this.afterMap.set( afterPhetioID, new Set() );
     }
     this.afterMap.get( afterPhetioID ).add( beforePhetioID );
+  }
+
+  /**
+   * Unregister all order dependencies for the provided Property
+   * @private
+   * @param {Property} property
+   */
+  unregisterOrderDependenciesForProperty( property ) {
+    const phetioIDToRemove = property.tandem.phetioID;
+
+    [ this.beforeMap, this.afterMap ].forEach( map => {
+      if ( map.has( phetioIDToRemove ) ) {
+        map.get( phetioIDToRemove ).forEach( phetioID => {
+          const setOfAfterMapIDs = map.otherMap.get( phetioID );
+          setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
+
+          // Clear out empty entries to avoid having lots of empty Sets sitting around
+          setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
+        } );
+      }
+      map.delete( phetioIDToRemove );
+    } );
+
+    // Look through every dependency and make sure the phetioID to remove has been completely removed.
+    assertSlow && [ this.beforeMap, this.afterMap ].forEach( map => {
+      map.forEach( ( valuePhetioIDs, key ) => {
+        assertSlow && assertSlow( key !== phetioIDToRemove, 'should not be a key' );
+        assertSlow && assertSlow( !valuePhetioIDs.has( phetioIDToRemove ), 'should not be in a value list' );
+      } );
+    } );
   }
 
   /**
