@@ -12,7 +12,8 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import ActionIO from './ActionIO.js';
+import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
@@ -58,7 +59,7 @@ class Action extends PhetioObject {
       // {function(new:function(new:ObjectIO),parameterTypes:function(new:ObjectIO))[]} - The non parameterized TypeIO, because
       // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a
       // parameterized ActionIO Type.
-      phetioOuterType: ActionIO,
+      phetioOuterType: Action.createActionIO,
       phetioState: false,
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
@@ -227,6 +228,36 @@ class Action extends PhetioObject {
     this.phetioEndEvent();
   }
 }
+
+const paramToTypeName = param => param.typeName;
+const cache = {};
+
+Action.createActionIO = parameterTypes => {
+
+  const key = parameterTypes.map( paramToTypeName ).join( ',' );
+
+  if ( !cache.hasOwnProperty( key ) ) {
+    cache[ key ] = PhetioObject.createIOType( Action, `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ObjectIO, {
+      documentation: 'Executes when an event occurs.',
+      events: [ 'emitted' ],
+      parameterTypes: parameterTypes,
+      methods: {
+        execute: {
+          returnType: VoidIO,
+          parameterTypes: parameterTypes,
+
+          // Match `Action.execute`'s dynamic number of arguments
+          implementation: function() {
+            this.phetioObject.execute.apply( this.phetioObject, arguments );
+          },
+          documentation: 'Executes the function the Action is wrapping.',
+          invocableForReadOnlyElements: false
+        }
+      }
+    } );
+  }
+  return cache[ key ];
+};
 
 axon.register( 'Action', Action );
 export default Action;

@@ -8,7 +8,7 @@
 
 import merge from '../../phet-core/js/merge.js';
 import PhetioObjectAPI from '../../tandem/js/PhetioObjectAPI.js';
-import ActionIO from './ActionIO.js';
+import Action from './Action.js';
 import axon from './axon.js';
 
 class ActionAPI extends PhetioObjectAPI {
@@ -18,7 +18,7 @@ class ActionAPI extends PhetioObjectAPI {
    */
   constructor( options ) {
     options = merge( {
-      phetioType: ActionIO( [] ),
+      phetioType: Action.createActionIO( [] ),
       phetioState: false
     }, options );
     super( options );

@@ -10,7 +10,6 @@ import Enumeration from '../../phet-core/js/Enumeration.js';
 import Node from '../../scenery/js/nodes/Node.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
-import EmitterIO from './EmitterIO.js';
 import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
 
@@ -134,7 +133,7 @@ QUnit.test( 'Test phetioType', assert => {
     isValidValue: v => v.startsWith( 'o' )
   } ), 'string not valid' );
 
-  assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: EmitterIO( [] ) } ), 'emitter is valid' );
+  assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: Emitter.createEmitterIO( [] ) } ), 'emitter is valid' );
 } );
 
 QUnit.test( 'Test arrayElementType', assert => {

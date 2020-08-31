@@ -10,9 +10,11 @@
  */
 
 import merge from '../../phet-core/js/merge.js';
+import PhetioObject from '../../tandem/js/PhetioObject.js';
+import FunctionIO from '../../tandem/js/types/FunctionIO.js';
+import VoidIO from '../../tandem/js/types/VoidIO.js';
 import Action from './Action.js';
 import axon from './axon.js';
-import EmitterIO from './EmitterIO.js';
 import TinyEmitter from './TinyEmitter.js';
 
 class Emitter extends Action {
@@ -23,7 +25,7 @@ class Emitter extends Action {
   constructor( options ) {
 
     options = merge( {
-      phetioOuterType: EmitterIO
+      phetioOuterType: Emitter.createEmitterIO
     }, options );
 
     super( function() {
@@ -122,6 +124,64 @@ class Emitter extends Action {
     return this.tinyEmitter.getListenerCount();
   }
 }
+
+
+const paramToTypeName = param => param.typeName;
+const cache = {};
+
+/**
+ * IO type for Emitter.
+ *
+ * Providing validators to instrumented Emitters:
+ * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).
+ * To provide validators, there are two methods. First, by default each TypeIO has its own
+ * validator that will be used. So specifying an argument object like `{ type: NumberIO }` will automatically use
+ * `NumberIO.validator` as the validator. This can be overridden with the `validator` key (second option), like
+ * { type: NumberIO, validator: { isValidValue: v=> typeof v === 'number' &&  v < 5 } }`
+ * NOTE: currently the implementation is either/or, if a validator is provided via the `validator` key, the validator
+ * from the `type` will be ignored.
+ * see https://github.com/phetsims/axon/issues/204 for more details.
+ *
+ * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
+ * @author Andrew Adare (PhET Interactive Simulations)
+ */
+Emitter.createEmitterIO = parameterTypes => {
+
+  const key = parameterTypes.map( paramToTypeName ).join( ',' );
+
+  if ( !cache.hasOwnProperty( key ) ) {
+
+    const ActionIOType = Action.createActionIO( parameterTypes );
+    cache[ key ] = PhetioObject.createIOType( Emitter, `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ActionIOType, {
+      documentation: 'Emits when an event occurs and calls added listeners.',
+      events: [ 'emitted' ],
+      parameterTypes: parameterTypes,
+      methods: {
+        addListener: {
+          returnType: VoidIO,
+          parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+          implementation: function( listener ) {
+            this.phetioObject.addListener( listener );
+          },
+          documentation: 'Adds a listener which will be called when the emitter emits.'
+        },
+        emit: {
+          returnType: VoidIO,
+          parameterTypes: parameterTypes,
+
+          // Match `Emitter.emit`'s dynamic number of arguments
+          implementation: function() {
+            this.phetioObject.emit.apply( this.phetioObject, arguments );
+          },
+          documentation: 'Emits a single event to all listeners.',
+          invocableForReadOnlyElements: false
+        }
+      }
+    } );
+  }
+  return cache[ key ];
+};
 
 axon.register( 'Emitter', Emitter );
 export default Emitter;

@@ -10,7 +10,6 @@ import merge from '../../phet-core/js/merge.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import Emitter from './Emitter.js';
-import EmitterIO from './EmitterIO.js';
 
 QUnit.module( 'EmitterIO' );
 
@@ -22,7 +21,7 @@ QUnit.test( 'test EmitterIO', assert => {
 
     assert.throws( () => {
       emitter = new Emitter( {
-        phetioType: EmitterIO( [] )
+        phetioType: Emitter.createEmitterIO( [] )
       } );
     }, 'cannot supply default EmitterIO type' );
 
@@ -42,7 +41,6 @@ QUnit.test( 'test EmitterIO', assert => {
   emitter.emit( 10 );
   window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string' );
   window.assert && assert.throws( () => emitter.emit( null ), 'cannot emit string' );
-
 
   const validator = { isValidValue: v => v < 3 };
   emitter = new Emitter( {
