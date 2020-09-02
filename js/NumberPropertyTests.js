@@ -195,6 +195,15 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
       rangePropertyOptions: { tandem: generalTandem.createTandem( 'rangePropertyfdsa' ) }
     } );
   }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
-
   p.dispose();
+
+  if ( Tandem.PHET_IO_ENABLED ) {
+    const uninstrumentedRangeProperty = new Property( new Range( 0, 1 ) );
+    window.assert && assert.throws( () => {
+      return new NumberProperty( 0, {
+        range: uninstrumentedRangeProperty,
+        tandem: generalTandem.createTandem( 'thisWillNotBeDisposedSoCreateALongNameThatWillNotBeReproducedProperty' )
+      } );
+    }, 'uninstrumented range cannot be passed to instrumented number property' );
+  }
 } );

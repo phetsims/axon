@@ -110,6 +110,8 @@ class NumberProperty extends Property {
       this.rangeProperty = options.range;
     }
     assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
+    assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
+      'rangeProperty must be instrument if NumberProperty is instrumented' );
 
     const rangePropertyObserver = range => {
       this.validateNumberProperty && this.validateNumberProperty( this.value );
