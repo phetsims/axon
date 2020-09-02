@@ -10,8 +10,8 @@
  */
 
 import merge from '../../phet-core/js/merge.js';
-import PhetioObject from '../../tandem/js/PhetioObject.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
+import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import Action from './Action.js';
 import axon from './axon.js';
@@ -153,7 +153,7 @@ Emitter.createEmitterIO = parameterTypes => {
   if ( !cache.hasOwnProperty( key ) ) {
 
     const ActionIOType = Action.createActionIO( parameterTypes );
-    cache[ key ] = PhetioObject.createIOType( Emitter, `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ActionIOType, {
+    cache[ key ] = ObjectIO.createIOType( Emitter, `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ActionIOType, {
       documentation: 'Emits when an event occurs and calls added listeners.',
       events: [ 'emitted' ],
       parameterTypes: parameterTypes,
