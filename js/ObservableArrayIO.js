@@ -1,7 +1,7 @@
 // Copyright 2017-2020, University of Colorado Boulder
 
 /**
- * IO type for ObservableArray.
+ * IO Type for ObservableArray.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -50,8 +50,8 @@ const create = parameterType => {
   assert && assert( parameterType.fromStateObject, 'only data type serialization supported for parameterType.' );
 
   /**
-   * Parametric IO type constructor.  Given an element type, this function returns an ObservableArray IO type.
-   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+   * Parametric IO Type constructor.  Given an element type, this function returns an ObservableArray IO Type.
+   * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    * @constructor

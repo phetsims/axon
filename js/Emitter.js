@@ -130,7 +130,7 @@ const paramToTypeName = param => param.typeName;
 const cache = {};
 
 /**
- * IO type for Emitter.
+ * IO Type for Emitter.
  *
  * Providing validators to instrumented Emitters:
  * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).

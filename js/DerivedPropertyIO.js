@@ -1,7 +1,7 @@
 // Copyright 2017-2020, University of Colorado Boulder
 
 /**
- * IO type for DerivedProperty.
+ * IO Type for DerivedProperty.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -25,9 +25,9 @@ const PROPERTY_IO_VALIDATOR = {
 const cache = {};
 
 /**
- * Parametric IO type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
- * IO type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
- * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * Parametric IO Type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
+ * IO Type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  */
