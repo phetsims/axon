@@ -237,7 +237,7 @@ Action.createActionIO = parameterTypes => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
 
   if ( !cache.hasOwnProperty( key ) ) {
-    cache[ key ] = ObjectIO.createIOType( Action, `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ObjectIO, {
+    cache[ key ] = ObjectIO.createIOType( Action, `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       documentation: 'Executes when an event occurs.',
       events: [ 'emitted' ],
       parameterTypes: parameterTypes,

@@ -153,7 +153,8 @@ Emitter.createEmitterIO = parameterTypes => {
   if ( !cache.hasOwnProperty( key ) ) {
 
     const ActionIOType = Action.createActionIO( parameterTypes );
-    cache[ key ] = ObjectIO.createIOType( Emitter, `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, ActionIOType, {
+    cache[ key ] = ObjectIO.createIOType( Emitter, `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+      parentIOType: ActionIOType,
       documentation: 'Emits when an event occurs and calls added listeners.',
       events: [ 'emitted' ],
       parameterTypes: parameterTypes,
