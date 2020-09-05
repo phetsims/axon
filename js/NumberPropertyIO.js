@@ -74,6 +74,7 @@ NumberPropertyIO.validator = {
   }
 };
 
+NumberPropertyIO.methodOrder = [];
 NumberPropertyIO.typeName = 'NumberPropertyIO';
 NumberPropertyIO.documentation = 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
                                  VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )';

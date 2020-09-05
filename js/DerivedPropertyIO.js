@@ -84,6 +84,7 @@ const create = parameterType => {
                                         'instances';
   DerivedPropertyIOImpl.validator = PROPERTY_IO_VALIDATOR;
   DerivedPropertyIOImpl.typeName = `DerivedPropertyIO<${parameterType.typeName}>`;
+  DerivedPropertyIOImpl.methodOrder = [];
 
   // @public - allow type checking for DerivedPropertyIOImpl
   DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
