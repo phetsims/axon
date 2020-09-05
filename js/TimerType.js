@@ -103,11 +103,5 @@ class TimerType extends TinyEmitter {
   }
 }
 
-// Register and return a singleton
-const timer = new TimerType( { parameters: [ { valueType: 'number' } ] } );
-
-// This timer always runs even if the sim is paused or not active
-// timer.animationFrameTimer = new TimerType( { parameters: [ { valueType: 'number' } ] } );
-
-axon.register( 'timer', timer );
-export default timer;
+axon.register( 'TimerType', TimerType );
+export default TimerType;
