@@ -1,7 +1,7 @@
 // Copyright 2019-2020, University of Colorado Boulder
 
 /**
- * Timer so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
+ * TimerType so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
  * Emitter interface for adding/removing listeners.
  *
  * Listeners added with addListener are called with a {number} dt argument (in seconds)
@@ -17,7 +17,7 @@
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-class Timer extends TinyEmitter {
+class TimerType extends TinyEmitter {
 
   /**
    * Adds a listener to be called back once after the specified time in milliseconds
@@ -104,6 +104,10 @@ class Timer extends TinyEmitter {
 }
 
 // Register and return a singleton
-const timer = new Timer( { parameters: [ { valueType: 'number' } ] } );
+const timer = new TimerType( { parameters: [ { valueType: 'number' } ] } );
+
+// This timer always runs even if the sim is paused or not active
+// timer.animationFrameTimer = new TimerType( { parameters: [ { valueType: 'number' } ] } );
+
 axon.register( 'timer', timer );
 export default timer;
