@@ -8,8 +8,10 @@
  * via timer.emit1 in Sim.stepSimulation.
  * Listeners added with setTimeout/setInterval are called with no arguments.
  *
- * Note: this is not specific to the running screen, it is global across all screens.
- * Moved from PHET_CORE on Feb 4, 2019
+ * This is not specific to the running screen, it is global across all screens.
+ *
+ * Named "TimerType.js" instead of Timer.js so that timer.js can be the singleton in the same directory, without
+ * casing conflicts.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
