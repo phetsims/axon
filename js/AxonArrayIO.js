@@ -1,9 +1,9 @@
 // Copyright 2020, University of Colorado Boulder
 
 import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import axon from './axon.js';
 import AxonArray from './AxonArray.js';
 import validate from './validate.js';
-import axon from './axon.js';
 
 /**
  * AxonArrayIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
@@ -34,7 +34,7 @@ class AxonArrayIO extends ObjectIO {
 AxonArrayIO.documentation = 'IO Type for AxonArray';
 AxonArrayIO.validator = { isValidValue: value => value instanceof AxonArray.AxonArrayPhetioObject };
 AxonArrayIO.typeName = 'AxonArrayIO';
-ObjectIO.validateSubtype( AxonArrayIO );
+ObjectIO.validateIOType( AxonArrayIO );
 
 axon.register( 'AxonArrayIO', AxonArrayIO );
 export default AxonArrayIO;

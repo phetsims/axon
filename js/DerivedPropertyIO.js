@@ -88,7 +88,7 @@ const create = parameterType => {
   // @public - allow type checking for DerivedPropertyIOImpl
   DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
 
-  ObjectIO.validateSubtype( DerivedPropertyIOImpl );
+  ObjectIO.validateIOType( DerivedPropertyIOImpl );
 
   return DerivedPropertyIOImpl;
 };

@@ -174,7 +174,7 @@ const create = parameterType => {
   PropertyIOImpl.events = [ 'changed' ];
   PropertyIOImpl.typeName = `PropertyIO<${parameterType.typeName}>`;
   PropertyIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( PropertyIOImpl );
+  ObjectIO.validateIOType( PropertyIOImpl );
 
   return PropertyIOImpl;
 };

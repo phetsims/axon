@@ -80,7 +80,7 @@ NumberPropertyIO.documentation = 'Extends PropertyIO to add values for the numer
 
 // we need this attribute to be defined even if the brand is not phetio, so we cannot rely on phetio inherit
 NumberPropertyIO.VALID_NUMBER_TYPES = VALID_NUMBER_TYPES;
-ObjectIO.validateSubtype( NumberPropertyIO );
+ObjectIO.validateIOType( NumberPropertyIO );
 
 axon.register( 'NumberPropertyIO', NumberPropertyIO );
 export default NumberPropertyIO;

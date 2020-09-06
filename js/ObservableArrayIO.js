@@ -133,7 +133,7 @@ const create = parameterType => {
   ObservableArrayIOImpl.events = [ 'itemAdded', 'itemRemoved' ];
   ObservableArrayIOImpl.typeName = `ObservableArrayIO<${parameterType.typeName}>`;
   ObservableArrayIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( ObservableArrayIOImpl );
+  ObjectIO.validateIOType( ObservableArrayIOImpl );
 
   return ObservableArrayIOImpl;
 };
