@@ -152,18 +152,15 @@ const create = parameterType => {
       documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
                      'without the current-value callback on registration. The listener takes two arguments, the new ' +
                      'value and the previous value.'
+    },
+    unlink: {
+      returnType: VoidIO,
+      parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
+      implementation: function( listener ) {
+        this.phetioObject.unlink( listener );
+      },
+      documentation: 'Removes a listener.'
     }
-    // TODO: get this working again, see https://github.com/phetsims/axon/issues/262
-    // ,
-    //
-    // unlink: {
-    //   returnType: VoidIO,
-    //   parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-    //   implementation: function( listener ) {
-    //     this.phetioObject.unlink( listener );
-    //   },
-    //   documentation: 'Removes a listener.'
-    // }
   };
 
   PropertyIOImpl.documentation = 'Observable values that send out notifications when the value changes. This differs from the ' +
