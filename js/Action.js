@@ -248,7 +248,7 @@ Action.createActionIO = parameterTypes => {
 
           // Match `Action.execute`'s dynamic number of arguments
           implementation: function() {
-            this.phetioObject.execute.apply( this.phetioObject, arguments );
+            this.execute.apply( this, arguments );
           },
           documentation: 'Executes the function the Action is wrapping.',
           invocableForReadOnlyElements: false

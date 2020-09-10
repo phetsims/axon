@@ -74,7 +74,7 @@ const create = parameterType => {
       returnType: VoidIO,
       parameterTypes: [ parameterType ],
       implementation: function( value ) {
-        return this.phetioObject.set( value );
+        return this.set( value );
       },
       documentation: 'Errors out when you try to set a derived property.',
       invocableForReadOnlyElements: false

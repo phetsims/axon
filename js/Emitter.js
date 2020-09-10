@@ -162,7 +162,7 @@ Emitter.createEmitterIO = parameterTypes => {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
           implementation: function( listener ) {
-            this.phetioObject.addListener( listener );
+            this.addListener( listener );
           },
           documentation: 'Adds a listener which will be called when the emitter emits.'
         },
@@ -172,7 +172,7 @@ Emitter.createEmitterIO = parameterTypes => {
 
           // Match `Emitter.emit`'s dynamic number of arguments
           implementation: function() {
-            this.phetioObject.emit.apply( this.phetioObject, arguments );
+            this.emit.apply( this, arguments );
           },
           documentation: 'Emits a single event to all listeners.',
           invocableForReadOnlyElements: false

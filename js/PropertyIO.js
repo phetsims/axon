@@ -112,7 +112,7 @@ const create = parameterType => {
       returnType: parameterType,
       parameterTypes: [],
       implementation: function() {
-        return this.phetioObject.get();
+        return this.get();
       },
       documentation: 'Gets the current value.'
     },
@@ -121,7 +121,7 @@ const create = parameterType => {
       returnType: VoidIO,
       parameterTypes: [ parameterType ],
       implementation: function( value ) {
-        this.phetioObject.set( value );
+        this.set( value );
       },
       documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
                      'notified with the new value.',
@@ -134,7 +134,7 @@ const create = parameterType => {
       // oldValue will start as "null" the first time called
       parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
       implementation: function( listener ) {
-        this.phetioObject.link( listener );
+        this.link( listener );
       },
       documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
                      'also called with the current value. The listener takes two arguments, the new value and the ' +
@@ -147,7 +147,7 @@ const create = parameterType => {
       // oldValue will start as "null" the first time called
       parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
       implementation: function( listener ) {
-        this.phetioObject.lazyLink( listener );
+        this.lazyLink( listener );
       },
       documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
                      'without the current-value callback on registration. The listener takes two arguments, the new ' +
@@ -157,7 +157,7 @@ const create = parameterType => {
       returnType: VoidIO,
       parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
       implementation: function( listener ) {
-        this.phetioObject.unlink( listener );
+        this.unlink( listener );
       },
       documentation: 'Removes a listener.'
     }

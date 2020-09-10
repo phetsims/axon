@@ -96,7 +96,7 @@ const create = parameterType => {
       returnType: VoidIO,
       parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
       implementation: function( listener ) {
-        this.phetioObject.addItemAddedListener( listener );
+        this.addItemAddedListener( listener );
       },
       documentation: 'Add a listener that is called when an item is added to the observable array.'
     },
@@ -110,7 +110,7 @@ const create = parameterType => {
       returnType: VoidIO,
       parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
       implementation: function( listener ) {
-        this.phetioObject.addItemRemovedListener( listener );
+        this.addItemRemovedListener( listener );
       },
       documentation: 'Add a listener that is called when an item is removed from the observable array.'
     },
@@ -122,7 +122,7 @@ const create = parameterType => {
       returnType: NumberIO,
       parameterTypes: [],
       implementation: function() {
-        return this.phetioObject.length;
+        return this.length;
       },
       documentation: 'Get the number of elements in the observable array'
     }
