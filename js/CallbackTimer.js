@@ -9,7 +9,7 @@
 
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
-import timer from './timer.js';
+import stepTimer from './stepTimer.js';
 
 class CallbackTimer {
 
@@ -49,9 +49,9 @@ class CallbackTimer {
   start() {
     if ( !this.isRunning() ) {
       this.fired = false;
-      this.delayID = timer.setTimeout( () => {
+      this.delayID = stepTimer.setTimeout( () => {
         this.delayID = null;
-        this.intervalID = timer.setInterval( () => this.fire(), this.interval );
+        this.intervalID = stepTimer.setInterval( () => this.fire(), this.interval );
 
         // fire after scheduling the intervalID, so that isRunning will be true for callbacks, see sun#216
         this.fire();
@@ -67,11 +67,11 @@ class CallbackTimer {
   stop( fire ) {
     if ( this.isRunning() ) {
       if ( this.delayID ) {
-        timer.clearTimeout( this.delayID );
+        stepTimer.clearTimeout( this.delayID );
         this.delayID = null;
       }
       if ( this.intervalID ) {
-        timer.clearInterval( this.intervalID );
+        stepTimer.clearInterval( this.intervalID );
         this.intervalID = null;
       }
       if ( fire && !this.fired ) {
