@@ -1,7 +1,7 @@
 // Copyright 2019-2020, University of Colorado Boulder
 
 /**
- * TimerType so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
+ * Timer so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
  * Emitter interface for adding/removing listeners.
  *
  * Listeners added with addListener are called with a {number} dt argument (in seconds)
@@ -10,16 +10,13 @@
  *
  * This is not specific to the running screen, it is global across all screens.
  *
- * Named "TimerType.js" instead of Timer.js so that timer.js can be the singleton in the same directory, without
- * casing conflicts.
- *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-class TimerType extends TinyEmitter {
+class Timer extends TinyEmitter {
 
   /**
    * Adds a listener to be called back once after the specified time in milliseconds
@@ -105,5 +102,5 @@ class TimerType extends TinyEmitter {
   }
 }
 
-axon.register( 'TimerType', TimerType );
-export default TimerType;
+axon.register( 'Timer', Timer );
+export default Timer;
