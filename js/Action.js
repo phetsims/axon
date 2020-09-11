@@ -237,24 +237,27 @@ Action.createActionIO = parameterTypes => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
 
   if ( !cache.hasOwnProperty( key ) ) {
-    cache[ key ] = ObjectIO.createIOType( Action, `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
-      documentation: 'Executes when an event occurs.',
-      events: [ 'emitted' ],
-      parameterTypes: parameterTypes,
-      methods: {
-        execute: {
-          returnType: VoidIO,
-          parameterTypes: parameterTypes,
 
-          // Match `Action.execute`'s dynamic number of arguments
-          implementation: function() {
-            this.execute.apply( this, arguments );
-          },
-          documentation: 'Executes the function the Action is wrapping.',
-          invocableForReadOnlyElements: false
-        }
+    class ActionIOImpl extends ObjectIO {}
+
+    ActionIOImpl.typeName = `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`;
+    ActionIOImpl.documentation = 'Executes when an event occurs.';
+    ActionIOImpl.events = [ 'emitted' ];
+    ActionIOImpl.parameterTypes = parameterTypes;
+    ActionIOImpl.methods = {
+      execute: {
+        returnType: VoidIO,
+        parameterTypes: parameterTypes,
+
+        // Match `Action.execute`'s dynamic number of arguments
+        implementation: function() {
+          this.execute.apply( this, arguments );
+        },
+        documentation: 'Executes the function the Action is wrapping.',
+        invocableForReadOnlyElements: false
       }
-    } );
+    };
+    cache[ key ] = ActionIOImpl;
   }
   return cache[ key ];
 };
