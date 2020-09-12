@@ -4,12 +4,6 @@
  * Timer so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
  * Emitter interface for adding/removing listeners.
  *
- * Listeners added with addListener are called with a {number} dt argument (in seconds)
- * via timer.emit1 in Sim.stepSimulation.
- * Listeners added with setTimeout/setInterval are called with no arguments.
- *
- * This is not specific to the running screen, it is global across all screens.
- *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
