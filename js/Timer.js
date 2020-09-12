@@ -97,7 +97,7 @@ class Timer extends TinyEmitter {
    * @public
    * @param {function()} listener
    */
-  runOnNextFrame( listener ) {
+  runOnNextTick( listener ) {
     this.setTimeout( listener, 0 );
   }
 }
