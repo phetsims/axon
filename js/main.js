@@ -8,6 +8,7 @@
  */
 
 import './Action.js';
+import './animationFrameTimer.js';
 import axon from './axon.js';
 import './BooleanProperty.js';
 import './CallbackTimer.js';
@@ -22,8 +23,9 @@ import './Property.js';
 import './PropertyStateHandler.js';
 import './propertyStateHandlerSingleton.js';
 import './PropertyStatePhase.js';
+import './stepTimer.js';
 import './StringProperty.js';
-import './timer.js';
+import './Timer.js';
 import './TinyEmitter.js';
 import './TinyForwardingProperty.js';
 import './TinyProperty.js';
