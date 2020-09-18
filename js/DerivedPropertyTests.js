@@ -9,7 +9,6 @@
 import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import DerivedProperty from './DerivedProperty.js';
-import DerivedPropertyIO from './DerivedPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
@@ -153,7 +152,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const derivedProperty = new DerivedProperty( [ firstProperty, secondProperty, thirdProperty ], () => 3, {
       tandem: parentTandem.createTandem( 'derivedProperty' ),
-      phetioType: DerivedPropertyIO( NumberIO )
+      phetioType: DerivedProperty.DerivedPropertyIO( NumberIO )
     } );
     assert.ok( getOrderDependencyLength() === 3, 'derivedProperty adds order dependency for each dependency' );
 
