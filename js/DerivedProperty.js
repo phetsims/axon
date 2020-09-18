@@ -29,7 +29,7 @@ class DerivedProperty extends Property {
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, options );
 
-    // TODO https://github.com/phetsims/tandem/issues/211 factor out or do better
+    // TODO: https://github.com/phetsims/tandem/issues/211 factor out or do better
     assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( 'DerivedProperty' ),
       'unsupported phetioType' );
 
