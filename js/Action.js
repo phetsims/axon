@@ -237,7 +237,7 @@ Action.createActionIO = parameterTypes => {
   if ( !cache.hasOwnProperty( key ) ) {
     cache[ key ] = new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Action,
-      documentation: 'Executes when an event occurs.',
+      documentation: 'Executes when an event occurs',
       events: [ 'emitted' ],
       parameterTypes: parameterTypes,
       methods: {

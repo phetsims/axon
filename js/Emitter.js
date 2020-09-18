@@ -151,7 +151,6 @@ Emitter.createEmitterIO = parameterTypes => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
 
   if ( !cache.hasOwnProperty( key ) ) {
-
     cache[ key ] = new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Emitter,
       supertype: Action.createActionIO( parameterTypes ),

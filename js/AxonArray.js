@@ -301,6 +301,7 @@ AxonArray.AxonArrayPhetioObject = AxonArrayPhetioObject;
 /**
  * AxonArrayIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
  * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
+ * TODO: This may need to become a parametric type when we add methods
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */

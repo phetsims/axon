@@ -23,7 +23,7 @@ const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   supertype: PropertyIOImpl,
 
-  // REVIEW: https://github.com/phetsims/tandem/issues/211 should this inherit, so you don't have to specify it in the subclass if a parent class already specified it?
+  // REVIEW: https://github.com/phetsims/tandem/issues/211 should parameterTypes inherit, so you don't have to specify it in the subtype if a supertype already specified it?
   parameterTypes: [ NumberIO ],
   documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
                  VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )',

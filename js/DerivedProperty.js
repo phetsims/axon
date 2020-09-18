@@ -261,6 +261,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
       supertype: PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
+
       // Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
       // back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
       applyState: () => { },
