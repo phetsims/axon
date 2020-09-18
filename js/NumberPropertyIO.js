@@ -22,7 +22,9 @@ const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
 const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   supertype: PropertyIOImpl,
-  parameterTypes: [ NumberIO ], // TODO: https://github.com/phetsims/tandem/issues/211.  Not inherited?
+
+  // REVIEW: https://github.com/phetsims/tandem/issues/211 should this inherit, so you don't have to specify it in the subclass if a parent class already specified it?
+  parameterTypes: [ NumberIO ],
   documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
                  VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )',
   isValidValue: v => {
@@ -58,7 +60,7 @@ const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 } );
 
 // we need this attribute to be defined even if the brand is not phetio, so we cannot rely on phetio inherit
-// TODO: https://github.com/phetsims/tandem/issues/211 this looks odd
+// TODO: https://github.com/phetsims/tandem/issues/211 this will be eliminated when we move to the core file
 NumberPropertyIO.VALID_NUMBER_TYPES = VALID_NUMBER_TYPES;
 
 axon.register( 'NumberPropertyIO', NumberPropertyIO );

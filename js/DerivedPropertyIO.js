@@ -32,7 +32,9 @@ function DerivedPropertyIO( parameterType ) {
         const DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
         return v instanceof DerivedProperty;
       },
-      parameterTypes: [ parameterType ], // TODO: https://github.com/phetsims/tandem/issues/211 should this inherit?
+
+      // REVIEW: https://github.com/phetsims/tandem/issues/211 should this inherit, so you don't have to specify it in the subclass if a parent class already specified it?
+      parameterTypes: [ parameterType ],
       supertype: PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
@@ -55,10 +57,6 @@ function DerivedPropertyIO( parameterType ) {
 
   return cache[ parameterType.typeName ];
 }
-
-// @public - allow type checking for DerivedPropertyIOImpl
-// TODO: https://github.com/phetsims/tandem/issues/211
-// DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
 
 axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 export default DerivedPropertyIO;

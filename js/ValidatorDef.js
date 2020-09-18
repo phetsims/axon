@@ -156,8 +156,6 @@ const ValidatorDef = {
     }
 
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
-
-      // TODO: https://github.com/phetsims/tandem/issues/211
       if ( !( validator.phetioType && validator.phetioType.validator ) ) {
         assert && options.assertions && assert( false, 'validator needed for phetioType: ' + ( validator.phetioType && validator.phetioType.typeName ) );
         return false;
