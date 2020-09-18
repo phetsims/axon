@@ -34,12 +34,8 @@ function ObservableArrayIO( parameterType ) {
       },
       events: [ 'itemAdded', 'itemRemoved' ],
       parameterTypes: [ parameterType ],
-      toStateObject( observableArray ) {
-        return {
-          array: observableArray.getArray().map( item => parameterType.toStateObject( item ) )
-        };
-      },
-      applyState( observableArray, stateObject ) {
+      toStateObject: observableArray => ( { array: observableArray.getArray().map( item => parameterType.toStateObject( item ) ) } ),
+      applyState: ( observableArray, stateObject ) => {
         observableArray.clear();
         const elements = stateObject.array.map( paramStateObject => parameterType.fromStateObject( paramStateObject ) );
         observableArray.addAll( elements );

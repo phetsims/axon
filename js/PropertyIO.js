@@ -36,7 +36,7 @@ const PropertyIO = parameterType => {
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject( property ) {
+      toStateObject: property => {
         assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
         const stateObject = {
           value: parameterType.toStateObject( property.value )
@@ -55,7 +55,7 @@ const PropertyIO = parameterType => {
         }
         return stateObject;
       },
-      applyState( property, stateObject ) {
+      applyState: ( property, stateObject ) => {
         property.units = stateObject.units;
         property.set( parameterType.fromStateObject( stateObject.value ) );
 

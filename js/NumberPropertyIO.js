@@ -29,7 +29,7 @@ const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
     return v instanceof NumberProperty;
   },
-  toStateObject( numberProperty ) {
+  toStateObject: numberProperty => {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
@@ -49,7 +49,7 @@ const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     }
     return parentStateObject;
   },
-  applyState( numberProperty, stateObject ) {
+  applyState: ( numberProperty, stateObject ) => {
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
     numberProperty.step = stateObject.step;
