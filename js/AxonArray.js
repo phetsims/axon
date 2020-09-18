@@ -24,9 +24,8 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
-import AxonArrayIO from './AxonArrayIO.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 
@@ -53,7 +52,7 @@ class AxonArray extends Array {
       length: 0,
       elements: [],
       tandem: Tandem.OPTIONAL,
-      phetioElementType: ObjectIO,
+      phetioElementType: IOType.ObjectIO,
 
       // The elementAddedEmitter and elementRemoveEmitter use this validator to check the validity ef elements,
       // Supports validator keys, like valueType, isValidValue, etc.  But we gracefully support untyped elements
@@ -286,7 +285,7 @@ class AxonArrayPhetioObject extends PhetioObject {
   constructor( axonArray, options ) {
 
     options = merge( {
-      phetioType: AxonArrayIO
+      phetioType: AxonArray.AxonArrayIO
     }, options );
 
     super( options );
@@ -298,6 +297,19 @@ class AxonArrayPhetioObject extends PhetioObject {
 
 // @public (read-only) (AxonArrayIO)
 AxonArray.AxonArrayPhetioObject = AxonArrayPhetioObject;
+
+/**
+ * AxonArrayIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
+ * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
+ *
+ * @author Sam Reid (PhET Interactive Simulations)
+ */
+AxonArray.AxonArrayIO = new IOType( 'AxonArrayIO', {
+  isValidValue: value => value instanceof AxonArray.AxonArrayPhetioObject,
+  toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.axonArray.toStateObject(),
+  stateToArgsForConstructor: AxonArray.stateToArgsForConstructor,
+  applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.axonArray.applyState( state )
+} );
 
 axon.register( 'AxonArray', AxonArray );
 export default AxonArray;

@@ -7,8 +7,8 @@
  */
 
 import merge from '../../phet-core/js/merge.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import Emitter from './Emitter.js';
 
 QUnit.module( 'EmitterIO' );
@@ -27,7 +27,7 @@ QUnit.test( 'test EmitterIO', assert => {
 
     assert.throws( () => {
       emitter = new Emitter( {
-        phetioType: ObjectIO
+        phetioType: IOType.ObjectIO
       } );
     }, 'cannot supply any phetioType' );
   }

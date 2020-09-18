@@ -119,7 +119,6 @@ QUnit.test( 'Test phetioType', assert => {
   assert.ok( !ValidatorDef.isValidValidator( { phetioType: 'null' } ), 'bad phetioType' );
   assert.ok( !ValidatorDef.isValidValidator( { phetioType: null } ), 'bad phetioType' );
 
-
   assert.ok( ValidatorDef.isValueValid( 'hello', { phetioType: StringIO } ), 'string valid' );
   assert.ok( !ValidatorDef.isValueValid( null, { phetioType: StringIO } ), 'null not valid' );
   assert.ok( !ValidatorDef.isValueValid( undefined, { phetioType: StringIO } ), 'undefined not valid' );

@@ -13,14 +13,14 @@
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ObservableArrayIO from './ObservableArrayIO.js';
 
 // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
-const DefaultObservableArrayIOType = ObservableArrayIO( ObjectIO );
+const DefaultObservableArrayIOType = ObservableArrayIO( IOType.ObjectIO );
 
 class ObservableArray extends PhetioObject {
 

@@ -7,18 +7,10 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import PropertyIO from './PropertyIO.js';
-
-// constants
-const PROPERTY_IO_VALIDATOR = {
-  isValidValue: v => {
-    const DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
-    return v instanceof DerivedProperty;
-  }
-};
 
 // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized DerivedPropertyIO so that
 // it is only created once.
@@ -35,63 +27,42 @@ function DerivedPropertyIO( parameterType ) {
   assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );
 
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = create( parameterType );
+    cache[ parameterType.typeName ] = new IOType( `DerivedPropertyIO<${parameterType.typeName}>`, {
+      isValidValue: v => {
+        const DerivedProperty = window.phet ? phet.axon.DerivedProperty : axon.DerivedProperty;
+        return v instanceof DerivedProperty;
+      },
+      parameterTypes: [ parameterType ], // TODO: https://github.com/phetsims/tandem/issues/211 should this inherit?
+      supertype: PropertyIO( parameterType ),
+      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
+                     'instances',
+      /**
+       * Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
+       * back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
+       * @override
+       * @public
+       */
+      applyState() { },
+      methods: {
+        setValue: {
+          returnType: VoidIO,
+          parameterTypes: [ parameterType ],
+          implementation: function( value ) {
+            return this.set( value );
+          },
+          documentation: 'Errors out when you try to set a derived property.',
+          invocableForReadOnlyElements: false
+        }
+      }
+    } );
   }
 
   return cache[ parameterType.typeName ];
 }
 
-/**
- * Creates a ObservableArrayIOImpl
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
- */
-const create = parameterType => {
-
-  // The parent type is also parameterized, so we have to instantiate it before we can extend it.
-  const PropertyIOImpl = PropertyIO( parameterType );
-
-  /**
-   * This type constructor is parameterized based on the parameterType.
-   *
-   * @param {DerivedProperty} derivedProperty
-   * @param {string} phetioID
-   * @constructor
-   */
-  class DerivedPropertyIOImpl extends PropertyIOImpl {
-
-    /**
-     * Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
-     * back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
-     * @override
-     * @public
-     */
-    static applyState() { }
-  }
-
-  DerivedPropertyIOImpl.methods = {
-    setValue: {
-      returnType: VoidIO,
-      parameterTypes: [ parameterType ],
-      implementation: function( value ) {
-        return this.set( value );
-      },
-      documentation: 'Errors out when you try to set a derived property.',
-      invocableForReadOnlyElements: false
-    }
-  };
-  DerivedPropertyIOImpl.documentation = 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
-                                        'instances';
-  DerivedPropertyIOImpl.validator = PROPERTY_IO_VALIDATOR;
-  DerivedPropertyIOImpl.typeName = `DerivedPropertyIO<${parameterType.typeName}>`;
-
-  // @public - allow type checking for DerivedPropertyIOImpl
-  DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
-
-  ObjectIO.validateIOType( DerivedPropertyIOImpl );
-
-  return DerivedPropertyIOImpl;
-};
+// @public - allow type checking for DerivedPropertyIOImpl
+// TODO: https://github.com/phetsims/tandem/issues/211
+// DerivedPropertyIOImpl.outerType = DerivedPropertyIO;
 
 axon.register( 'DerivedPropertyIO', DerivedPropertyIO );
 export default DerivedPropertyIO;

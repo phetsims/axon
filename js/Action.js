@@ -12,7 +12,7 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import validate from './validate.js';
@@ -233,31 +233,27 @@ const paramToTypeName = param => param.typeName;
 const cache = {};
 
 Action.createActionIO = parameterTypes => {
-
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
-
   if ( !cache.hasOwnProperty( key ) ) {
+    cache[ key ] = new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+      valueType: Action,
+      documentation: 'Executes when an event occurs.',
+      events: [ 'emitted' ],
+      parameterTypes: parameterTypes,
+      methods: {
+        execute: {
+          returnType: VoidIO,
+          parameterTypes: parameterTypes,
 
-    class ActionIOImpl extends ObjectIO {}
-
-    ActionIOImpl.typeName = `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`;
-    ActionIOImpl.documentation = 'Executes when an event occurs.';
-    ActionIOImpl.events = [ 'emitted' ];
-    ActionIOImpl.parameterTypes = parameterTypes;
-    ActionIOImpl.methods = {
-      execute: {
-        returnType: VoidIO,
-        parameterTypes: parameterTypes,
-
-        // Match `Action.execute`'s dynamic number of arguments
-        implementation: function() {
-          this.execute.apply( this, arguments );
-        },
-        documentation: 'Executes the function the Action is wrapping.',
-        invocableForReadOnlyElements: false
+          // Match `Action.execute`'s dynamic number of arguments
+          implementation: function() {
+            this.execute.apply( this, arguments );
+          },
+          documentation: 'Executes the function the Action is wrapping.',
+          invocableForReadOnlyElements: false
+        }
       }
-    };
-    cache[ key ] = ActionIOImpl;
+    } );
   }
   return cache[ key ];
 };

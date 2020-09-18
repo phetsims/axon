@@ -72,8 +72,8 @@ const VALIDATOR_KEYS = [
   // valueType is `Array`.
   'arrayElementType',
 
-  // {function(new: ObjectIO)} - A TypeIO used to specify the public typeing for PhET-iO. Each TypeIO must have a
-  // `validator` key specified that can be used for validation. See ObjectIO for an example.
+  // {function(new: IOType)} - A TypeIO used to specify the public typing for PhET-iO. Each TypeIO must have a
+  // `validator` key specified that can be used for validation. See IOType for an example.
   'phetioType'
 ];
 
@@ -156,6 +156,8 @@ const ValidatorDef = {
     }
 
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
+
+      // TODO: https://github.com/phetsims/tandem/issues/211
       if ( !( validator.phetioType && validator.phetioType.validator ) ) {
         assert && options.assertions && assert( false, 'validator needed for phetioType: ' + ( validator.phetioType && validator.phetioType.typeName ) );
         return false;

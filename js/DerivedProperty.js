@@ -11,7 +11,6 @@
 import merge from '../../phet-core/js/merge.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import DerivedPropertyIO from './DerivedPropertyIO.js';
 import Property from './Property.js';
 import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
@@ -30,7 +29,8 @@ class DerivedProperty extends Property {
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, options );
 
-    assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.outerType === DerivedPropertyIO,
+    // TODO https://github.com/phetsims/tandem/issues/211 factor out or do better
+    assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( 'DerivedProperty' ),
       'unsupported phetioType' );
 
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
@@ -43,7 +43,7 @@ class DerivedProperty extends Property {
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
-      assert && assert( options.phetioType.outerType === DerivedPropertyIO, 'phetioType should be DerivedPropertyIO' );
+      assert && assert( options.phetioType.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
     }
 
     this.dependencies = dependencies; // @private

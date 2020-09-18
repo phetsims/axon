@@ -8,12 +8,11 @@
  */
 
 import RangeIO from '../../dot/js/RangeIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
-import ObjectIO from '../../tandem/js/types/ObjectIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import PropertyIO from './PropertyIO.js';
-import validate from './validate.js';
 
 // constants
 const PropertyIOImpl = PropertyIO( NumberIO );
@@ -21,17 +20,16 @@ const PropertyIOImpl = PropertyIO( NumberIO );
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
-class NumberPropertyIO extends PropertyIOImpl {
-
-  /**
-   * Encodes a NumberProperty instance to a state.
-   * @param {Object} numberProperty
-   * @returns {Object} - a state object
-   * @override
-   * @public
-   */
-  static toStateObject( numberProperty ) {
-    validate( numberProperty, this.validator );
+const NumberPropertyIO = new IOType( 'NumberPropertyIO', {
+  supertype: PropertyIOImpl,
+  parameterTypes: [ NumberIO ], // TODO: https://github.com/phetsims/tandem/issues/211.  Not inherited?
+  documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
+                 VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )',
+  isValidValue: v => {
+    const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
+    return v instanceof NumberProperty;
+  },
+  toStateObject( numberProperty ) {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
@@ -50,37 +48,18 @@ class NumberPropertyIO extends PropertyIOImpl {
       parentStateObject.step = NumberIO.toStateObject( numberProperty.step );
     }
     return parentStateObject;
-  }
-
-  /**
-   * @param {NumberProperty} numberProperty
-   * @param {Object} stateObject
-   * @override
-   * @public
-   */
-  static applyState( numberProperty, stateObject ) {
-    validate( numberProperty, this.validator );
+  },
+  applyState( numberProperty, stateObject ) {
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
     numberProperty.step = stateObject.step;
     numberProperty.numberType = stateObject.numberType;
   }
-}
-
-NumberPropertyIO.validator = {
-  isValidValue: v => {
-    const NumberProperty = window.phet ? phet.axon.NumberProperty : axon.NumberProperty;
-    return v instanceof NumberProperty;
-  }
-};
-
-NumberPropertyIO.typeName = 'NumberPropertyIO';
-NumberPropertyIO.documentation = 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
-                                 VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )';
+} );
 
 // we need this attribute to be defined even if the brand is not phetio, so we cannot rely on phetio inherit
+// TODO: https://github.com/phetsims/tandem/issues/211 this looks odd
 NumberPropertyIO.VALID_NUMBER_TYPES = VALID_NUMBER_TYPES;
-ObjectIO.validateIOType( NumberPropertyIO );
 
 axon.register( 'NumberPropertyIO', NumberPropertyIO );
 export default NumberPropertyIO;

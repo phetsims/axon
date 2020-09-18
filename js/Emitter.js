@@ -11,6 +11,7 @@
 
 import merge from '../../phet-core/js/merge.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import Action from './Action.js';
 import axon from './axon.js';
@@ -151,35 +152,33 @@ Emitter.createEmitterIO = parameterTypes => {
 
   if ( !cache.hasOwnProperty( key ) ) {
 
-    const ActionIOType = Action.createActionIO( parameterTypes );
-
-    class EmitterIOImpl extends ActionIOType {}
-
-    EmitterIOImpl.typeName = `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`;
-    EmitterIOImpl.documentation = 'Emits when an event occurs and calls added listeners.';
-    EmitterIOImpl.parameterTypes = parameterTypes;
-    EmitterIOImpl.methods = {
-      addListener: {
-        returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-        implementation: function( listener ) {
-          this.addListener( listener );
+    cache[ key ] = new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+      valueType: Emitter,
+      supertype: Action.createActionIO( parameterTypes ),
+      documentation: 'Emits when an event occurs and calls added listeners.',
+      parameterTypes: parameterTypes,
+      methods: {
+        addListener: {
+          returnType: VoidIO,
+          parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+          implementation: function( listener ) {
+            this.addListener( listener );
+          },
+          documentation: 'Adds a listener which will be called when the emitter emits.'
         },
-        documentation: 'Adds a listener which will be called when the emitter emits.'
-      },
-      emit: {
-        returnType: VoidIO,
-        parameterTypes: parameterTypes,
+        emit: {
+          returnType: VoidIO,
+          parameterTypes: parameterTypes,
 
-        // Match `Emitter.emit`'s dynamic number of arguments
-        implementation: function() {
-          this.emit.apply( this, arguments );
-        },
-        documentation: 'Emits a single event to all listeners.',
-        invocableForReadOnlyElements: false
+          // Match `Emitter.emit`'s dynamic number of arguments
+          implementation: function() {
+            this.emit.apply( this, arguments );
+          },
+          documentation: 'Emits a single event to all listeners.',
+          invocableForReadOnlyElements: false
+        }
       }
-    };
-    cache[ key ] = EmitterIOImpl;
+    } );
   }
   return cache[ key ];
 };
