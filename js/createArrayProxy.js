@@ -192,6 +192,24 @@ const createArrayProxy = options => {
   arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
   arrayProxy.lengthProperty = lengthProperty;
 
+  /******************************************
+   * For compatibility with ObservableArray
+   * NOTE: consider deleting after migration
+   *******************************************/
+  arrayProxy.reset = () => {
+    arrayProxy.length = 0;
+    if ( options.length >= 0 ) {
+      arrayProxy.length = options.length;
+    }
+    if ( options.elements.length > 0 ) {
+      Array.prototype.push.apply( arrayProxy, options.elements );
+    }
+  };
+  arrayProxy.get = index => arrayProxy[ index ];
+
+  /******************************************
+   * PhET-iO support
+   *******************************************/
   if ( options.tandem.supplied ) {
     arrayProxy.toStateObject = () => {
       // console.log( 'getting state' );
