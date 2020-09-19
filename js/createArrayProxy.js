@@ -1,5 +1,6 @@
 // Copyright 2020, University of Colorado Boulder
 
+import arrayRemove from '../../phet-core/js/arrayRemove.js';
 /**
  * Creates an object that has the same API as an Array, but also supports notifications and PhET-iO
  *
@@ -206,6 +207,46 @@ const createArrayProxy = options => {
     }
   };
   arrayProxy.get = index => arrayProxy[ index ];
+  arrayProxy.addItemAddedListener = listener => elementAddedEmitter.addListener( listener );
+  arrayProxy.removeItemAddedListener = listener => elementAddedEmitter.removeListener( listener );
+  arrayProxy.addItemRemovedListener = listener => elementRemovedEmitter.addListener( listener );
+  arrayProxy.removeItemRemovedListener = listener => elementRemovedEmitter.removeListener( listener );
+  arrayProxy.add = element => arrayProxy.push( element );
+  arrayProxy.addAll = elements => arrayProxy.push( ...elements );
+  arrayProxy.remove = element => arrayRemove( arrayProxy, element );
+  arrayProxy.removeAll = elements => elements.forEach( element => arrayRemove( arrayProxy, element ) );
+  arrayProxy.clear = () => {
+    while ( this.length > 0 ) {
+      this.pop();
+    }
+  };
+  arrayProxy.count = predicate => {
+    let count = 0;
+    for ( let i = 0; i < this._array.length; i++ ) {
+      if ( predicate( this._array[ i ] ) ) {
+        count++;
+      }
+    }
+    return count;
+  };
+  arrayProxy.find = ( predicate, fromIndex ) => {
+    assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
+    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
+      `fromIndex out of bounds: ${fromIndex}` );
+    return _.find( this._array, predicate, fromIndex );
+  };
+  arrayProxy.getArrayCopy = () => arrayProxy.slice();
+  arrayProxy.shuffle = random => {
+    assert && assert( random, 'random must be supplied' );
+
+    // preserve the same _array reference in case any clients got a reference to it with getArray()
+    const shuffled = random.shuffle( this._array );
+    this._array.length = 0;
+    Array.prototype.push.apply( this._array, shuffled );
+  };
+
+  // TODO: This seems important to eliminate
+  arrayProxy.getArray = () => arrayProxy;
 
   /******************************************
    * PhET-iO support
