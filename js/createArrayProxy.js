@@ -61,8 +61,6 @@ const createArrayProxy = options => {
 
   const originalArray = [];
 
-  let depth = 0;
-
   const arrayProxy = new Proxy( originalArray, {
     get: function( target, key, receiver ) {
       const value = target[ key ];
@@ -72,8 +70,7 @@ const createArrayProxy = options => {
       else {
         return function() {
 
-          depth++;
-          console.log( `depth ${depth}: running ${key}`, arguments );
+          console.log( `running ${key}`, arguments );
           const initialLength = originalArray.length;
 
           let shallowCopy;
@@ -132,15 +129,13 @@ const createArrayProxy = options => {
             after.forEach( element => elementAddedEmitter.emit( element ) );
           }
 
-          depth--;
           return returnValue;
         };
       }
     },
     set: function( array, key, newValue ) {
-      depth++;
       const oldValue = array[ key ];
-      console.log( `depth: ${depth}, Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
+      console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
 
       let removedElements = null;
       // See which items are removed
@@ -163,12 +158,10 @@ const createArrayProxy = options => {
 
         removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
       }
-      depth--;
       return returnValue;
     },
     deleteProperty: function( array, key ) {
-      depth++;
-      console.log( `depth: ${depth}, deleteProperty ${key}, ${typeof key}` );
+      console.log( `deleteProperty ${key}, ${typeof key}` );
       const parsed = parseInt( key, 10 );
 
       let removed;
@@ -180,7 +173,6 @@ const createArrayProxy = options => {
         elementRemovedEmitter.emit( removed );
       }
 
-      depth--;
       return returnValue;
     }
   } );
