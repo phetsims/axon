@@ -77,7 +77,7 @@ const createArrayProxy = options => {
           const initialLength = originalArray.length;
 
           let shallowCopy;
-          if ( key === 'copyWithin' ) {
+          if ( key === 'copyWithin' || key === 'fill' ) {
             shallowCopy = originalArray.slice();
           }
           const returnValue = value.apply( originalArray, arguments );
@@ -113,9 +113,9 @@ const createArrayProxy = options => {
               this.elementAddedEmitter.emit( arguments[ i ] );
             }
           }
-          else if ( key === 'copyWithin' ) {
+          else if ( key === 'copyWithin' || key === 'fill' ) {
 
-            // black box testing is less efficient but more concise and easy to verify correctness
+            // black box testing is less efficient but more concise and easy to verify correctness.  Methods are on the rare side
             const before = shallowCopy;
             const after = originalArray.slice();
 

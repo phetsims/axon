@@ -174,7 +174,7 @@ QUnit.test( 'Test axon array setLength', assert => {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.push', assert => {
+QUnit.test( 'Test createArrayProxy.push', assert => {
   testArrayEmitters( assert, array => {
     array.push( 'hello', 'there', 'old', undefined );
   }, [
@@ -185,7 +185,7 @@ QUnit.test( 'Test AxonArray.push', assert => {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.pop', assert => {
+QUnit.test( 'Test createArrayProxy.pop', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7 );
     const popped = array.pop();
@@ -196,7 +196,7 @@ QUnit.test( 'Test AxonArray.pop', assert => {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.shift', assert => {
+QUnit.test( 'Test createArrayProxy.shift', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7, 3 );
     const removed = array.shift();
@@ -208,7 +208,7 @@ QUnit.test( 'Test AxonArray.shift', assert => {
   ] );
 } );
 
-QUnit.test( 'Test AxonArray.unshift', assert => {
+QUnit.test( 'Test createArrayProxy.unshift', assert => {
 
   // From this example: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
   testArrayEmitters( assert, array => {
@@ -227,7 +227,7 @@ QUnit.test( 'Test AxonArray.unshift', assert => {
 } );
 
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin
-QUnit.test( 'Test AxonArray.copyWithin', assert => {
+QUnit.test( 'Test createArrayProxy.copyWithin', assert => {
   testArrayEmitters( assert, array => {
     array.push( 1, 2, 3, 4, 5 );
     array.copyWithin( -2 ); // [1, 2, 3, 1, 2]
@@ -285,6 +285,95 @@ QUnit.test( 'Test AxonArray.copyWithin', assert => {
   ] );
 } );
 
+// Examples from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+QUnit.test( 'Test createArrayProxy.fill', assert => {
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4 ); // [4,4,4]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 },
+    { type: 'removed', value: 1 },
+    { type: 'removed', value: 2 },
+    { type: 'removed', value: 3 },
+    { type: 'added', value: 4 },
+    { type: 'added', value: 4 },
+    { type: 'added', value: 4 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, 1 ); // [1,4,4]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 },
+    { type: 'removed', value: 2 },
+    { type: 'removed', value: 3 },
+    { type: 'added', value: 4 },
+    { type: 'added', value: 4 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, 1, 2 ); // [1,4,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 },
+    { type: 'removed', value: 2 },
+    { type: 'added', value: 4 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, 1, 1 ); // [1,2,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, 3, 3 ); // [1,2,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, -3, -2 ); // [4,2,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 },
+    { type: 'removed', value: 1 },
+    { type: 'added', value: 4 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, NaN, NaN ); // [1,2,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 }
+  ] );
+
+  testArrayEmitters( assert, array => {
+    array.push( 1, 2, 3 );
+    array.fill( 4, 3, 5 ); // [1,2,3]
+  }, [
+    { type: 'added', value: 1 },
+    { type: 'added', value: 2 },
+    { type: 'added', value: 3 }
+  ] );
+} );
+
 QUnit.test( 'Test that length is correct in emitter callbacks after push', assert => {
   const a = createArrayProxy();
   a.elementAddedEmitter.addListener( element => {
@@ -308,7 +397,7 @@ QUnit.test( 'Test return types', assert => {
 
   const x = a.slice();
   x.unshift( 7 );
-  assert.ok( true, 'make sure it is safe to unshift on a sliced AxonArray' );
+  assert.ok( true, 'make sure it is safe to unshift on a sliced createArrayProxy' );
 } );
 
 QUnit.test( 'Test constructor arguments', assert => {
