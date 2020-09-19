@@ -182,34 +182,7 @@ const createArrayProxy = options => {
 
       depth--;
       return returnValue;
-    },
-    // OBSOLETE
-    // enumerate: function( array, key ) {
-    //   console.log( 'enumerate', key );
-    //   return Reflect.enumerate( array, key );
-    // },
-    // ownKeys: function( array, key ) {
-    //   depth++;
-    //   console.log( 'ownKeys', key );
-    //   const ownKeys = Reflect.ownKeys( array );
-    //   depth--;
-    //   return ownKeys;
-    // },
-    // has: function( array, key ) {
-    //   console.log( 'has', key );
-    //   return Reflect.has( array, key );
-    // },
-    defineProperty: function( array, key, desc ) {
-      depth++;
-      console.log( 'defineProperty', key, desc );
-      const returnValue = Reflect.defineProperty( array, key, desc );
-      depth--;
-      return returnValue;
     }
-    // getOwnPropertyDescriptor: function( array, key ) {
-    //   console.log( 'getOwnPropertyDescriptor', key );
-    //   return Reflect.getOwnPropertyDescriptor( array, key );
-    // }
   } );
 
   if ( options.length >= 0 ) {
