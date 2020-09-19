@@ -6,9 +6,11 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 import merge from '../../phet-core/js/merge.js';
+import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
+import AxonArray from './AxonArray.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 
@@ -30,6 +32,7 @@ const createArrayProxy = options => {
     elements: [],
     tandem: Tandem.OPTIONAL,
     phetioElementType: IOType.ObjectIO,
+    phetioState: true,
 
     // The elementAddedEmitter and elementRemoveEmitter use this validator to check the validity ef elements,
     // Supports validator keys, like valueType, isValidValue, etc.  But we gracefully support untyped elements
@@ -70,7 +73,7 @@ const createArrayProxy = options => {
       else {
         return function() {
 
-          console.log( `running ${key}`, arguments );
+          // console.log( `running ${key}`, arguments );
           const initialLength = originalArray.length;
 
           let shallowCopy;
@@ -135,7 +138,7 @@ const createArrayProxy = options => {
     },
     set: function( array, key, newValue ) {
       const oldValue = array[ key ];
-      console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
+      // console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
 
       let removedElements = null;
       // See which items are removed
@@ -161,7 +164,7 @@ const createArrayProxy = options => {
       return returnValue;
     },
     deleteProperty: function( array, key ) {
-      console.log( `deleteProperty ${key}, ${typeof key}` );
+      // console.log( `deleteProperty ${key}, ${typeof key}` );
       const parsed = parseInt( key, 10 );
 
       let removed;
@@ -184,11 +187,82 @@ const createArrayProxy = options => {
     Array.prototype.push.apply( arrayProxy, options.elements );
   }
 
+  // @public (listen only)
   arrayProxy.elementAddedEmitter = elementAddedEmitter;
   arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
   arrayProxy.lengthProperty = lengthProperty;
+
+  if ( options.tandem.supplied ) {
+    arrayProxy.toStateObject = () => {
+      // console.log( 'getting state' );
+      const result = { array: arrayProxy.map( item => arrayProxy.phetioElementType.toStateObject( item ) ) };
+      // console.log( result );
+      return result;
+    };
+
+    // @public
+    arrayProxy.applyState = stateObject => {
+      arrayProxy.length = 0;
+      const elements = stateObject.array.map( paramStateObject => arrayProxy.phetioElementType.fromStateObject( paramStateObject ) );
+      arrayProxy.push( ...elements );
+    };
+
+    // @public
+    arrayProxy.dispose = () => {
+      this.elementAddedEmitter.dispose();
+      this.elementRemovedEmitter.dispose();
+      this.lengthProperty.dispose();
+      this.axonArrayPhetioObject.dispose();
+    };
+
+    // @private - for managing state in phet-io
+    // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
+    arrayProxy.axonArrayPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
+
+    // @public (ArrayProxyPhetioObject,AxonArrayStateIO)
+    arrayProxy.phetioElementType = options.phetioElementType;
+  }
+
   return arrayProxy;
 };
+
+/**
+ * Manages state save/load.  ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
+ * provides that functionality.
+ */
+class ArrayProxyPhetioObject extends PhetioObject {
+
+  /**
+   * @param {Object} arrayProxy
+   * @param {Object} [options] - same as the options to the parent AxonArray
+   */
+  constructor( arrayProxy, options ) {
+
+    options = merge( {
+      phetioType: ArrayProxyIO
+    }, options );
+
+    super( options );
+
+    // @private
+    this.arrayProxy = arrayProxy;
+  }
+}
+
+// @public (read-only) (ArrayProxyIO)
+AxonArray.ArrayProxyPhetioObject = ArrayProxyPhetioObject;
+
+/**
+ * ArrayProxyIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
+ * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
+ *
+ * @author Sam Reid (PhET Interactive Simulations)
+ */
+const ArrayProxyIO = new IOType( 'ArrayProxyIO', {
+  valueType: ArrayProxyPhetioObject,
+  toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.arrayProxy.toStateObject(),
+  applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.arrayProxy.applyState( state )
+} );
 
 axon.register( 'createArrayProxy', createArrayProxy );
 export default createArrayProxy;
