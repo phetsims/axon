@@ -14,6 +14,7 @@ import axon from './axon.js';
 import AxonArray from './AxonArray.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
+import ValidatorDef from './ValidatorDef.js';
 
 /**
  * @param {Object} [options]
@@ -26,34 +27,40 @@ const createArrayProxy = options => {
   }
 
   // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
-  const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
+  // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
 
   options = merge( {
+
+    // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
+
     length: 0,
     elements: [],
-    tandem: Tandem.OPTIONAL,
-    phetioElementType: IOType.ObjectIO,
-    phetioState: true,
-
-    // The elementAddedEmitter and elementRemoveEmitter use this validator to check the validity ef elements,
-    // Supports validator keys, like valueType, isValidValue, etc.  But we gracefully support untyped elements
-    validator: { isValidValue: () => true }
+    tandem: Tandem.OPTIONAL
   }, options );
 
-  // @public - notifies when an element has been added
-  const parameterOptions = merge( { name: 'value' }, options.validator );
-  if ( isPhetioElementTypeProvided ) {
-    parameterOptions.phetioType = options.phetioElementType;
+  let emitterParameterOptions = null;
+  if ( options.phetioType ) {
+
+    assert && assert( options.phetioType.typeName.startsWith( 'ArrayProxyIO' ) );
+    emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
   }
+  else if ( ValidatorDef.isValidValidator( options ) ) {
+    const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+    emitterParameterOptions = merge( { name: 'value' }, validator );
+  }
+  else {
+    emitterParameterOptions = merge( { name: 'value' }, { isValidValue: _.stubTrue } );
+  }
+  // @public - notifies when an element has been added
   const elementAddedEmitter = new Emitter( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
-    parameters: [ parameterOptions ]
+    parameters: [ emitterParameterOptions ]
   } );
 
   // @public - notifies when an element has been removed
   const elementRemovedEmitter = new Emitter( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
-    parameters: [ parameterOptions ]
+    parameters: [ emitterParameterOptions ]
   } );
 
   // @public (read-only) observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
@@ -252,17 +259,15 @@ const createArrayProxy = options => {
    * PhET-iO support
    *******************************************/
   if ( options.tandem.supplied ) {
+    const phetioElementType = options.phetioType.parameterTypes[ 0 ];
     arrayProxy.toStateObject = () => {
-      // console.log( 'getting state' );
-      const result = { array: arrayProxy.map( item => arrayProxy.phetioElementType.toStateObject( item ) ) };
-      // console.log( result );
-      return result;
+      return { array: arrayProxy.map( item => phetioElementType.toStateObject( item ) ) };
     };
 
     // @public
     arrayProxy.applyState = stateObject => {
       arrayProxy.length = 0;
-      const elements = stateObject.array.map( paramStateObject => arrayProxy.phetioElementType.fromStateObject( paramStateObject ) );
+      const elements = stateObject.array.map( paramStateObject => phetioElementType.fromStateObject( paramStateObject ) );
       arrayProxy.push( ...elements );
     };
 
@@ -277,9 +282,6 @@ const createArrayProxy = options => {
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
     arrayProxy.axonArrayPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
-
-    // @public (ArrayProxyPhetioObject,AxonArrayStateIO)
-    arrayProxy.phetioElementType = options.phetioElementType;
   }
 
   return arrayProxy;
@@ -311,17 +313,29 @@ class ArrayProxyPhetioObject extends PhetioObject {
 // @public (read-only) (ArrayProxyIO)
 AxonArray.ArrayProxyPhetioObject = ArrayProxyPhetioObject;
 
+// {Map.<cacheKey:function(new:ObjectIO), function(new:ObjectIO)>} - Cache each parameterized PropertyIO based on
+// the parameter type, so that it is only created once
+const cache = new Map();
+
 /**
  * ArrayProxyIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
  * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-const ArrayProxyIO = new IOType( 'ArrayProxyIO', {
-  valueType: ArrayProxyPhetioObject,
-  toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.arrayProxy.toStateObject(),
-  applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.arrayProxy.applyState( state )
-} );
+const ArrayProxyIO = parameterType => {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `ArrayProxyIO<${parameterType.typeName}>`, {
+      parameterTypes: [ parameterType ],
+      valueType: ArrayProxyPhetioObject,
+      toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.arrayProxy.toStateObject(),
+      applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.arrayProxy.applyState( state )
+    } ) );
+  }
+  return cache.get( parameterType );
+};
+
+createArrayProxy.ArrayProxyIO = ArrayProxyIO;
 
 axon.register( 'createArrayProxy', createArrayProxy );
 export default createArrayProxy;

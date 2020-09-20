@@ -48,10 +48,6 @@ QUnit.test( 'Hello', assert => {
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-// import arrayRemove from '../../phet-core/js/arrayRemove.js';
-//
-QUnit.module( 'Axon Array' );
-
 // Creates an array that is tested with the given modifiers against the expected results.
 const testArrayEmitters = ( assert, modifier, expected ) => {
   const array = createArrayProxy();
@@ -427,18 +423,14 @@ QUnit.test( 'Test constructor arguments', assert => {
   // valid element types should succeed
   const a4 = createArrayProxy( {
     elements: [ 'a', 'b' ],
-    validator: {
-      valueType: 'string'
-    }
+    valueType: 'string'
   } );
   assert.ok( !!a4, 'correct element types should succeed' );
 
   // invalid element types should fail
   window.assert && assert.throws( () => createArrayProxy( {
     elements: [ 'a', 'b' ],
-    validator: {
-      valueType: 'number'
-    }
+    valueType: 'number'
   } ), 'should fail for invalid element types' );
 
 } );
