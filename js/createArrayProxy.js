@@ -220,17 +220,17 @@ const createArrayProxy = options => {
   arrayProxy.removeItemRemovedListener = listener => elementRemovedEmitter.removeListener( listener );
   arrayProxy.add = element => arrayProxy.push( element );
   arrayProxy.addAll = elements => arrayProxy.push( ...elements );
-  arrayProxy.remove = element => arrayRemove( arrayProxy, element );
-  arrayProxy.removeAll = elements => elements.forEach( element => arrayRemove( arrayProxy, element ) );
+  arrayProxy.remove = element => arrayProxy.includes( element ) && arrayRemove( arrayProxy, element );
+  arrayProxy.removeAll = elements => elements.forEach( element => arrayProxy.includes( element ) && arrayRemove( arrayProxy, element ) );
   arrayProxy.clear = () => {
-    while ( this.length > 0 ) {
-      this.pop();
+    while ( arrayProxy.length > 0 ) {
+      arrayProxy.pop();
     }
   };
   arrayProxy.count = predicate => {
     let count = 0;
-    for ( let i = 0; i < this._array.length; i++ ) {
-      if ( predicate( this._array[ i ] ) ) {
+    for ( let i = 0; i < arrayProxy.length; i++ ) {
+      if ( predicate( arrayProxy[ i ] ) ) {
         count++;
       }
     }
@@ -238,18 +238,18 @@ const createArrayProxy = options => {
   };
   arrayProxy.find = ( predicate, fromIndex ) => {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
-    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
+    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < arrayProxy.length,
       `fromIndex out of bounds: ${fromIndex}` );
-    return _.find( this._array, predicate, fromIndex );
+    return _.find( arrayProxy, predicate, fromIndex );
   };
   arrayProxy.getArrayCopy = () => arrayProxy.slice();
   arrayProxy.shuffle = random => {
     assert && assert( random, 'random must be supplied' );
 
     // preserve the same _array reference in case any clients got a reference to it with getArray()
-    const shuffled = random.shuffle( this._array );
-    this._array.length = 0;
-    Array.prototype.push.apply( this._array, shuffled );
+    const shuffled = random.shuffle( arrayProxy );
+    arrayProxy.length = 0;
+    Array.prototype.push.apply( arrayProxy, shuffled );
   };
 
   // TODO: This seems important to eliminate
@@ -271,18 +271,18 @@ const createArrayProxy = options => {
       arrayProxy.push( ...elements );
     };
 
-    // @public
-    arrayProxy.dispose = () => {
-      this.elementAddedEmitter.dispose();
-      this.elementRemovedEmitter.dispose();
-      this.lengthProperty.dispose();
-      this.axonArrayPhetioObject.dispose();
-    };
-
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
     arrayProxy.axonArrayPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
   }
+
+  // @public
+  arrayProxy.dispose = () => {
+    arrayProxy.elementAddedEmitter.dispose();
+    arrayProxy.elementRemovedEmitter.dispose();
+    arrayProxy.lengthProperty.dispose();
+    arrayProxy.axonArrayPhetioObject && arrayProxy.axonArrayPhetioObject.dispose();
+  };
 
   return arrayProxy;
 };
