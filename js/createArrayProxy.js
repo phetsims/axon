@@ -70,9 +70,9 @@ const createArrayProxy = options => {
     phetioReadOnly: true
   } );
 
-  const originalArray = [];
+  const targetArray = [];
 
-  const arrayProxy = new Proxy( originalArray, {
+  const arrayProxy = new Proxy( targetArray, {
     get: function( target, key, receiver ) {
       const value = target[ key ];
       if ( typeof value !== 'function' ) {
@@ -82,13 +82,13 @@ const createArrayProxy = options => {
         return function() {
 
           // console.log( `running ${key}`, arguments );
-          const initialLength = originalArray.length;
+          const initialLength = targetArray.length;
 
           let shallowCopy;
           if ( key === 'copyWithin' || key === 'fill' ) {
-            shallowCopy = originalArray.slice();
+            shallowCopy = targetArray.slice();
           }
-          const returnValue = value.apply( originalArray, arguments );
+          const returnValue = value.apply( targetArray, arguments );
 
           if ( key === 'splice' ) {
 
@@ -125,7 +125,7 @@ const createArrayProxy = options => {
 
             // black box testing is less efficient but more concise and easy to verify correctness.  Methods are on the rare side
             const before = shallowCopy;
-            const after = originalArray.slice();
+            const after = targetArray.slice();
 
             for ( let i = 0; i < before.length; i++ ) {
               const beforeElement = before[ i ];
