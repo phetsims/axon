@@ -21,12 +21,8 @@ import ValidatorDef from './ValidatorDef.js';
  */
 const validate = ( value, validator, options ) => {
 
-  if ( assert ) {
-
-    // Throws an error if not valid
-    ValidatorDef.isValueValid( value, validator, merge( { assertions: true }, options ) );
-  }
-  return value;
+  // Throws an error if not valid
+  assert && ValidatorDef.isValueValid( value, validator, merge( { assertions: true }, options ) );
 };
 
 
