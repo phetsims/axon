@@ -85,6 +85,7 @@ const methods = {
       this.elementAddedEmitter.emit( arguments[ i ] );
     }
     deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
+    return returnValue;
   },
   copyWithin() {
     const before = this.targetArray.slice();
@@ -104,21 +105,21 @@ const methods = {
    * NOTE: consider deleting after migration
    *******************************************/
 
-  get: index => this[ index ],
-  addItemAddedListener: listener => this.elementAddedEmitter.addListener( listener ),
-  removeItemAddedListener: listener => this.elementAddedEmitter.removeListener( listener ),
-  addItemRemovedListener: listener => this.elementRemovedEmitter.addListener( listener ),
-  removeItemRemovedListener: listener => this.elementRemovedEmitter.removeListener( listener ),
-  add: element => this.push( element ),
-  addAll: elements => this.push( ...elements ),
-  remove: element => this.includes( element ) && arrayRemove( this, element ),
-  removeAll: elements => elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) ),
-  clear: () => {
+  get: function( index ) {return this[ index ];},
+  addItemAddedListener: function( listener ) { this.elementAddedEmitter.addListener( listener );},
+  removeItemAddedListener: function( listener ) { this.elementAddedEmitter.removeListener( listener );},
+  addItemRemovedListener: function( listener ) { this.elementRemovedEmitter.addListener( listener );},
+  removeItemRemovedListener: function( listener ) { this.elementRemovedEmitter.removeListener( listener );},
+  add: function( element ) { this.push( element );},
+  addAll: function( elements ) { this.push( ...elements );},
+  remove: function( element ) { this.includes( element ) && arrayRemove( this, element );},
+  removeAll: function( elements ) { elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) );},
+  clear: function() {
     while ( this.length > 0 ) {
       this.pop();
     }
   },
-  count: predicate => {
+  count: function( predicate ) {
     let count = 0;
     for ( let i = 0; i < this.length; i++ ) {
       if ( predicate( this[ i ] ) ) {
@@ -127,14 +128,14 @@ const methods = {
     }
     return count;
   },
-  find: ( predicate, fromIndex ) => {
+  find: function( predicate, fromIndex ) {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
     assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
       `fromIndex out of bounds: ${fromIndex}` );
     return _.find( this, predicate, fromIndex );
   },
-  getArrayCopy: () => this.slice(),
-  shuffle: random => {
+  getArrayCopy: function() {return this.slice();},
+  shuffle: function( random ) {
     assert && assert( random, 'random must be supplied' );
 
     // preserve the same _array reference in case any clients got a reference to it with getArray()
@@ -144,25 +145,25 @@ const methods = {
   },
 
   // TODO: This seems important to eliminate
-  getArray: () => this,
+  getArray: function() {return this;},
 
   /******************************************
    * PhET-iO
    *******************************************/
   // @public
-  toStateObject: () => {
+  toStateObject: function() {
     return { array: this.map( item => this.phetioElementType.toStateObject( item ) ) };
   },
 
   // @public
-  applyState: stateObject => {
+  applyState: function( stateObject ) {
     this.length = 0;
     const elements = stateObject.array.map( paramStateObject => this.phetioElementType.fromStateObject( paramStateObject ) );
     this.push( ...elements );
   },
 
   // @public
-  dispose: () => {
+  dispose: function() {
     this.elementAddedEmitter.dispose();
     this.elementRemovedEmitter.dispose();
     this.lengthProperty.dispose();
