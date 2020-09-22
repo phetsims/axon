@@ -16,9 +16,13 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
+/**
+ * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
+ * @param {Object[]} shallowCopy
+ * @param {arrayProxy[]} arrayProxy
+ */
 const reportDifference = ( shallowCopy, arrayProxy ) => {
 
-  // black box testing is less efficient but more concise and easy to verify correctness.  Methods are on the rare side
   const before = shallowCopy;
   const after = arrayProxy.targetArray.slice();
 
@@ -35,7 +39,12 @@ const reportDifference = ( shallowCopy, arrayProxy ) => {
   after.forEach( element => arrayProxy.elementAddedEmitter.emit( element ) );
 };
 
+// Methods shared by all arrayProxy instances
 const methods = {
+
+  /******************************************
+   * Overridden Array methods
+   *******************************************/
   pop() {
     const initialLength = this.targetArray.length;
     const returnValue = Array.prototype.pop.apply( this.targetArray, arguments );
@@ -88,6 +97,76 @@ const methods = {
     const returnValue = Array.prototype.fill.apply( this.targetArray, arguments );
     reportDifference( before, this );
     return returnValue;
+  },
+
+  /******************************************
+   * For compatibility with ObservableArray
+   * NOTE: consider deleting after migration
+   *******************************************/
+
+  get: index => this[ index ],
+  addItemAddedListener: listener => this.elementAddedEmitter.addListener( listener ),
+  removeItemAddedListener: listener => this.elementAddedEmitter.removeListener( listener ),
+  addItemRemovedListener: listener => this.elementRemovedEmitter.addListener( listener ),
+  removeItemRemovedListener: listener => this.elementRemovedEmitter.removeListener( listener ),
+  add: element => this.push( element ),
+  addAll: elements => this.push( ...elements ),
+  remove: element => this.includes( element ) && arrayRemove( this, element ),
+  removeAll: elements => elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) ),
+  clear: () => {
+    while ( this.length > 0 ) {
+      this.pop();
+    }
+  },
+  count: predicate => {
+    let count = 0;
+    for ( let i = 0; i < this.length; i++ ) {
+      if ( predicate( this[ i ] ) ) {
+        count++;
+      }
+    }
+    return count;
+  },
+  find: ( predicate, fromIndex ) => {
+    assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
+    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
+      `fromIndex out of bounds: ${fromIndex}` );
+    return _.find( this, predicate, fromIndex );
+  },
+  getArrayCopy: () => this.slice(),
+  shuffle: random => {
+    assert && assert( random, 'random must be supplied' );
+
+    // preserve the same _array reference in case any clients got a reference to it with getArray()
+    const shuffled = random.shuffle( this );
+    this.length = 0;
+    Array.prototype.push.apply( this, shuffled );
+  },
+
+  // TODO: This seems important to eliminate
+  getArray: () => this,
+
+  /******************************************
+   * PhET-iO
+   *******************************************/
+  // @public
+  toStateObject: () => {
+    return { array: this.map( item => this.phetioElementType.toStateObject( item ) ) };
+  },
+
+  // @public
+  applyState: stateObject => {
+    this.length = 0;
+    const elements = stateObject.array.map( paramStateObject => this.phetioElementType.fromStateObject( paramStateObject ) );
+    this.push( ...elements );
+  },
+
+  // @public
+  dispose: () => {
+    this.elementAddedEmitter.dispose();
+    this.elementRemovedEmitter.dispose();
+    this.lengthProperty.dispose();
+    this.axonArrayPhetioObject && this.axonArrayPhetioObject.dispose();
   }
 };
 
@@ -215,10 +294,7 @@ const createArrayProxy = options => {
     Array.prototype.push.apply( arrayProxy, options.elements );
   }
 
-  /******************************************
-   * For compatibility with ObservableArray
-   * NOTE: consider deleting after migration
-   *******************************************/
+  // TODO: Move to "prototype" above or drop support
   arrayProxy.reset = () => {
     arrayProxy.length = 0;
     if ( options.length >= 0 ) {
@@ -228,76 +304,17 @@ const createArrayProxy = options => {
       Array.prototype.push.apply( arrayProxy, options.elements );
     }
   };
-  arrayProxy.get = index => arrayProxy[ index ];
-  arrayProxy.addItemAddedListener = listener => elementAddedEmitter.addListener( listener );
-  arrayProxy.removeItemAddedListener = listener => elementAddedEmitter.removeListener( listener );
-  arrayProxy.addItemRemovedListener = listener => elementRemovedEmitter.addListener( listener );
-  arrayProxy.removeItemRemovedListener = listener => elementRemovedEmitter.removeListener( listener );
-  arrayProxy.add = element => arrayProxy.push( element );
-  arrayProxy.addAll = elements => arrayProxy.push( ...elements );
-  arrayProxy.remove = element => arrayProxy.includes( element ) && arrayRemove( arrayProxy, element );
-  arrayProxy.removeAll = elements => elements.forEach( element => arrayProxy.includes( element ) && arrayRemove( arrayProxy, element ) );
-  arrayProxy.clear = () => {
-    while ( arrayProxy.length > 0 ) {
-      arrayProxy.pop();
-    }
-  };
-  arrayProxy.count = predicate => {
-    let count = 0;
-    for ( let i = 0; i < arrayProxy.length; i++ ) {
-      if ( predicate( arrayProxy[ i ] ) ) {
-        count++;
-      }
-    }
-    return count;
-  };
-  arrayProxy.find = ( predicate, fromIndex ) => {
-    assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
-    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < arrayProxy.length,
-      `fromIndex out of bounds: ${fromIndex}` );
-    return _.find( arrayProxy, predicate, fromIndex );
-  };
-  arrayProxy.getArrayCopy = () => arrayProxy.slice();
-  arrayProxy.shuffle = random => {
-    assert && assert( random, 'random must be supplied' );
-
-    // preserve the same _array reference in case any clients got a reference to it with getArray()
-    const shuffled = random.shuffle( arrayProxy );
-    arrayProxy.length = 0;
-    Array.prototype.push.apply( arrayProxy, shuffled );
-  };
-
-  // TODO: This seems important to eliminate
-  arrayProxy.getArray = () => arrayProxy;
 
   /******************************************
    * PhET-iO support
    *******************************************/
   if ( options.tandem.supplied ) {
-    const phetioElementType = options.phetioType.parameterTypes[ 0 ];
-    arrayProxy.toStateObject = () => {
-      return { array: arrayProxy.map( item => phetioElementType.toStateObject( item ) ) };
-    };
-
-    // @public
-    arrayProxy.applyState = stateObject => {
-      arrayProxy.length = 0;
-      const elements = stateObject.array.map( paramStateObject => phetioElementType.fromStateObject( paramStateObject ) );
-      arrayProxy.push( ...elements );
-    };
+    arrayProxy.phetioElementType = options.phetioType.parameterTypes[ 0 ];
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
     arrayProxy.axonArrayPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
   }
-
-  // @public
-  arrayProxy.dispose = () => {
-    arrayProxy.elementAddedEmitter.dispose();
-    arrayProxy.elementRemovedEmitter.dispose();
-    arrayProxy.lengthProperty.dispose();
-    arrayProxy.axonArrayPhetioObject && arrayProxy.axonArrayPhetioObject.dispose();
-  };
 
   return arrayProxy;
 };
