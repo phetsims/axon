@@ -158,15 +158,11 @@ QUnit.test( 'Test axon array setLength', assert => {
     array.push( 'hello' );
     array.length = 0;
     array.length = 4;
+    array[ 12 ] = 'cheetah';
   }, [
     { type: 'added', value: 'hello' },
-    { type: 'removed', value: 'hello' }
-
-    // TODO: Were items added?  I don't think so.
-    // { type: 'added', value: undefined },
-    // { type: 'added', value: undefined },
-    // { type: 'added', value: undefined },
-    // { type: 'added', value: undefined }
+    { type: 'removed', value: 'hello' },
+    { type: 'added', value: 'cheetah' }
   ] );
 } );
 
@@ -384,12 +380,7 @@ QUnit.test( 'Test return types', assert => {
 
   assert.ok( true );
   const a = createArrayProxy();
-  // a.elementAddedEmitter.addListener( element => {
-  //   assert.equal( a.length, 1 );
-  //   assert.equal( a.lengthProperty.value, 1 );
-  //   assert.equal( element, 'hello' );
-  // } );
-  // a.push( 'hello' );
+  a.push( 'hello' );
 
   const x = a.slice();
   x.unshift( 7 );
@@ -433,4 +424,14 @@ QUnit.test( 'Test constructor arguments', assert => {
     valueType: 'number'
   } ), 'should fail for invalid element types' );
 
+} );
+
+QUnit.test( 'Test function values', assert => {
+  const array = createArrayProxy();
+  let number = 7;
+  array.push( () => {
+    number++;
+  } );
+  array[ 0 ]();
+  assert.equal( 8, number, 'array should support function values' );
 } );
