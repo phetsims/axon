@@ -132,9 +132,9 @@ QUnit.test( 'Test axon array', assert => {
 
     array.pop();
     array.push( 'hello' );
+    Array.prototype.push.call( array, 'hello' );
     array.push( 'hello' );
-    array.push( 'hello' );
-    array.push( 'time' );
+    Array.prototype.push.apply( array, [ 'time' ] );
     arrayRemove( array, 'hello' );
   }, [
     { type: 'added', value: 'test' },
@@ -434,4 +434,9 @@ QUnit.test( 'Test function values', assert => {
   } );
   array[ 0 ]();
   assert.equal( 8, number, 'array should support function values' );
+} );
+
+QUnit.test( 'createArrayProxyTests misc', assert => {
+  const array = createArrayProxy();
+  assert.ok( Array.isArray( array ), 'should be an array' );
 } );
