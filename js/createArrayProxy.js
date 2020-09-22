@@ -16,6 +16,81 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
+const reportDifference = ( shallowCopy, arrayProxy ) => {
+
+  // black box testing is less efficient but more concise and easy to verify correctness.  Methods are on the rare side
+  const before = shallowCopy;
+  const after = arrayProxy.targetArray.slice();
+
+  for ( let i = 0; i < before.length; i++ ) {
+    const beforeElement = before[ i ];
+    const afterIndex = after.indexOf( beforeElement );
+    if ( afterIndex >= 0 ) {
+      before.splice( i, 1 );
+      after.splice( afterIndex, 1 );
+      i--;
+    }
+  }
+  before.forEach( element => arrayProxy.elementRemovedEmitter.emit( element ) );
+  after.forEach( element => arrayProxy.elementAddedEmitter.emit( element ) );
+};
+
+const methods = {
+  pop() {
+    const initialLength = this.targetArray.length;
+    const returnValue = Array.prototype.pop.apply( this.targetArray, arguments );
+    this.lengthProperty.value = this.length;
+    initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
+    return returnValue;
+  },
+  shift() {
+    const initialLength = this.targetArray.length;
+    const returnValue = Array.prototype.shift.apply( this.targetArray, arguments );
+    this.lengthProperty.value = this.length;
+    initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
+    return returnValue;
+  },
+  push() {
+    const returnValue = Array.prototype.push.apply( this.targetArray, arguments );
+    this.lengthProperty.value = this.length;
+    for ( let i = 0; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
+    }
+    return returnValue;
+  },
+  unshift() {
+    const returnValue = Array.prototype.unshift.apply( this.targetArray, arguments );
+    this.lengthProperty.value = this.length;
+    for ( let i = 0; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
+    }
+    return returnValue;
+  },
+  splice() {
+    const returnValue = Array.prototype.splice.apply( this.targetArray, arguments );
+
+    // Set length first so it will be correct in elementListener callbacks
+    this.lengthProperty.value = this.length;
+    const deletedElements = returnValue;
+    for ( let i = 2; i < arguments.length; i++ ) {
+      this.elementAddedEmitter.emit( arguments[ i ] );
+    }
+    deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
+  },
+  copyWithin() {
+    const before = this.targetArray.slice();
+    const returnValue = Array.prototype.copyWithin.apply( this.targetArray, arguments );
+    reportDifference( before, this );
+    return returnValue;
+  },
+  fill() {
+    const before = this.targetArray.slice();
+    const returnValue = Array.prototype.fill.apply( this.targetArray, arguments );
+    reportDifference( before, this );
+    return returnValue;
+  }
+};
+
 /**
  * @param {Object} [options]
  * @returns {[]}
@@ -74,74 +149,11 @@ const createArrayProxy = options => {
 
   const arrayProxy = new Proxy( targetArray, {
     get: function( target, key, receiver ) {
-      const value = target[ key ];
-      if ( typeof value !== 'function' ) {
-        return value;
+      if ( methods.hasOwnProperty( key ) ) {
+        return methods[ key ];
       }
       else {
-        return function() {
-
-          // console.log( `running ${key}`, arguments );
-          const initialLength = targetArray.length;
-
-          let shallowCopy;
-          if ( key === 'copyWithin' || key === 'fill' ) {
-            shallowCopy = targetArray.slice();
-          }
-          const returnValue = value.apply( targetArray, arguments );
-
-          if ( key === 'splice' ) {
-
-            // Set length first so it will be correct in elementListener callbacks
-            this.lengthProperty.value = this.length;
-            const deletedElements = returnValue;
-            for ( let i = 2; i < arguments.length; i++ ) {
-              this.elementAddedEmitter.emit( arguments[ i ] );
-            }
-            deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
-          }
-          else if ( key === 'push' ) {
-            this.lengthProperty.value = this.length;
-            for ( let i = 0; i < arguments.length; i++ ) {
-              this.elementAddedEmitter.emit( arguments[ i ] );
-            }
-          }
-          else if ( key === 'pop' ) {
-            this.lengthProperty.value = this.length;
-            // Supports notifying for [...,undefined].  TODO: or does it?
-            initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
-          }
-          else if ( key === 'shift' ) {
-            this.lengthProperty.value = this.length;
-            initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
-          }
-          else if ( key === 'unshift' ) {
-            this.lengthProperty.value = this.length;
-            for ( let i = 0; i < arguments.length; i++ ) {
-              this.elementAddedEmitter.emit( arguments[ i ] );
-            }
-          }
-          else if ( key === 'copyWithin' || key === 'fill' ) {
-
-            // black box testing is less efficient but more concise and easy to verify correctness.  Methods are on the rare side
-            const before = shallowCopy;
-            const after = targetArray.slice();
-
-            for ( let i = 0; i < before.length; i++ ) {
-              const beforeElement = before[ i ];
-              const afterIndex = after.indexOf( beforeElement );
-              if ( afterIndex >= 0 ) {
-                before.splice( i, 1 );
-                after.splice( afterIndex, 1 );
-                i--;
-              }
-            }
-            before.forEach( element => elementRemovedEmitter.emit( element ) );
-            after.forEach( element => elementAddedEmitter.emit( element ) );
-          }
-
-          return returnValue;
-        };
+        return Reflect.get( target, key, receiver );
       }
     },
     set: function( array, key, newValue ) {
@@ -188,17 +200,20 @@ const createArrayProxy = options => {
     }
   } );
 
+  // @private - Make it possible to use the targetArray in the overridden methods above.
+  arrayProxy.targetArray = targetArray;
+
+  // @public (listen only)
+  arrayProxy.elementAddedEmitter = elementAddedEmitter;
+  arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
+  arrayProxy.lengthProperty = lengthProperty;
+
   if ( options.length >= 0 ) {
     arrayProxy.length = options.length;
   }
   if ( options.elements.length > 0 ) {
     Array.prototype.push.apply( arrayProxy, options.elements );
   }
-
-  // @public (listen only)
-  arrayProxy.elementAddedEmitter = elementAddedEmitter;
-  arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
-  arrayProxy.lengthProperty = lengthProperty;
 
   /******************************************
    * For compatibility with ObservableArray
