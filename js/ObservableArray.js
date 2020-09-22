@@ -378,12 +378,12 @@ class ObservableArray extends PhetioObject {
   /**
    * Starting with the initial value, combine values from this ObservableArray to come up with a composite result.
    * Same as foldLeft.  In underscore this is called _.reduce aka _.fold or _.inject
-   * @param {*} value - output of the reduction
    * @param {function(value:*, item:*)} combiner
+   * @param {*} value - output of the reduction
    * @returns {*}
    * @public
    */
-  reduce( value, combiner ) {
+  reduce( combiner, value ) {
     for ( let i = 0; i < this._array.length; i++ ) {
       value = combiner( value, this._array[ i ] );
     }
