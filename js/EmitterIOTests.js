@@ -21,7 +21,7 @@ QUnit.test( 'test EmitterIO', assert => {
 
     assert.throws( () => {
       emitter = new Emitter( {
-        phetioType: Emitter.createEmitterIO( [] )
+        phetioType: Emitter.EmitterIO( [] )
       } );
     }, 'cannot supply default EmitterIO type' );
 

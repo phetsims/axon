@@ -25,7 +25,7 @@ class Emitter extends Action {
   constructor( options ) {
 
     options = merge( {
-      phetioOuterType: Emitter.createEmitterIO
+      phetioOuterType: Emitter.EmitterIO
     }, options );
 
     super( function() {
@@ -146,7 +146,7 @@ const cache = {};
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-Emitter.createEmitterIO = parameterTypes => {
+Emitter.EmitterIO = parameterTypes => {
 
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
 

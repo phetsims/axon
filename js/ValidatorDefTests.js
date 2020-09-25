@@ -132,7 +132,7 @@ QUnit.test( 'Test phetioType', assert => {
     isValidValue: v => v.startsWith( 'o' )
   } ), 'string not valid' );
 
-  assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: Emitter.createEmitterIO( [] ) } ), 'emitter is valid' );
+  assert.ok( ValidatorDef.isValueValid( new Emitter(), { phetioType: Emitter.EmitterIO( [] ) } ), 'emitter is valid' );
 } );
 
 QUnit.test( 'Test arrayElementType', assert => {
