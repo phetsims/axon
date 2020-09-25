@@ -18,7 +18,7 @@ class ActionAPI extends PhetioObjectAPI {
    */
   constructor( options ) {
     options = merge( {
-      phetioType: Action.createActionIO( [] ),
+      phetioType: Action.ActionIO( [] ),
       phetioState: false
     }, options );
     super( options );

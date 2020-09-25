@@ -59,7 +59,7 @@ class Action extends PhetioObject {
       // {function(new:function(new:ObjectIO),parameterTypes:function(new:ObjectIO))[]} - The non parameterized TypeIO, because
       // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a
       // parameterized ActionIO Type.
-      phetioOuterType: Action.createActionIO,
+      phetioOuterType: Action.ActionIO,
       phetioState: false,
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
@@ -232,7 +232,7 @@ class Action extends PhetioObject {
 const paramToTypeName = param => param.typeName;
 const cache = {};
 
-Action.createActionIO = parameterTypes => {
+Action.ActionIO = parameterTypes => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
   if ( !cache.hasOwnProperty( key ) ) {
     cache[ key ] = new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {

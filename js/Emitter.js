@@ -153,7 +153,7 @@ Emitter.EmitterIO = parameterTypes => {
   if ( !cache.hasOwnProperty( key ) ) {
     cache[ key ] = new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Emitter,
-      supertype: Action.createActionIO( parameterTypes ),
+      supertype: Action.ActionIO( parameterTypes ),
       documentation: 'Emits when an event occurs and calls added listeners.',
       parameterTypes: parameterTypes,
       methods: {
