@@ -27,9 +27,9 @@ QUnit.test( 'Hello', assert => {
   } ) );
 
   run( 'push hello', () => arrayProxy.push( 'hello' ) );
-  run( 'set element 0', () => {arrayProxy[ 0 ] = 'dinosaur';} );
-  run( 'set element 5', () => {arrayProxy[ 5 ] = 'hamburger';} );
-  run( 'length = 0', () => {arrayProxy.length = 0;} );
+  run( 'set element 0', () => {arrayProxy[ 0 ] = 'dinosaur'; } );
+  run( 'set element 5', () => {arrayProxy[ 5 ] = 'hamburger'; } );
+  run( 'length = 0', () => {arrayProxy.length = 0; } );
   run( 'a,b,c', () => {
     arrayProxy.push( 'a' );
     arrayProxy.push( 'b' );
