@@ -255,8 +255,6 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
     cache[ parameterType.typeName ] = new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
       isValidValue: derivedProperty => derivedProperty instanceof DerivedProperty,
-
-      // REVIEW: https://github.com/phetsims/tandem/issues/211 should this inherit, so you don't have to specify it in the subclass if a parent class already specified it?
       parameterTypes: [ parameterType ],
       supertype: PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
