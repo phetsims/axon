@@ -273,6 +273,7 @@ const createArrayProxy = options => {
   const targetArray = [];
 
   const arrayProxy = new Proxy( targetArray, {
+
     get: function( target, key, receiver ) {
       if ( methods.hasOwnProperty( key ) ) {
         return methods[ key ];
@@ -281,6 +282,7 @@ const createArrayProxy = options => {
         return Reflect.get( target, key, receiver );
       }
     },
+
     set: function( array, key, newValue ) {
       const oldValue = array[ key ];
       // console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
@@ -308,6 +310,7 @@ const createArrayProxy = options => {
       }
       return returnValue;
     },
+
     deleteProperty: function( array, key ) {
       // console.log( `deleteProperty ${key}, ${typeof key}` );
       const parsed = parseInt( key, 10 );
