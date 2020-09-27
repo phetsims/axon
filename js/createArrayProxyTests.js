@@ -40,14 +40,6 @@ QUnit.test( 'Hello', assert => {
   // arrayProxy.slice( 0 );
 } );
 
-// Copyright 2020, University of Colorado Boulder
-
-/**
- * QUnit tests for ObservableArray
- *
- * @author Sam Reid (PhET Interactive Simulations)
- */
-
 // Creates an array that is tested with the given modifiers against the expected results.
 const testArrayEmitters = ( assert, modifier, expected ) => {
   const array = createArrayProxy();
