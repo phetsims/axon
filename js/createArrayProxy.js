@@ -1,11 +1,12 @@
 // Copyright 2020, University of Colorado Boulder
 
-import arrayRemove from '../../phet-core/js/arrayRemove.js';
 /**
  * Creates an object that has the same API as an Array, but also supports notifications and PhET-iO
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
+
+import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
