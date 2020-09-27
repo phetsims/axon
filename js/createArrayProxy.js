@@ -122,16 +122,16 @@ const methods = {
   get: function( index ) {return this[ index ];},
 
   // @public
-  addItemAddedListener: function( listener ) { this.elementAddedEmitter.addListener( listener );},
+  addItemAddedListener: function( listener ) { this.elementAddedEmitter.addListener( listener ); },
 
   // @public
-  removeItemAddedListener: function( listener ) { this.elementAddedEmitter.removeListener( listener );},
+  removeItemAddedListener: function( listener ) { this.elementAddedEmitter.removeListener( listener ); },
 
   // @public
-  addItemRemovedListener: function( listener ) { this.elementRemovedEmitter.addListener( listener );},
+  addItemRemovedListener: function( listener ) { this.elementRemovedEmitter.addListener( listener ); },
 
   // @public
-  removeItemRemovedListener: function( listener ) { this.elementRemovedEmitter.removeListener( listener );},
+  removeItemRemovedListener: function( listener ) { this.elementRemovedEmitter.removeListener( listener ); },
 
   // @public
   add: function( element ) { this.push( element );},
@@ -143,7 +143,9 @@ const methods = {
   remove: function( element ) { this.includes( element ) && arrayRemove( this, element );},
 
   // @public
-  removeAll: function( elements ) { elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) );},
+  removeAll: function( elements ) {
+    elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) );
+  },
 
   // @public
   clear: function() {
@@ -248,6 +250,7 @@ const createArrayProxy = options => {
   else {
     emitterParameterOptions = merge( { name: 'value' }, { isValidValue: _.stubTrue } );
   }
+
   // @public - notifies when an element has been added
   const elementAddedEmitter = new Emitter( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
