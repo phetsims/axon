@@ -46,6 +46,8 @@ const methods = {
   /******************************************
    * Overridden Array methods
    *******************************************/
+
+  // @public
   pop() {
     const initialLength = this.targetArray.length;
     const returnValue = Array.prototype.pop.apply( this.targetArray, arguments );
@@ -53,6 +55,8 @@ const methods = {
     initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
+
+  // @public
   shift() {
     const initialLength = this.targetArray.length;
     const returnValue = Array.prototype.shift.apply( this.targetArray, arguments );
@@ -68,6 +72,8 @@ const methods = {
     }
     return returnValue;
   },
+
+  // @public
   unshift() {
     const returnValue = Array.prototype.unshift.apply( this.targetArray, arguments );
     this.lengthProperty.value = this.length;
@@ -76,6 +82,8 @@ const methods = {
     }
     return returnValue;
   },
+
+  // @public
   splice() {
     const returnValue = Array.prototype.splice.apply( this.targetArray, arguments );
 
@@ -88,12 +96,16 @@ const methods = {
     deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     return returnValue;
   },
+
+  // @public
   copyWithin() {
     const before = this.targetArray.slice();
     const returnValue = Array.prototype.copyWithin.apply( this.targetArray, arguments );
     reportDifference( before, this );
     return returnValue;
   },
+
+  // @public
   fill() {
     const before = this.targetArray.slice();
     const returnValue = Array.prototype.fill.apply( this.targetArray, arguments );
@@ -106,20 +118,41 @@ const methods = {
    * NOTE: consider deleting after migration
    *******************************************/
 
+  // @public
   get: function( index ) {return this[ index ];},
+
+  // @public
   addItemAddedListener: function( listener ) { this.elementAddedEmitter.addListener( listener );},
+
+  // @public
   removeItemAddedListener: function( listener ) { this.elementAddedEmitter.removeListener( listener );},
+
+  // @public
   addItemRemovedListener: function( listener ) { this.elementRemovedEmitter.addListener( listener );},
+
+  // @public
   removeItemRemovedListener: function( listener ) { this.elementRemovedEmitter.removeListener( listener );},
+
+  // @public
   add: function( element ) { this.push( element );},
+
+  // @public
   addAll: function( elements ) { this.push( ...elements );},
+
+  // @public
   remove: function( element ) { this.includes( element ) && arrayRemove( this, element );},
+
+  // @public
   removeAll: function( elements ) { elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) );},
+
+  // @public
   clear: function() {
     while ( this.length > 0 ) {
       this.pop();
     }
   },
+
+  // @public
   count: function( predicate ) {
     let count = 0;
     for ( let i = 0; i < this.length; i++ ) {
@@ -129,13 +162,19 @@ const methods = {
     }
     return count;
   },
+
+  // @public
   find: function( predicate, fromIndex ) {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
     assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
       `fromIndex out of bounds: ${fromIndex}` );
     return _.find( this, predicate, fromIndex );
   },
+
+  // @public
   getArrayCopy: function() {return this.slice();},
+
+  // @public
   shuffle: function( random ) {
     assert && assert( random, 'random must be supplied' );
 
@@ -146,11 +185,13 @@ const methods = {
   },
 
   // TODO: This seems important to eliminate
+  // @public
   getArray: function() {return this;},
 
   /******************************************
    * PhET-iO
    *******************************************/
+
   // @public
   toStateObject: function() {
     return { array: this.map( item => this.phetioElementType.toStateObject( item ) ) };
@@ -369,6 +410,7 @@ const ArrayProxyIO = parameterType => {
   return cache.get( parameterType );
 };
 
+// @public
 createArrayProxy.ArrayProxyIO = ArrayProxyIO;
 
 axon.register( 'createArrayProxy', createArrayProxy );
