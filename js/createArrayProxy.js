@@ -106,7 +106,8 @@ const createArrayProxy = options => {
       else if ( key === 'length' ) {
         lengthProperty.value = newValue;
 
-        removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
+        assert && assert( removedElements, 'removedElements should be defined for key===length' );
+        removedElements && removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
       }
       return returnValue;
     },
