@@ -17,27 +17,182 @@ import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
 /**
- * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
- * @param {Object[]} shallowCopy
- * @param {ArrayProxyDef} arrayProxy
+ * @param {Object} [options]
+ * @returns {[]}
  */
-const reportDifference = ( shallowCopy, arrayProxy ) => {
+const createArrayProxy = options => {
 
-  const before = shallowCopy;
-  const after = arrayProxy.targetArray.slice();
-
-  for ( let i = 0; i < before.length; i++ ) {
-    const beforeElement = before[ i ];
-    const afterIndex = after.indexOf( beforeElement );
-    if ( afterIndex >= 0 ) {
-      before.splice( i, 1 );
-      after.splice( afterIndex, 1 );
-      i--;
-    }
+  if ( options && options.hasOwnProperty( 'length' ) ) {
+    assert && assert( !options.hasOwnProperty( 'elements' ), 'options.elements and options.length are mutually exclusive' );
   }
-  before.forEach( element => arrayProxy.elementRemovedEmitter.emit( element ) );
-  after.forEach( element => arrayProxy.elementAddedEmitter.emit( element ) );
+
+  // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
+  // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
+
+  options = merge( {
+
+    // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
+
+    length: 0,
+    elements: [],
+    tandem: Tandem.OPTIONAL
+  }, options );
+
+  let emitterParameterOptions = null;
+  if ( options.phetioType ) {
+
+    assert && assert( options.phetioType.typeName.startsWith( 'ArrayProxyIO' ) );
+    emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
+  }
+  else if ( ValidatorDef.isValidValidator( options ) ) {
+    const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+    emitterParameterOptions = merge( { name: 'value' }, validator );
+  }
+  else {
+    emitterParameterOptions = merge( { name: 'value' }, { isValidValue: _.stubTrue } );
+  }
+
+  // notifies when an element has been added
+  const elementAddedEmitter = new Emitter( {
+    tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
+    parameters: [ emitterParameterOptions ]
+  } );
+
+  // notifies when an element has been removed
+  const elementRemovedEmitter = new Emitter( {
+    tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
+    parameters: [ emitterParameterOptions ]
+  } );
+
+  // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
+  const lengthProperty = new NumberProperty( 0, {
+    numberType: 'Integer',
+    tandem: options.tandem.createTandem( 'lengthProperty' ),
+    phetioReadOnly: true
+  } );
+
+  const targetArray = [];
+
+  const arrayProxy = new Proxy( targetArray, {
+
+    get: function( target, key, receiver ) {
+      if ( methods.hasOwnProperty( key ) ) {
+        return methods[ key ];
+      }
+      else {
+        return Reflect.get( target, key, receiver );
+      }
+    },
+
+    set: function( array, key, newValue ) {
+      const oldValue = array[ key ];
+      //TODO https://github.com/phetsims/axon/issues/330 dead code
+      // console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
+
+      let removedElements = null;
+      // See which items are removed
+      if ( key === 'length' ) {
+        removedElements = array.slice( newValue );
+      }
+
+      const returnValue = Reflect.set( array, key, newValue );
+      const parsed = parseInt( key, 10 );
+      if ( !isNaN( parsed ) ) {
+        if ( oldValue !== undefined ) {
+          elementRemovedEmitter.emit( array[ key ] );
+        }
+        if ( newValue !== undefined ) {
+          elementAddedEmitter.emit( newValue );
+        }
+      }
+      else if ( key === 'length' ) {
+        lengthProperty.value = newValue;
+
+        removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
+      }
+      return returnValue;
+    },
+
+    deleteProperty: function( array, key ) {
+      //TODO https://github.com/phetsims/axon/issues/330 dead code
+      // console.log( `deleteProperty ${key}, ${typeof key}` );
+      const parsed = parseInt( key, 10 );
+
+      let removed;
+      if ( !isNaN( parsed ) ) {
+        removed = array[ key ];
+      }
+      const returnValue = Reflect.deleteProperty( array, key );
+      if ( removed !== undefined ) {
+        elementRemovedEmitter.emit( removed );
+      }
+
+      return returnValue;
+    }
+  } );
+
+  // @private - Make it possible to use the targetArray in the overridden methods above.
+  arrayProxy.targetArray = targetArray;
+
+  // @public (listen only)
+  arrayProxy.elementAddedEmitter = elementAddedEmitter;
+  arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
+  arrayProxy.lengthProperty = lengthProperty;
+
+  if ( options.length >= 0 ) {
+    arrayProxy.length = options.length;
+  }
+  if ( options.elements.length > 0 ) {
+    Array.prototype.push.apply( arrayProxy, options.elements );
+  }
+
+  // TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
+  arrayProxy.reset = () => {
+    arrayProxy.length = 0;
+    if ( options.length >= 0 ) {
+      arrayProxy.length = options.length;
+    }
+    if ( options.elements.length > 0 ) {
+      Array.prototype.push.apply( arrayProxy, options.elements );
+    }
+  };
+
+  /******************************************
+   * PhET-iO support
+   *******************************************/
+  if ( options.tandem.supplied ) {
+    arrayProxy.phetioElementType = options.phetioType.parameterTypes[ 0 ];
+
+    // @private - for managing state in phet-io
+    // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
+    arrayProxy.arrayProxyPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
+  }
+
+  return arrayProxy;
 };
+
+/**
+ * Manages state save/load.  ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
+ * provides that functionality.
+ */
+class ArrayProxyPhetioObject extends PhetioObject {
+
+  /**
+   * @param {Object} arrayProxy
+   * @param {Object} [options] - same as the options to the parent ArrayProxyDef
+   */
+  constructor( arrayProxy, options ) {
+
+    options = merge( {
+      phetioType: ArrayProxyIO
+    }, options );
+
+    super( options );
+
+    // @private
+    this.arrayProxy = arrayProxy;
+  }
+}
 
 // Methods shared by all arrayProxy instances
 const methods = {
@@ -215,182 +370,27 @@ const methods = {
 };
 
 /**
- * @param {Object} [options]
- * @returns {[]}
+ * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
+ * @param {Object[]} shallowCopy
+ * @param {ArrayProxyDef} arrayProxy
  */
-const createArrayProxy = options => {
+const reportDifference = ( shallowCopy, arrayProxy ) => {
 
-  if ( options && options.hasOwnProperty( 'length' ) ) {
-    assert && assert( !options.hasOwnProperty( 'elements' ), 'options.elements and options.length are mutually exclusive' );
-  }
+  const before = shallowCopy;
+  const after = arrayProxy.targetArray.slice();
 
-  // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
-  // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
-
-  options = merge( {
-
-    // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
-
-    length: 0,
-    elements: [],
-    tandem: Tandem.OPTIONAL
-  }, options );
-
-  let emitterParameterOptions = null;
-  if ( options.phetioType ) {
-
-    assert && assert( options.phetioType.typeName.startsWith( 'ArrayProxyIO' ) );
-    emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
-  }
-  else if ( ValidatorDef.isValidValidator( options ) ) {
-    const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
-    emitterParameterOptions = merge( { name: 'value' }, validator );
-  }
-  else {
-    emitterParameterOptions = merge( { name: 'value' }, { isValidValue: _.stubTrue } );
-  }
-
-  // notifies when an element has been added
-  const elementAddedEmitter = new Emitter( {
-    tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
-    parameters: [ emitterParameterOptions ]
-  } );
-
-  // notifies when an element has been removed
-  const elementRemovedEmitter = new Emitter( {
-    tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
-    parameters: [ emitterParameterOptions ]
-  } );
-
-  // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
-  const lengthProperty = new NumberProperty( 0, {
-    numberType: 'Integer',
-    tandem: options.tandem.createTandem( 'lengthProperty' ),
-    phetioReadOnly: true
-  } );
-
-  const targetArray = [];
-
-  const arrayProxy = new Proxy( targetArray, {
-
-    get: function( target, key, receiver ) {
-      if ( methods.hasOwnProperty( key ) ) {
-        return methods[ key ];
-      }
-      else {
-        return Reflect.get( target, key, receiver );
-      }
-    },
-
-    set: function( array, key, newValue ) {
-      const oldValue = array[ key ];
-      //TODO https://github.com/phetsims/axon/issues/330 dead code
-      // console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
-
-      let removedElements = null;
-      // See which items are removed
-      if ( key === 'length' ) {
-        removedElements = array.slice( newValue );
-      }
-
-      const returnValue = Reflect.set( array, key, newValue );
-      const parsed = parseInt( key, 10 );
-      if ( !isNaN( parsed ) ) {
-        if ( oldValue !== undefined ) {
-          elementRemovedEmitter.emit( array[ key ] );
-        }
-        if ( newValue !== undefined ) {
-          elementAddedEmitter.emit( newValue );
-        }
-      }
-      else if ( key === 'length' ) {
-        lengthProperty.value = newValue;
-
-        removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
-      }
-      return returnValue;
-    },
-
-    deleteProperty: function( array, key ) {
-      //TODO https://github.com/phetsims/axon/issues/330 dead code
-      // console.log( `deleteProperty ${key}, ${typeof key}` );
-      const parsed = parseInt( key, 10 );
-
-      let removed;
-      if ( !isNaN( parsed ) ) {
-        removed = array[ key ];
-      }
-      const returnValue = Reflect.deleteProperty( array, key );
-      if ( removed !== undefined ) {
-        elementRemovedEmitter.emit( removed );
-      }
-
-      return returnValue;
+  for ( let i = 0; i < before.length; i++ ) {
+    const beforeElement = before[ i ];
+    const afterIndex = after.indexOf( beforeElement );
+    if ( afterIndex >= 0 ) {
+      before.splice( i, 1 );
+      after.splice( afterIndex, 1 );
+      i--;
     }
-  } );
-
-  // @private - Make it possible to use the targetArray in the overridden methods above.
-  arrayProxy.targetArray = targetArray;
-
-  // @public (listen only)
-  arrayProxy.elementAddedEmitter = elementAddedEmitter;
-  arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
-  arrayProxy.lengthProperty = lengthProperty;
-
-  if ( options.length >= 0 ) {
-    arrayProxy.length = options.length;
   }
-  if ( options.elements.length > 0 ) {
-    Array.prototype.push.apply( arrayProxy, options.elements );
-  }
-
-  // TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
-  arrayProxy.reset = () => {
-    arrayProxy.length = 0;
-    if ( options.length >= 0 ) {
-      arrayProxy.length = options.length;
-    }
-    if ( options.elements.length > 0 ) {
-      Array.prototype.push.apply( arrayProxy, options.elements );
-    }
-  };
-
-  /******************************************
-   * PhET-iO support
-   *******************************************/
-  if ( options.tandem.supplied ) {
-    arrayProxy.phetioElementType = options.phetioType.parameterTypes[ 0 ];
-
-    // @private - for managing state in phet-io
-    // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    arrayProxy.arrayProxyPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
-  }
-
-  return arrayProxy;
+  before.forEach( element => arrayProxy.elementRemovedEmitter.emit( element ) );
+  after.forEach( element => arrayProxy.elementAddedEmitter.emit( element ) );
 };
-
-/**
- * Manages state save/load.  ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
- * provides that functionality.
- */
-class ArrayProxyPhetioObject extends PhetioObject {
-
-  /**
-   * @param {Object} arrayProxy
-   * @param {Object} [options] - same as the options to the parent ArrayProxyDef
-   */
-  constructor( arrayProxy, options ) {
-
-    options = merge( {
-      phetioType: ArrayProxyIO
-    }, options );
-
-    super( options );
-
-    // @private
-    this.arrayProxy = arrayProxy;
-  }
-}
 
 // {Map.<cacheKey:function(new:ArrayProxyIO), function(new:ArrayProxyIO)>} - Cache each parameterized ArrayProxyIO
 // based on the parameter type, so that it is only created once.
