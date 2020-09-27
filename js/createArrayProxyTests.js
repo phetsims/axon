@@ -37,6 +37,7 @@ QUnit.test( 'Hello', assert => {
   } );
   run( 'splice', () => arrayProxy.splice( 0, 1 ) );
 
+  //TODO https://github.com/phetsims/axon/issues/330 dead code
   // arrayProxy.slice( 0 );
 } );
 
