@@ -175,7 +175,7 @@ const createArrayProxy = options => {
 class ArrayProxyPhetioObject extends PhetioObject {
 
   /**
-   * @param {Object} arrayProxy
+   * @param {ArrayProxyDef} arrayProxy
    * @param {Object} [options] - same as the options to the parent ArrayProxyDef
    */
   constructor( arrayProxy, options ) {
