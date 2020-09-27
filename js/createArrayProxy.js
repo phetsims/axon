@@ -186,7 +186,7 @@ const methods = {
     Array.prototype.push.apply( this, shuffled );
   },
 
-  // TODO: This seems important to eliminate
+  // TODO https://github.com/phetsims/axon/issues/330 This seems important to eliminate
   // @public
   getArray: function() {return this;},
 
