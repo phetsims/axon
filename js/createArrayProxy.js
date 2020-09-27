@@ -85,10 +85,9 @@ const createArrayProxy = options => {
 
     set: function( array, key, newValue ) {
       const oldValue = array[ key ];
-      //TODO https://github.com/phetsims/axon/issues/330 dead code
-      // console.log( `Changing ${key} (type===${typeof key}), from ${oldValue} to ${newValue}` );
 
       let removedElements = null;
+
       // See which items are removed
       if ( key === 'length' ) {
         removedElements = array.slice( newValue );
@@ -113,8 +112,6 @@ const createArrayProxy = options => {
     },
 
     deleteProperty: function( array, key ) {
-      //TODO https://github.com/phetsims/axon/issues/330 dead code
-      // console.log( `deleteProperty ${key}, ${typeof key}` );
       const parsed = parseInt( key, 10 );
 
       let removed;
