@@ -7,6 +7,7 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
+import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
@@ -22,9 +23,7 @@ import ValidatorDef from './ValidatorDef.js';
  */
 const createArrayProxy = options => {
 
-  if ( options && options.hasOwnProperty( 'length' ) ) {
-    assert && assert( !options.hasOwnProperty( 'elements' ), 'options.elements and options.length are mutually exclusive' );
-  }
+  assertMutuallyExclusiveOptions( options, [ 'length' ], [ 'elements' ] );
 
   // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
   // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
