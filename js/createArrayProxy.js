@@ -398,8 +398,6 @@ const cache = new Map();
 /**
  * ArrayProxyIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
  * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
- *
- * @author Sam Reid (PhET Interactive Simulations)
  */
 const ArrayProxyIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
