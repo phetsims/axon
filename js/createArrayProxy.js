@@ -19,7 +19,7 @@ import ValidatorDef from './ValidatorDef.js';
 /**
  * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
  * @param {Object[]} shallowCopy
- * @param {arrayProxy[]} arrayProxy
+ * @param {ArrayProxyDef} arrayProxy
  */
 const reportDifference = ( shallowCopy, arrayProxy ) => {
 
