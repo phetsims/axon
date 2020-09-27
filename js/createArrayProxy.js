@@ -251,19 +251,19 @@ const createArrayProxy = options => {
     emitterParameterOptions = merge( { name: 'value' }, { isValidValue: _.stubTrue } );
   }
 
-  // @public - notifies when an element has been added
+  // notifies when an element has been added
   const elementAddedEmitter = new Emitter( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
 
-  // @public - notifies when an element has been removed
+  // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
 
-  // @public (read-only) observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
+  // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
   const lengthProperty = new NumberProperty( 0, {
     numberType: 'Integer',
     tandem: options.tandem.createTandem( 'lengthProperty' ),
