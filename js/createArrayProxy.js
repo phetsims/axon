@@ -188,7 +188,7 @@ const methods = {
 
   // TODO https://github.com/phetsims/axon/issues/330 This seems important to eliminate
   // @public
-  getArray: function() {return this;},
+  getArray: function() { return this; },
 
   /******************************************
    * PhET-iO
