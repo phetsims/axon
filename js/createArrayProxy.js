@@ -343,7 +343,7 @@ const createArrayProxy = options => {
     Array.prototype.push.apply( arrayProxy, options.elements );
   }
 
-  // TODO: Move to "prototype" above or drop support
+  // TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
   arrayProxy.reset = () => {
     arrayProxy.length = 0;
     if ( options.length >= 0 ) {
