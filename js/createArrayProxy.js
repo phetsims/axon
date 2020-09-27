@@ -391,8 +391,8 @@ class ArrayProxyPhetioObject extends PhetioObject {
 // @public (read-only) (ArrayProxyIO)
 AxonArray.ArrayProxyPhetioObject = ArrayProxyPhetioObject;
 
-// {Map.<cacheKey:function(new:ObjectIO), function(new:ObjectIO)>} - Cache each parameterized PropertyIO based on
-// the parameter type, so that it is only created once
+// {Map.<cacheKey:function(new:ArrayProxyIO), function(new:ArrayProxyIO)>} - Cache each parameterized ArrayProxyIO
+// based on the parameter type, so that it is only created once.
 const cache = new Map();
 
 /**
