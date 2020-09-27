@@ -12,7 +12,6 @@ import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
-import AxonArray from './AxonArray.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
@@ -211,7 +210,7 @@ const methods = {
     this.elementAddedEmitter.dispose();
     this.elementRemovedEmitter.dispose();
     this.lengthProperty.dispose();
-    this.axonArrayPhetioObject && this.axonArrayPhetioObject.dispose();
+    this.arrayProxyPhetioObject && this.arrayProxyPhetioObject.dispose();
   }
 };
 
@@ -364,7 +363,7 @@ const createArrayProxy = options => {
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    arrayProxy.axonArrayPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
+    arrayProxy.arrayProxyPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
   }
 
   return arrayProxy;
@@ -378,7 +377,7 @@ class ArrayProxyPhetioObject extends PhetioObject {
 
   /**
    * @param {Object} arrayProxy
-   * @param {Object} [options] - same as the options to the parent AxonArray
+   * @param {Object} [options] - same as the options to the parent ArrayProxyDef
    */
   constructor( arrayProxy, options ) {
 
@@ -394,23 +393,23 @@ class ArrayProxyPhetioObject extends PhetioObject {
 }
 
 // @public (read-only) (ArrayProxyIO)
-AxonArray.ArrayProxyPhetioObject = ArrayProxyPhetioObject;
+createArrayProxy.ArrayProxyPhetioObject = ArrayProxyPhetioObject;
 
 // {Map.<cacheKey:function(new:ArrayProxyIO), function(new:ArrayProxyIO)>} - Cache each parameterized ArrayProxyIO
 // based on the parameter type, so that it is only created once.
 const cache = new Map();
 
 /**
- * ArrayProxyIO is the IO Type for AxonArray. It delegates most of its implementation to AxonArray.
- * Instead of being a parametric type, it leverages the phetioElementType on AxonArray.
+ * ArrayProxyIO is the IO Type for ArrayProxyDef. It delegates most of its implementation to ArrayProxyDef.
+ * Instead of being a parametric type, it leverages the phetioElementType on ArrayProxyDef.
  */
 const ArrayProxyIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ArrayProxyIO<${parameterType.typeName}>`, {
       parameterTypes: [ parameterType ],
       valueType: ArrayProxyPhetioObject,
-      toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.arrayProxy.toStateObject(),
-      applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.arrayProxy.applyState( state )
+      toStateObject: arrayProxyPhetioObject => arrayProxyPhetioObject.arrayProxy.toStateObject(),
+      applyState: ( arrayProxyPhetioObject, state ) => arrayProxyPhetioObject.arrayProxy.applyState( state )
     } ) );
   }
   return cache.get( parameterType );
