@@ -145,6 +145,7 @@ const createArrayProxy = options => {
      * @private
      */
     deleteProperty: function( array, key ) {
+      assert && assert( array === targetArray, 'array should match the targetArray' );
 
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
       //REVIEW https://github.com/phetsims/axon/issues/330 array[3.2] will break this
