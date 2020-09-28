@@ -248,6 +248,7 @@ const methods = {
   splice() {
     const returnValue = Array.prototype.splice.apply( this.targetArray, arguments );
 
+    //REVIEW https://github.com/phetsims/axon/issues/330 is this next comment true in general? Has that been thoroughly tested? Should this comment be moved to the header comment?
     // Set length first so it will be correct in elementListener callbacks
     this.lengthProperty.value = this.length;
     const deletedElements = returnValue;
