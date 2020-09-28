@@ -279,6 +279,7 @@ const methods = {
   /******************************************
    * For compatibility with ObservableArray
    * TODO https://github.com/phetsims/axon/issues/330 consider deleting after migration
+   * TODO https://github.com/phetsims/axon/issues/330 if not deleted, rename 'Item' with 'Element'
    *******************************************/
 
   // @public
