@@ -70,8 +70,10 @@ const createArrayProxy = options => {
     phetioReadOnly: true
   } );
 
+  //REVIEW https://github.com/phetsims/axon/issues/330 document targetArray
   const targetArray = [];
 
+  //REVIEW https://github.com/phetsims/axon/issues/330 would @param doc make get/set/deleteProperty easier to read? I don't understand it because I'm not familiar with Proxy.
   const arrayProxy = new Proxy( targetArray, {
 
     get: function( target, key, receiver ) {
@@ -94,6 +96,8 @@ const createArrayProxy = options => {
       }
 
       const returnValue = Reflect.set( array, key, newValue );
+
+      //REVIEW https://github.com/phetsims/axon/issues/330 I have no idea what's going on here. Why is key an int, and why do we need to parse it?
       const parsed = parseInt( key, 10 );
       if ( !isNaN( parsed ) ) {
         if ( oldValue !== undefined ) {
@@ -113,6 +117,7 @@ const createArrayProxy = options => {
     },
 
     deleteProperty: function( array, key ) {
+      //REVIEW https://github.com/phetsims/axon/issues/330 I have no idea what's going on here. Why is key an int, and why do we need to parse it?
       const parsed = parseInt( key, 10 );
 
       let removed;
@@ -143,7 +148,8 @@ const createArrayProxy = options => {
     Array.prototype.push.apply( arrayProxy, options.elements );
   }
 
-  // TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
+  //TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
+  //REVIEW https://github.com/phetsims/axon/issues/330 Add reset tests to createArrayProxyTests. Does this behave correctly if I'm listening to lengthProperty?
   arrayProxy.reset = () => {
     arrayProxy.length = 0;
     if ( options.length >= 0 ) {
@@ -215,6 +221,8 @@ const methods = {
     initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
+
+  // @public
   push() {
     const returnValue = Array.prototype.push.apply( this.targetArray, arguments );
     this.lengthProperty.value = this.length;
@@ -266,7 +274,7 @@ const methods = {
 
   /******************************************
    * For compatibility with ObservableArray
-   * NOTE: consider deleting after migration
+   * TODO https://github.com/phetsims/axon/issues/330 consider deleting after migration
    *******************************************/
 
   // @public
@@ -325,9 +333,6 @@ const methods = {
   },
 
   // @public
-  getArrayCopy: function() {return this.slice();},
-
-  // @public
   shuffle: function( random ) {
     assert && assert( random, 'random must be supplied' );
 
@@ -340,6 +345,11 @@ const methods = {
   // TODO https://github.com/phetsims/axon/issues/330 This seems important to eliminate
   // @public
   getArray: function() { return this; },
+
+  //REVIEW https://github.com/phetsims/axon/issues/330 This also seems important to eliminate
+  //REVIEW https://github.com/phetsims/axon/issues/330 do we need methods.slice?
+  // @public
+  getArrayCopy: function() { return this.slice(); },
 
   /******************************************
    * PhET-iO
@@ -357,6 +367,7 @@ const methods = {
     this.push( ...elements );
   },
 
+  //REVIEW https://github.com/phetsims/axon/issues/330 dispose isn't specific to PhET-iO, move above the "PhET-iO" section comment?
   // @public
   dispose: function() {
     this.elementAddedEmitter.dispose();
@@ -366,6 +377,7 @@ const methods = {
   }
 };
 
+//REVIEW https://github.com/phetsims/axon/issues/330 I've read this comment multiple times and I'm still in the dark.
 /**
  * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
  * @param {Object[]} shallowCopy
