@@ -71,30 +71,40 @@ const createArrayProxy = options => {
     phetioReadOnly: true
   } );
 
-  //REVIEW https://github.com/phetsims/axon/issues/330 document targetArray
+  // The underlying array which is wrapped by the Proxy
   const targetArray = [];
 
   //REVIEW https://github.com/phetsims/axon/issues/330 would @param doc make get/set/deleteProperty easier to read? I don't understand it because I'm not familiar with Proxy.
   const arrayProxy = new Proxy( targetArray, {
 
-    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc
     /**
-     * This is the trap for getting a property value.
+     * Trap for getting a property or method.
+     * @param {Object[]} array - the targetArray
+     * @param {string} key
+     * @param {Object} receiver
+     * @returns {*} - the requested value
+     * @private
      */
-    get: function( target, key, receiver ) {
+    get: function( array, key, receiver ) {
+      assert && assert( array === targetArray, 'array should match the targetArray' );
       if ( methods.hasOwnProperty( key ) ) {
         return methods[ key ];
       }
       else {
-        return Reflect.get( target, key, receiver );
+        return Reflect.get( array, key, receiver );
       }
     },
 
-    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc
     /**
-     * This is the trap for setting a property value.
+     * Trap for setting a property value.
+     * @param {Object[]} array - the targetArray
+     * @param {string} key
+     * @param {*} newValue
+     * @returns {boolean} - success
+     * @private
      */
     set: function( array, key, newValue ) {
+      assert && assert( array === targetArray, 'array should match the targetArray' );
       const oldValue = array[ key ];
 
       let removedElements = null;
@@ -127,12 +137,12 @@ const createArrayProxy = options => {
       return returnValue;
     },
 
-    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc params
     /**
      * This is the trap for the delete operator.
-     * @param array
-     * @param key
-     * @returns {*}
+     * @param {Object[]} array - the targetArray
+     * @param {string} key
+     * @returns {boolean} - success
+     * @private
      */
     deleteProperty: function( array, key ) {
 
