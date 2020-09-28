@@ -17,6 +17,10 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
+//REVIEW https://github.com/phetsims/axon/issues/330 wondering if createArrayProxy is the best name for this.
+//  It exposes the details of how it's implemented (Proxy) and there could be other Proxy implementations that
+//  add other features. It would be better if the name described what features it adds to Array, not how those
+//  features are added. I unfortunately can't think of better name than createObservableArray.
 /**
  * @param {Object} [options]
  * @returns {ArrayProxyDef}
