@@ -8,6 +8,7 @@
 
 import axon from './axon.js';
 
+//REVIEW https://github.com/phetsims/axon/issues/330 should this be annotated as @extends Array ?
 /**
  * @typedef {Object} ArrayProxyDef
  * See createArrayProxy for details
