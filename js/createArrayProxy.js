@@ -25,6 +25,8 @@ const createArrayProxy = options => {
 
   assertMutuallyExclusiveOptions( options, [ 'length' ], [ 'elements' ] );
 
+  //REVIEW https://github.com/phetsims/axon/issues/330 is phetioElementType a Core Type or an IO Type? Where is that validated?
+  //REVIEW https://github.com/phetsims/axon/issues/330 is the last line of this comment dead code, or is it supposed to tell me something?
   // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
   // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
 
