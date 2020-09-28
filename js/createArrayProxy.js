@@ -19,7 +19,7 @@ import ValidatorDef from './ValidatorDef.js';
 
 /**
  * @param {Object} [options]
- * @returns {[]}
+ * @returns {ArrayProxyDef}
  */
 const createArrayProxy = options => {
 
