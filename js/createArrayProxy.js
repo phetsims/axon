@@ -25,12 +25,6 @@ const createArrayProxy = options => {
 
   assertMutuallyExclusiveOptions( options, [ 'length' ], [ 'elements' ] );
 
-  //REVIEW https://github.com/phetsims/axon/issues/330 is phetioElementType a Core Type or an IO Type (looks like the latter)? Where is that validated?
-  //REVIEW https://github.com/phetsims/axon/issues/330 why would I provide both phetioType and phetioElementType?
-  //REVIEW https://github.com/phetsims/axon/issues/330 is the last line of this comment dead code, or is it supposed to tell me something?
-  // If the options supplied the phetioElementType, it is passed through as a phetioType to the Emitter parameter
-  // const isPhetioElementTypeProvided = options && options.hasOwnProperty( 'phetioElementType' );
-
   options = merge( {
 
     // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
@@ -79,6 +73,10 @@ const createArrayProxy = options => {
   //REVIEW https://github.com/phetsims/axon/issues/330 would @param doc make get/set/deleteProperty easier to read? I don't understand it because I'm not familiar with Proxy.
   const arrayProxy = new Proxy( targetArray, {
 
+    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc
+    /**
+     * This is the trap for getting a property value.
+     */
     get: function( target, key, receiver ) {
       if ( methods.hasOwnProperty( key ) ) {
         return methods[ key ];
@@ -88,6 +86,10 @@ const createArrayProxy = options => {
       }
     },
 
+    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc
+    /**
+     * This is the trap for setting a property value.
+     */
     set: function( array, key, newValue ) {
       const oldValue = array[ key ];
 
@@ -100,9 +102,11 @@ const createArrayProxy = options => {
 
       const returnValue = Reflect.set( array, key, newValue );
 
-      //REVIEW https://github.com/phetsims/axon/issues/330 I have no idea what's going on here. Why is key an int, and why do we need to parse it?
+      // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
+      //REVIEW https://github.com/phetsims/axon/issues/330 array[3.2] will break this
       const parsed = parseInt( key, 10 );
       if ( !isNaN( parsed ) ) {
+        //REVIEW https://github.com/phetsims/axon/issues/330 only do this if newValue !== oldValue
         if ( oldValue !== undefined ) {
           elementRemovedEmitter.emit( array[ key ] );
         }
@@ -119,8 +123,17 @@ const createArrayProxy = options => {
       return returnValue;
     },
 
+    //REVIEW https://github.com/phetsims/axon/issues/330 JSdoc params
+    /**
+     * This is the trap for the delete operator.
+     * @param array
+     * @param key
+     * @returns {*}
+     */
     deleteProperty: function( array, key ) {
-      //REVIEW https://github.com/phetsims/axon/issues/330 I have no idea what's going on here. Why is key an int, and why do we need to parse it?
+
+      // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
+      //REVIEW https://github.com/phetsims/axon/issues/330 array[3.2] will break this
       const parsed = parseInt( key, 10 );
 
       let removed;
@@ -152,9 +165,10 @@ const createArrayProxy = options => {
   }
 
   //TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
-  //REVIEW https://github.com/phetsims/axon/issues/330 Add reset tests to createArrayProxyTests. Does this behave correctly if I'm listening to lengthProperty?
   arrayProxy.reset = () => {
     arrayProxy.length = 0;
+
+    //REVIEW https://github.com/phetsims/axon/issues/330 duplicate code
     if ( options.length >= 0 ) {
       arrayProxy.length = options.length;
     }
