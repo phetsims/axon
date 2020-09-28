@@ -74,7 +74,7 @@ const createArrayProxy = options => {
   // The underlying array which is wrapped by the Proxy
   const targetArray = [];
 
-  //REVIEW https://github.com/phetsims/axon/issues/330 would @param doc make get/set/deleteProperty easier to read? I don't understand it because I'm not familiar with Proxy.
+  // The Proxy which will intercept method calls and trigger notifications.
   const arrayProxy = new Proxy( targetArray, {
 
     /**
