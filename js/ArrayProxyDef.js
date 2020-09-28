@@ -8,13 +8,13 @@
 
 import axon from './axon.js';
 
-//REVIEW https://github.com/phetsims/axon/issues/330 should this be annotated as @extends Array ?
+//REVIEW https://github.com/phetsims/axon/issues/330 WebStorm is having problems with {ArrayProxyDef} vs {Array} params
 /**
- * @typedef {Object} ArrayProxyDef
- * See createArrayProxy for details
+ * @typedef {Array} ArrayProxyDef
  * @property {Emitter} elementAddedEmitter
  * @property {Emitter} elementRemovedEmitter
  * @property {Property<Number>} lengthProperty
+ * See createArrayProxy for details
  */
 const ArrayProxyDef = {
 
