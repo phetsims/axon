@@ -11,7 +11,6 @@ import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 
 class EnumerationProperty extends Property {
 
@@ -37,7 +36,7 @@ class EnumerationProperty extends Property {
 
     options = merge( {
       valueType: enumeration,
-      phetioType: PropertyIO( EnumerationIO( enumeration ) ),
+      phetioType: Property.PropertyIO( EnumerationIO( enumeration ) ),
       validValues: enumeration.VALUES // for PhET-iO documentation and support
     }, options );
 

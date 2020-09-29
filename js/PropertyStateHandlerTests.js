@@ -13,7 +13,6 @@ import Tandem from '../../tandem/js/Tandem.js';
 import BooleanProperty from './BooleanProperty.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 import PropertyStateHandler from './PropertyStateHandler.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
@@ -94,7 +93,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const rangeProperty = new Property( new Range( 0, 1 ), {
       tandem: Tandem.GENERAL.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
-      phetioType: PropertyIO( RangeIO )
+      phetioType: Property.PropertyIO( RangeIO )
     } );
     const numberProperty = new NumberProperty( 0, {
       tandem: Tandem.GENERAL.createTandem( 'numberProperty' ),

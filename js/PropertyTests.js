@@ -10,7 +10,6 @@ import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
@@ -263,11 +262,11 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
     const secondProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'secondProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
 
     propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
@@ -277,7 +276,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const thirdProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'thirdProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
     secondProperty.link( () => { thirdProperty.value = 2;}, {
       phetioDependencies: [ thirdProperty ]

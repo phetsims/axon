@@ -17,7 +17,6 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 import validate from './validate.js';
 
 // constants
@@ -27,7 +26,7 @@ const VALID_INTEGER = { valueType: 'number', isValidValue: v => v % 1 === 0 };
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
 // For the IOType
-const PropertyIOImpl = PropertyIO( NumberIO );
+const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
 class NumberProperty extends Property {
 
@@ -51,7 +50,7 @@ class NumberProperty extends Property {
       // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
       rangePropertyOptions: {
         phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
-        phetioType: PropertyIO( NullableIO( RangeIO ) ),
+        phetioType: Property.PropertyIO( NullableIO( RangeIO ) ),
         phetioReadOnly: true
       },
 

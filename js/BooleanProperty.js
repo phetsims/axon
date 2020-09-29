@@ -11,10 +11,9 @@ import merge from '../../phet-core/js/merge.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 
 // constants
-const BooleanPropertyIO = PropertyIO( BooleanIO );
+const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
 class BooleanProperty extends Property {
 

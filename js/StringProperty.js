@@ -11,10 +11,9 @@ import merge from '../../phet-core/js/merge.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 
 // constants
-const StringPropertyIO = PropertyIO( StringIO );
+const StringPropertyIO = Property.PropertyIO( StringIO );
 
 class StringProperty extends Property {
 

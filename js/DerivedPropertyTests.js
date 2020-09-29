@@ -10,7 +10,6 @@ import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import DerivedProperty from './DerivedProperty.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 
 QUnit.module( 'DerivedProperty' );
@@ -139,15 +138,15 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
     const secondProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'secondProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
     const thirdProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'thirdProperty' ),
-      phetioType: PropertyIO( NumberIO )
+      phetioType: Property.PropertyIO( NumberIO )
     } );
 
     const derivedProperty = new DerivedProperty( [ firstProperty, secondProperty, thirdProperty ], () => 3, {

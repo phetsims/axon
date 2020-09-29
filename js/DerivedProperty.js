@@ -14,7 +14,6 @@ import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
-import PropertyIO from './PropertyIO.js';
 import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
@@ -256,7 +255,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
     cache[ parameterType.typeName ] = new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
       isValidValue: derivedProperty => derivedProperty instanceof DerivedProperty,
       parameterTypes: [ parameterType ],
-      supertype: PropertyIO( parameterType ),
+      supertype: Property.PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
 
