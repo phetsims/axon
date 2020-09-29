@@ -9,7 +9,6 @@
 import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
-import NumberPropertyIO from './NumberPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
@@ -233,7 +232,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
     const done = assert.async();
     const tandem = Tandem.GENERAL.createTandem( 'testTandemProperty' );
-    const phetioType = NumberPropertyIO;
+    const phetioType = NumberProperty.NumberPropertyIO;
     const propertyValue = 123;
     const validValues = [ 0, 1, 2, 3, propertyValue ];
     tandem.addPhetioObject = function( instance, options ) {

@@ -12,7 +12,6 @@ import RangeIO from '../../dot/js/RangeIO.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import BooleanProperty from './BooleanProperty.js';
 import NumberProperty from './NumberProperty.js';
-import NumberPropertyIO from './NumberPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
 import PropertyStateHandler from './PropertyStateHandler.js';
@@ -115,7 +114,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       numberProperty, PropertyStatePhase.UNDEFER
     );
 
-    const serializedValue = NumberPropertyIO.toStateObject( numberProperty );
+    const serializedValue = NumberProperty.NumberPropertyIO.toStateObject( numberProperty );
     serializedValue.range.min = 4;
     serializedValue.range.max = 8;
     serializedValue.value = 7;

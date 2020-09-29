@@ -11,16 +11,23 @@ import Range from '../../dot/js/Range.js';
 import RangeIO from '../../dot/js/RangeIO.js';
 import merge from '../../phet-core/js/merge.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
+import NumberIO from '../../tandem/js/types/NumberIO.js';
+import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import NumberPropertyIO from './NumberPropertyIO.js';
 import Property from './Property.js';
 import PropertyIO from './PropertyIO.js';
 import validate from './validate.js';
 
 // constants
-const VALID_NUMBER_TYPES = NumberPropertyIO.VALID_NUMBER_TYPES;
 const VALID_INTEGER = { valueType: 'number', isValidValue: v => v % 1 === 0 };
+
+// valid values for options.numberType to convey whether it is continuous or discrete with step size 1
+const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
+
+// For the IOType
+const PropertyIOImpl = PropertyIO( NumberIO );
 
 class NumberProperty extends Property {
 
@@ -72,7 +79,7 @@ class NumberProperty extends Property {
     assert && assert( !options.valueType, 'NumberProperty sets valueType' );
     options.valueType = 'number';
     assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
-    options.phetioType = NumberPropertyIO;
+    options.phetioType = NumberProperty.NumberPropertyIO;
 
     const rangePropertyProvided = options.range && options.range instanceof Property;
     const ownsRangeProperty = !rangePropertyProvided;
@@ -223,6 +230,40 @@ class NumberProperty extends Property {
     this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue );
   }
 }
+
+NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
+  valueType: NumberProperty,
+  supertype: PropertyIOImpl,
+  parameterTypes: [ NumberIO ],
+  documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
+                 VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )',
+  toStateObject: numberProperty => {
+
+    const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
+
+    // conditionals to avoid keys with value "null" in state objects
+    if ( numberProperty.numberType ) {
+      parentStateObject.numberType = numberProperty.numberType;
+    }
+
+    if ( numberProperty.rangeProperty.value ) {
+      parentStateObject.range = RangeIO.toStateObject( numberProperty.rangeProperty.value );
+      if ( numberProperty.rangeProperty.isPhetioInstrumented() ) {
+        parentStateObject.rangePhetioID = StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID );
+      }
+    }
+    if ( numberProperty.step ) {
+      parentStateObject.step = NumberIO.toStateObject( numberProperty.step );
+    }
+    return parentStateObject;
+  },
+  applyState: ( numberProperty, stateObject ) => {
+
+    PropertyIOImpl.applyState( numberProperty, stateObject );
+    numberProperty.step = stateObject.step;
+    numberProperty.numberType = stateObject.numberType;
+  }
+} );
 
 axon.register( 'NumberProperty', NumberProperty );
 export default NumberProperty;
