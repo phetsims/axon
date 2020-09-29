@@ -8,7 +8,6 @@
  */
 
 import Range from '../../dot/js/Range.js';
-import RangeIO from '../../dot/js/RangeIO.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import BooleanProperty from './BooleanProperty.js';
 import NumberProperty from './NumberProperty.js';
@@ -93,7 +92,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const rangeProperty = new Property( new Range( 0, 1 ), {
       tandem: Tandem.GENERAL.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
-      phetioType: Property.PropertyIO( RangeIO )
+      phetioType: Property.PropertyIO( Range.RangeIO )
     } );
     const numberProperty = new NumberProperty( 0, {
       tandem: Tandem.GENERAL.createTandem( 'numberProperty' ),

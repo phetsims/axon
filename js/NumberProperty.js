@@ -8,7 +8,6 @@
  */
 
 import Range from '../../dot/js/Range.js';
-import RangeIO from '../../dot/js/RangeIO.js';
 import merge from '../../phet-core/js/merge.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -50,7 +49,7 @@ class NumberProperty extends Property {
       // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
       rangePropertyOptions: {
         phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
-        phetioType: Property.PropertyIO( NullableIO( RangeIO ) ),
+        phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
         phetioReadOnly: true
       },
 
@@ -246,7 +245,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     }
 
     if ( numberProperty.rangeProperty.value ) {
-      parentStateObject.range = RangeIO.toStateObject( numberProperty.rangeProperty.value );
+      parentStateObject.range = Range.RangeIO.toStateObject( numberProperty.rangeProperty.value );
       if ( numberProperty.rangeProperty.isPhetioInstrumented() ) {
         parentStateObject.rangePhetioID = StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID );
       }
