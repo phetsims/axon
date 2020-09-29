@@ -56,9 +56,8 @@ class Action extends PhetioObject {
       // phet-io - see PhetioObject.js for doc
       tandem: Tandem.OPTIONAL,
 
-      // {function(new:function(new:ObjectIO),parameterTypes:function(new:ObjectIO))[]} - The non parameterized TypeIO, because
-      // passing in parameters. Override this to create a subtype of ActionIO as the phetioType instead of a
-      // parameterized ActionIO Type.
+      // {function(IOType[]):IOType} - The non parameterized TypeIO. Override this to create a subtype of ActionIO as
+      // the phetioType instead of a parameterized ActionIO Type.
       phetioOuterType: Action.ActionIO,
       phetioState: false,
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,

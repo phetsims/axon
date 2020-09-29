@@ -14,7 +14,7 @@ import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
 
-// {Map.<cacheKey:function(new:ObjectIO), function(new:ObjectIO)>} - Cache each parameterized PropertyIO based on
+// {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
 // the parameter type, so that it is only created once
 const cache = new Map();
 

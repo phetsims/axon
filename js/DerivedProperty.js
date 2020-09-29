@@ -238,7 +238,7 @@ const orFunction = ( value, property ) => {
   return value || property.value;
 };
 
-// {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized DerivedPropertyIO so that
+// {Object.<parameterTypeName:string, IOType>} - Cache each parameterized DerivedPropertyIO so that
 // it is only created once.
 const cache = {};
 

@@ -451,7 +451,7 @@ class ObservableArray extends PhetioObject {
   }
 }
 
-// {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized ObservableArray.ObservableArrayIO so that it
+// {Object.<parameterTypeName:string, IOType>} - Cache each parameterized ObservableArray.ObservableArrayIO so that it
 // is only created once.
 const cache = {};
 
