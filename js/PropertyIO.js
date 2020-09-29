@@ -21,8 +21,8 @@ const cache = new Map();
 /**
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
+ * @param {IOType} parameterType
+ * @returns {IOType}
  */
 const PropertyIO = parameterType => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );

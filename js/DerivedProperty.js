@@ -246,8 +246,8 @@ const cache = {};
  * Parametric IO Type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
  * IO Type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
+ * @param {IOType} parameterType
+ * @returns {IOType}
  */
 DerivedProperty.DerivedPropertyIO = parameterType => {
   assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );

@@ -457,8 +457,8 @@ const cache = {};
 
 /**
  * An observable array that triggers notifications when items are added or removed.
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
+ * @param {IOType} parameterType
+ * @returns {IOType}
  */
 ObservableArray.ObservableArrayIO = parameterType => {
   assert && assert( parameterType instanceof IOType, 'element type should be defined' );

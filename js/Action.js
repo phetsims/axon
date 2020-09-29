@@ -28,7 +28,7 @@ assert && Object.freeze( EMPTY_ARRAY );
 // allowed keys to options.parameters
 const PARAMETER_KEYS = [
   'name', // {string} - required for phet-io instrumented Actions
-  'phetioType', // {function(new:ObjectIO)} - required for phet-io instrumented Actions
+  'phetioType', // {IOType} - required for phet-io instrumented Actions
   'phetioDocumentation', // {string} - optional, additional documentation for this specific parameter
 
   // {boolean=true} - specify this to keep the parameter private to the phet-io api. To support emitting and executing over
