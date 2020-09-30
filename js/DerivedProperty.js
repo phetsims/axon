@@ -253,7 +253,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
 
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
     cache[ parameterType.typeName ] = new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
-      isValidValue: derivedProperty => derivedProperty instanceof DerivedProperty,
+      valueType: DerivedProperty,
       parameterTypes: [ parameterType ],
       supertype: Property.PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +

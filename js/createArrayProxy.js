@@ -446,8 +446,8 @@ const cache = new Map();
 const ArrayProxyIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ArrayProxyIO<${parameterType.typeName}>`, {
-      parameterTypes: [ parameterType ],
       valueType: ArrayProxyPhetioObject,
+      parameterTypes: [ parameterType ],
       toStateObject: arrayProxyPhetioObject => arrayProxyPhetioObject.arrayProxy.toStateObject(),
       applyState: ( arrayProxyPhetioObject, state ) => arrayProxyPhetioObject.arrayProxy.applyState( state )
     } ) );

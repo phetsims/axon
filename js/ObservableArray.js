@@ -465,8 +465,8 @@ ObservableArray.ObservableArrayIO = parameterType => {
 
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
     cache[ parameterType.typeName ] = new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
+      valueType: ObservableArray,
       documentation: 'An array that sends notifications when its values have changed.',
-      isValidValue: v => v instanceof ObservableArray,
       events: [ 'itemAdded', 'itemRemoved' ],
       parameterTypes: [ parameterType ],
       toStateObject: observableArray => ( { array: observableArray.getArray().map( item => parameterType.toStateObject( item ) ) } ),

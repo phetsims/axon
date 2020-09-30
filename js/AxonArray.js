@@ -306,7 +306,7 @@ AxonArray.AxonArrayPhetioObject = AxonArrayPhetioObject;
  * @author Sam Reid (PhET Interactive Simulations)
  */
 AxonArray.AxonArrayIO = new IOType( 'AxonArrayIO', {
-  isValidValue: value => value instanceof AxonArray.AxonArrayPhetioObject,
+  valueType: AxonArrayPhetioObject,
   toStateObject: axonArrayPhetioObject => axonArrayPhetioObject.axonArray.toStateObject(),
   stateToArgsForConstructor: AxonArray.stateToArgsForConstructor,
   applyState: ( axonArrayPhetioObject, state ) => axonArrayPhetioObject.axonArray.applyState( state )
