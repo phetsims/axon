@@ -295,7 +295,7 @@ const methods = {
   },
 
   /******************************************
-   * For compatibility with ObservableArray
+   * For compatibility with ObservableArrayDef
    * TODO https://github.com/phetsims/axon/issues/334 consider deleting after migration
    * TODO https://github.com/phetsims/axon/issues/334 if not deleted, rename 'Item' with 'Element'
    *******************************************/
