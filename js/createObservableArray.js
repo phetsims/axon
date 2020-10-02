@@ -372,6 +372,14 @@ const methods = {
   // @public
   getArrayCopy: function() { return this.slice(); },
 
+  // @public
+  dispose: function() {
+    this.elementAddedEmitter.dispose();
+    this.elementRemovedEmitter.dispose();
+    this.lengthProperty.dispose();
+    this.arrayProxyPhetioObject && this.arrayProxyPhetioObject.dispose();
+  },
+
   /******************************************
    * PhET-iO
    *******************************************/
@@ -386,15 +394,6 @@ const methods = {
     this.length = 0;
     const elements = stateObject.array.map( paramStateObject => this.phetioElementType.fromStateObject( paramStateObject ) );
     this.push( ...elements );
-  },
-
-  //REVIEW https://github.com/phetsims/axon/issues/330 dispose isn't specific to PhET-iO, move above the "PhET-iO" section comment?
-  // @public
-  dispose: function() {
-    this.elementAddedEmitter.dispose();
-    this.elementRemovedEmitter.dispose();
-    this.lengthProperty.dispose();
-    this.arrayProxyPhetioObject && this.arrayProxyPhetioObject.dispose();
   }
 };
 
