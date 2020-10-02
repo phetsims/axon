@@ -165,24 +165,21 @@ const createObservableArray = options => {
   arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
   arrayProxy.lengthProperty = lengthProperty;
 
-  if ( options.length >= 0 ) {
-    arrayProxy.length = options.length;
-  }
-  if ( options.elements.length > 0 ) {
-    Array.prototype.push.apply( arrayProxy, options.elements );
-  }
-
-  //TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
-  arrayProxy.reset = () => {
-    arrayProxy.length = 0;
-
-    //REVIEW https://github.com/phetsims/axon/issues/330 duplicate code
+  const init = () => {
     if ( options.length >= 0 ) {
       arrayProxy.length = options.length;
     }
     if ( options.elements.length > 0 ) {
       Array.prototype.push.apply( arrayProxy, options.elements );
     }
+  };
+
+  init();
+
+  //TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
+  arrayProxy.reset = () => {
+    arrayProxy.length = 0;
+    init();
   };
 
   /******************************************
