@@ -21,6 +21,8 @@ const ObservableArrayDef = {
   /**
    * Returns true if the argument has the properties that an ObservableArrayDef should have.
    * @public
+   *
+   * @returns {boolean}
    */
   isObservableArray( observableArray ) {
 
