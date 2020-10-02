@@ -1,7 +1,8 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * Creates an object that has the same API as an Array, but also supports notifications and PhET-iO
+ * Creates an object that has the same API as an Array, but also supports notifications and PhET-iO. When an item
+ * is added or removed, the lengthProperty changes before elementAddedEmitter or elementRemovedEmitter emit.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -267,9 +268,6 @@ const methods = {
   // @public
   splice() {
     const returnValue = Array.prototype.splice.apply( this.targetArray, arguments );
-
-    //REVIEW https://github.com/phetsims/axon/issues/330 is this next comment true in general? Has that been thoroughly tested? Should this comment be moved to the header comment?
-    // Set length first so it will be correct in elementListener callbacks
     this.lengthProperty.value = this.length;
     const deletedElements = returnValue;
     for ( let i = 2; i < arguments.length; i++ ) {
