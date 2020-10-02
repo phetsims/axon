@@ -369,7 +369,6 @@ const methods = {
   getArray: function() { return this; },
 
   //REVIEW https://github.com/phetsims/axon/issues/330 This also seems important to eliminate
-  //REVIEW https://github.com/phetsims/axon/issues/330 do we need methods.slice?
   // @public
   getArrayCopy: function() { return this.slice(); },
 
