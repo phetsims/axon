@@ -455,7 +455,7 @@ QUnit.test( 'Test function values', assert => {
   assert.equal( 8, number, 'array should support function values' );
 } );
 
-QUnit.test( 'createArrayProxyTests misc', assert => {
+QUnit.test( 'createObservableArrayTests misc', assert => {
   const array = createObservableArray();
   assert.ok( Array.isArray( array ), 'should be an array' );
 } );

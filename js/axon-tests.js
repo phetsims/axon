@@ -7,7 +7,7 @@
  */
 
 import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
-import './createArrayProxyTests.js';
+import './createObservableArrayTests.js';
 import './AxonArrayTests.js';
 import './BooleanPropertyTests.js';
 import './DerivedPropertyTests.js';
