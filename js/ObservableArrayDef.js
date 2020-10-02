@@ -19,12 +19,12 @@ import axon from './axon.js';
 const ObservableArrayDef = {
 
   /**
-   * Returns true if the argument has the properties that an Array Proxy should have.
+   * Returns true if the argument has the properties that an ObservableArrayDef should have.
    * @public
    */
-  isArrayProxy( arrayProxy ) {
+  isObservableArray( observableArray ) {
 
-    return Array.isArray( arrayProxy ) && arrayProxy.elementAddedEmitter && arrayProxy.elementRemovedEmitter && arrayProxy.lengthProperty;
+    return Array.isArray( observableArray ) && observableArray.elementAddedEmitter && observableArray.elementRemovedEmitter && observableArray.lengthProperty;
   }
 };
 

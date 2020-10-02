@@ -38,7 +38,7 @@ const createObservableArray = options => {
   let emitterParameterOptions = null;
   if ( options.phetioType ) {
 
-    assert && assert( options.phetioType.typeName.startsWith( 'ArrayProxyIO' ) );
+    assert && assert( options.phetioType.typeName.startsWith( 'ObservableArrayIO' ) );
     emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
   }
   else if ( ValidatorDef.isValidValidator( options ) ) {
@@ -72,7 +72,7 @@ const createObservableArray = options => {
   const targetArray = [];
 
   // The Proxy which will intercept method calls and trigger notifications.
-  const arrayProxy = new Proxy( targetArray, {
+  const observableArray = new Proxy( targetArray, {
 
     /**
      * Trap for getting a property or method.
@@ -159,27 +159,27 @@ const createObservableArray = options => {
   } );
 
   // @private - Make it possible to use the targetArray in the overridden methods above.
-  arrayProxy.targetArray = targetArray;
+  observableArray.targetArray = targetArray;
 
   // @public (listen only)
-  arrayProxy.elementAddedEmitter = elementAddedEmitter;
-  arrayProxy.elementRemovedEmitter = elementRemovedEmitter;
-  arrayProxy.lengthProperty = lengthProperty;
+  observableArray.elementAddedEmitter = elementAddedEmitter;
+  observableArray.elementRemovedEmitter = elementRemovedEmitter;
+  observableArray.lengthProperty = lengthProperty;
 
   const init = () => {
     if ( options.length >= 0 ) {
-      arrayProxy.length = options.length;
+      observableArray.length = options.length;
     }
     if ( options.elements.length > 0 ) {
-      Array.prototype.push.apply( arrayProxy, options.elements );
+      Array.prototype.push.apply( observableArray, options.elements );
     }
   };
 
   init();
 
   //TODO https://github.com/phetsims/axon/issues/334 Move to "prototype" above or drop support
-  arrayProxy.reset = () => {
-    arrayProxy.length = 0;
+  observableArray.reset = () => {
+    observableArray.length = 0;
     init();
   };
 
@@ -187,40 +187,40 @@ const createObservableArray = options => {
    * PhET-iO support
    *******************************************/
   if ( options.tandem.supplied ) {
-    arrayProxy.phetioElementType = options.phetioType.parameterTypes[ 0 ];
+    observableArray.phetioElementType = options.phetioType.parameterTypes[ 0 ];
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    arrayProxy.arrayProxyPhetioObject = new ArrayProxyPhetioObject( arrayProxy, options );
+    observableArray.observableArrayPhetioObject = new observableArrayPhetioObject( observableArray, options );
   }
 
-  return arrayProxy;
+  return observableArray;
 };
 
 /**
- * Manages state save/load.  ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
+ * Manages state save/load. ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
  * provides that functionality.
  */
-class ArrayProxyPhetioObject extends PhetioObject {
+class observableArrayPhetioObject extends PhetioObject {
 
   /**
-   * @param {ObservableArrayDef} arrayProxy
+   * @param {ObservableArrayDef} observableArray
    * @param {Object} [options] - same as the options to the parent ObservableArrayDef
    */
-  constructor( arrayProxy, options ) {
+  constructor( observableArray, options ) {
 
     options = merge( {
-      phetioType: ArrayProxyIO
+      phetioType: ObservableArrayIO
     }, options );
 
     super( options );
 
     // @private
-    this.arrayProxy = arrayProxy;
+    this.observableArray = observableArray;
   }
 }
 
-// Methods shared by all arrayProxy instances
+// Methods shared by all ObservableArrayDef instances
 const methods = {
 
   /******************************************
@@ -377,7 +377,7 @@ const methods = {
     this.elementAddedEmitter.dispose();
     this.elementRemovedEmitter.dispose();
     this.lengthProperty.dispose();
-    this.arrayProxyPhetioObject && this.arrayProxyPhetioObject.dispose();
+    this.observableArrayPhetioObject && this.observableArrayPhetioObject.dispose();
   },
 
   /******************************************
@@ -401,12 +401,12 @@ const methods = {
  * For copyWithin and fill, which have more complex behavior, we treat the array as a black box, making a shallow copy
  * before the operation in order to identify what has been added and removed.
  * @param {Object[]} shallowCopy
- * @param {ObservableArrayDef} arrayProxy
+ * @param {ObservableArrayDef} observableArray
  */
-const reportDifference = ( shallowCopy, arrayProxy ) => {
+const reportDifference = ( shallowCopy, observableArray ) => {
 
   const before = shallowCopy;
-  const after = arrayProxy.targetArray.slice();
+  const after = observableArray.targetArray.slice();
 
   for ( let i = 0; i < before.length; i++ ) {
     const beforeElement = before[ i ];
@@ -417,32 +417,32 @@ const reportDifference = ( shallowCopy, arrayProxy ) => {
       i--;
     }
   }
-  before.forEach( element => arrayProxy.elementRemovedEmitter.emit( element ) );
-  after.forEach( element => arrayProxy.elementAddedEmitter.emit( element ) );
+  before.forEach( element => observableArray.elementRemovedEmitter.emit( element ) );
+  after.forEach( element => observableArray.elementAddedEmitter.emit( element ) );
 };
 
-// {Map.<cacheKey:function(new:ArrayProxyIO), function(new:ArrayProxyIO)>} - Cache each parameterized ArrayProxyIO
+// {Map.<cacheKey:function(new:ObservableArrayIO), function(new:ObservableArrayIO)>} - Cache each parameterized ObservableArrayIO
 // based on the parameter type, so that it is only created once.
 const cache = new Map();
 
 /**
- * ArrayProxyIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
+ * ObservableArrayIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
  * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
-const ArrayProxyIO = parameterType => {
+const ObservableArrayIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `ArrayProxyIO<${parameterType.typeName}>`, {
-      valueType: ArrayProxyPhetioObject,
+    cache.set( parameterType, new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
+      valueType: observableArrayPhetioObject,
       parameterTypes: [ parameterType ],
-      toStateObject: arrayProxyPhetioObject => arrayProxyPhetioObject.arrayProxy.toStateObject(),
-      applyState: ( arrayProxyPhetioObject, state ) => arrayProxyPhetioObject.arrayProxy.applyState( state )
+      toStateObject: observableArrayPhetioObject => observableArrayPhetioObject.observableArray.toStateObject(),
+      applyState: ( observableArrayPhetioObject, state ) => observableArrayPhetioObject.observableArray.applyState( state )
     } ) );
   }
   return cache.get( parameterType );
 };
 
 // @public
-createObservableArray.ArrayProxyIO = ArrayProxyIO;
+createObservableArray.ObservableArrayIO = ObservableArrayIO;
 
 axon.register( 'createObservableArray', createObservableArray );
 export default createObservableArray;

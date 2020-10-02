@@ -22,20 +22,20 @@ QUnit.test( 'Hello', assert => {
     return result;
   };
 
-  const arrayProxy = run( 'create', () => createObservableArray( {
+  const observableArray = run( 'create', () => createObservableArray( {
     elements: [ 'a', 'bc' ]
   } ) );
 
-  run( 'push hello', () => arrayProxy.push( 'hello' ) );
-  run( 'set element 0', () => { arrayProxy[ 0 ] = 'dinosaur'; } );
-  run( 'set element 5', () => { arrayProxy[ 5 ] = 'hamburger'; } );
-  run( 'length = 0', () => { arrayProxy.length = 0; } );
+  run( 'push hello', () => observableArray.push( 'hello' ) );
+  run( 'set element 0', () => { observableArray[ 0 ] = 'dinosaur'; } );
+  run( 'set element 5', () => { observableArray[ 5 ] = 'hamburger'; } );
+  run( 'length = 0', () => { observableArray.length = 0; } );
   run( 'a,b,c', () => {
-    arrayProxy.push( 'a' );
-    arrayProxy.push( 'b' );
-    arrayProxy.push( 'c' );
+    observableArray.push( 'a' );
+    observableArray.push( 'b' );
+    observableArray.push( 'c' );
   } );
-  run( 'splice', () => arrayProxy.splice( 0, 1 ) );
+  run( 'splice', () => observableArray.splice( 0, 1 ) );
 } );
 
 // Creates an array that is tested with the given modifiers against the expected results.
