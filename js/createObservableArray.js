@@ -407,9 +407,9 @@ const methods = {
   }
 };
 
-//REVIEW https://github.com/phetsims/axon/issues/330 I've read this comment multiple times and I'm still in the dark.
 /**
- * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
+ * For copyWithin and fill, which have more complex behavior, we treat the array as a black box, making a shallow copy
+ * before the operation in order to identify what has been added and removed.
  * @param {Object[]} shallowCopy
  * @param {ObservableArrayDef} arrayProxy
  */
