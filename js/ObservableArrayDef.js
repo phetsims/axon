@@ -8,7 +8,7 @@
 
 import axon from './axon.js';
 
-//REVIEW https://github.com/phetsims/axon/issues/331 WebStorm is having problems with {ObservableArrayDef} vs {Array} params
+// TODO https://github.com/phetsims/axon/issues/331 WebStorm is having problems with {ObservableArrayDef} vs {Array} params
 /**
  * @typedef {Array} ObservableArrayDef
  * @property {Emitter} elementAddedEmitter
