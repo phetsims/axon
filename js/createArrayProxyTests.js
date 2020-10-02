@@ -95,6 +95,17 @@ QUnit.test( 'Test delete', assert => {
   ] );
 } );
 
+QUnit.test( 'Test same value', assert => {
+
+  testArrayEmitters( assert, array => {
+
+    array.push( 'test' );
+    array[ 0 ] = 'test';
+  }, [
+    { type: 'added', value: 'test' }
+  ] );
+} );
+
 QUnit.test( 'Test axon array', assert => {
 
   testArrayEmitters( assert, array => {

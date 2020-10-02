@@ -114,8 +114,7 @@ const createObservableArray = options => {
 
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
       const numberKey = Number( key );
-      if ( Number.isInteger( numberKey ) && numberKey >= 0 ) {
-        //REVIEW https://github.com/phetsims/axon/issues/330 only do this if newValue !== oldValue
+      if ( Number.isInteger( numberKey ) && numberKey >= 0 && oldValue !== newValue ) {
         if ( oldValue !== undefined ) {
           elementRemovedEmitter.emit( array[ key ] );
         }
