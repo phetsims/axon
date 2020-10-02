@@ -368,7 +368,7 @@ const methods = {
   // @public
   getArray: function() { return this; },
 
-  //REVIEW https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
+  // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
   // @public
   getArrayCopy: function() { return this.slice(); },
 
