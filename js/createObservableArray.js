@@ -191,17 +191,18 @@ const createObservableArray = options => {
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    observableArray.observableArrayPhetioObject = new observableArrayPhetioObject( observableArray, options );
+    observableArray.observableArrayPhetioObject = new ObservableArrayPhetioObject( observableArray, options );
   }
 
   return observableArray;
 };
 
 /**
- * Manages state save/load. ArrayProxy uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
+ * Manages state save/load. This implementation uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
  * provides that functionality.
+ * @private
  */
-class observableArrayPhetioObject extends PhetioObject {
+class ObservableArrayPhetioObject extends PhetioObject {
 
   /**
    * @param {ObservableArrayDef} observableArray
@@ -432,7 +433,7 @@ const cache = new Map();
 const ObservableArrayIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
-      valueType: observableArrayPhetioObject,
+      valueType: ObservableArrayPhetioObject,
       parameterTypes: [ parameterType ],
       toStateObject: observableArrayPhetioObject => observableArrayPhetioObject.observableArray.toStateObject(),
       applyState: ( observableArrayPhetioObject, state ) => observableArrayPhetioObject.observableArray.applyState( state )
