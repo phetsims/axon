@@ -1,15 +1,15 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * QUnit tests for createArrayProxy
+ * QUnit tests for createObservableArray
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import createArrayProxy from './createArrayProxy.js';
+import createObservableArray from './createObservableArray.js';
 
-QUnit.module( 'createArrayProxy' );
+QUnit.module( 'createObservableArray' );
 
 QUnit.test( 'Hello', assert => {
 
@@ -22,7 +22,7 @@ QUnit.test( 'Hello', assert => {
     return result;
   };
 
-  const arrayProxy = run( 'create', () => createArrayProxy( {
+  const arrayProxy = run( 'create', () => createObservableArray( {
     elements: [ 'a', 'bc' ]
   } ) );
 
@@ -43,7 +43,7 @@ QUnit.test( 'Hello', assert => {
 
 // Creates an array that is tested with the given modifiers against the expected results.
 const testArrayEmitters = ( assert, modifier, expected ) => {
-  const array = createArrayProxy();
+  const array = createObservableArray();
   const deltas = [];
   array.elementAddedEmitter.addListener( e => deltas.push( { type: 'added', value: e } ) );
   array.elementRemovedEmitter.addListener( e => deltas.push( { type: 'removed', value: e } ) );
@@ -53,7 +53,7 @@ const testArrayEmitters = ( assert, modifier, expected ) => {
 
 QUnit.test( 'Test axon array length', assert => {
 
-  const array = createArrayProxy();
+  const array = createObservableArray();
   array.push( 'hello' );
   assert.equal( array.lengthProperty.value, 1, 'array lengthProperty test' );
   assert.equal( array.length, 1, 'array length test' );
@@ -159,7 +159,7 @@ QUnit.test( 'Test axon array setLength', assert => {
   ] );
 } );
 
-QUnit.test( 'Test createArrayProxy.push', assert => {
+QUnit.test( 'Test createObservableArray.push', assert => {
   testArrayEmitters( assert, array => {
     array.push( 'hello', 'there', 'old', undefined );
   }, [
@@ -170,7 +170,7 @@ QUnit.test( 'Test createArrayProxy.push', assert => {
   ] );
 } );
 
-QUnit.test( 'Test createArrayProxy.pop', assert => {
+QUnit.test( 'Test createObservableArray.pop', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7 );
     const popped = array.pop();
@@ -181,7 +181,7 @@ QUnit.test( 'Test createArrayProxy.pop', assert => {
   ] );
 } );
 
-QUnit.test( 'Test createArrayProxy.shift', assert => {
+QUnit.test( 'Test createObservableArray.shift', assert => {
   testArrayEmitters( assert, array => {
     array.push( 7, 3 );
     const removed = array.shift();
@@ -193,7 +193,7 @@ QUnit.test( 'Test createArrayProxy.shift', assert => {
   ] );
 } );
 
-QUnit.test( 'Test createArrayProxy.unshift', assert => {
+QUnit.test( 'Test createObservableArray.unshift', assert => {
 
   // From this example: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
   testArrayEmitters( assert, array => {
@@ -212,7 +212,7 @@ QUnit.test( 'Test createArrayProxy.unshift', assert => {
 } );
 
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin
-QUnit.test( 'Test createArrayProxy.copyWithin', assert => {
+QUnit.test( 'Test createObservableArray.copyWithin', assert => {
   testArrayEmitters( assert, array => {
     array.push( 1, 2, 3, 4, 5 );
     array.copyWithin( -2 ); // [1, 2, 3, 1, 2]
@@ -271,7 +271,7 @@ QUnit.test( 'Test createArrayProxy.copyWithin', assert => {
 } );
 
 // Examples from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
-QUnit.test( 'Test createArrayProxy.fill', assert => {
+QUnit.test( 'Test createObservableArray.fill', assert => {
   testArrayEmitters( assert, array => {
     array.push( 1, 2, 3 );
     array.fill( 4 ); // [4,4,4]
@@ -360,7 +360,7 @@ QUnit.test( 'Test createArrayProxy.fill', assert => {
 } );
 
 QUnit.test( 'Test that length is correct in emitter callbacks after push', assert => {
-  const a = createArrayProxy();
+  const a = createObservableArray();
   a.elementAddedEmitter.addListener( element => {
     assert.equal( a.length, 1 );
     assert.equal( a.lengthProperty.value, 1 );
@@ -372,17 +372,17 @@ QUnit.test( 'Test that length is correct in emitter callbacks after push', asser
 QUnit.test( 'Test return types', assert => {
 
   assert.ok( true );
-  const a = createArrayProxy();
+  const a = createObservableArray();
   a.push( 'hello' );
 
   const x = a.slice();
   x.unshift( 7 );
-  assert.ok( true, 'make sure it is safe to unshift on a sliced createArrayProxy' );
+  assert.ok( true, 'make sure it is safe to unshift on a sliced createObservableArray' );
 } );
 
 QUnit.test( 'Test constructor arguments', assert => {
 
-  const a1 = createArrayProxy( {
+  const a1 = createObservableArray( {
     length: 7
   } );
   assert.equal( a1.lengthProperty.value, 7, 'array length test' );
@@ -390,7 +390,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   assert.equal( a1.lengthProperty.value, 8, 'array length test' );
   assert.equal( a1[ 7 ], 'hello', 'for push, element should be added at the end of the array' );
 
-  const a2 = createArrayProxy( {
+  const a2 = createObservableArray( {
     elements: [ 'hi', 'there' ]
   } );
   assert.equal( a2.length, 2, 'array length test' );
@@ -400,19 +400,19 @@ QUnit.test( 'Test constructor arguments', assert => {
 
   let a3 = null;
   window.assert && assert.throws( () => {
-    a3 = createArrayProxy( { elements: [ 3 ], length: 1 } );
+    a3 = createObservableArray( { elements: [ 3 ], length: 1 } );
   }, 'length and elements are mutually exclusive' );
   assert.equal( a3, null, 'should not have been assigned' );
 
   // valid element types should succeed
-  const a4 = createArrayProxy( {
+  const a4 = createObservableArray( {
     elements: [ 'a', 'b' ],
     valueType: 'string'
   } );
   assert.ok( !!a4, 'correct element types should succeed' );
 
   // invalid element types should fail
-  window.assert && assert.throws( () => createArrayProxy( {
+  window.assert && assert.throws( () => createObservableArray( {
     elements: [ 'a', 'b' ],
     valueType: 'number'
   } ), 'should fail for invalid element types' );
@@ -420,7 +420,7 @@ QUnit.test( 'Test constructor arguments', assert => {
 } );
 
 QUnit.test( 'Test function values', assert => {
-  const array = createArrayProxy();
+  const array = createObservableArray();
   let number = 7;
   array.push( () => {
     number++;
@@ -430,6 +430,6 @@ QUnit.test( 'Test function values', assert => {
 } );
 
 QUnit.test( 'createArrayProxyTests misc', assert => {
-  const array = createArrayProxy();
+  const array = createObservableArray();
   assert.ok( Array.isArray( array ), 'should be an array' );
 } );

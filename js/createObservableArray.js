@@ -17,15 +17,15 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
-//REVIEW https://github.com/phetsims/axon/issues/330 wondering if createArrayProxy is the best name for this.
+//REVIEW https://github.com/phetsims/axon/issues/330 wondering if createObservableArray is the best name for this.
 //  It exposes the details of how it's implemented (Proxy) and there could be other Proxy implementations that
 //  add other features. It would be better if the name described what features it adds to Array, not how those
 //  features are added. I unfortunately can't think of better name than createObservableArray.
 /**
  * @param {Object} [options]
- * @returns {ArrayProxyDef}
+ * @returns {ObservableArrayDef}
  */
-const createArrayProxy = options => {
+const createObservableArray = options => {
 
   assertMutuallyExclusiveOptions( options, [ 'length' ], [ 'elements' ] );
 
@@ -213,8 +213,8 @@ const createArrayProxy = options => {
 class ArrayProxyPhetioObject extends PhetioObject {
 
   /**
-   * @param {ArrayProxyDef} arrayProxy
-   * @param {Object} [options] - same as the options to the parent ArrayProxyDef
+   * @param {ObservableArrayDef} arrayProxy
+   * @param {Object} [options] - same as the options to the parent ObservableArrayDef
    */
   constructor( arrayProxy, options ) {
 
@@ -415,7 +415,7 @@ const methods = {
 /**
  * Black box testing is less efficient but more concise and easy to verify correctness.  Used for the rarer methods.
  * @param {Object[]} shallowCopy
- * @param {ArrayProxyDef} arrayProxy
+ * @param {ObservableArrayDef} arrayProxy
  */
 const reportDifference = ( shallowCopy, arrayProxy ) => {
 
@@ -440,8 +440,8 @@ const reportDifference = ( shallowCopy, arrayProxy ) => {
 const cache = new Map();
 
 /**
- * ArrayProxyIO is the IO Type for ArrayProxyDef. It delegates most of its implementation to ArrayProxyDef.
- * Instead of being a parametric type, it leverages the phetioElementType on ArrayProxyDef.
+ * ArrayProxyIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
+ * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
 const ArrayProxyIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
@@ -456,7 +456,7 @@ const ArrayProxyIO = parameterType => {
 };
 
 // @public
-createArrayProxy.ArrayProxyIO = ArrayProxyIO;
+createObservableArray.ArrayProxyIO = ArrayProxyIO;
 
-axon.register( 'createArrayProxy', createArrayProxy );
-export default createArrayProxy;
+axon.register( 'createObservableArray', createObservableArray );
+export default createObservableArray;
