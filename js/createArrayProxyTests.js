@@ -77,7 +77,25 @@ QUnit.test( 'Test axon array length', assert => {
   assert.equal( array.length, 0, 'array length test after setLengthAndNotify' );
 } );
 
-QUnit.test( 'Test axon array INCREMENTAL', assert => {
+QUnit.test( 'Test delete', assert => {
+
+  testArrayEmitters( assert, array => {
+
+    array.push( 'test' );
+    delete array[ 0 ];
+
+    array.hello = 'there';
+    delete array.hello;
+
+    array[ -7 ] = 'time';
+    delete array[ -7 ];
+  }, [
+    { type: 'added', value: 'test' },
+    { type: 'removed', value: 'test' }
+  ] );
+} );
+
+QUnit.test( 'Test axon array', assert => {
 
   testArrayEmitters( assert, array => {
 
@@ -112,7 +130,7 @@ QUnit.test( 'Test axon array INCREMENTAL', assert => {
   ] );
 } );
 
-QUnit.test( 'Test axon array', assert => {
+QUnit.test( 'Test axon array using Array.prototype.push.call etc', assert => {
 
   testArrayEmitters( assert, array => {
 

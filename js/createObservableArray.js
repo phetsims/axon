@@ -113,9 +113,8 @@ const createObservableArray = options => {
       const returnValue = Reflect.set( array, key, newValue );
 
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
-      //REVIEW https://github.com/phetsims/axon/issues/330 array[3.2] will break this
-      const parsed = parseInt( key, 10 );
-      if ( !isNaN( parsed ) ) {
+      const numberKey = Number( key );
+      if ( Number.isInteger( numberKey ) && numberKey >= 0 ) {
         //REVIEW https://github.com/phetsims/axon/issues/330 only do this if newValue !== oldValue
         if ( oldValue !== undefined ) {
           elementRemovedEmitter.emit( array[ key ] );
@@ -144,11 +143,10 @@ const createObservableArray = options => {
       assert && assert( array === targetArray, 'array should match the targetArray' );
 
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
-      //REVIEW https://github.com/phetsims/axon/issues/330 array[3.2] will break this
-      const parsed = parseInt( key, 10 );
+      const numberKey = Number( key );
 
       let removed;
-      if ( !isNaN( parsed ) ) {
+      if ( Number.isInteger( numberKey ) && numberKey >= 0 ) {
         removed = array[ key ];
       }
       const returnValue = Reflect.deleteProperty( array, key );
