@@ -177,7 +177,7 @@ const createObservableArray = options => {
 
   init();
 
-  //TODO https://github.com/phetsims/axon/issues/330 Move to "prototype" above or drop support
+  //TODO https://github.com/phetsims/axon/issues/334 Move to "prototype" above or drop support
   arrayProxy.reset = () => {
     arrayProxy.length = 0;
     init();
@@ -295,8 +295,8 @@ const methods = {
 
   /******************************************
    * For compatibility with ObservableArray
-   * TODO https://github.com/phetsims/axon/issues/330 consider deleting after migration
-   * TODO https://github.com/phetsims/axon/issues/330 if not deleted, rename 'Item' with 'Element'
+   * TODO https://github.com/phetsims/axon/issues/334 consider deleting after migration
+   * TODO https://github.com/phetsims/axon/issues/334 if not deleted, rename 'Item' with 'Element'
    *******************************************/
 
   // @public
@@ -364,11 +364,11 @@ const methods = {
     Array.prototype.push.apply( this, shuffled );
   },
 
-  // TODO https://github.com/phetsims/axon/issues/330 This seems important to eliminate
+  // TODO https://github.com/phetsims/axon/issues/334 This seems important to eliminate
   // @public
   getArray: function() { return this; },
 
-  //REVIEW https://github.com/phetsims/axon/issues/330 This also seems important to eliminate
+  //REVIEW https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
   // @public
   getArrayCopy: function() { return this.slice(); },
 
