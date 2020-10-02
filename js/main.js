@@ -18,7 +18,7 @@ import './Emitter.js';
 import './EnumerationProperty.js';
 import './Multilink.js';
 import './NumberProperty.js';
-import './ObservableArray.js';
+import './createObservableArray.js';
 import './Property.js';
 import './PropertyStateHandler.js';
 import './propertyStateHandlerSingleton.js';

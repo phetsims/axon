@@ -15,7 +15,6 @@ import './EmitterIOTests.js';
 import './EmitterTests.js';
 import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
-import './ObservableArrayTests.js';
 import './PropertyStateHandlerTests.js';
 import './PropertyTests.js';
 import './StringPropertyTests.js';
