@@ -36,9 +36,6 @@ QUnit.test( 'Hello', assert => {
     arrayProxy.push( 'c' );
   } );
   run( 'splice', () => arrayProxy.splice( 0, 1 ) );
-
-  //TODO https://github.com/phetsims/axon/issues/330 dead code
-  // arrayProxy.slice( 0 );
 } );
 
 // Creates an array that is tested with the given modifiers against the expected results.
