@@ -31,10 +31,16 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {Property.<*>|null} property - null to "unset" forwarding.
    */
   setForwardingProperty( property ) {
+
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
     if ( this.forwardingProperty === property ) {
       return;
     }
+
+    const currentForwardingPropertyInstrumented = this.forwardingProperty &&
+                                                  this.forwardingProperty.isPhetioInstrumented();
+    assert && currentForwardingPropertyInstrumented && assert( property && property.isPhetioInstrumented(),
+      'Cannot set swap out a PhET-iO instrumented forwardingProperty for an uninstrumented one' );
 
     // Lazily set this value, it will be added as a listener to any forwardingProperty we have.
     this.forwardingListener = this.forwardingListener || ( ( value, oldValue, property ) => {
