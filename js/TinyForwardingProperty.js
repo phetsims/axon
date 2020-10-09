@@ -13,6 +13,7 @@ import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
 
 class TinyForwardingProperty extends TinyProperty {
+
   /**
    * @param {*} value - The initial value of the property
    * @param {Object} [options] - options
