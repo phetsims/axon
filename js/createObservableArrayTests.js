@@ -6,6 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import Random from '../../dot/js/Random.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import createObservableArray from './createObservableArray.js';
 
@@ -97,7 +98,7 @@ QUnit.test( 'Test same value', assert => {
   testArrayEmitters( assert, array => {
 
     array.push( 'test' );
-    array[ 0 ] = 'test';
+    array.shuffle( new Random() );// eslint-disable-line
   }, [
     { type: 'added', value: 'test' }
   ] );

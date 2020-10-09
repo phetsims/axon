@@ -361,8 +361,10 @@ const methods = {
 
     // preserve the same _array reference in case any clients got a reference to it with getArray()
     const shuffled = random.shuffle( this );
-    this.length = 0;
-    Array.prototype.push.apply( this, shuffled );
+
+    // Act on the targetArray so that removal and add notifications aren't sent.
+    this.targetArray.length = 0;
+    Array.prototype.push.apply( this.targetArray, shuffled );
   },
 
   // TODO https://github.com/phetsims/axon/issues/334 This seems important to eliminate
