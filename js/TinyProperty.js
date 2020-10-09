@@ -220,6 +220,15 @@ class TinyProperty extends TinyEmitter {
   }
 
   /**
+   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangably
+   * @public
+   * @returns {boolean} - always false
+   */
+  isPhetioInstrumented() {
+    return false;
+  }
+
+  /**
    * Releases references.
    * @public
    * @override
