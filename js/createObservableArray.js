@@ -367,10 +367,6 @@ const methods = {
     Array.prototype.push.apply( this.targetArray, shuffled );
   },
 
-  // TODO https://github.com/phetsims/axon/issues/334 This seems important to eliminate
-  // @public
-  getArray: function() { return this; },
-
   // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
   // @public
   getArrayCopy: function() { return this.slice(); },
