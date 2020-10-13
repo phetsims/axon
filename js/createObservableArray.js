@@ -71,6 +71,14 @@ const createObservableArray = options => {
   // The underlying array which is wrapped by the Proxy
   const targetArray = [];
 
+  // Verify that lengthProperty is updated before listeners are notified.
+  assert && elementAddedEmitter.addListener( () => {
+    assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
+  } );
+  assert && elementRemovedEmitter.addListener( () => {
+    assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
+  } );
+
   // The Proxy which will intercept method calls and trigger notifications.
   const observableArray = new Proxy( targetArray, {
 
@@ -116,6 +124,8 @@ const createObservableArray = options => {
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
       const numberKey = Number( key );
       if ( Number.isInteger( numberKey ) && numberKey >= 0 && oldValue !== newValue ) {
+        lengthProperty.value = array.length;
+
         if ( oldValue !== undefined ) {
           elementRemovedEmitter.emit( array[ key ] );
         }

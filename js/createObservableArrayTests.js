@@ -460,33 +460,3 @@ QUnit.test( 'createObservableArrayTests misc', assert => {
   const array = createObservableArray();
   assert.ok( Array.isArray( array ), 'should be an array' );
 } );
-
-QUnit.test( 'lengthProperty is set before calling listeners', assert => {
-
-  // Create an array with some values in it.
-  const array = createObservableArray();
-
-  // When a listener is called, verify that lengthProperty matches the array's length.
-  array.elementAddedEmitter.addListener( () => {
-    assert.ok( array.lengthProperty.value === array.length,
-      `elementAdded listener was called before changing lengthProperty, lengthProperty=${array.lengthProperty.value}, array.length=${array.length}` );
-  } );
-  array.elementRemovedEmitter.addListener( () => {
-    assert.ok( array.lengthProperty.value === array.length,
-      `elementRemoved listener was called before changing lengthProperty, lengthProperty=${array.lengthProperty.value}, array.length=${array.length}` );
-  } );
-
-  // Test the paths in set (the trap for setting a property value) that call element*Emitter.emit
-  array.length = 1;
-  array[ 0 ] = 'a'; // test [] operator when the value is replacing undefined
-  array[ 0 ] = 'b'; // test [] operator when the value is replacing !undefined
-
-  // Test the other methods that call element*Emitter.emit
-  array.length = 0;
-  array.push( 'a', 'b', 'c' );
-  array.pop();
-  array.shift();
-  array.push( 'd' );
-  array.unshift( 'e' );
-  array.splice( 0, 1 );
-} );
