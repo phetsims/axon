@@ -71,12 +71,20 @@ const createObservableArray = options => {
   // The underlying array which is wrapped by the Proxy
   const targetArray = [];
 
-  // Verify that lengthProperty is updated before listeners are notified.
+  // Verify that lengthProperty is updated before listeners are notified, but not when setting PhET-iO State
   assert && elementAddedEmitter.addListener( () => {
-    assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
+    if ( assert ) {
+      if ( !phet.joist.sim || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+        assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
+      }
+    }
   } );
   assert && elementRemovedEmitter.addListener( () => {
-    assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
+    if ( assert ) {
+      if ( !phet.joist.sim || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+        assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
+      }
+    }
   } );
 
   // The Proxy which will intercept method calls and trigger notifications.
