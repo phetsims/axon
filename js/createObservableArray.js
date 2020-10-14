@@ -74,14 +74,14 @@ const createObservableArray = options => {
   // Verify that lengthProperty is updated before listeners are notified, but not when setting PhET-iO State
   assert && elementAddedEmitter.addListener( () => {
     if ( assert ) {
-      if ( !phet.joist.sim || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      if ( !_.hasIn( window, 'phet.joist.sim' ) || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
         assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
       }
     }
   } );
   assert && elementRemovedEmitter.addListener( () => {
     if ( assert ) {
-      if ( !phet.joist.sim || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      if ( !_.hasIn( window, 'phet.joist.sim' ) || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
         assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
       }
     }
