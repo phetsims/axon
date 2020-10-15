@@ -73,7 +73,7 @@ const createObservableArray = options => {
 
   // Verify that lengthProperty is updated before listeners are notified, but not when setting PhET-iO State,
   // This is because we cannot specify ordering dependencies between Properties and ObservableArrays,
-  // see https://github.com/phetsims/phet-io/issues/1661
+  // TODO: Maybe this can be improved when we have better support for this in https://github.com/phetsims/phet-io/issues/1661
   assert && elementAddedEmitter.addListener( () => {
     if ( assert ) {
       if ( !_.hasIn( window, 'phet.joist.sim' ) || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
