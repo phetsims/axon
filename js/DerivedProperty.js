@@ -117,11 +117,7 @@ class DerivedProperty extends Property {
    * @override
    * @public
    */
-  set( value ) {
-    if ( !this.equalsValue( value ) ) {
-      throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value );
-    }
-  }
+  set( value ) { throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value ); }
 
   /**
    * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
