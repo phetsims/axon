@@ -72,7 +72,7 @@ const VALIDATOR_KEYS = [
   // valueType is `Array`.
   'arrayElementType',
 
-  // {function(new: IOType)} - A TypeIO used to specify the public typing for PhET-iO. Each TypeIO must have a
+  // {IOType} - A IOType used to specify the public typing for PhET-iO. Each IOType must have a
   // `validator` key specified that can be used for validation. See IOType for an example.
   'phetioType'
 ];

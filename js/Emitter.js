@@ -134,7 +134,7 @@ const cache = {};
  *
  * Providing validators to instrumented Emitters:
  * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).
- * To provide validators, there are two methods. First, by default each TypeIO has its own
+ * To provide validators, there are two methods. First, by default each IOType has its own
  * validator that will be used. So specifying an argument object like `{ type: NumberIO }` will automatically use
  * `NumberIO.validator` as the validator. This can be overridden with the `validator` key (second option), like
  * { type: NumberIO, validator: { isValidValue: v=> typeof v === 'number' &&  v < 5 } }`
