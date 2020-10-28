@@ -248,7 +248,6 @@ class TinyForwardingProperty extends TinyProperty {
    */
   dispose() {
     this.targetProperty && this.targetProperty.unlink( this.forwardingListener );
-    this.targetProperty = null;
     this.disposeOwnedPhetioProperty();
     super.dispose();
   }
