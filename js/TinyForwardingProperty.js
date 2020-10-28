@@ -23,13 +23,14 @@ class TinyForwardingProperty extends TinyProperty {
     super( value );
 
     /*******************************************************************************************/
-    // @protected {Property.<*>|null|undefined} targetProperty - Set in setTargetProperty
+    // @public (read-only NodeTests) {Property.<*>|null|undefined} targetProperty - Set in setTargetProperty()
     /*******************************************************************************************/
 
     /*******************************************************************************************/
     // @protected {function|undefined} forwardingListener - Set lazily in setTargetProperty
     /*******************************************************************************************/
 
+    /*******************************************************************************************/
     // @public {boolean|undefined} targetPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
     // forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
     /*******************************************************************************************/
@@ -80,8 +81,7 @@ class TinyForwardingProperty extends TinyProperty {
     // that ownedPhetioProperty is added via this exact method, see this.initializePhetio() for details
     // Do this before adding a PhET-iO LinkedElement because ownedPhetioProperty has the same phetioID as the LinkedElement
     if ( this.ownedPhetioProperty && newTarget !== this.ownedPhetioProperty ) {
-      this.ownedPhetioProperty.dispose();
-      delete this.ownedPhetioProperty; // back to original value
+      this.disposeOwnedPhetioProperty();
     }
 
     node.updateLinkedElementForProperty( tandemName, previousTarget, newTarget );
@@ -230,6 +230,28 @@ class TinyForwardingProperty extends TinyProperty {
     if ( assert ) {
       this.phetioInitialized = true;
     }
+  }
+
+  /**
+   * This currently also involves deleting the field.
+   * @private
+   */
+  disposeOwnedPhetioProperty() {
+    if ( this.ownedPhetioProperty ) {
+      this.ownedPhetioProperty.dispose();
+      delete this.ownedPhetioProperty; // back to original value
+    }
+  }
+
+  /**
+   * @public
+   * @override
+   */
+  dispose() {
+    this.targetProperty && this.targetProperty.unlink( this.forwardingListener );
+    this.targetProperty = null;
+    this.disposeOwnedPhetioProperty();
+    super.dispose();
   }
 }
 
