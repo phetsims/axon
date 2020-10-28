@@ -31,20 +31,18 @@ class TinyForwardingProperty extends TinyProperty {
     /*******************************************************************************************/
 
     /*******************************************************************************************/
-    // @public {boolean|undefined} targetPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
-    // forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
-    /*******************************************************************************************/
-
-    // @private - when true, automatically set up a PhET-iO instrumented forwarded Property for pickableProperty, see this.initializePhetioObject for usage
-    if ( targetPropertyInstrumented ) {
-      this.targetPropertyInstrumented = targetPropertyInstrumented;
-    }
-
-    /*******************************************************************************************/
     // @public (NodeTests) {Property|undefined} ownedPhetioProperty - TinyProperty is not instrumented for PhET-iO, so when a Node is
     // instrumented, by default, an instrumented `Property` can be forwarded to. This field stores the default
     // instrumented Property when targetPropertyInstrumented is true.
     /*******************************************************************************************/
+
+    /*******************************************************************************************/
+    // @private {boolean|undefined} targetPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
+    // forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
+    /*******************************************************************************************/
+    if ( targetPropertyInstrumented ) {
+      this.targetPropertyInstrumented = targetPropertyInstrumented;
+    }
 
     if ( assert ) {
 
@@ -209,11 +207,12 @@ class TinyForwardingProperty extends TinyProperty {
    * @public
    */
   initializePhetio( node, tandemName, createProperty ) {
+    assert && assert( typeof tandemName === 'string' );
+    assert && assert( typeof createProperty === 'function' );
     assert && assert( !this.phetioInitialized, 'already initialized' );
     assert && assert( !this.ownedPhetioProperty, 'Already created the ownedPhetioProperty' );
 
-    if ( this.targetPropertyInstrumented ) {
-      assert && assert( !this.targetProperty, 'I create the targetProperty when targetPropertyInstrumented:true' );
+    if ( !this.targetProperty && this.targetPropertyInstrumented ) {
 
       this.ownedPhetioProperty = createProperty();
       assert && assert( this.ownedPhetioProperty instanceof Property, 'The owned property should be an AXON/Property' );
