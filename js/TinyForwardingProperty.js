@@ -185,6 +185,25 @@ class TinyForwardingProperty extends TinyProperty {
   }
 
   /**
+   * Use this to automatically create a forwarded, PhET-iO instrumented Property owned by this TinyForwardingProperty.
+   *
+   * @public
+   * @param {boolean} forwardingPropertyInstrumented
+   * @param {Node} node
+   * @returns {Node} - for chaining
+   */
+  setForwardingPropertyInstrumented( forwardingPropertyInstrumented, node ) {
+    assert && assert( typeof forwardingPropertyInstrumented === 'boolean' );
+
+    // See Node.initializePhetioObject for more details on this assertion
+    assert && assert( !node.isPhetioInstrumented(), 'this option only works if it is passed in before this Node is instrumented' );
+
+    this.forwardingPropertyInstrumented = forwardingPropertyInstrumented;
+
+    return node;
+  }
+
+  /**
    * @param {Node} node - the parent container that supports updateLinkedElementForProperty()
    * @param {string} tandemName
    * @param {function():Property} createProperty - creates an "owned" Property
