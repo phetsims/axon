@@ -14,22 +14,19 @@ import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
 class TinyProperty extends TinyEmitter {
+
   /**
    * @param {*} value - The initial value of the property
-   * @param {Object} [options] - options
    */
-  constructor( value, options ) {
+  constructor( value ) {
     super();
 
     // @protected {*} - Store the internal value
     this._value = value;
 
-    // @protected {boolean|undefined} useDeepEquality - Keeps some compatibility with the Property interface to have the
-    // options check here. Not defining in the general case for memory usage, only using if we notice the option set.
-    // Forces use of the deep equality checks.
-
-    // @protected {function|undefined} onAccessAttempt - Not defined for memory usage. When set, it will be called
-    // whenever there is an attempt to read the value of this TinyProperty.
+    // @protected {boolean|undefined} useDeepEquality - Forces use of the deep equality checks. Keeps some compatibility
+    // with the Property interface to have the equality check in this type too. Not defining in the general case for
+    // memory usage, only using if we notice this flag set.
   }
 
   /**
@@ -42,8 +39,6 @@ class TinyProperty extends TinyEmitter {
    * @returns {*}
    */
   get() {
-    this.onAccessAttempt && this.onAccessAttempt();
-
     return this._value;
   }
 

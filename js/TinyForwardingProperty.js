@@ -82,14 +82,11 @@ class TinyForwardingProperty extends TinyProperty {
    * @returns {*}
    */
   get() {
-    this.onAccessAttempt && this.onAccessAttempt();
-
     if ( this.forwardingProperty ) {
       return this.forwardingProperty.value;
     }
     else {
-      // NOTE: This is not using super here, since we don't want to call onAccessAttempt twice()
-      return this._value;
+      return super.get();
     }
   }
 
@@ -122,8 +119,8 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {*} oldValue
    */
   notifyListeners( oldValue ) {
-    // NOTE: This is overridden to use this.get(), since we need to hook up forwarding, and onAccessAttept being called
-    // is NOT a problem here due to the more specific usage.
+
+    // NOTE: This is overridden to use this.get(), since we need to hook up forwarding.
     this.emit( this.get(), oldValue, this );
   }
 
