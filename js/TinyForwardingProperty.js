@@ -17,33 +17,32 @@ class TinyForwardingProperty extends TinyProperty {
 
   /**
    * @param {*} value - The initial value of the property
-   * @param {boolean} [forwardingPropertyInstrumented=false]
+   * @param {boolean} [targetPropertyInstrumented=false]
    */
-  constructor( value, forwardingPropertyInstrumented = false ) {
+  constructor( value, targetPropertyInstrumented = false ) {
     super( value );
 
-    // TODO: https://github.com/phetsims/scenery/issues/1097 rename forwardingProperty to targetProperty, note there are usages outside of this file
     /*******************************************************************************************/
-    // @protected {Property.<*>|null|undefined} forwardingProperty - Set in setForwardingProperty
-    /*******************************************************************************************/
-
-    /*******************************************************************************************/
-    // @protected {function|undefined} forwardingListener - Set lazily in setForwardingProperty
+    // @protected {Property.<*>|null|undefined} targetProperty - Set in setTargetProperty
     /*******************************************************************************************/
 
-    // @public {boolean|undefined} forwardingPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
+    /*******************************************************************************************/
+    // @protected {function|undefined} forwardingListener - Set lazily in setTargetProperty
+    /*******************************************************************************************/
+
+    // @public {boolean|undefined} targetPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
     // forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
     /*******************************************************************************************/
 
     // @private - when true, automatically set up a PhET-iO instrumented forwarded Property for pickableProperty, see this.initializePhetioObject for usage
-    if ( forwardingPropertyInstrumented ) {
-      this.forwardingPropertyInstrumented = forwardingPropertyInstrumented;
+    if ( targetPropertyInstrumented ) {
+      this.targetPropertyInstrumented = targetPropertyInstrumented;
     }
 
     /*******************************************************************************************/
     // @public (NodeTests) {Property|undefined} ownedPhetioProperty - TinyProperty is not instrumented for PhET-iO, so when a Node is
     // instrumented, by default, an instrumented `Property` can be forwarded to. This field stores the default
-    // instrumented Property when forwardingPropertyInstrumented is true.
+    // instrumented Property when targetPropertyInstrumented is true.
     /*******************************************************************************************/
 
     if ( assert ) {
@@ -62,20 +61,20 @@ class TinyForwardingProperty extends TinyProperty {
    * @param {TinyProperty.<*>|Property.<*>|null} newTarget - null to "unset" forwarding.
    * @returns {Node} - the passed in Node, for chaining.
    */
-  setForwardingProperty( node, tandemName, newTarget ) {
+  setTargetProperty( node, tandemName, newTarget ) {
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
-    if ( this.forwardingProperty === newTarget ) {
+    if ( this.targetProperty === newTarget ) {
       return node; // for chaining
     }
 
-    const currentForwardingPropertyInstrumented = this.forwardingProperty &&
-                                                  this.forwardingProperty.isPhetioInstrumented();
+    const currentForwardingPropertyInstrumented = this.targetProperty &&
+                                                  this.targetProperty.isPhetioInstrumented();
     assert && currentForwardingPropertyInstrumented && assert( newTarget && newTarget.isPhetioInstrumented(),
-      'Cannot set swap out a PhET-iO instrumented forwardingProperty for an uninstrumented one' );
+      'Cannot set swap out a PhET-iO instrumented targetProperty for an uninstrumented one' );
 
     // We need this information eagerly for later on in the function
-    const previousTarget = this.forwardingProperty;
+    const previousTarget = this.targetProperty;
 
     // If we had the "default instrumented" Property, we'll remove that and then link our new Property. Guard on the fact
     // that ownedPhetioProperty is added via this exact method, see this.initializePhetio() for details
@@ -87,30 +86,30 @@ class TinyForwardingProperty extends TinyProperty {
 
     node.updateLinkedElementForProperty( tandemName, previousTarget, newTarget );
 
-    // Lazily set this value, it will be added as a listener to any forwardingProperty we have.
+    // Lazily set this value, it will be added as a listener to any targetProperty we have.
     this.forwardingListener = this.forwardingListener || ( ( value, oldValue ) => {
       this.notifyListeners( oldValue );
     } );
 
     const oldValue = this.get();
 
-    if ( this.forwardingProperty ) {
-      this.forwardingProperty.unlink( this.forwardingListener );
+    if ( this.targetProperty ) {
+      this.targetProperty.unlink( this.forwardingListener );
     }
 
-    this.forwardingProperty = newTarget;
+    this.targetProperty = newTarget;
 
-    if ( this.forwardingProperty ) {
-      this.forwardingProperty.lazyLink( this.forwardingListener );
+    if ( this.targetProperty ) {
+      this.targetProperty.lazyLink( this.forwardingListener );
     }
     else {
-      // If we're switching away from a forwardingProperty, prefer no notification (so set our value to the last value)
+      // If we're switching away from a targetProperty, prefer no notification (so set our value to the last value)
       this._value = oldValue;
     }
 
     const newValue = this.get();
 
-    // Changing forwarding COULD change the value, so send notifications if this is the case.
+    // Changing forwarding target COULD change the value, so send notifications if this is the case.
     if ( !this.areValuesEqual( oldValue, newValue ) ) {
       this.notifyListeners( oldValue );
     }
@@ -128,8 +127,8 @@ class TinyForwardingProperty extends TinyProperty {
    * @returns {*}
    */
   get() {
-    if ( this.forwardingProperty ) {
-      return this.forwardingProperty.value;
+    if ( this.targetProperty ) {
+      return this.targetProperty.value;
     }
     else {
       return super.get();
@@ -147,8 +146,8 @@ class TinyForwardingProperty extends TinyProperty {
    * @returns {TinyForwardingProperty} this instance, for chaining.
    */
   set( value ) {
-    if ( this.forwardingProperty ) {
-      this.forwardingProperty.set( value );
+    if ( this.targetProperty ) {
+      this.targetProperty.set( value );
     }
     else {
       super.set( value );
@@ -157,8 +156,8 @@ class TinyForwardingProperty extends TinyProperty {
   }
 
   /**
-   * Directly notifies listeners of changes. This needs to be an override to make sure that the value of the forwarding
-   * Property is used if it exists.
+   * Directly notifies listeners of changes. This needs to be an override to make sure that the value of the targetProperty
+   * is used if it exists.
    * @public
    * @override
    *
@@ -188,17 +187,17 @@ class TinyForwardingProperty extends TinyProperty {
    * Use this to automatically create a forwarded, PhET-iO instrumented Property owned by this TinyForwardingProperty.
    *
    * @public
-   * @param {boolean} forwardingPropertyInstrumented
+   * @param {boolean} targetPropertyInstrumented
    * @param {Node} node
    * @returns {Node} - for chaining
    */
-  setForwardingPropertyInstrumented( forwardingPropertyInstrumented, node ) {
-    assert && assert( typeof forwardingPropertyInstrumented === 'boolean' );
+  setTargetPropertyInstrumented( targetPropertyInstrumented, node ) {
+    assert && assert( typeof targetPropertyInstrumented === 'boolean' );
 
     // See Node.initializePhetioObject for more details on this assertion
     assert && assert( !node.isPhetioInstrumented(), 'this option only works if it is passed in before this Node is instrumented' );
 
-    this.forwardingPropertyInstrumented = forwardingPropertyInstrumented;
+    this.targetPropertyInstrumented = targetPropertyInstrumented;
 
     return node;
   }
@@ -213,19 +212,19 @@ class TinyForwardingProperty extends TinyProperty {
     assert && assert( !this.phetioInitialized, 'already initialized' );
     assert && assert( !this.ownedPhetioProperty, 'Already created the ownedPhetioProperty' );
 
-    if ( this.forwardingPropertyInstrumented ) {
-      assert && assert( !this.forwardingProperty, 'I create the forwardingProperty when forwardingPropertyInstrumented:true' );
+    if ( this.targetPropertyInstrumented ) {
+      assert && assert( !this.targetProperty, 'I create the targetProperty when targetPropertyInstrumented:true' );
 
       this.ownedPhetioProperty = createProperty();
       assert && assert( this.ownedPhetioProperty instanceof Property, 'The owned property should be an AXON/Property' );
       assert && assert( this.ownedPhetioProperty.isPhetioInstrumented(), 'The owned property should be PhET-iO instrumented' );
 
-      this.setForwardingProperty( node, tandemName, this.ownedPhetioProperty );
+      this.setTargetProperty( node, tandemName, this.ownedPhetioProperty );
     }
-    else if ( this.forwardingProperty && this.forwardingProperty.isPhetioInstrumented() ) {
+    else if ( this.targetProperty && this.targetProperty.isPhetioInstrumented() ) {
 
       // If the Property was already set, now that it is instrumented, add a LinkedElement for it.
-      node.updateLinkedElementForProperty( tandemName, null, this.forwardingProperty );
+      node.updateLinkedElementForProperty( tandemName, null, this.targetProperty );
     }
 
     if ( assert ) {
