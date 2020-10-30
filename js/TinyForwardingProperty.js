@@ -22,24 +22,25 @@ class TinyForwardingProperty extends TinyProperty {
   constructor( value, targetPropertyInstrumented = false ) {
     super( value );
 
-    /*******************************************************************************************/
-    // @public (read-only NodeTests) {Property.<*>|null|undefined} targetProperty - Set in setTargetProperty()
-    /*******************************************************************************************/
+    /*******************************************************************************************************************
+     targetProperty - @public (read-only NodeTests) {Property.<*>|null|undefined} - Set in setTargetProperty()
+     ******************************************************************************************************************/
 
-    /*******************************************************************************************/
-    // @protected {function|undefined} forwardingListener - Set lazily in setTargetProperty
-    /*******************************************************************************************/
+    /*******************************************************************************************************************
+     forwardingListener - @protected {function|undefined} forwardingListener - Set lazily in setTargetProperty()
+     ******************************************************************************************************************/
 
-    /*******************************************************************************************/
-    // @public (NodeTests) {Property|undefined} ownedPhetioProperty - TinyProperty is not instrumented for PhET-iO, so when a Node is
-    // instrumented, by default, an instrumented `Property` can be forwarded to. This field stores the default
-    // instrumented Property when targetPropertyInstrumented is true.
-    /*******************************************************************************************/
+    /*******************************************************************************************************************
+     ownedPhetioProperty - @public (NodeTests) {Property|undefined} - TinyProperty is not instrumented for PhET-iO, so
+     - when a Node is instrumented, by default, an instrumented `Property` can be forwarded to. This field stores the
+     - default instrumented Property when targetPropertyInstrumented is true.
+     ******************************************************************************************************************/
 
-    /*******************************************************************************************/
-    // @private {boolean|undefined} targetPropertyInstrumented -  when true, automatically set up a PhET-iO instrumented
-    // forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
-    /*******************************************************************************************/
+    /*******************************************************************************************************************
+     targetPropertyInstrumented - @private {boolean|undefined} - when true, automatically set up a PhET-iO instrumented
+     forwarded Property for this TinyProperty, see this.initializePhetioObject() for usage.
+     ******************************************************************************************************************/
+
     if ( targetPropertyInstrumented ) {
       this.targetPropertyInstrumented = targetPropertyInstrumented;
     }
