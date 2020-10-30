@@ -85,9 +85,7 @@ class TinyForwardingProperty extends TinyProperty {
     node.updateLinkedElementForProperty( tandemName, previousTarget, newTarget );
 
     // Lazily set this value, it will be added as a listener to any targetProperty we have.
-    this.forwardingListener = this.forwardingListener || ( ( value, oldValue ) => {
-      this.notifyListeners( oldValue );
-    } );
+    this.forwardingListener = this.forwardingListener || this.onTargetPropertyChange.bind( this );
 
     const oldValue = this.get();
 
@@ -113,6 +111,17 @@ class TinyForwardingProperty extends TinyProperty {
     }
 
     return node; // for chaining
+  }
+
+  /**
+   * Notify this Property's listeners when the targetProperty changes.
+   * For performance, keep this listener on the prototype.
+   * @param {*} value
+   * @param {*} oldValue
+   * @private
+   */
+  onTargetPropertyChange( value, oldValue ) {
+    this.notifyListeners( oldValue );
   }
 
   /**
