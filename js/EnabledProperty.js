@@ -20,9 +20,12 @@ class EnabledProperty extends BooleanProperty {
    * @param {Object} [options]
    */
   constructor( initialEnabled, options ) {
+    if ( assert && options && options.tandem ) {
+      assert && assert( options.tandem.name === TANDEM_NAME, `EnabledProperty tandems should be named ${TANDEM_NAME}` );
+    }
+
     super( initialEnabled, merge( {
-      tandem: options.tandem.createTandem( TANDEM_NAME ),
-      phetioDocumentation: 'When disabled, the component is grayed out and cannot be interacted with.',
+      phetioDocumentation: 'Whether this component is interactive. When disabled, the component cannot be interacted with and is often visually grayed out.',
       phetioFeatured: true
     }, options ) );
   }
@@ -31,7 +34,7 @@ class EnabledProperty extends BooleanProperty {
    * @public
    * @returns {string}
    */
-  static get TANDEM_NAME() { return TANDEM_NAME;}
+  static get TANDEM_NAME() { return TANDEM_NAME; }
 }
 
 axon.register( 'EnabledProperty', EnabledProperty );
