@@ -25,7 +25,7 @@ class EnabledProperty extends BooleanProperty {
     }
 
     super( initialEnabled, merge( {
-      phetioDocumentation: 'Whether this component is interactive. When disabled, the component cannot be interacted with and is often visually grayed out.',
+      phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
       phetioFeatured: true
     }, options ) );
   }
