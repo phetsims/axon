@@ -237,9 +237,9 @@ const orFunction = ( value, property ) => {
   return value || property.value;
 };
 
-// {Object.<parameterTypeName:string, IOType>} - Cache each parameterized DerivedPropertyIO so that
+// {Map.<parameterType:IOType, IOType>} - Cache each parameterized DerivedPropertyIO so that
 // it is only created once.
-const cache = {};
+const cache = new Map();
 
 /**
  * Parametric IO Type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
@@ -251,8 +251,8 @@ const cache = {};
 DerivedProperty.DerivedPropertyIO = parameterType => {
   assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );
 
-  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
       valueType: DerivedProperty,
       parameterTypes: [ parameterType ],
       supertype: Property.PropertyIO( parameterType ),
@@ -273,10 +273,10 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
           invocableForReadOnlyElements: false
         }
       }
-    } );
+    } ) );
   }
 
-  return cache[ parameterType.typeName ];
+  return cache.get( parameterType );
 };
 
 axon.register( 'DerivedProperty', DerivedProperty );

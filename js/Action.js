@@ -229,12 +229,15 @@ class Action extends PhetioObject {
 }
 
 const paramToTypeName = param => param.typeName;
-const cache = {};
+
+// {Map.<string, IOType>} - Cache each parameterized IOType so that
+// it is only created once.
+const cache = new Map();
 
 Action.ActionIO = parameterTypes => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
-  if ( !cache.hasOwnProperty( key ) ) {
-    cache[ key ] = new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+  if ( !cache.has( key ) ) {
+    cache.set( key, new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Action,
       documentation: 'Executes when an event occurs',
       events: [ 'emitted' ],
@@ -252,9 +255,9 @@ Action.ActionIO = parameterTypes => {
           invocableForReadOnlyElements: false
         }
       }
-    } );
+    } ) );
   }
-  return cache[ key ];
+  return cache.get( key );
 };
 
 axon.register( 'Action', Action );

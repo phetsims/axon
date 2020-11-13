@@ -127,7 +127,10 @@ class Emitter extends Action {
 
 
 const paramToTypeName = param => param.typeName;
-const cache = {};
+
+// {Map.<string, IOType>} - Cache each parameterized IOType so that
+// it is only created once.
+const cache = new Map();
 
 /**
  * IO Type for Emitter.
@@ -150,8 +153,8 @@ Emitter.EmitterIO = parameterTypes => {
 
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
 
-  if ( !cache.hasOwnProperty( key ) ) {
-    cache[ key ] = new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+  if ( !cache.has( key ) ) {
+    cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Emitter,
       supertype: Action.ActionIO( parameterTypes ),
       documentation: 'Emits when an event occurs and calls added listeners.',
@@ -177,9 +180,9 @@ Emitter.EmitterIO = parameterTypes => {
           invocableForReadOnlyElements: false
         }
       }
-    } );
+    } ) );
   }
-  return cache[ key ];
+  return cache.get( key );
 };
 
 axon.register( 'Emitter', Emitter );
