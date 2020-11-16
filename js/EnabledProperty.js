@@ -20,14 +20,23 @@ class EnabledProperty extends BooleanProperty {
    * @param {Object} [options]
    */
   constructor( initialEnabled, options ) {
-    if ( assert && options && options.tandem ) {
+
+    options = merge( {
+      phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
+      phetioFeatured: true,
+
+      // by default, the tandem name must match. In rare occurrences (such as when one model must have 2 separate
+      // EnabledProperties, like this.mass1EnabledProperty = ..., this.mass2EnabledProperty = ...
+      // you can opt out of the name check. This should be used sparingly. For instance, for the example above, it may
+      // be better to do this.mass1.enabledProperty anyways.
+      checkTandemName: true
+    }, options );
+
+    if ( assert && options && options.tandem && options.checkTandemName ) {
       assert && assert( options.tandem.name === TANDEM_NAME, `EnabledProperty tandems should be named ${TANDEM_NAME}` );
     }
 
-    super( initialEnabled, merge( {
-      phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
-      phetioFeatured: true
-    }, options ) );
+    super( initialEnabled, options );
   }
 
   /**
