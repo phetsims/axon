@@ -36,7 +36,6 @@ QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
   assert.equal( widthProperty.changedEmitter.getListenerCount(), 1 + startingWidthListenerCount );
   assert.equal( heightProperty.changedEmitter.getListenerCount(), 1 + startingHeightListenerCount );
   assert.equal( areaProperty.dependencies.length, 2 );
-  assert.equal( areaProperty.dependencyListeners.size, 2 );
 
   // Unlink the listener
   areaProperty.unlink( listener );
@@ -48,9 +47,7 @@ QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
   assert.equal( areaProperty.dependencies, null );
   assert.equal( areaProperty.dependencyListeners, null );
   assert.equal( areaProperty.dependencyValues, null );
-
 } );
-
 
 QUnit.test( 'DerivedProperty.valueEquals', function( assert ) {
   const propA = new Property( 'a' );

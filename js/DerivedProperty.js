@@ -59,35 +59,36 @@ class DerivedProperty extends Property {
     // @private
     this.derivation = derivation;
 
-    // @private {Map<Property,function>} Keep track of listeners so they can be detached
-    this.dependencyListeners = new Map();
+    // @private
+    this.derivedPropertyListener = this.getDerivedPropertyListener.bind( this );
 
-    for ( let i = 0; i < dependencies.length; i++ ) {
-      const dependency = dependencies[ i ];
-      ( dependency => {
-        const listener = () => {
+    dependencies.forEach( dependency => {
 
-          // Just mark that there is a deferred value, then calculate the derivation below when setDeferred() is called.
-          // This is in part supported by the PhET-iO state engine because it can account for intermediate states, such
-          // that this Property won't notify until after it is undeferred and has taken its final value.
-          if ( this.isDeferred ) {
-            this.hasDeferredValue = true;
-          }
-          else {
-            super.set( derivation.apply( null, dependencies.map( property => property.get() ) ) );
-          }
-        };
-        this.dependencyListeners.set( dependency, listener );
-        dependency.lazyLink( listener );
+      // this.dependencyListeners.set( dependency, listener );
+      dependency.lazyLink( this.derivedPropertyListener );
 
-        if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
+      if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
 
-          // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure to have the right value.
-          // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
-          // with Multlinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-          phetioStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
-        }
-      } )( dependency, i );
+        // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure
+        // to have the right value.
+        // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
+        // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
+        phetioStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
+      }
+    } );
+  }
+
+  // @private - for bind
+  getDerivedPropertyListener() {
+
+    // Just mark that there is a deferred value, then calculate the derivation below when setDeferred() is called.
+    // This is in part supported by the PhET-iO state engine because it can account for intermediate states, such
+    // that this Property won't notify until after it is undeferred and has taken its final value.
+    if ( this.isDeferred ) {
+      this.hasDeferredValue = true;
+    }
+    else {
+      super.set( this.derivation.apply( null, this.dependencies.map( property => property.get() ) ) );
     }
   }
 
@@ -97,15 +98,11 @@ class DerivedProperty extends Property {
     // Unlink from dependent Properties
     for ( let i = 0; i < this.dependencies.length; i++ ) {
       const dependency = this.dependencies[ i ];
-      const listener = this.dependencyListeners.get( dependency );
-
-      if ( dependency.hasListener( listener ) ) {
-        dependency.unlink( listener );
+      if ( dependency.hasListener( this.derivedPropertyListener ) ) {
+        dependency.unlink( this.derivedPropertyListener );
       }
     }
     this.dependencies = null;
-    this.dependencyListeners.clear();
-    this.dependencyListeners = null;
 
     super.dispose( this );
   }
