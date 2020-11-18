@@ -8,7 +8,9 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import phetioAPITest from '../../tandem/js/phetioAPITest.js';
 import Emitter from './Emitter.js';
+import EmitterAPI from './EmitterAPI.js';
 
 QUnit.module( 'Emitter' );
 
@@ -187,4 +189,8 @@ QUnit.test( 'Emitter Tricks', assert => {
 
   assert.equal( entries[ 6 ].listener, 'b' );
   assert.equal( entries[ 6 ].arg, 'first' );
+} );
+
+QUnit.test( 'PhET-iO API Validation', assert => {
+  phetioAPITest( assert, new EmitterAPI(), 'emitter', tandem => new Emitter( { tandem: tandem } ) );
 } );
