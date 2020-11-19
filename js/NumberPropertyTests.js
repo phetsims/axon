@@ -93,6 +93,16 @@ QUnit.test( 'Test NumberProperty', assert => {
   }, 'EnumerationProperty sets phetioType' );
 
   assert.ok( true, 'one assertion for when assert is not enabled' );
+
+
+  ///////////////////////////////
+  p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
+  p.rangeProperty.value = new Range( 0, 100 );
+  p.value = 99;
+  p.rangeProperty.value = new Range( 90, 100 );
+
+  // TODO: this should not fail, see https://github.com/phetsims/axon/issues/282
+  // p.reset();
 } );
 
 
