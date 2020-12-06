@@ -342,11 +342,11 @@ const methods = {
   addAll: function( elements ) { this.push( ...elements );},
 
   // @public
-  remove: function( element ) { this.includes( element ) && arrayRemove( this, element );},
+  remove: function( element ) { arrayRemove( this, element );},
 
   // @public
   removeAll: function( elements ) {
-    elements.forEach( element => this.includes( element ) && arrayRemove( this, element ) );
+    elements.forEach( element => arrayRemove( this, element ) );
   },
 
   // @public
