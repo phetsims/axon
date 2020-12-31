@@ -168,6 +168,14 @@ Emitter.EmitterIO = parameterTypes => {
           },
           documentation: 'Adds a listener which will be called when the emitter emits.'
         },
+        removeListener: {
+          returnType: VoidIO,
+          parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+          implementation: function( listener ) {
+            this.removeListener( listener );
+          },
+          documentation: 'Remove a listener.'
+        },
         emit: {
           returnType: VoidIO,
           parameterTypes: parameterTypes,
