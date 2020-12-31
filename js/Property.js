@@ -263,7 +263,7 @@ class Property extends PhetioObject {
    */
   _notifyListeners( oldValue ) {
 
-    this.isPhetioInstrumented() && this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
+    this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
       getData: () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
@@ -280,7 +280,7 @@ class Property extends PhetioObject {
     this.changedEmitter.emit( this.get(), oldValue, this );
     this.notifying = false;
 
-    this.isPhetioInstrumented() && this.phetioEndEvent();
+    this.phetioEndEvent();
   }
 
   /**
