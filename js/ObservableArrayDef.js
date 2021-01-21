@@ -13,7 +13,7 @@ import axon from './axon.js';
  * @typedef {Array} ObservableArrayDef
  * @property {Emitter} elementAddedEmitter
  * @property {Emitter} elementRemovedEmitter
- * @property {Property<Number>} lengthProperty
+ * @property {Property.<Number>} lengthProperty
  * See createObservableArray for details
  */
 const ObservableArrayDef = {
