@@ -14,15 +14,14 @@ import axon from './axon.js';
 class ActionSpecification extends PhetioObjectSpecification {
 
   /**
-   * @param {Action} action
    * @param {Object} [options]
    */
-  constructor( action, options ) {
+  constructor( options ) {
     options = merge( {
       phetioType: Action.ActionIO( [] ),
       phetioState: false
     }, options );
-    super( action, options );
+    super( options );
   }
 }
 

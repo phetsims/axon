@@ -14,10 +14,9 @@ import axon from './axon.js';
 class PropertySpecification extends PhetioObjectSpecification {
 
   /**
-   * @param {Property} property
    * @param {Object} config
    */
-  constructor( property, config ) {
+  constructor( config ) {
 
     config = merge( {
       phetioType: required( config.phetioType )

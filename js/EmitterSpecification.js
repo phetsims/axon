@@ -14,10 +14,9 @@ import Emitter from './Emitter.js';
 class EmitterSpecification extends ActionSpecification {
 
   /**
-   * @param {Emitter} emitter
    * @param {Object} [options]
    */
-  constructor( emitter, options ) {
+  constructor( options ) {
     options = merge( {
       phetioType: Emitter.EmitterIO( [] )
     }, options );
