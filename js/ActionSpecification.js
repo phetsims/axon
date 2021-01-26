@@ -22,7 +22,7 @@ class ActionSpecification extends PhetioObjectSpecification {
       phetioType: Action.ActionIO( [] ),
       phetioState: false
     }, options );
-    super( options );
+    super( action, options );
   }
 }
 
