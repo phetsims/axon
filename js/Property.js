@@ -147,6 +147,15 @@ class Property extends PhetioObject {
   }
 
   /**
+   * Returns true if the value can be set externally, using .value= or set()
+   * @returns {boolean}
+   * @public
+   */
+  isSettable() {
+    return true;
+  }
+
+  /**
    * Gets the value.
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.

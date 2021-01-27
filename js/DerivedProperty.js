@@ -78,6 +78,16 @@ class DerivedProperty extends Property {
     } );
   }
 
+  /**
+   * DerivedProperty cannot have their value set externally, so this returns false.
+   * @returns {boolean}
+   * @override
+   * @public
+   */
+  isSettable() {
+    return false;
+  }
+
   // @private - for bind
   getDerivedPropertyListener() {
 

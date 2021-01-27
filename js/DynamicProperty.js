@@ -310,6 +310,16 @@ class DynamicProperty extends Property {
 
     this.isExternallyChanging = false;
   }
+
+  /**
+   * Returns true if this Property value can be set externally, by set() or .value =
+   * @returns {boolean}
+   * @override
+   * @public
+   */
+  isSettable() {
+    return super.isSettable() && this.bidirectional;
+  }
 }
 
 axon.register( 'DynamicProperty', DynamicProperty );
