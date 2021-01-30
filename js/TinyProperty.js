@@ -224,6 +224,15 @@ class TinyProperty extends TinyEmitter {
   }
 
   /**
+   * Returns true if the value can be set externally, using .value= or set()
+   * @returns {boolean}
+   * @public
+   */
+  isSettable() {
+    return true;
+  }
+
+  /**
    * Releases references.
    * @public
    * @override
