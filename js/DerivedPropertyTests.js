@@ -128,7 +128,7 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
 if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'propertyStateHandlerSingleton tests for DerivedProperty', assert => {
 
-    const parentTandem = Tandem.GENERAL;
+    const parentTandem = Tandem.ROOT_TEST;
 
     const originalOrderDependencyLength = propertyStateHandlerSingleton.getNumberOfOrderDependencies();
     const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies() - originalOrderDependencyLength;

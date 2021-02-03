@@ -189,11 +189,11 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
 } );
 QUnit.test( 'Test NumberProperty phet-io options', assert => {
 
-  const generalTandem = Tandem.GENERAL;
+  const tandem = Tandem.ROOT_TEST;
   let p = new NumberProperty( 0, {
     range: new Range( 0, 20 ),
-    tandem: generalTandem.createTandem( 'numberProperty' ),
-    rangePropertyOptions: { tandem: generalTandem.createTandem( 'rangeProperty' ) }
+    tandem: tandem.createTandem( 'numberProperty' ),
+    rangePropertyOptions: { tandem: tandem.createTandem( 'rangeProperty' ) }
   } );
 
   assert.ok( p.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
@@ -201,8 +201,8 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
   window.assert && assert.throws( () => {
     p = new NumberProperty( 0, {
       range: new Range( 0, 20 ),
-      tandem: generalTandem.createTandem( 'numberProperty2' ),
-      rangePropertyOptions: { tandem: generalTandem.createTandem( 'rangePropertyfdsa' ) }
+      tandem: tandem.createTandem( 'numberProperty2' ),
+      rangePropertyOptions: { tandem: tandem.createTandem( 'rangePropertyfdsa' ) }
     } );
   }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
   p.dispose();
@@ -212,7 +212,7 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
     window.assert && assert.throws( () => {
       return new NumberProperty( 0, {
         range: uninstrumentedRangeProperty,
-        tandem: generalTandem.createTandem( 'thisWillNotBeDisposedSoCreateALongNameThatWillNotBeReproducedProperty' )
+        tandem: tandem.createTandem( 'thisWillNotBeDisposedSoCreateALongNameThatWillNotBeReproducedProperty' )
       } );
     }, 'uninstrumented range cannot be passed to instrumented number property' );
   }

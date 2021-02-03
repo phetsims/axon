@@ -35,13 +35,13 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
     const propertyA = new BooleanProperty( false, {
-      tandem: Tandem.GENERAL.createTandem( 'aProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
     } );
     const propertyB = new BooleanProperty( true, {
-      tandem: Tandem.GENERAL.createTandem( 'bProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
     } );
     const propertyC = new BooleanProperty( false, {
-      tandem: Tandem.GENERAL.createTandem( 'cProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
     } );
 
     const originalOrderDependencyLength = propertyStateHandler.getNumberOfOrderDependencies();
@@ -75,7 +75,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     if ( window.assert ) {
       const uninstrumentedProperty = new Property( 2 );
       const instrumentedProperty = new BooleanProperty( false, {
-        tandem: Tandem.GENERAL.createTandem( 'instrumentedProperty' )
+        tandem: Tandem.ROOT_TEST.createTandem( 'instrumentedProperty' )
       } );
       assert.throws( () => {
         propertyStateHandler.registerPhetioOrderDependency( uninstrumentedProperty, PropertyStatePhase.UNDEFER, instrumentedProperty, PropertyStatePhase.UNDEFER );
@@ -90,18 +90,18 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Order dependency between NumberProperty and its Range', assert => {
     assert.ok( true, 'always pass' );
     const rangeProperty = new Property( new Range( 0, 1 ), {
-      tandem: Tandem.GENERAL.createTandem( 'rangeProperty' ),
+      tandem: Tandem.ROOT_TEST.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
       phetioType: Property.PropertyIO( Range.RangeIO )
     } );
     const numberProperty = new NumberProperty( 0, {
-      tandem: Tandem.GENERAL.createTandem( 'numberProperty' ),
+      tandem: Tandem.ROOT_TEST.createTandem( 'numberProperty' ),
       phetioDynamicElement: true,
       range: rangeProperty
     } );
 
     const randomDependencyProperty = new BooleanProperty( false, {
-      tandem: Tandem.GENERAL.createTandem( 'randomDependencyProperty' ),
+      tandem: Tandem.ROOT_TEST.createTandem( 'randomDependencyProperty' ),
       phetioDynamicElement: true
     } );
 
@@ -118,12 +118,12 @@ if ( Tandem.PHET_IO_ENABLED ) {
     serializedValue.value = 7;
 
     phet.phetio.phetioEngine.phetioStateEngine.setState( {
-      'axon.general.numberProperty': serializedValue,
-      'axon.general.randomDependencyProperty': { value: true },
-      'axon.general.rangeProperty': {
+      'axon.test.numberProperty': serializedValue,
+      'axon.test.randomDependencyProperty': { value: true },
+      'axon.test.rangeProperty': {
         value: { min: 4, max: 8 }
       }
-    }, Tandem.ROOT );
+    }, Tandem.ROOT_TEST );
 
     rangeProperty.dispose();
     numberProperty.dispose();
@@ -141,13 +141,13 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
     const propertyA = new BooleanProperty( false, {
-      tandem: Tandem.GENERAL.createTandem( 'aProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
     } );
     const propertyB = new BooleanProperty( true, {
-      tandem: Tandem.GENERAL.createTandem( 'bProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
     } );
     const propertyC = new BooleanProperty( false, {
-      tandem: Tandem.GENERAL.createTandem( 'cProperty' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
     } );
 
     propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
