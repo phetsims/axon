@@ -15,7 +15,7 @@ const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && ph
 class TinyEmitter {
   constructor() {
 
-    // @private {Set<function>} - the listeners that will be called on emit
+    // @private {Set.<function>} - the listeners that will be called on emit
     this.listeners = new Set();
 
     // @private {Object[]} - during emit() keep track of iteration progress and guard listeners if mutated during emit()
