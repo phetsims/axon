@@ -50,6 +50,34 @@ class TinyStaticProperty extends TinyProperty {
   set( value ) {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
   }
+
+  /**
+   * Directly notifies listeners of changes.
+   * @public
+   * @override
+   *
+   * @param {*} oldValue
+   */
+  notifyListeners( oldValue ) {
+
+    // We use this.get() to ensure value is up to date with onAccessAttempt().
+    this.emit( this.get(), oldValue, this );
+  }
+
+  /**
+   * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
+   * notification provides the current value for newValue and null for oldValue.
+   * @public
+   * @override
+   *
+   * @param {function} listener a function of the form listener(newValue,oldValue)
+   */
+  link( listener ) {
+    this.addListener( listener );
+
+    // listener called with this.get() to ensure value is up to date with onAccessAttempt().
+    listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
+  }
 }
 
 axon.register( 'TinyStaticProperty', TinyStaticProperty );
