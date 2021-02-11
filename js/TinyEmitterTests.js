@@ -162,3 +162,28 @@ QUnit.test( 'TinyEmitter Tricks', assert => {
   assert.equal( entries[ 6 ].listener, 'b' );
   assert.equal( entries[ 6 ].arg, 'first' );
 } );
+
+
+QUnit.test( 'TinyEmitter onBeforeNotify', assert => {
+
+  const state = { happiness: 0 };
+
+  const callForHappinessEmitter = new TinyEmitter( () => {
+    state.happiness++;
+  } );
+
+  let countCalled = 0;
+  callForHappinessEmitter.addListener( () => {
+
+    assert.ok( ++countCalled === state.happiness, `happiness should change as emitted: ${countCalled}` );
+
+  } );
+
+  callForHappinessEmitter.emit();
+  callForHappinessEmitter.emit();
+  callForHappinessEmitter.emit();
+  callForHappinessEmitter.emit();
+  callForHappinessEmitter.emit();
+  assert.ok( state.happiness === 5, 'end count' );
+
+} );

@@ -18,10 +18,11 @@ class TinyForwardingProperty extends TinyProperty {
 
   /**
    * @param {*} value - The initial value of the property
-   * @param {boolean} [targetPropertyInstrumented=false]
+   * @param {boolean} targetPropertyInstrumented
+   * @param {function()} [onBeforeNotify]
    */
-  constructor( value, targetPropertyInstrumented = false ) {
-    super( value );
+  constructor( value, targetPropertyInstrumented, onBeforeNotify ) {
+    super( value, onBeforeNotify );
 
     /*******************************************************************************************************************
      targetProperty - @public (read-only NodeTests) {Property.<*>|null|undefined} - Set in setTargetProperty()

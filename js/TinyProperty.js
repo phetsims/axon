@@ -17,9 +17,10 @@ class TinyProperty extends TinyEmitter {
 
   /**
    * @param {*} value - The initial value of the property
+   * @param {function()} [onBeforeNotify]
    */
-  constructor( value ) {
-    super();
+  constructor( value, onBeforeNotify ) {
+    super( onBeforeNotify );
 
     // @protected {*} - Store the internal value
     this._value = value;

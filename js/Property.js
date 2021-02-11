@@ -51,7 +51,11 @@ class Property extends PhetioObject {
       // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
       // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
       // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
-      reentrant: false
+      reentrant: false,
+
+      // {function()|null} - if specified, runs before listeners are notified. Typically used to ensure a consistent state
+      //                   - or accomplish any work that must be done before any listeners are notified.
+      onBeforeNotify: null
 
       // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
@@ -110,7 +114,7 @@ class Property extends PhetioObject {
     // @private (unit-tests) - emit is called when the value changes (or on link)
     // Also used in ShapePlacementBoard.js at the moment
     // We are validating here in Property, so we don't need the sub-emitter to validate too.
-    this.changedEmitter = new TinyEmitter();
+    this.changedEmitter = new TinyEmitter( options.onBeforeNotify );
 
     // @private whether we are in the process of notifying listeners
     this.notifying = false;
@@ -271,22 +275,23 @@ class Property extends PhetioObject {
    * @private - but note that a few sims are calling this even though they shouldn't
    */
   _notifyListeners( oldValue ) {
+    const newValue = this.get();
 
     this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
       getData: () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
           oldValue: NullableIO( parameterType ).toStateObject( oldValue ),
-          newValue: parameterType.toStateObject( this.get() )
+          newValue: parameterType.toStateObject( newValue )
         };
       }
     } );
 
     // notify listeners, optionally detect loops where this Property is set again before this completes.
     assert && assert( !this.notifying || this.reentrant,
-      'reentry detected, value=' + this.get() + ', oldValue=' + oldValue );
+      'reentry detected, value=' + newValue + ', oldValue=' + oldValue );
     this.notifying = true;
-    this.changedEmitter.emit( this.get(), oldValue, this );
+    this.changedEmitter.emit( newValue, oldValue, this );
     this.notifying = false;
 
     this.phetioEndEvent();

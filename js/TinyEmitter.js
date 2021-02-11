@@ -13,7 +13,19 @@ import axon from './axon.js';
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
 class TinyEmitter {
-  constructor() {
+
+  /**
+   * @param {function()|null} [onBeforeNotify]
+   */
+  constructor( onBeforeNotify ) {
+
+    if ( onBeforeNotify ) {
+
+      assert && assert( typeof onBeforeNotify === 'function', 'onBeforeNotify should be a function' );
+
+      // @private {function()} - if specified, this will be called before listeners are notified.
+      this.onBeforeNotify = onBeforeNotify;
+    }
 
     // @private {Set.<function>} - the listeners that will be called on emit
     this.listeners = new Set();
@@ -51,6 +63,9 @@ class TinyEmitter {
    */
   emit() {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
+
+    // optional callback, before notifying listeners
+    this.onBeforeNotify && this.onBeforeNotify.apply( null, arguments );
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.

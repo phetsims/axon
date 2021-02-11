@@ -25,7 +25,11 @@ class Emitter extends Action {
   constructor( options ) {
 
     options = merge( {
-      phetioOuterType: Emitter.EmitterIO
+      phetioOuterType: Emitter.EmitterIO,
+
+      // {function()|null} - if specified, runs before listeners are notified. Typically used to ensure a consistent state
+      //                   - or accomplish any work that must be done before any listeners are notified.
+      onBeforeNotify: null
     }, options );
 
     super( function() {
@@ -38,7 +42,7 @@ class Emitter extends Action {
     const self = this;
 
     // @private - provide Emitter functionality via composition
-    this.tinyEmitter = new TinyEmitter();
+    this.tinyEmitter = new TinyEmitter( options.onBeforeNotify );
   }
 
   /**
