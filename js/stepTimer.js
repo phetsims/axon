@@ -1,7 +1,7 @@
 // Copyright 2020, University of Colorado Boulder
 
-import Timer from './Timer.js';
 import axon from './axon.js';
+import Timer from './Timer.js';
 
 /**
  * Register and return a singleton timer, which can be used to schedule events. This ticks under the following circumstances:
@@ -15,7 +15,7 @@ import axon from './axon.js';
  * Sim.stepSimulation. Listeners added with setTimeout/setInterval are called with no arguments. This is not specific
  * to the running screen, it is global across all screens.
  */
-const stepTimer = new Timer( { parameters: [ { valueType: 'number' } ] } );
+const stepTimer = new Timer();
 
 axon.register( 'stepTimer', stepTimer );
 export default stepTimer;
