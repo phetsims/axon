@@ -20,3 +20,32 @@ QUnit.test( 'TinyProperty Basics', assert => {
 
   assert.ok( true, 'one test' );
 } );
+
+QUnit.test( 'TinyProperty onBeforeNotify', assert => {
+
+  class MyObservedObject {
+    constructor() {
+      this.hasFun = false;
+      this.hadFun = false;
+      this.hasFunProperty = new TinyProperty( false, ( newValue, oldValue ) => {
+        this.hasFun = newValue;
+        this.hadFun = oldValue;
+      } );
+    }
+  }
+
+  const x = new MyObservedObject();
+
+  x.hasFunProperty.lazyLink( ( newValue, oldValue ) => {
+    assert.ok( x.hadFun === oldValue, 'old value should match' );
+    assert.ok( x.hasFun === newValue, 'new value should match' );
+  } );
+
+
+  x.hasFunProperty.value = true;
+  x.hasFunProperty.value = false;
+  x.hasFunProperty.value = true;
+  x.hasFunProperty.value = 42;
+  x.hasFunProperty.value = 'duh';
+  x.hasFunProperty.value = 'always';
+} );

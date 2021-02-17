@@ -185,5 +185,4 @@ QUnit.test( 'TinyEmitter onBeforeNotify', assert => {
   callForHappinessEmitter.emit();
   callForHappinessEmitter.emit();
   assert.ok( state.happiness === 5, 'end count' );
-
 } );
