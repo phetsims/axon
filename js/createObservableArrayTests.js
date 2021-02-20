@@ -27,6 +27,9 @@ QUnit.test( 'Hello', assert => {
     elements: [ 'a', 'bc' ]
   } ) );
 
+  assert.ok( Array.isArray( observableArray ), 'isArray check' );
+  assert.ok( observableArray instanceof Array, 'instanceof check' ); // eslint-disable-line no-instanceof-array
+
   run( 'push hello', () => observableArray.push( 'hello' ) );
   run( 'set element 0', () => { observableArray[ 0 ] = 'dinosaur'; } );
   run( 'set element 5', () => { observableArray[ 5 ] = 'hamburger'; } );
