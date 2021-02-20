@@ -20,6 +20,16 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
+/**
+ * Compute the derived value given a derivation and an array of dependencies
+ * @param {function} derivation
+ * @param {Property[]} dependencies
+ * @returns {*}
+ */
+const getDerivedValue = ( derivation, dependencies ) => {
+  return derivation.apply( null, dependencies.map( property => property.get() ) );
+};
+
 class DerivedProperty extends Property {
 
   /**
@@ -39,7 +49,7 @@ class DerivedProperty extends Property {
 
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    const initialValue = derivation.apply( null, dependencies.map( property => property.get() ) );
+    const initialValue = getDerivedValue( derivation, dependencies );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     super( initialValue, options );
@@ -98,7 +108,7 @@ class DerivedProperty extends Property {
       this.hasDeferredValue = true;
     }
     else {
-      super.set( this.derivation.apply( null, this.dependencies.map( property => property.get() ) ) );
+      super.set( getDerivedValue( this.derivation, this.dependencies ) );
     }
   }
 
@@ -165,7 +175,7 @@ class DerivedProperty extends Property {
   setDeferred( isDeferred ) {
     assert && assert( typeof isDeferred === 'boolean' );
     if ( this.isDeferred && !isDeferred ) {
-      this.deferredValue = this.derivation.apply( null, this.dependencies.map( property => property.get() ) );
+      this.deferredValue = getDerivedValue( this.derivation, this.dependencies );
     }
     return super.setDeferred( isDeferred );
   }
