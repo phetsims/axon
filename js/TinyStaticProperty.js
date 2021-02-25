@@ -78,6 +78,20 @@ class TinyStaticProperty extends TinyProperty {
     // listener called with this.get() to ensure value is up to date with onAccessAttempt().
     listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
   }
+
+  /**
+   * Returns true if and only if the specified value equals the value of this property
+   * @protected
+   * @override
+   *
+   * @param {*} value
+   * @returns {boolean}
+   */
+  equalsValue( value ) {
+
+    // checked with this.get() to ensure value is up to date with onAccessAttempt()
+    return this.areValuesEqual( value, this.get() );
+  }
 }
 
 axon.register( 'TinyStaticProperty', TinyStaticProperty );
