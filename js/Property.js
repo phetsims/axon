@@ -97,9 +97,9 @@ class Property extends PhetioObject {
       assert && assert( !!options.phetioType.parameterTypes[ 0 ],
         'phetioType parameter type must be specified (only one). Tandem.phetioID: ' + this.tandem.phetioID );
     }
-    assert && Tandem.VALIDATION && assert( !this.isPhetioInstrumented() ||
-                                           options.tandem.name.endsWith( 'Property' ) ||
-                                           options.tandem.name === 'property',
+    assert && assert( !this.isPhetioInstrumented() ||
+                      options.tandem.name.endsWith( 'Property' ) ||
+                      options.tandem.name === 'property',
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
 
     // @private - Store the internal value and the initial value
