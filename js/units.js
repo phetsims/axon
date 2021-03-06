@@ -42,7 +42,8 @@ const units = {
     'mol/L',
     'mol',
 
-    // NOTE: In time, these will be replaced with abbreviations, see above.
+    //TODO https://github.com/phetsims/axon/issues/345 replace these with abbreviations
+    // @deprecated the units below here should not be used in new code, and should be replaced with abbreviations
     'amperes',
     'milliamperes',
     'becquerels',
