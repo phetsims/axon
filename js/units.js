@@ -12,10 +12,12 @@ const units = {
   values: [
 
     // NOTE: Abbreviations are preferred, see https://github.com/phetsims/phet-io/issues/530
+    '%', // percent
     'AMU', // atomic mass unit
     'atm', // atmospheres
     'cm', // centimeters
     '\u00B0C', // degrees Celsius
+    'g', // grams
     'K', // Kelvin
     'kg', // kilograms
     'kg/m^3', // kg/cubic meter
