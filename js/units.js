@@ -20,48 +20,47 @@ const units = {
     'kg', // kilograms
     'kg/m^3', // kg/cubic meter
     'kPa', // kilopascals
+    'L',
+    'L/s',
     'm', // meters
-    'mm', //millimeters
     'm/s', // meters/second
     'm/s^2', // meters/seconds squared
+    'mm', //millimeters
+    'mol',
+    'mol/L',
+    'N', // Newtons
     'nm', // nanometers
     'nm/ps', // nanometers/picosecond
     '\u2126', // ohms, don't use the one in MathSymbols to prevent a dependency on scenery-phet
     'particles/ps', // particles/picosecond
     'pm', // picometers
+    'pm/ps', // picometers/picosecond
     'pm/s', // picometers/second
     'pm/s^2', // picometers/second squared
-    'pm/ps', // picometers/picosecond
     'pm^3', // picometers cubed
     'ps', // picoseconds
-    's', // seconds
-    'N', // Newtons
     'radians', // radians, note this has the same abbreviation as the radiation term "rad" so we use the full term
-    'L/s',
-    'L',
-    'mol/L',
-    'mol',
+    's', // seconds
 
     //TODO https://github.com/phetsims/axon/issues/345 replace these with abbreviations
     // @deprecated the units below here should not be used in new code, and should be replaced with abbreviations
     'amperes',
-    'milliamperes',
     'becquerels',
     'centimeters',
     'centimeters-squared',
     'coulombs',
-    'degrees Celsius',
     'degrees',
+    'degrees Celsius',
     'farads',
-    'kilograms',
     'grams',
     'gray',
-    'henrys',
     'henries',
+    'henrys',
     'hertz',
     'joules',
     'katals',
     'kelvins',
+    'kilograms',
     'liters',
     'liters/second',
     'lumens',
@@ -69,13 +68,14 @@ const units = {
     'meters',
     'meters/second',
     'meters/second/second',
+    'milliamperes',
     'moles',
     'moles/liter',
     'nanometers',
     'newtons/meters',
     'newtons-second/meters',
-    'ohms',
     'ohm-centimeters',
+    'ohms',
     'pascals',
     'percent',
     'radians/second',
