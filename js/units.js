@@ -3,6 +3,9 @@
 /**
  * These are the units that can be associated with Property instances.
  *
+ * When adding units to this file, please add abbreviation, preferably SI abbreviations.
+ * See https://github.com/phetsims/phet-io/issues/530
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
@@ -10,14 +13,19 @@ import axon from './axon.js';
 
 const units = {
   values: [
-
-    // NOTE: Abbreviations are preferred, see https://github.com/phetsims/phet-io/issues/530
     '%', // percent
+    'A', // amperes
     'AMU', // atomic mass unit
     'atm', // atmospheres
     'cm', // centimeters
-    '\u00B0C', // degrees Celsius
+    'cm^2', // centimeters squared
+    'C', // coulombs
+    '\u00B0', // °, degrees (angle)
+    '\u00B0C', // °C, degrees Celsius
+    'F', // farad
     'g', // grams
+    'Hz', // hertz
+    'J', // Joules
     'K', // Kelvin
     'kg', // kilograms
     'kg/m^3', // kg/cubic meter
@@ -26,70 +34,31 @@ const units = {
     'L/s',
     'm', // meters
     'm/s', // meters/second
+    'm/s/s', // meters/second/second
     'm/s^2', // meters/seconds squared
+    'mA', // milliampere
     'mm', //millimeters
     'mol',
     'mol/L',
     'N', // Newtons
+    'N/m', // Newtons/meter
     'nm', // nanometers
     'nm/ps', // nanometers/picosecond
-    '\u2126', // ohms, don't use the one in MathSymbols to prevent a dependency on scenery-phet
+    '(N\u00b7s)/m', // (N·s)/n, Newton-seconds/meter
+    '\u2126', // Ω, ohms - don't use the one in MathSymbols to prevent a dependency on scenery-phet
+    '\u2126\u00b7cm', // Ω·cm, ohm-centimeters
     'particles/ps', // particles/picosecond
     'pm', // picometers
     'pm/ps', // picometers/picosecond
     'pm/s', // picometers/second
-    'pm/s^2', // picometers/second squared
+    'pm/s^2', // picometers/second-squared
     'pm^3', // picometers cubed
     'ps', // picoseconds
-    'radians', // radians, note this has the same abbreviation as the radiation term "rad" so we use the full term
+    'radians', // radians - note this has the same abbreviation as the radiation term "rad" so we use the full term
+    'radians/s', // radians/second
     's', // seconds
-
-    //TODO https://github.com/phetsims/axon/issues/345 replace these with abbreviations
-    // @deprecated the units below here should not be used in new code, and should be replaced with abbreviations
-    'amperes',
-    'becquerels',
-    'centimeters',
-    'centimeters-squared',
-    'coulombs',
-    'degrees',
-    'degrees Celsius',
-    'farads',
-    'grams',
-    'gray',
-    'henries',
-    'henrys',
-    'hertz',
-    'joules',
-    'katals',
-    'kelvins',
-    'kilograms',
-    'liters',
-    'liters/second',
-    'lumens',
-    'lux',
-    'meters',
-    'meters/second',
-    'meters/second/second',
-    'milliamperes',
-    'moles',
-    'moles/liter',
-    'nanometers',
-    'newtons/meters',
-    'newtons-second/meters',
-    'ohm-centimeters',
-    'ohms',
-    'pascals',
-    'percent',
-    'radians/second',
-    'seconds',
-    'siemens',
-    'sieverts',
-    'steradians',
-    'tesla',
-    'view-coordinates/second',
-    'volts',
-    'watts',
-    'webers'
+    'V', // volts
+    'view-coordinates/s'
   ],
 
   isValidUnits: function( unit ) {
