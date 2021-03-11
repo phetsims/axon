@@ -120,7 +120,7 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   assert.ok( p.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
   p.value = 1;
   p.value = 0;
-  p.value = .5;
+  p.value = 0.5;
   window.assert && assert.throws( () => {
     p.value = 2;
   }, 'larger than range' );
