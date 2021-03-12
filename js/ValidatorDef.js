@@ -166,6 +166,7 @@ const ValidatorDef = {
   },
 
   /**
+   * Validate that the valueType is of the expected format.
    * @private
    * @param valueType
    * @param {Object} [options] - required, options from isValidValidator
@@ -220,6 +221,18 @@ const ValidatorDef = {
   },
 
   /**
+   * @private
+   * @param {string} genericMessage
+   * @param {string} [specificMessage] - provided as an option to this.isValueValid()
+   */
+  formulateAssertionMessage( genericMessage, specificMessage ) {
+    if ( specificMessage ) {
+      genericMessage = `${specificMessage}: ${genericMessage}`;
+    }
+    return genericMessage;
+  },
+
+  /**
    * Determines whether a value is valid (returning a boolean value), and optionally throws an assertion error if the
    * value is not valid.  The reason assertions are (optionally) thrown from this method is so that we can have more
    * specific error messages.
@@ -241,7 +254,11 @@ const ValidatorDef = {
       validateValidator: true,
 
       // if true, throw an assertion "instead" of waiting to return a boolean
-      assertions: false
+      assertions: false,
+
+      // {string} - if provided, this will provide supplemental information to the assertion messages in addition to the
+      // validate-key-specific message that will be given.
+      message: null
     }, options );
 
     // Use the same policy for whether to throw assertions when checking the validator itself.
@@ -257,13 +274,13 @@ const ValidatorDef = {
 
         // Only one should be valid, so error out if none of them returned valid
         // Hard code assertions false because most will fail, instead have a general assertion here.
-        if ( !_.some( valueType.map( typeInArray => ValidatorDef.isValueValidValueType( value, typeInArray, ASSERTIONS_FALSE ) ) ) ) {
-          assert && options.assertions && assert( false, `value not valid for any valueType in ${valueType}, value: ${value}` );
+        if ( !_.some( valueType.map( typeInArray => ValidatorDef.isValueValidValueType( value, typeInArray, options.message, ASSERTIONS_FALSE ) ) ) ) {
+          assert && options.assertions && assert( false, this.formulateAssertionMessage( `value not valid for any valueType in ${valueType}, value: ${value}`, options.message ) );
           return false;
         }
       }
       else if ( valueType ) {
-        if ( !ValidatorDef.isValueValidValueType( value, valueType, options ) ) {
+        if ( !ValidatorDef.isValueValidValueType( value, valueType, options.message, options ) ) {
           return false;
         }
       }
@@ -283,8 +300,8 @@ const ValidatorDef = {
 
         // if the type is an array, then handle it like we did for valueType, with _.some
         if ( Array.isArray( arrayElementType ) ) {
-          if ( !_.some( arrayElementType.map( typeInArray => ValidatorDef.isValueValidValueType( arrayElement, typeInArray, ASSERTIONS_FALSE ) ) ) ) {
-            assert && options.assertions && assert( false, `array element not valid for any arrayElementType in ${arrayElementType}, value: ${arrayElement}` );
+          if ( !_.some( arrayElementType.map( typeInArray => ValidatorDef.isValueValidValueType( arrayElement, typeInArray, options.message, ASSERTIONS_FALSE ) ) ) ) {
+            assert && options.assertions && assert( false, this.formulateAssertionMessage( `array element not valid for any arrayElementType in ${arrayElementType}, value: ${arrayElement}`, options.message ) );
             return false;
           }
           return true;
@@ -292,7 +309,7 @@ const ValidatorDef = {
         else {
 
           // if not an array, then just check the array element
-          return ValidatorDef.isValueValidValueType( arrayElement, validator.arrayElementType, options );
+          return ValidatorDef.isValueValidValueType( arrayElement, validator.arrayElementType, options.message, options );
         }
       } ) ) ) {
         return false; // if every element didn't pass, then return false
@@ -300,18 +317,18 @@ const ValidatorDef = {
     }
 
     if ( validator.hasOwnProperty( 'validValues' ) && validator.validValues.indexOf( value ) === -1 ) {
-      assert && options.assertions && assert( false, `value not in validValues: ${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value not in validValues: ${value}`, options.message ) );
       return false;
     }
     if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue( value ) ) {
-      assert && options.assertions && assert( false, `value failed isValidValue: ${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value failed isValidValue: ${value}`, options.message ) );
       return false;
     }
     if ( validator.hasOwnProperty( 'phetioType' ) &&
 
          // Never assert, instead handling it here for the better assertion message.
          !ValidatorDef.isValueValid( value, validator.phetioType.validator, ASSERTIONS_FALSE ) ) {
-      assert && options.assertions && assert( false, `value failed phetioType validator: ${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value failed phetioType validator: ${value}`, options.message ) );
       return false;
     }
     return true;
@@ -320,30 +337,32 @@ const ValidatorDef = {
   /**
    * @param {Object|null} value
    * @param {string|function|null|undefined} valueType - see above definition, Array is not allowed in this method
+   * @param {string} [message] - Optional, more specific message about the context of the failure, to be added to
+   * valueType-specific assertion messages.
    * @param {Object} [options] - not optional, should be passed in from isValidValue
    * @returns {boolean} - whether the value is a validType
    * @throws {Error} assertion error if not valid and options.assertions is true
    * @private
    */
-  isValueValidValueType( value, valueType, options ) {
+  isValueValidValueType( value, valueType, message, options ) {
     if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
-      assert && options.assertions && assert( false, `value should have typeof ${valueType}, value=${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should have typeof ${valueType}, value=${value}`, message ) );
       return false;
     }
     else if ( valueType === Array && !Array.isArray( value ) ) {
-      assert && options.assertions && assert( false, `value should have been an array, value=${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should have been an array, value=${value}`, message ) );
       return false;
     }
     else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
-      assert && assert( false, 'value is not a member of Enumeration ' + valueType );
+      assert && assert( false, this.formulateAssertionMessage( 'value is not a member of Enumeration ' + valueType, message ) );
       return false;
     }
     else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor
-      assert && options.assertions && assert( false, `value should be instanceof ${valueType.name}, value=${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should be instanceof ${valueType.name}, value=${value}`, message ) );
       return false;
     }
     if ( valueType === null && value !== null ) {
-      assert && options.assertions && assert( false, `value should be null, value=${value}` );
+      assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should be null, value=${value}`, message ) );
       return false;
     }
     return true;
