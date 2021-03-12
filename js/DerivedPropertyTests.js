@@ -14,22 +14,22 @@ import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 
 QUnit.module( 'DerivedProperty' );
 
-QUnit.test( 'Test stale values in DerivedProperty', function( assert ) {
+QUnit.test( 'Test stale values in DerivedProperty', assert => {
   const a = new Property( 1 );
   const b = new Property( 2 );
-  const c = new DerivedProperty( [ a, b ], function( a, b ) {return a + b;} );
+  const c = new DerivedProperty( [ a, b ], ( ( a, b ) => {return a + b;} ) );
   a.value = 7;
   assert.equal( c.value, 9 );
 } );
 
-QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
+QUnit.test( 'Test DerivedProperty.unlink', assert => {
 
   const widthProperty = new Property( 2 );
   const startingWidthListenerCount = widthProperty.changedEmitter.getListenerCount();
   const heightProperty = new Property( 3 );
   const startingHeightListenerCount = heightProperty.changedEmitter.getListenerCount();
   const areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
-    function( width, height ) { return width * height; } );
+    ( ( width, height ) => width * height ) );
   const listener = function( area ) { /*console.log( 'area = ' + area );*/ };
   areaProperty.link( listener );
 
@@ -49,7 +49,7 @@ QUnit.test( 'Test DerivedProperty.unlink', function( assert ) {
   assert.equal( areaProperty.dependencyValues, null );
 } );
 
-QUnit.test( 'DerivedProperty.valueEquals', function( assert ) {
+QUnit.test( 'DerivedProperty.valueEquals', assert => {
   const propA = new Property( 'a' );
   const propB = new Property( 'b' );
   const prop = DerivedProperty.valueEquals( propA, propB );
@@ -58,7 +58,7 @@ QUnit.test( 'DerivedProperty.valueEquals', function( assert ) {
   assert.equal( prop.value, true );
 } );
 
-QUnit.test( 'Test defer', function( assert ) {
+QUnit.test( 'Test defer', assert => {
   const property1 = new Property( 0 );
   const property2 = new Property( 2 );
   const derivedProperty = new DerivedProperty( [ property1, property2 ], ( a, b ) => a + b );
@@ -86,7 +86,7 @@ QUnit.test( 'Test defer', function( assert ) {
   assert.ok( derivedProperty.value === 6, 'nothing changed' );
 } );
 
-QUnit.test( 'DerivedProperty and/or', function( assert ) {
+QUnit.test( 'DerivedProperty and/or', assert => {
 
   const propA = new Property( false );
   const propB = new Property( false );
@@ -94,11 +94,11 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
   const propD = new Property( 0 ); // dependency with an invalid (non-boolean) type
 
   // fail: 'and' with non-boolean Property
-  window.assert && assert.throws( function() { return DerivedProperty.and( [ propA, propD ] ); },
+  window.assert && assert.throws( () => DerivedProperty.and( [ propA, propD ] ),
     'DerivedProperty.and requires booleans Property values' );
 
   // fail: 'or' with non-boolean Property
-  window.assert && assert.throws( function() { return DerivedProperty.or( [ propA, propD ] ); },
+  window.assert && assert.throws( () => DerivedProperty.or( [ propA, propD ] ),
     'DerivedProperty.or requires booleans Property values' );
 
   // correct usages of 'and' and 'or'
@@ -121,7 +121,7 @@ QUnit.test( 'DerivedProperty and/or', function( assert ) {
   assert.equal( or.value, true );
 
   // fail: setting a dependency to a non-boolean value
-  window.assert && assert.throws( function() { propA.value = 0; },
+  window.assert && assert.throws( () => { propA.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );
 

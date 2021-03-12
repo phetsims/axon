@@ -18,7 +18,7 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 
 QUnit.module( 'Property' );
 
-QUnit.test( 'Test unlink', function( assert ) {
+QUnit.test( 'Test unlink', assert => {
   const p = new Property( 1 );
   const startingPListenerCount = p.changedEmitter.getListenerCount();
   const a = function( a ) {};
@@ -34,11 +34,11 @@ QUnit.test( 'Test unlink', function( assert ) {
   assert.equal( p.changedEmitter.getListenerCount(), 2 + startingPListenerCount, 'should have removed an item' );
 } );
 
-QUnit.test( 'Test Property.multilink', function( assert ) {
+QUnit.test( 'Test Property.multilink', assert => {
   const a = new Property( 1 );
   const b = new Property( 2 );
   let callbacks = 0;
-  Property.multilink( [ a, b ], function( a, b ) {
+  Property.multilink( [ a, b ], ( a, b ) => {
     callbacks++;
     assert.equal( a, 1, 'first value should pass through' );
     assert.equal( b, 2, 'second value should pass through' );
@@ -46,11 +46,11 @@ QUnit.test( 'Test Property.multilink', function( assert ) {
   assert.equal( callbacks, 1, 'should have called back to a multilink' );
 } );
 
-QUnit.test( 'Test Property.lazyMultilink', function( assert ) {
+QUnit.test( 'Test Property.lazyMultilink', assert => {
   const a = new Property( 1 );
   const b = new Property( 2 );
   let callbacks = 0;
-  Property.lazyMultilink( [ a, b ], function( a, b ) {
+  Property.lazyMultilink( [ a, b ], ( a, b ) => {
     callbacks++;
     assert.equal( a, 1 );
     assert.equal( b, 2 );
@@ -58,10 +58,10 @@ QUnit.test( 'Test Property.lazyMultilink', function( assert ) {
   assert.equal( callbacks, 0, 'should not call back to a lazy multilink' );
 } );
 
-QUnit.test( 'Test defer', function( assert ) {
+QUnit.test( 'Test defer', assert => {
   const property = new Property( 0 );
   let callbacks = 0;
-  property.lazyLink( function( newValue, oldValue ) {
+  property.lazyLink( ( newValue, oldValue ) => {
     callbacks++;
     assert.equal( newValue, 2, 'newValue should be the final value after the transaction' );
     assert.equal( oldValue, 0, 'oldValue should be the original value before the transaction' );
@@ -78,14 +78,14 @@ QUnit.test( 'Test defer', function( assert ) {
   assert.equal( property.value, 2, 'should take final value' );
 } );
 
-QUnit.test( 'Property ID checks', function( assert ) {
+QUnit.test( 'Property ID checks', assert => {
   assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' ); // eslint-disable-line no-self-compare
 } );
 
-QUnit.test( 'Property link parameters', function( assert ) {
+QUnit.test( 'Property link parameters', assert => {
   const p = new Property( 1 );
   const calls = [];
-  p.link( function( newValue, oldValue, property ) {
+  p.link( ( newValue, oldValue, property ) => {
     calls.push( {
       newValue: newValue,
       oldValue: oldValue,
@@ -108,7 +108,7 @@ QUnit.test( 'Property link parameters', function( assert ) {
 /**
  * Make sure linking attributes and unlinking attributes works on Property
  */
-QUnit.test( 'Property.linkAttribute', function( assert ) {
+QUnit.test( 'Property.linkAttribute', assert => {
   const property = new Property( 7 );
   const state = { age: 99 };
   const listener = property.linkAttribute( state, 'age' );
@@ -120,7 +120,7 @@ QUnit.test( 'Property.linkAttribute', function( assert ) {
   assert.equal( state.age, 8, 'state should not have changed after unlink' );
 } );
 
-QUnit.test( 'Property value validation', function( assert ) {
+QUnit.test( 'Property value validation', assert => {
 
   // Type that is specific to valueType tests
   function TestType() {}
@@ -132,15 +132,15 @@ QUnit.test( 'Property value validation', function( assert ) {
   options = {
     valueType: 'string'
   };
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, { valueType: 'foo' } ); // eslint-disable-line
   }, 'options.valueType is invalid, expected a primitive data type' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.valueType typeof validation' );
   property = new Property( 'horizontal', options );
   property.set( 'vertical' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 0 );
   }, 'invalid set value with options.valueType typeof validation' );
 
@@ -148,12 +148,12 @@ QUnit.test( 'Property value validation', function( assert ) {
   options = {
     valueType: TestType
   };
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value for options.valueType instanceof validation' );
   property = new Property( new TestType(), options );
   property.set( new TestType() );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 0 );
   }, 'invalid set value with options.valueType instanceof validation' );
 
@@ -161,15 +161,15 @@ QUnit.test( 'Property value validation', function( assert ) {
   options = {
     validValues: [ 1, 2, 3 ]
   };
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, { validValues: 0 } ); // eslint-disable-line
   }, 'options.validValues is invalid' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.validValues' );
   property = new Property( 1, options );
   property.set( 3 );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 4 );
   }, 'invalid set value with options.validValues' );
 
@@ -179,15 +179,15 @@ QUnit.test( 'Property value validation', function( assert ) {
       return ( value > 0 && value < 4 );
     }
   };
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, { isValidValue: 0 } ); // eslint-disable-line
   }, 'options.isValidValue is invalid' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.isValidValue' );
   property = new Property( 1, options );
   property.set( 3 );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 4 );
   }, 'invalid set value with options.isValidValue' );
 
@@ -200,10 +200,10 @@ QUnit.test( 'Property value validation', function( assert ) {
     }
   };
   property = new Property( 'bob', options );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 0 );
   }, 'invalid set value with compatible combination of validation options' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property.set( 'ted' );
   }, 'invalid set value with compatible combination of validation options' );
 
@@ -216,13 +216,13 @@ QUnit.test( 'Property value validation', function( assert ) {
       return value.length === 4;
     }
   };
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property = new Property( 0, options );
   }, 'invalid initial value with incompatible combination of validation options' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property = new Property( 'bob', options );
   }, 'invalid initial value with incompatible combination of validation options' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     property = new Property( 'fred', options );
   }, 'invalid initial value with incompatible combination of validation options' );
 
@@ -231,7 +231,7 @@ QUnit.test( 'Property value validation', function( assert ) {
 
 // Tests that can only run in phet-io mode
 if ( Tandem.PHET_IO_ENABLED ) {
-  QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', function( assert ) {
+  QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', assert => {
     const done = assert.async();
     const tandem = Tandem.ROOT_TEST.createTandem( 'testTandemProperty' );
     const phetioType = NumberProperty.NumberPropertyIO;

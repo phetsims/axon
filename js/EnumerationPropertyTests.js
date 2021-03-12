@@ -11,7 +11,7 @@ import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
 import EnumerationProperty from './EnumerationProperty.js';
 
 QUnit.module( 'EnumerationProperty' );
-QUnit.test( 'EnumerationProperty', function( assert ) {
+QUnit.test( 'EnumerationProperty', assert => {
 
   const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   let birdProperty = null;

@@ -11,32 +11,32 @@ import StringIO from '../../tandem/js/types/StringIO.js';
 import StringProperty from './StringProperty.js';
 
 QUnit.module( 'StringProperty' );
-QUnit.test( 'Test StringProperty', function( assert ) {
+QUnit.test( 'Test StringProperty', assert => {
 
   let p = null;
 
   // valueType
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'foo', { valueType: 'string' } );
   }, 'valueType cannot be set by client' );
   p = new StringProperty( 'foo' );
   p.value = 'bar';
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p.value = 0;
   }, 'set value fails valueType test' );
 
   // validValues
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'bad', {
       validValues: [ 'foo', 'bar' ]
     } );
   }, 'initial value is not a member of validValues' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'foo', {
       validValues: [ 'foo', 'bar', 0 ]
     } );
   }, 'member of validValues has incorrect valueType' );
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'foo', {
       validValues: [ 'foo', 'bar' ],
       isValidValue: function( value ) { return value[ 0 ] === 'f'; }
@@ -46,7 +46,7 @@ QUnit.test( 'Test StringProperty', function( assert ) {
     validValues: [ 'foo', 'bar' ]
   } );
   p.value = 'bar';
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p.value = 'bad';
   }, 'set value is not a member of validValues' );
 
@@ -55,7 +55,7 @@ QUnit.test( 'Test StringProperty', function( assert ) {
     isValidValue: function( value ) { return value[ 0 ] === 'f'; }
   } );
   p.value = 'five';
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p.value = 'bad';
   }, 'set value fails isValidValue test' );
 
@@ -66,14 +66,14 @@ QUnit.test( 'Test StringProperty', function( assert ) {
   } );
 
   // multiple incompatible options
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'foo', {
       validValues: [ 'foo', 'bar' ],
       isValidValue: function( value ) { return value.length === 4; }
     } );
   }, 'incompatible validation options fail on initialization' );
 
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     p = new StringProperty( 'hello', { phetioType: StringIO } );
   }, 'EnumerationProperty sets phetioType' );
 

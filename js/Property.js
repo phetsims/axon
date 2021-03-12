@@ -594,7 +594,7 @@ Property.PropertyIO = parameterType => {
 
         // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
         if ( property.validValues ) {
-          stateObject.validValues = property.validValues.map( function( v ) {
+          stateObject.validValues = property.validValues.map( v => {
             return parameterType.toStateObject( v );
           } );
         }
