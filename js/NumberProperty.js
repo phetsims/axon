@@ -64,10 +64,10 @@ class NumberProperty extends Property {
       }
     }, options );
 
-    assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), 'invalid numberType: ' + options.numberType );
+    assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), `invalid numberType: ${options.numberType}` );
     assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
-      'invalid range' + options.range );
-    assert && options.step && assert( typeof options.step === 'number', 'invalid step:' + options.step );
+      `invalid range${options.range}` );
+    assert && options.step && assert( typeof options.step === 'number', `invalid step:${options.step}` );
 
     assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
     assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem.name === 'rangeProperty',
@@ -233,8 +233,8 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   valueType: NumberProperty,
   supertype: PropertyIOImpl,
   parameterTypes: [ NumberIO ],
-  documentation: 'Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( \'' +
-                 VALID_NUMBER_TYPES.join( '\' | \'' ) + '\' )',
+  documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
+                 VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
   toStateObject: numberProperty => {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );

@@ -134,7 +134,7 @@ class DerivedProperty extends Property {
    * @override
    * @public
    */
-  set( value ) { throw new Error( 'Cannot set values directly to a DerivedProperty, tried to set: ' + value ); }
+  set( value ) { throw new Error( `Cannot set values directly to a DerivedProperty, tried to set: ${value}` ); }
 
   /**
    * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
@@ -144,7 +144,7 @@ class DerivedProperty extends Property {
    * @override
    * @public
    */
-  set value( newValue ) { throw new Error( 'Cannot es5-set values directly to a DerivedProperty, tried to set: ' + newValue ); }
+  set value( newValue ) { throw new Error( `Cannot es5-set values directly to a DerivedProperty, tried to set: ${newValue}` ); }
 
   /**
    * Override the mutators to provide an error message.  These should not be called directly,

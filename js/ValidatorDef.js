@@ -148,7 +148,7 @@ const ValidatorDef = {
       if ( ValidatorDef.containsValidatorKey( validatorWithoutValidValues ) ) {
         for ( let i = 0; i < validator.validValues.length; i++ ) {
           if ( !ValidatorDef.isValueValid( validator.validValues[ i ], validatorWithoutValidValues ) ) {
-            assert && options.assertions && assert( false, 'Item not valid: ' + validator.validValues[ i ] );
+            assert && options.assertions && assert( false, `Item not valid: ${validator.validValues[ i ]}` );
             return false;
           }
         }
@@ -157,7 +157,7 @@ const ValidatorDef = {
 
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
       if ( !( validator.phetioType && validator.phetioType.validator ) ) {
-        assert && options.assertions && assert( false, 'validator needed for phetioType: ' + ( validator.phetioType && validator.phetioType.typeName ) );
+        assert && options.assertions && assert( false, `validator needed for phetioType: ${validator.phetioType && validator.phetioType.typeName}` );
         return false;
       }
       return ValidatorDef.isValidValidator( validator.phetioType.validator, options );
@@ -354,7 +354,7 @@ const ValidatorDef = {
       return false;
     }
     else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
-      assert && assert( false, this.formulateAssertionMessage( 'value is not a member of Enumeration ' + valueType, message ) );
+      assert && assert( false, this.formulateAssertionMessage( `value is not a member of Enumeration ${valueType}`, message ) );
       return false;
     }
     else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor

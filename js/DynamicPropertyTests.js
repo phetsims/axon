@@ -106,7 +106,7 @@ QUnit.test( 'Mapping (with bidirectional)', assert => {
   const dynamicProperty = new DynamicProperty( numberPropertyProperty, { // eslint-disable-line no-undef
     bidirectional: true,
     map: function( number ) {
-      return '' + number;
+      return `${number}`;
     },
     inverseMap: function( string ) {
       return Number.parseFloat( string );

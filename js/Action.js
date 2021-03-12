@@ -138,7 +138,7 @@ class Action extends PhetioObject {
         `validator must be specified for parameter ${i}` );
 
       for ( const key in parameter ) {
-        assert && assert( PARAMETER_KEYS.includes( key ), 'unrecognized parameter key: ' + key );
+        assert && assert( PARAMETER_KEYS.includes( key ), `unrecognized parameter key: ${key}` );
       }
 
       // Changing after construction indicates a logic error.
@@ -192,8 +192,8 @@ class Action extends PhetioObject {
       return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
     };
 
-    return currentPhetioDocumentation + ( parameters.length === 0 ? '<br>No parameters.' : '<br>The parameters are:<br/>' +
-           '<ol>' + parameters.map( paramToDocString ).join( '<br/>' ) + '</ol>' );
+    return currentPhetioDocumentation + ( parameters.length === 0 ? '<br>No parameters.' : `${'<br>The parameters are:<br/>' +
+           '<ol>'}${parameters.map( paramToDocString ).join( '<br/>' )}</ol>` );
   }
 
   /**

@@ -66,7 +66,7 @@ class Property extends PhetioObject {
       options.isValidValue = () => true;
     }
 
-    assert && options.units && assert( units.isValidUnits( options.units ), 'invalid units: ' + options.units );
+    assert && options.units && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
     if ( options.units ) {
       options.phetioEventMetadata = options.phetioEventMetadata || {};
       assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'units' ), 'units should be supplied by Property, not elsewhere' );
@@ -91,11 +91,11 @@ class Property extends PhetioObject {
 
       // This assertion helps in instrumenting code that has the tandem but not type
       assert && assert( !!options.phetioType,
-        'phetioType passed to Property must be specified. Tandem.phetioID: ' + this.tandem.phetioID );
+        `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
       // This assertion helps in instrumenting code that has the tandem but not type
       assert && assert( !!options.phetioType.parameterTypes[ 0 ],
-        'phetioType parameter type must be specified (only one). Tandem.phetioID: ' + this.tandem.phetioID );
+        `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||
                       options.tandem.name.endsWith( 'Property' ) ||
@@ -289,7 +289,7 @@ class Property extends PhetioObject {
 
     // notify listeners, optionally detect loops where this Property is set again before this completes.
     assert && assert( !this.notifying || this.reentrant,
-      'reentry detected, value=' + newValue + ', oldValue=' + oldValue );
+      `reentry detected, value=${newValue}, oldValue=${oldValue}` );
     this.notifying = true;
     this.changedEmitter.emit( newValue, oldValue, this );
     this.notifying = false;
@@ -587,7 +587,7 @@ Property.PropertyIO = parameterType => {
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
       toStateObject: property => {
-        assert && assert( parameterType.toStateObject, 'toStateObject doesnt exist for ' + parameterType.typeName );
+        assert && assert( parameterType.toStateObject, `toStateObject doesnt exist for ${parameterType.typeName}` );
         const stateObject = {
           value: parameterType.toStateObject( property.value )
         };

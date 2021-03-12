@@ -303,7 +303,7 @@ class DynamicProperty extends Property {
    */
   set( value ) {
     assert && assert( this.bidirectional,
-      'Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ' + value );
+      `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}` );
 
     this.isExternallyChanging = true;
     super.set( value );

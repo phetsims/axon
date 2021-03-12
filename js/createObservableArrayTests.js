@@ -17,9 +17,9 @@ QUnit.test( 'Hello', assert => {
   assert.ok( 'first test' );
 
   const run = ( name, command ) => {
-    console.log( 'START: ' + name );
+    console.log( `START: ${name}` );
     const result = command();
-    console.log( 'END: ' + name + '\n\n' );
+    console.log( `END: ${name}\n\n` );
     return result;
   };
 
