@@ -234,7 +234,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   supertype: PropertyIOImpl,
   parameterTypes: [ NumberIO ],
   documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
-                 VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
+    VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
   toStateObject: numberProperty => {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
