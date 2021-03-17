@@ -59,11 +59,12 @@ class TinyForwardingProperty extends TinyProperty {
    * @public
    *
    * @param {Node} node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
-   * @param {string} tandemName
+   * @param {string|null} tandemName - null if the Property doesn't not support PhET-iO instrumentation
    * @param {TinyProperty.<*>|Property.<*>|null} newTarget - null to "unset" forwarding.
    * @returns {Node} - the passed in Node, for chaining.
    */
   setTargetProperty( node, tandemName, newTarget ) {
+    assert && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
     if ( this.targetProperty === newTarget ) {
