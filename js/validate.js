@@ -11,35 +11,30 @@ import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import ValidatorDef from './ValidatorDef.js';
 
-const ASSERTIONS_TRUE = { assertions: true };
-
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
  * @param {*} value
  * @param {ValidatorDef} validator
- * @param {Object|string} [optionsOrMessage] - see ValidatorDef.isValueValid() for options, or provide a string as a message instead.
+ * @param {string} [message] - make this an arg, instead of an option, for convenience. This message will be prepended to
+ * a message in ValidatorDef that specifies which validator key fails, along with the value. It is best to end this
+ * message with no punctuation.
+ * @param {Object} [options] - see ValidatorDef.isValueValid() for options
  * @returns {*} - returns the input value for chaining
  * @public
  */
-const validate = ( value, validator, optionsOrMessage ) => {
+const validate = ( value, validator, message, options ) => {
 
-  if ( !assert ) {
-    return;
+  if ( assert ) {
+    options && assert( !options.hasOwnProperty( message ), 'prefer parameter to options for message' );
+
+    options = merge( {
+      assertions: true,
+      message: message // use a parameter and merge it in here for convenience
+    }, options );
+
+    // Throws an error if not valid
+    ValidatorDef.isValueValid( value, validator, options );
   }
-
-  let options;
-
-  // Support polymorphism to prevent a proliferation of objects being created to house messages to validate().
-  if ( typeof optionsOrMessage === 'string' ) {
-    options = merge( { message: optionsOrMessage }, ASSERTIONS_TRUE );
-  }
-  else {
-    options = merge( {}, ASSERTIONS_TRUE, optionsOrMessage );
-  }
-
-
-  // Throws an error if not valid
-  ValidatorDef.isValueValid( value, validator, options );
 };
 
 

@@ -146,7 +146,7 @@ class Property extends PhetioObject {
       ValidatorDef.validateValidator( validator );
 
       // validate the initial value as well as any changes in the future
-      this.link( value => validate( value, validator, VALIDATE_OPTIONS_FALSE ) );
+      this.link( value => validate( value, validator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
     }
   }
 

@@ -208,11 +208,11 @@ class Action extends PhetioObject {
       );
       for ( let i = 0; i < this._parameters.length; i++ ) {
         const parameter = this._parameters[ i ];
-        validate( arguments[ i ], parameter, VALIDATE_OPTIONS_FALSE );
+        validate( arguments[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
 
         // valueType overrides the phetioType validator so we don't use that one if there is a valueType
         if ( parameter.phetioType && !this._parameters.valueType ) {
-          validate( arguments[ i ], parameter.phetioType.validator, VALIDATE_OPTIONS_FALSE );
+          validate( arguments[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
         }
       }
     }
