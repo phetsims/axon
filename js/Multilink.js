@@ -32,6 +32,7 @@ class Multilink {
 
     this.dependencies = dependencies; // @private
 
+    assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
     // @private {Map.<Property,function>} Keep track of listeners so they can be detached
