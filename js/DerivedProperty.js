@@ -47,6 +47,7 @@ class DerivedProperty extends Property {
     assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( DERIVED_PROPERTY_IO_PREFIX ),
       'unsupported phetioType' );
 
+    assert && assert( dependencies.filter( d => !!d ).length === dependencies.length, 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
     const initialValue = getDerivedValue( derivation, dependencies );
