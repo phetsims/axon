@@ -205,6 +205,15 @@ class TinyEmitter {
   getListenerCount() {
     return this.listeners.size;
   }
+
+  /**
+   * Invokes a callback once for each listener
+   * @param {function} callback - takes the listener as an argument
+   * @public (Property)
+   */
+  forEachListener( callback ) {
+    this.listeners.forEach( callback );
+  }
 }
 
 axon.register( 'TinyEmitter', TinyEmitter );

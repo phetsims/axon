@@ -20,18 +20,18 @@ QUnit.module( 'Property' );
 
 QUnit.test( 'Test unlink', assert => {
   const p = new Property( 1 );
-  const startingPListenerCount = p.changedEmitter.getListenerCount();
+  const startingPListenerCount = p.getListenerCount();
   const a = function( a ) {};
   const b = function( b ) {};
   const c = function( c ) {};
   p.link( a );
   p.link( b );
   p.link( c );
-  assert.equal( p.changedEmitter.getListenerCount(), 3 + startingPListenerCount, 'should have 3 observers now' );
+  assert.equal( p.getListenerCount(), 3 + startingPListenerCount, 'should have 3 observers now' );
   p.unlink( b );
-  assert.ok( p.changedEmitter.hasListener( a ), 'should have removed b' );
-  assert.ok( p.changedEmitter.hasListener( c ), 'should have removed b' );
-  assert.equal( p.changedEmitter.getListenerCount(), 2 + startingPListenerCount, 'should have removed an item' );
+  assert.ok( p.hasListener( a ), 'should have removed b' );
+  assert.ok( p.hasListener( c ), 'should have removed b' );
+  assert.equal( p.getListenerCount(), 2 + startingPListenerCount, 'should have removed an item' );
 } );
 
 QUnit.test( 'Test Property.multilink', assert => {

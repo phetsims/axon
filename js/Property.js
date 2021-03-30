@@ -18,7 +18,7 @@ import axon from './axon.js';
 import Multilink from './Multilink.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import TinyEmitter from './TinyEmitter.js';
+import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
@@ -102,19 +102,14 @@ class Property extends PhetioObject {
                       options.tandem.name === 'property',
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
 
-    // @private - Store the internal value and the initial value
-    this._value = value;
-
     // @protected - Initial value
     this._initialValue = value;
 
     // @public (phet-io)
     this.validValues = options.validValues;
 
-    // @private (unit-tests) - emit is called when the value changes (or on link)
-    // Also used in ShapePlacementBoard.js at the moment
-    // We are validating here in Property, so we don't need the sub-emitter to validate too.
-    this.changedEmitter = new TinyEmitter( options.onBeforeNotify );
+    // @private - emit is called when the value changes (or on link)
+    this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
 
     // @private whether we are in the process of notifying listeners
     this.notifying = false;
@@ -167,7 +162,7 @@ class Property extends PhetioObject {
    * @public
    */
   get() {
-    return this._value;
+    return this.tinyProperty.get();
   }
 
   /**
@@ -202,7 +197,7 @@ class Property extends PhetioObject {
    * @protected - for overriding only
    */
   setPropertyValue( value ) {
-    this._value = value;
+    this.tinyProperty.setPropertyValue( value );
   }
 
   /**
@@ -223,7 +218,7 @@ class Property extends PhetioObject {
    * @protected
    */
   equalsValue( value ) {
-    return this.areValuesEqual( value, this._value );
+    return this.areValuesEqual( value, this.get() );
   }
 
   /**
@@ -291,7 +286,7 @@ class Property extends PhetioObject {
     assert && assert( !this.notifying || this.reentrant,
       `reentry detected, value=${newValue}, oldValue=${oldValue}` );
     this.notifying = true;
-    this.changedEmitter.emit( newValue, oldValue, this );
+    this.tinyProperty.emit( newValue, oldValue, this ); // cannot use tinyProperty.notifyListeners because it uses the wrong this
     this.notifying = false;
 
     this.phetioEndEvent();
@@ -330,7 +325,7 @@ class Property extends PhetioObject {
       assert && assert( this.isDeferred, 'Property wasn\'t deferred' );
       this.isDeferred = false;
 
-      const oldValue = this._value;
+      const oldValue = this.get();
 
       // Take the new value
       if ( this.hasDeferredValue ) {
@@ -397,7 +392,7 @@ class Property extends PhetioObject {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
 
-    this.changedEmitter.addListener( listener );
+    this.tinyProperty.addListener( listener ); // cannot use tinyProperty.link() because of wrong this
     listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
   }
 
@@ -412,7 +407,7 @@ class Property extends PhetioObject {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
-    this.changedEmitter.addListener( listener );
+    this.tinyProperty.lazyLink( listener );
   }
 
   /**
@@ -422,7 +417,7 @@ class Property extends PhetioObject {
    * @public
    */
   unlink( listener ) {
-    this.changedEmitter.removeListener( listener );
+    this.tinyProperty.unlink( listener );
   }
 
   /**
@@ -430,7 +425,7 @@ class Property extends PhetioObject {
    * @public
    */
   unlinkAll() {
-    this.changedEmitter.removeAllListeners();
+    this.tinyProperty.unlinkAll();
   }
 
   /**
@@ -496,16 +491,13 @@ class Property extends PhetioObject {
   // @public Ensures that the Property is eligible for GC
   dispose() {
 
-    // remove any listeners that are still attached to this Property
-    this.unlinkAll();
-
     // unregister any order dependencies for this Property for PhET-iO state
     if ( this.isPhetioInstrumented() ) {
       propertyStateHandlerSingleton.unregisterOrderDependenciesForProperty( this );
     }
 
     super.dispose();
-    this.changedEmitter.dispose();
+    this.tinyProperty.dispose();
   }
 
   /**
@@ -515,7 +507,25 @@ class Property extends PhetioObject {
    * @public
    */
   hasListener( listener ) {
-    return this.changedEmitter.hasListener( listener );
+    return this.tinyProperty.hasListener( listener );
+  }
+
+  /**
+   * Returns the number of listeners.
+   * @returns {number}
+   * @public
+   */
+  getListenerCount() {
+    return this.tinyProperty.getListenerCount();
+  }
+
+  /**
+   * Invokes a callback once for each listener
+   * @param {function} callback - takes the listener as an argument
+   * @public (ShapePlacementBoard)
+   */
+  forEachListener( callback ) {
+    this.tinyProperty.forEachListener( callback );
   }
 
   /**
@@ -525,7 +535,7 @@ class Property extends PhetioObject {
    */
   hasListeners() {
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
-    return this.changedEmitter.hasListeners();
+    return this.tinyProperty.hasListeners();
   }
 
   /**
