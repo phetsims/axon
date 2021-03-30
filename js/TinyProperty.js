@@ -108,7 +108,7 @@ class TinyProperty extends TinyEmitter {
   /**
    * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
    * wrapped value changes, and whether onValue is triggered.
-   * @protected
+   * @public (Property)
    *
    * useDeepEquality: true => Use the `equals` method on the values
    * useDeepEquality: false => Use === for equality test
@@ -192,6 +192,8 @@ class TinyProperty extends TinyEmitter {
    * Links an object's named attribute to this TinyProperty.  Returns a handle so it can be removed using
    * TinyProperty.unlink();
    * Example: modelVisibleProperty.linkAttribute(view, 'visible');
+   *
+   * NOTE: Duplicated with Property.linkAttribute
    * @public
    *
    * @param {*} object

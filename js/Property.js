@@ -81,11 +81,6 @@ class Property extends PhetioObject {
     // @public (phet-io) Units, if any.  See units.js for valid values
     this.units = options.units;
 
-    // @private (read-only) whether to use the values' equals method or === equality
-    // useDeepEquality: true => Use the `equals` method on the values
-    // useDeepEquality: false => Use === for equality test
-    this.useDeepEquality = options.useDeepEquality;
-
     // When running as phet-io, if the tandem is specified, the type must be specified.
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
@@ -110,6 +105,10 @@ class Property extends PhetioObject {
 
     // @private - emit is called when the value changes (or on link)
     this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
+
+    if ( options.useDeepEquality ) {
+      this.tinyProperty.useDeepEquality = options.useDeepEquality;
+    }
 
     // @private whether we are in the process of notifying listeners
     this.notifying = false;
@@ -222,32 +221,14 @@ class Property extends PhetioObject {
   }
 
   /**
-   * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
-   * wrapped value changes, and whether onValue is triggered.
-   *
-   * useDeepEquality: true => Use the `equals` method on the values
-   * useDeepEquality: false => Use === for equality test
-   *
-   * Alternatively different implementation can be provided by subclasses or instances to change the equals
-   * definition. See #10 and #73 and #115
-   * @param {Object} a - should have the same type as Property element type
-   * @param {Object} b - should have the same type as Property element type
+   * See TinyProperty.areValuesEqual
+   * @param {*} a
+   * @param {*} b
    * @returns {boolean}
-   * @private
+   * @public
    */
   areValuesEqual( a, b ) {
-    if ( this.useDeepEquality && a && b && a.constructor === b.constructor ) {
-
-      assert && assert( !!a.equals, 'no equals function for 1st arg' );
-      assert && assert( !!b.equals, 'no equals function for 2nd arg' );
-      assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
-      return a.equals( b );
-    }
-    else {
-
-      // Reference equality for objects, value equality for primitives
-      return a === b;
-    }
+    return this.tinyProperty.areValuesEqual( a, b );
   }
 
   /**
@@ -431,6 +412,8 @@ class Property extends PhetioObject {
   /**
    * Links an object's named attribute to this property.  Returns a handle so it can be removed using Property.unlink();
    * Example: modelVisibleProperty.linkAttribute(view,'visible');
+   *
+   * NOTE: Duplicated with TinyProperty.linkAttribute
    *
    * @param {*} object
    * @param {string} attributeName
