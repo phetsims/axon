@@ -106,9 +106,8 @@ class Property extends PhetioObject {
     // @private - emit is called when the value changes (or on link)
     this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
 
-    if ( options.useDeepEquality ) {
-      this.tinyProperty.useDeepEquality = options.useDeepEquality;
-    }
+    // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.
+    this.tinyProperty.useDeepEquality = options.useDeepEquality;
 
     // @private whether we are in the process of notifying listeners
     this.notifying = false;
