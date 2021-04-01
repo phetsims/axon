@@ -214,6 +214,14 @@ class TinyForwardingProperty extends TinyProperty {
   }
 
   /**
+   * @public
+   * @returns {boolean}
+   */
+  getTargetPropertyInstrumented() {
+    return this.targetPropertyInstrumented;
+  }
+
+  /**
    * @param {Node} node - the parent container that supports updateLinkedElementForProperty()
    * @param {string} tandemName
    * @param {function():Property} createProperty - creates an "owned" Property
