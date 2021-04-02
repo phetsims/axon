@@ -6,13 +6,10 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Range from '../../dot/js/Range.js';
-import phetioAPITest from '../../tandem/js/phetioAPITest.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import PropertyAPI from './PropertyAPI.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
@@ -293,11 +290,3 @@ if ( Tandem.PHET_IO_ENABLED ) {
     thirdProperty.dispose();
   } );
 }
-
-QUnit.test( 'PhET-iO API Validation', assert => {
-  phetioAPITest( assert, new PropertyAPI( { phetioType: Property.PropertyIO( Range.RangeIO ) } ), 'property',
-    tandem => new Property( new Range( 0, 1 ), {
-      phetioType: Property.PropertyIO( Range.RangeIO ),
-      tandem: tandem
-    } ) );
-} );
