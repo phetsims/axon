@@ -37,6 +37,8 @@ const PARAMETER_KEYS = [
   'phetioPrivate'
 ].concat( ValidatorDef.VALIDATOR_KEYS );
 
+const PHET_IO_STATE_DEFAULT = false;
+
 // helper closures
 const paramToPhetioType = param => param.phetioType;
 const paramToName = param => param.name;
@@ -59,7 +61,7 @@ class Action extends PhetioObject {
       // {function(IOType[]):IOType} - The non parameterized IOType. Override this to create a subtype of ActionIO as
       // the phetioType instead of a parameterized ActionIO Type.
       phetioOuterType: Action.ActionIO,
-      phetioState: false,
+      phetioState: PHET_IO_STATE_DEFAULT,
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
       phetioDocumentation: 'A function that executes.'
@@ -242,6 +244,9 @@ Action.ActionIO = parameterTypes => {
       documentation: 'Executes when an event occurs',
       events: [ 'emitted' ],
       parameterTypes: parameterTypes,
+      metadataDefaults: {
+        phetioState: PHET_IO_STATE_DEFAULT
+      },
       methods: {
         execute: {
           returnType: VoidIO,
