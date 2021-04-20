@@ -52,6 +52,16 @@ class TinyStaticProperty extends TinyProperty {
   }
 
   /**
+   * Returns true if the value can be set externally. Static Property values should only be mutated, not set.
+   * @returns {boolean}
+   * @override
+   * @public
+   */
+  isSettable() {
+    return false;
+  }
+
+  /**
    * Directly notifies listeners of changes.
    * @public
    * @override
