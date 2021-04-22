@@ -60,20 +60,20 @@ class TinyForwardingProperty extends TinyProperty {
    *
    * @param {Node} node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
    * @param {string|null} tandemName - null if the Property doesn't not support PhET-iO instrumentation
-   * @param {TinyProperty.<*>|Property.<*>|null} newTarget - null to "unset" forwarding.
+   * @param {TinyProperty.<*>|Property.<*>|null} newTargetProperty - null to "unset" forwarding.
    * @returns {Node} - the passed in Node, for chaining.
    */
-  setTargetProperty( node, tandemName, newTarget ) {
+  setTargetProperty( node, tandemName, newTargetProperty ) {
     assert && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
-    if ( this.targetProperty === newTarget ) {
+    if ( this.targetProperty === newTargetProperty ) {
       return node; // for chaining
     }
 
     const currentForwardingPropertyInstrumented = this.targetProperty &&
                                                   this.targetProperty.isPhetioInstrumented();
-    assert && currentForwardingPropertyInstrumented && assert( newTarget && newTarget.isPhetioInstrumented(),
+    assert && currentForwardingPropertyInstrumented && assert( newTargetProperty && newTargetProperty.isPhetioInstrumented(),
       'Cannot set swap out a PhET-iO instrumented targetProperty for an uninstrumented one' );
 
     // We need this information eagerly for later on in the function
@@ -82,11 +82,11 @@ class TinyForwardingProperty extends TinyProperty {
     // If we had the "default instrumented" Property, we'll remove that and then link our new Property. Guard on the fact
     // that ownedPhetioProperty is added via this exact method, see this.initializePhetio() for details
     // Do this before adding a PhET-iO LinkedElement because ownedPhetioProperty has the same phetioID as the LinkedElement
-    if ( this.ownedPhetioProperty && newTarget !== this.ownedPhetioProperty ) {
+    if ( this.ownedPhetioProperty && newTargetProperty !== this.ownedPhetioProperty ) {
       this.disposeOwnedPhetioProperty();
     }
 
-    node.updateLinkedElementForProperty( tandemName, previousTarget, newTarget );
+    node.updateLinkedElementForProperty( tandemName, previousTarget, newTargetProperty );
 
     // Lazily set this value, it will be added as a listener to any targetProperty we have.
     this.forwardingListener = this.forwardingListener || this.onTargetPropertyChange.bind( this );
@@ -97,7 +97,7 @@ class TinyForwardingProperty extends TinyProperty {
       this.targetProperty.unlink( this.forwardingListener );
     }
 
-    this.targetProperty = newTarget;
+    this.targetProperty = newTargetProperty;
 
     if ( this.targetProperty ) {
       this.targetProperty.lazyLink( this.forwardingListener );
@@ -158,6 +158,7 @@ class TinyForwardingProperty extends TinyProperty {
    */
   set( value ) {
     if ( this.targetProperty ) {
+      assert && assert( this.targetProperty.isSettable(), 'targetProperty must be settable' );
       this.targetProperty.set( value );
     }
     else {
