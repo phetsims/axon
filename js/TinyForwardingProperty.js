@@ -58,13 +58,13 @@ class TinyForwardingProperty extends TinyProperty {
    * Sets (or unsets if `null` is provided) the Property that we use for forwarding changes.
    * @public
    *
-   * @param {Node} node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
+   * @param {{updateLinkedElementForProperty:function}|null} node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
    * @param {string|null} tandemName - null if the Property doesn't not support PhET-iO instrumentation
    * @param {TinyProperty.<*>|Property.<*>|null} newTargetProperty - null to "unset" forwarding.
    * @returns {Node} - the passed in Node, for chaining.
    */
   setTargetProperty( node, tandemName, newTargetProperty ) {
-    assert && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
+    assert && node && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
     if ( this.targetProperty === newTargetProperty ) {
@@ -86,7 +86,7 @@ class TinyForwardingProperty extends TinyProperty {
       this.disposeOwnedPhetioProperty();
     }
 
-    node.updateLinkedElementForProperty( tandemName, previousTarget, newTargetProperty );
+    node && node.updateLinkedElementForProperty( tandemName, previousTarget, newTargetProperty );
 
     // Lazily set this value, it will be added as a listener to any targetProperty we have.
     this.forwardingListener = this.forwardingListener || this.onTargetPropertyChange.bind( this );
