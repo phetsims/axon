@@ -7,8 +7,8 @@
  */
 
 import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
-import './createObservableArrayTests.js';
 import './BooleanPropertyTests.js';
+import './createObservableArrayTests.js';
 import './DerivedPropertyTests.js';
 import './DynamicPropertyTests.js';
 import './EmitterIOTests.js';
@@ -19,6 +19,7 @@ import './PropertyStateHandlerTests.js';
 import './PropertyTests.js';
 import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
+import './TinyForwardingPropertyTests.js';
 import './TinyPropertyTests.js';
 import './ValidatorDefTests.js';
 
