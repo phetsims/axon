@@ -112,7 +112,7 @@ class CallbackTimer {
    * @public
    */
   dispose() {
-    this.stop();
+    this.stop( false );
     this.callbacks.length = 0;
   }
 }
