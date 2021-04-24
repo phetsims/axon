@@ -125,7 +125,7 @@ class DerivedProperty extends Property {
     }
     this.dependencies = null;
 
-    super.dispose( this );
+    super.dispose();
   }
 
   /**
