@@ -269,7 +269,7 @@ class DynamicProperty extends Property {
       this.derive( this.valuePropertyProperty.value ).unlink( this.propertyPropertyListener );
     }
 
-    super.dispose( this );
+    super.dispose();
   }
 
   /**
