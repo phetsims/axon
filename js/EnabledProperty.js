@@ -32,7 +32,7 @@ class EnabledProperty extends BooleanProperty {
       checkTandemName: true
     }, options );
 
-    if ( assert && options && options.tandem && options.checkTandemName ) {
+    if ( assert && options && options.tandem && options.tandem.supplied && options.checkTandemName ) {
       assert && assert( options.tandem.name === TANDEM_NAME, `EnabledProperty tandems should be named ${TANDEM_NAME}` );
     }
 
