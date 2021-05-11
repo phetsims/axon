@@ -13,6 +13,7 @@ import './DerivedPropertyTests.js';
 import './DynamicPropertyTests.js';
 import './EmitterIOTests.js';
 import './EmitterTests.js';
+import './EnabledComponentTests.js';
 import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
 import './PropertyStateHandlerTests.js';
