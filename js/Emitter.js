@@ -133,6 +133,16 @@ define( function( require ) {
     },
 
     /**
+     * Check whether the listener is registered with this Emitter
+     * @param {function} listener
+     * @returns {boolean}
+     * @public
+     */
+    hasListener: function( listener ) {
+      return this.containsListener( listener );
+    },
+
+    /**
      * Returns true if there are any listeners.
      * @returns {boolean}
      */
