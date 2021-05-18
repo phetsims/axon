@@ -100,7 +100,7 @@ class Property extends PhetioObject {
     // @protected - Initial value
     this._initialValue = value;
 
-    // @public (phet-io)
+    // @public (read-only)
     this.validValues = options.validValues;
 
     // @private - emit is called when the value changes (or on link)
