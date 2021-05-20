@@ -1,4 +1,4 @@
-// Copyright 2019-2020, University of Colorado Boulder
+// Copyright 2019-2021, University of Colorado Boulder
 
 /**
  * Event & listener abstraction for a single "event" type. The type provides extra functionality beyond just notifying

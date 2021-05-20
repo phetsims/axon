@@ -1,4 +1,4 @@
-// Copyright 2020-2021, University of Colorado Boulder
+// Copyright 2021, University of Colorado Boulder
 
 /**
  * Base class that defines a settable Property that determines whether the Object is enabled or not. This includes
