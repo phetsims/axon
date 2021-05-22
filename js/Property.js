@@ -1,4 +1,4 @@
-// Copyright 2013-2020, University of Colorado Boulder
+// Copyright 2013-2021, University of Colorado Boulder
 
 /**
  * An observable property which notifies listeners when the value changes.
@@ -100,7 +100,7 @@ class Property extends PhetioObject {
     // @protected - Initial value
     this._initialValue = value;
 
-    // @public (phet-io)
+    // @public (read-only)
     this.validValues = options.validValues;
 
     // @private - emit is called when the value changes (or on link)
