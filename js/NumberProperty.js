@@ -198,11 +198,12 @@ class NumberProperty extends Property {
   /**
    * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
    * not fail after one but has been set not the other.
-   * @param {Number} value
+   * @param {number} value
    * @param {Range} range
    * @public
    */
   setValueAndRange( value, range ) {
+    assert && assert( range.contains( value ), `value ${value} is not in range [${range.min},${range.max}]` );
 
     // defer notification of listeners
     this.setDeferred( true );
