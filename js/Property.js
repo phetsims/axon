@@ -121,7 +121,7 @@ class Property extends PhetioObject {
     // send notifications.
     this.isDeferred = false;
 
-    // @private {*} - the value that this Property will take after no longer deferred
+    // @protected {*} - the value that this Property will take after no longer deferred
     this.deferredValue = null;
 
     // @private {boolean} whether a deferred value has been set
