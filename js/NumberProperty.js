@@ -240,9 +240,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
-    // conditionals to avoid keys with value "null" in state objects
-    parentStateObject.numberType = NullableIO( StringIO ).toStateObject( numberProperty.numberType );
-
+    parentStateObject.numberType = StringIO.toStateObject( numberProperty.numberType );
     parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( numberProperty.rangeProperty.value );
 
     const hasRangePhetioID = numberProperty.rangeProperty && numberProperty.rangeProperty.isPhetioInstrumented();
@@ -257,6 +255,13 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     PropertyIOImpl.applyState( numberProperty, stateObject );
     numberProperty.step = stateObject.step;
     numberProperty.numberType = stateObject.numberType;
+  },
+  stateSchema: {
+    numberType: StringIO,
+    range: NullableIO( Range.RangeIO ),
+    rangePhetioID: NullableIO( StringIO ),
+    step: NullableIO( NumberIO ),
+    value: NumberIO
   }
 } );
 

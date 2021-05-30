@@ -12,6 +12,7 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
@@ -454,7 +455,10 @@ const ObservableArrayIO = parameterType => {
       valueType: ObservableArrayPhetioObject,
       parameterTypes: [ parameterType ],
       toStateObject: observableArrayPhetioObject => observableArrayPhetioObject.observableArray.toStateObject(),
-      applyState: ( observableArrayPhetioObject, state ) => observableArrayPhetioObject.observableArray.applyState( state )
+      applyState: ( observableArrayPhetioObject, state ) => observableArrayPhetioObject.observableArray.applyState( state ),
+      stateSchema: {
+        array: ArrayIO( parameterType )
+      }
     } ) );
   }
   return cache.get( parameterType );

@@ -10,6 +10,7 @@
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
@@ -605,6 +606,11 @@ Property.PropertyIO = parameterType => {
         if ( stateObject.validValues ) {
           property.validValues = stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) );
         }
+      },
+      stateSchema: {
+        value: parameterType,
+        validValues: NullableIO( ArrayIO( parameterType ) ),
+        units: NullableIO( StringIO )
       },
       methods: {
         getValue: {
