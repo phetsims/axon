@@ -10,9 +10,11 @@
 import merge from '../../phet-core/js/merge.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
+import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import Multilink from './Multilink.js';
@@ -120,7 +122,7 @@ class Property extends PhetioObject {
     // send notifications.
     this.isDeferred = false;
 
-    // @private {*} - the value that this Property will take after no longer deferred
+    // @protected {*} - the value that this Property will take after no longer deferred
     this.deferredValue = null;
 
     // @private {boolean} whether a deferred value has been set
@@ -579,7 +581,7 @@ Property.PropertyIO = parameterType => {
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
       toStateObject: property => {
-        assert && assert( parameterType.toStateObject, `toStateObject doesnt exist for ${parameterType.typeName}` );
+        assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
         const stateObject = {
           value: parameterType.toStateObject( property.value )
         };
@@ -590,20 +592,25 @@ Property.PropertyIO = parameterType => {
             return parameterType.toStateObject( v );
           } );
         }
-
-        // Only supply units if they were specified, to avoid seeing "units: null" in so many properties, see https://github.com/phetsims/phet-io/issues/1315
-        if ( property.units ) {
-          stateObject.units = property.units;
+        else {
+          stateObject.validValues = null;
         }
+
+        stateObject.units = NullableIO( StringIO ).toStateObject( property.units );
         return stateObject;
       },
       applyState: ( property, stateObject ) => {
-        property.units = stateObject.units;
+        property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
         property.set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
           property.validValues = stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) );
         }
+      },
+      stateSchema: {
+        value: parameterType,
+        validValues: NullableIO( ArrayIO( parameterType ) ),
+        units: NullableIO( StringIO )
       },
       methods: {
         getValue: {

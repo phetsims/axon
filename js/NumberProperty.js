@@ -198,11 +198,12 @@ class NumberProperty extends Property {
   /**
    * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
    * not fail after one but has been set not the other.
-   * @param {Number} value
+   * @param {number} value
    * @param {Range} range
    * @public
    */
   setValueAndRange( value, range ) {
+    assert && assert( range.contains( value ), `value ${value} is not in range [${range.min},${range.max}]` );
 
     // defer notification of listeners
     this.setDeferred( true );
@@ -239,27 +240,28 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
-    // conditionals to avoid keys with value "null" in state objects
-    if ( numberProperty.numberType ) {
-      parentStateObject.numberType = numberProperty.numberType;
-    }
+    parentStateObject.numberType = StringIO.toStateObject( numberProperty.numberType );
+    parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( numberProperty.rangeProperty.value );
 
-    if ( numberProperty.rangeProperty.value ) {
-      parentStateObject.range = Range.RangeIO.toStateObject( numberProperty.rangeProperty.value );
-      if ( numberProperty.rangeProperty.isPhetioInstrumented() ) {
-        parentStateObject.rangePhetioID = StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID );
-      }
-    }
-    if ( numberProperty.step ) {
-      parentStateObject.step = NumberIO.toStateObject( numberProperty.step );
-    }
+    const hasRangePhetioID = numberProperty.rangeProperty && numberProperty.rangeProperty.isPhetioInstrumented();
+    parentStateObject.rangePhetioID = hasRangePhetioID ? StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID ) : null;
+
+    parentStateObject.step = NullableIO( NumberIO ).toStateObject( numberProperty.step );
     return parentStateObject;
   },
   applyState: ( numberProperty, stateObject ) => {
+    // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
     numberProperty.step = stateObject.step;
     numberProperty.numberType = stateObject.numberType;
+  },
+  stateSchema: {
+    numberType: StringIO,
+    range: NullableIO( Range.RangeIO ),
+    rangePhetioID: NullableIO( StringIO ),
+    step: NullableIO( NumberIO ),
+    value: NumberIO
   }
 } );
 

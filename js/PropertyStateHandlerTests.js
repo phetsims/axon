@@ -119,9 +119,13 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     phet.phetio.phetioEngine.phetioStateEngine.setState( {
       'axon.test.numberProperty': serializedValue,
-      'axon.test.randomDependencyProperty': { value: true },
+      'axon.test.randomDependencyProperty': { value: true, validValues: null, units: null },
       'axon.test.rangeProperty': {
-        value: { min: 4, max: 8 }
+        value: {
+          min: 4, max: 8
+        },
+        validValues: null,
+        units: null
       }
     }, Tandem.ROOT_TEST );
 
