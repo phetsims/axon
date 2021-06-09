@@ -31,8 +31,8 @@ const PARAMETER_KEYS = [
   'phetioType', // {IOType} - required for phet-io instrumented Actions
   'phetioDocumentation', // {string} - optional, additional documentation for this specific parameter
 
-  // {boolean=true} - specify this to keep the parameter private to the phet-io api. To support emitting and executing over
-  // the phet-io api, phetioPrivate parameters must not ever be before a public one. For example
+  // {boolean=true} - specify this to keep the parameter private to the phet-io API. To support emitting and executing over
+  // the phet-io API, phetioPrivate parameters must not ever be before a public one. For example
   // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
   'phetioPrivate'
 ].concat( ValidatorDef.VALIDATOR_KEYS );
