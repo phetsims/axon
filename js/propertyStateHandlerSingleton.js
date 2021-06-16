@@ -1,4 +1,4 @@
-// Copyright 2020, University of Colorado Boulder
+[object Promise]
 
 /**
  * Singleton responsible for AXON/Property specific state logic. Use this global for the project to have a single

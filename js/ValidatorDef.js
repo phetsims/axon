@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * The definition file for "validators" used to validate values. This file holds associated logic that validates the

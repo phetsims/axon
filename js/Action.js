@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * An action that can be executed and sent to the PhET-iO data stream, and optionally recorded for playback. This type

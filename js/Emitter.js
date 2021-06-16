@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * Event & listener abstraction for a single "event" type. The type provides extra functionality beyond just notifying

@@ -1,4 +1,4 @@
-// Copyright 2017-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * Unit tests for axon. Please run once in phet brand and once in brand=phet-io to cover all functionality.

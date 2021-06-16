@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * Throws an assertion error if assertions are enabled and the value is invalid, otherwise returns the value.

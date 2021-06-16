@@ -1,4 +1,4 @@
-// Copyright 2019-2020, University of Colorado Boulder
+[object Promise]
 
 /**
  * Timer so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its

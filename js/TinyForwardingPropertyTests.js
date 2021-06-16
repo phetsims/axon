@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * QUnit tests for TinyForwardingProperty

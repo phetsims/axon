@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * Base class that defines a settable Property that determines whether the Object is enabled or not. This includes

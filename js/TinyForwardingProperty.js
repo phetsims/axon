@@ -1,4 +1,4 @@
-// Copyright 2020-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * A lightweight version of Property (that satisfies some of the interface), meant for high-performance applications

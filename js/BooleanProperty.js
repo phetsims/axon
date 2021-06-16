@@ -1,4 +1,4 @@
-// Copyright 2016-2020, University of Colorado Boulder
+[object Promise]
 
 /**
  * Property whose value must be true or false. Truthy/falsy values are invalid.

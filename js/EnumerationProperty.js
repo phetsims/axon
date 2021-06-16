@@ -1,4 +1,4 @@
-// Copyright 2019-2020, University of Colorado Boulder
+[object Promise]
 
 /**
  * Property whose value is a member of an Enumeration.

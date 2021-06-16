@@ -1,4 +1,4 @@
-// Copyright 2014-2021, University of Colorado Boulder
+[object Promise]
 
 /**
  * Multilink is used to link to multiple properties.  It is very similar to a DerivedProperty, but has no value and
