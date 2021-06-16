@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * Responsible for handling Property-specific logic associated with setting PhET-iO state. This file will defer Properties

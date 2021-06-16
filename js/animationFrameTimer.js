@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 import axon from './axon.js';
 import Timer from './Timer.js';

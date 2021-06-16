@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * An observable stub which satisfies some of the Property interface, which can store a (static/constant) value

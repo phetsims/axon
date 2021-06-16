@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * Creates an object that has the same API as an Array, but also supports notifications and PhET-iO. When an item

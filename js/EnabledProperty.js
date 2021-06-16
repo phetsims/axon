@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * Property to control the enabled of something. In general this should never be called by clients, but instead is factored

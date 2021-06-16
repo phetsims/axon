@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2017-2021, University of Colorado Boulder
 
 /**
  * Creates a Property that does synchronization of values with a swappable Property that itself can change.

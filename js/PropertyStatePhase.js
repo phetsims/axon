@@ -1,4 +1,4 @@
-[object Promise]
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * Describes the phases that a Property can go through in its value setting and notification lifecycle.
