@@ -27,7 +27,7 @@ const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
  * @returns {*}
  */
 const getDerivedValue = ( derivation, dependencies ) => {
-  return derivation.apply( null, dependencies.map( property => property.get() ) );
+  return derivation( ...dependencies.map( property => property.get() ) );
 };
 
 class DerivedProperty extends Property {

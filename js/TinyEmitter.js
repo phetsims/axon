@@ -83,7 +83,7 @@ class TinyEmitter {
       this.emitContexts.push( emitContext );
 
       for ( const listener of this.listeners ) {
-        listener.apply( null, args );
+        listener( ...args );
         emitContext.index++;
 
         // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
@@ -97,7 +97,7 @@ class TinyEmitter {
       // listeners in order from where we left off.
       if ( emitContext.listenerArray ) {
         for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
-          emitContext.listenerArray[ i ].apply( null, args );
+          emitContext.listenerArray[ i ]( ...args );
         }
       }
       this.emitContexts.pop();

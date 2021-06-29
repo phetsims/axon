@@ -36,7 +36,7 @@ class Emitter extends Action {
       assert && assert( self.tinyEmitter instanceof TinyEmitter,
         'Emitter should not emit until after its constructor has completed' );
 
-      self.tinyEmitter.emit.apply( self.tinyEmitter, args );
+      self.tinyEmitter.emit( ...args );
     }, options );
 
     const self = this;
@@ -186,7 +186,7 @@ Emitter.EmitterIO = parameterTypes => {
 
           // Match `Emitter.emit`'s dynamic number of arguments
           implementation: function( ...args ) {
-            this.emit.apply( this, args );
+            this.emit( ...args );
           },
           documentation: 'Emits a single event to all listeners.',
           invocableForReadOnlyElements: false

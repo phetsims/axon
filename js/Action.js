@@ -221,7 +221,7 @@ class Action extends PhetioObject {
 
     // handle phet-io data stream for the emitted event
     this.phetioStartEvent( 'emitted', {
-      getData: () => this.getPhetioData.apply( this, args ) // put this in a closure so that it is only called in phet-io brand
+      getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
     this._action.apply( null, args );
@@ -254,7 +254,7 @@ Action.ActionIO = parameterTypes => {
 
           // Match `Action.execute`'s dynamic number of arguments
           implementation: function( ...args ) {
-            this.execute.apply( this, args );
+            this.execute( ...args );
           },
           documentation: 'Executes the function the Action is wrapping.',
           invocableForReadOnlyElements: false

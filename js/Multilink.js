@@ -44,7 +44,7 @@ class Multilink {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
         if ( !this.isDisposed ) {
-          callback.apply( null, dependencies.map( GET_PROPERTY_VALUE ) );
+          callback( ...dependencies.map( GET_PROPERTY_VALUE ) );
         }
       };
       this.dependencyListeners.set( dependency, listener );
@@ -59,7 +59,7 @@ class Multilink {
 
     // Send initial call back but only if we are non-lazy
     if ( !lazy ) {
-      callback.apply( null, dependencies.map( GET_PROPERTY_VALUE ) );
+      callback( ...dependencies.map( GET_PROPERTY_VALUE ) );
     }
 
     // @private - whether the Multilink has been disposed
