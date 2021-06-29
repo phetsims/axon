@@ -61,11 +61,11 @@ class TinyEmitter {
    * Notify listeners
    * @public
    */
-  emit() {
+  emit( ...args ) {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // optional callback, before notifying listeners
-    this.onBeforeNotify && this.onBeforeNotify.apply( null, arguments );
+    this.onBeforeNotify && this.onBeforeNotify.apply( null, args );
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
@@ -83,7 +83,7 @@ class TinyEmitter {
       this.emitContexts.push( emitContext );
 
       for ( const listener of this.listeners ) {
-        listener.apply( null, arguments );
+        listener.apply( null, args );
         emitContext.index++;
 
         // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
@@ -97,7 +97,7 @@ class TinyEmitter {
       // listeners in order from where we left off.
       if ( emitContext.listenerArray ) {
         for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
-          emitContext.listenerArray[ i ].apply( null, arguments );
+          emitContext.listenerArray[ i ].apply( null, args );
         }
       }
       this.emitContexts.pop();

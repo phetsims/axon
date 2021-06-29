@@ -159,7 +159,7 @@ class Action extends PhetioObject {
    * @returns {Object} - the data, keys dependent on parameter metadata
    * @private
    */
-  getPhetioData() {
+  getPhetioData( ...args ) {
 
     assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
 
@@ -172,7 +172,7 @@ class Action extends PhetioObject {
       for ( let i = 0; i < this._parameters.length; i++ ) {
         const element = this._parameters[ i ];
         if ( !element.phetioPrivate ) {
-          data[ element.name ] = element.phetioType.toStateObject( arguments[ i ] );
+          data[ element.name ] = element.phetioType.toStateObject( args[ i ] );
         }
       }
     }
@@ -203,28 +203,28 @@ class Action extends PhetioObject {
    * @params - expected parameters are based on options.parameters, see constructor
    * @public
    */
-  execute() {
+  execute( ...args ) {
     if ( assert ) {
-      assert( arguments.length === this._parameters.length,
-        `Emitted unexpected number of args. Expected: ${this._parameters.length} and received ${arguments.length}`
+      assert( args.length === this._parameters.length,
+        `Emitted unexpected number of args. Expected: ${this._parameters.length} and received ${args.length}`
       );
       for ( let i = 0; i < this._parameters.length; i++ ) {
         const parameter = this._parameters[ i ];
-        validate( arguments[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
+        validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
 
         // valueType overrides the phetioType validator so we don't use that one if there is a valueType
         if ( parameter.phetioType && !this._parameters.valueType ) {
-          validate( arguments[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
+          validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
         }
       }
     }
 
     // handle phet-io data stream for the emitted event
     this.phetioStartEvent( 'emitted', {
-      getData: () => this.getPhetioData.apply( this, arguments ) // put this in a closure so that it is only called in phet-io brand
+      getData: () => this.getPhetioData.apply( this, args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
-    this._action.apply( null, arguments );
+    this._action.apply( null, args );
 
     this.phetioEndEvent();
   }
@@ -253,8 +253,8 @@ Action.ActionIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Action.execute`'s dynamic number of arguments
-          implementation: function() {
-            this.execute.apply( this, arguments );
+          implementation: function( ...args ) {
+            this.execute.apply( this, args );
           },
           documentation: 'Executes the function the Action is wrapping.',
           invocableForReadOnlyElements: false

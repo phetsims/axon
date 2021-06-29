@@ -250,67 +250,67 @@ const methods = {
    *******************************************/
 
   // @public
-  pop() {
+  pop( ...args ) {
     const initialLength = this.targetArray.length;
-    const returnValue = Array.prototype.pop.apply( this.targetArray, arguments );
+    const returnValue = Array.prototype.pop.apply( this.targetArray, args );
     this.lengthProperty.value = this.length;
     initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
 
   // @public
-  shift() {
+  shift( ...args ) {
     const initialLength = this.targetArray.length;
-    const returnValue = Array.prototype.shift.apply( this.targetArray, arguments );
+    const returnValue = Array.prototype.shift.apply( this.targetArray, args );
     this.lengthProperty.value = this.length;
     initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
 
   // @public
-  push() {
-    const returnValue = Array.prototype.push.apply( this.targetArray, arguments );
+  push( ...args ) {
+    const returnValue = Array.prototype.push.apply( this.targetArray, args );
     this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+      this.elementAddedEmitter.emit( args[ i ] );
     }
     return returnValue;
   },
 
   // @public
-  unshift() {
-    const returnValue = Array.prototype.unshift.apply( this.targetArray, arguments );
+  unshift( ...args ) {
+    const returnValue = Array.prototype.unshift.apply( this.targetArray, args );
     this.lengthProperty.value = this.length;
-    for ( let i = 0; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+    for ( let i = 0; i < args.length; i++ ) {
+      this.elementAddedEmitter.emit( args[ i ] );
     }
     return returnValue;
   },
 
   // @public
-  splice() {
-    const returnValue = Array.prototype.splice.apply( this.targetArray, arguments );
+  splice( ...args ) {
+    const returnValue = Array.prototype.splice.apply( this.targetArray, args );
     this.lengthProperty.value = this.length;
     const deletedElements = returnValue;
-    for ( let i = 2; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( arguments[ i ] );
+    for ( let i = 2; i < args.length; i++ ) {
+      this.elementAddedEmitter.emit( args[ i ] );
     }
     deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
     return returnValue;
   },
 
   // @public
-  copyWithin() {
+  copyWithin( ...args ) {
     const before = this.targetArray.slice();
-    const returnValue = Array.prototype.copyWithin.apply( this.targetArray, arguments );
+    const returnValue = Array.prototype.copyWithin.apply( this.targetArray, args );
     reportDifference( before, this );
     return returnValue;
   },
 
   // @public
-  fill() {
+  fill( ...args ) {
     const before = this.targetArray.slice();
-    const returnValue = Array.prototype.fill.apply( this.targetArray, arguments );
+    const returnValue = Array.prototype.fill.apply( this.targetArray, args );
     reportDifference( before, this );
     return returnValue;
   },

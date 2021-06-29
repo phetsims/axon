@@ -32,11 +32,11 @@ class Emitter extends Action {
       onBeforeNotify: null
     }, options );
 
-    super( function() {
+    super( ( ...args ) => {
       assert && assert( self.tinyEmitter instanceof TinyEmitter,
         'Emitter should not emit until after its constructor has completed' );
 
-      self.tinyEmitter.emit.apply( self.tinyEmitter, arguments );
+      self.tinyEmitter.emit.apply( self.tinyEmitter, args );
     }, options );
 
     const self = this;
@@ -60,8 +60,8 @@ class Emitter extends Action {
    * @public
    * @params {*}
    */
-  emit() {
-    super.execute.apply( this, arguments );
+  emit( ...args ) {
+    super.execute.apply( this, args );
   }
 
   /**
@@ -185,8 +185,8 @@ Emitter.EmitterIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Emitter.emit`'s dynamic number of arguments
-          implementation: function() {
-            this.emit.apply( this, arguments );
+          implementation: function( ...args ) {
+            this.emit.apply( this, args );
           },
           documentation: 'Emits a single event to all listeners.',
           invocableForReadOnlyElements: false
