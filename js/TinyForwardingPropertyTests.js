@@ -38,3 +38,20 @@ QUnit.test( 'Basics', assert => {
   myProperty.value = 6;
   assert.ok( myForwardingProperty.get() === 11, 'should forward after set to DerivedProperty after dependencies change' );
 } );
+
+QUnit.test( 'Forward to a TinyProperty', assert => {
+
+  const myForwardingProperty = new TinyForwardingProperty( true, false );
+
+  const myTinyProperty = new TinyProperty( 'hi' );
+
+  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+
+  assert.ok( myForwardingProperty.value === 'hi', 'forward to tinyProperty' );
+
+  const otherTinyProperty = new TinyProperty( 'seven' );
+
+  myForwardingProperty.setTargetProperty( null, null, otherTinyProperty );
+
+  assert.ok( myForwardingProperty.value === 'seven', 'forward to other TinyProperty' );
+} );
