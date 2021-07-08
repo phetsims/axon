@@ -101,7 +101,7 @@ QUnit.test( 'Test NumberProperty', assert => {
   p.value = 99;
   p.rangeProperty.value = new Range( 90, 100 );
 
-  // TODO: this should not fail, see https://github.com/phetsims/axon/issues/282
+  // This should not fail, but will until we support nested deferral for PhET-iO support, see https://github.com/phetsims/axon/issues/282
   // p.reset();
 } );
 
