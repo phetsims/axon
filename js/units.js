@@ -4,6 +4,7 @@
  * These are the units that can be associated with Property instances.
  *
  * When adding units to this file, please add abbreviation, preferably SI abbreviations.
+ * And keep the array alphabetized by value.
  * See https://github.com/phetsims/phet-io/issues/530
  *
  * @author Sam Reid (PhET Interactive Simulations)
