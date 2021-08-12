@@ -28,7 +28,6 @@ class BooleanProperty extends Property {
 
       // client cannot specify superclass options that are not supported by BooleanProperty
       assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'BooleanProperty does not support isValidValue' );
-      assert && assert( !options.hasOwnProperty( 'validValues' ), 'BooleanProperty does not support validValues' );
 
       // client cannot specify superclass options that are controlled by BooleanProperty
       assert && assert( !options.hasOwnProperty( 'valueType' ), 'BooleanProperty sets valueType' );

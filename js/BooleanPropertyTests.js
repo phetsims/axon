@@ -20,11 +20,6 @@ QUnit.test( 'BooleanProperty', assert => {
     p = new BooleanProperty( true, { valueType: 'boolean' } );
   }, 'valueType cannot be set by client' );
 
-  // validValues
-  window.assert && assert.throws( () => {
-    p = new BooleanProperty( true, { validValues: [ true, false ] } );
-  }, 'validValues cannot be set by client' );
-
   // isValidValue
   window.assert && assert.throws( () => {
     p = new BooleanProperty( true, { isValidValue: function( value ) { return typeof value === 'boolean'; } } );
