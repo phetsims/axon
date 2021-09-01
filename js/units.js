@@ -35,6 +35,7 @@ const units = {
     'L',
     'L/s',
     'm', // meters
+    'm^3', // cubic meter
     'm/s', // meters/second
     'm/s/s', // meters/second/second
     'm/s^2', // meters/seconds squared
@@ -49,6 +50,7 @@ const units = {
     'N\u00b7s/m', // N·s/m, Newton-seconds/meter
     '\u2126', // Ω, ohms - don't use the one in MathSymbols to prevent a dependency on scenery-phet
     '\u2126\u00b7cm', // Ω·cm, ohm-centimeters
+    'Pa\u00b7s', // Pascal-seconds
     'particles/ps', // particles/picosecond
     'pm', // picometers
     'pm/ps', // picometers/picosecond
