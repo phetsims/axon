@@ -68,7 +68,7 @@ const VALIDATOR_KEYS = [
   'isValidValue',
 
   // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
-  // elements of an array. For this option to valid, `valueType` must be not also be provided. It is assumed that
+  // elements of an array. For this option to valid, `valueType` must either be omitted, or be `Array`. It is assumed that
   // valueType is `Array`.
   'arrayElementType',
 
@@ -119,8 +119,8 @@ const ValidatorDef = {
     }
 
     if ( validator.hasOwnProperty( 'arrayElementType' ) ) {
-      if ( validator.hasOwnProperty( 'valueType' ) ) {
-        assert && options.assertions && assert( false, 'valueType is redundant with arrayElementType. valueType is Array.' );
+      if ( validator.hasOwnProperty( 'valueType' ) && validator.valueType !== Array ) {
+        assert && options.assertions && assert( false, 'valueType must be "Array" when specified with arrayElementType.' );
         return false;
       }
       if ( !validateValueOrElementType( validator.arrayElementType, options ) ) {

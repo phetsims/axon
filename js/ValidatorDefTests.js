@@ -137,13 +137,13 @@ QUnit.test( 'Test phetioType', assert => {
 
 QUnit.test( 'Test arrayElementType', assert => {
 
-
   window.assert && assert.throws( () => ValidatorDef.validateValidator( {
-    valueType: Array,
+    valueType: 'not array',
     arrayElementType: null
-  } ), 'arrayElementType expected should not have valueType' );
+  } ), 'arrayElementType expected should not have valueType or for it to be "Array"' );
 
   assert.ok( ValidatorDef.isValidValidator( { arrayElementType: 'number' } ), 'good valueType' );
+  assert.ok( ValidatorDef.isValidValidator( { valueType: Array, arrayElementType: 'number' } ), 'does not matter if valueType: Array is provided' );
   assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 'number' } ), 'no validator keys supplied' );
   assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 4 } ), 'no validator keys supplied' );
   assert.ok( !ValidatorDef.isValidValidator( { arrayElementType: 'blaradysharady' } ), 'invalid valueType string' );
@@ -158,6 +158,8 @@ QUnit.test( 'Test arrayElementType', assert => {
   assert.ok( ValidatorDef.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'number', 'string', null ] } ), 'number and string array ok with null' );
   assert.ok( !ValidatorDef.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'string', null ] } ), 'number and string array ok with null' );
   assert.ok( ValidatorDef.isValueValid( [ [], [], [], [] ], { arrayElementType: [ Array ] } ), 'array array' );
+  assert.ok( ValidatorDef.isValueValid( [ [ 4 ], [ 'other' ], null, [] ], { arrayElementType: [ Array, null ] } ), 'array {array|null}' );
+  assert.ok( ValidatorDef.isValueValid( [ [ 4 ], [ 'other' ], null, 432, [] ], { arrayElementType: [ Array, null, 'number' ] } ), 'array {array|null|number}' );
 
   window.assert && assert.throws( () => {
     ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ] }, ASSERTIONS_TRUE );
