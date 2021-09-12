@@ -62,7 +62,8 @@ const units = {
     'radians/s', // radians/second
     's', // seconds
     'V', // volts
-    'view-coordinates/s'
+    'view-coordinates/s',
+    'W' // watts
   ],
 
   isValidUnits: function( unit ) {
