@@ -17,6 +17,7 @@ import Action from './Action.js';
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
+/** @template T */
 class Emitter extends Action {
 
   /**
@@ -58,7 +59,7 @@ class Emitter extends Action {
   /**
    * Emit to notify listeners; implemented by executing the action of the parent class.
    * @public
-   * @params {*}
+   * @param {T} args
    */
   emit( ...args ) {
     super.execute.apply( this, args );
@@ -76,7 +77,7 @@ class Emitter extends Action {
 
   /**
    * Adds a listener which will be called during emit.
-   * @param {function} listener
+   * @param {(value:...T)=>void} listener
    * @public
    */
   addListener( listener ) {
@@ -85,7 +86,7 @@ class Emitter extends Action {
 
   /**
    * Removes a listener
-   * @param {function} listener
+   * @param {(value:...T)=>void} listener
    * @public
    */
   removeListener( listener ) {
@@ -102,7 +103,7 @@ class Emitter extends Action {
 
   /**
    * Checks whether a listener is registered with this Emitter
-   * @param {function} listener
+   * @param {(value:...T)=>void} listener
    * @returns {boolean}
    * @public
    */
