@@ -17,6 +17,10 @@ import Action from './Action.js';
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
+// This JSDoc template attribute allows us to treate Property as a generic type with type parameter T. TypeScript
+// knows how to read this template variable, and gives correct type information for Emitter<[T]>.
+// For instance, new Emitter<[]>() or new Emitter<[number,string]>()
+// See https://stackoverflow.com/a/19322784/1009071
 /** @template T */
 class Emitter extends Action {
 

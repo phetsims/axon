@@ -31,6 +31,10 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // autoincremented for unique IDs
 
+// This JSDoc template attribute allows us to treate Property as a generic type with type parameter T. TypeScript
+// knows how to read this template variable, and gives correct type information for Property<T>. For instance,
+// new Property<number>();
+// See https://stackoverflow.com/a/19322784/1009071
 /** @template T */
 class Property extends PhetioObject {
 
