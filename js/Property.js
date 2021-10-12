@@ -31,10 +31,11 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // autoincremented for unique IDs
 
+/** @template T */
 class Property extends PhetioObject {
 
   /**
-   * @param {*} value - the initial value of the property
+   * @param {T} value - the initial value of the property
    * @param {Object} [options] - options
    */
   constructor( value, options ) {
@@ -158,7 +159,7 @@ class Property extends PhetioObject {
    * Gets the value.
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.
-   * @returns {*}
+   * @returns {T}
    * @public
    */
   get() {
@@ -170,7 +171,7 @@ class Property extends PhetioObject {
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    *
-   * @param {*} value
+   * @param {T} value
    * @returns {Property} this instance, for chaining.
    * @public
    */
@@ -193,7 +194,7 @@ class Property extends PhetioObject {
    * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
    * when setting the value.
    *
-   * @param {*} value
+   * @param {T} value
    * @protected - for overriding only
    */
   setPropertyValue( value ) {
@@ -204,7 +205,7 @@ class Property extends PhetioObject {
    * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
    * typically only in situations where the initial value is unknowable at instantiation.
    *
-   * @param {*} initialValue
+   * @param {T} initialValue
    * @public
    */
   setInitialValue( initialValue ) {
@@ -236,19 +237,22 @@ class Property extends PhetioObject {
    * Returns the initial value of this Property.
    * @public
    *
-   * @returns {*}
+   * @returns {T}
    */
   getInitialValue() {
     return this._initialValue;
   }
 
-  // @public
+  /**
+   * @returns {T}
+   * @public
+   */
   get initialValue() {
     return this.getInitialValue();
   }
 
   /**
-   * @param {*} oldValue
+   * @param {T} oldValue
    * @private - but note that a few sims are calling this even though they shouldn't
    */
   _notifyListeners( oldValue ) {
@@ -334,10 +338,14 @@ class Property extends PhetioObject {
     this.set( this._initialValue );
   }
 
-  // @public
+  /**
+   * @returns {T}
+   */
   get value() { return this.get(); }
 
-  // @public
+  /**
+   * @param {T} newValue
+   */
   set value( newValue ) { this.set( newValue ); }
 
   /**
@@ -365,7 +373,7 @@ class Property extends PhetioObject {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    *
-   * @param {function(newValue:*,oldValue:*,Property)} listener - a function that takes a new value, old value, and this Property as arguments
+   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */
@@ -381,7 +389,7 @@ class Property extends PhetioObject {
   /**
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
-   * @param {function(newValue:*,oldValue:*,Property)} listener - a function that takes a new value, old value, and this Property as arguments
+   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */
@@ -395,7 +403,7 @@ class Property extends PhetioObject {
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    *
-   * @param {function} listener
+   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener
    * @public
    */
   unlink( listener ) {
@@ -486,7 +494,7 @@ class Property extends PhetioObject {
 
   /**
    * Checks whether a listener is registered with this Property
-   * @param {function} listener
+   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener
    * @returns {boolean}
    * @public
    */
