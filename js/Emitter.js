@@ -77,7 +77,7 @@ class Emitter extends Action {
 
   /**
    * Adds a listener which will be called during emit.
-   * @param {(value:...T)=>void} listener
+   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
    * @public
    */
   addListener( listener ) {
@@ -86,7 +86,7 @@ class Emitter extends Action {
 
   /**
    * Removes a listener
-   * @param {(value:...T)=>void} listener
+   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
    * @public
    */
   removeListener( listener ) {
@@ -103,7 +103,7 @@ class Emitter extends Action {
 
   /**
    * Checks whether a listener is registered with this Emitter
-   * @param {(value:...T)=>void} listener
+   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
    * @returns {boolean}
    * @public
    */
