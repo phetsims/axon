@@ -30,6 +30,7 @@ const getDerivedValue = ( derivation, dependencies ) => {
   return derivation( ...dependencies.map( property => property.get() ) );
 };
 
+/** @template T */
 class DerivedProperty extends Property {
 
   /**
@@ -131,7 +132,7 @@ class DerivedProperty extends Property {
   /**
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
-   * @param value
+   * @param {T} value
    * @override
    * @public
    */
@@ -146,7 +147,7 @@ class DerivedProperty extends Property {
    * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
    * when the dependencies change. Keep the newValue output in the string so the argument won't be stripped by minifier
    * (which would cause crashes like https://github.com/phetsims/axon/issues/15)
-   * @param newValue
+   * @param {T} newValue
    * @override
    * @public
    */
@@ -189,7 +190,7 @@ class DerivedProperty extends Property {
   /**
    * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
    * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
-   * @returns {*}
+   * @returns {T}
    * @override
    * @public
    */
