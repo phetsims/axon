@@ -12,6 +12,7 @@ import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
 
+/** @template T */
 class EnumerationProperty extends Property {
 
   /**
