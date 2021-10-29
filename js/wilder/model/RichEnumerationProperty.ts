@@ -1,4 +1,4 @@
-// Copyright 2018-2021, University of Colorado Boulder
+// Copyright 2021, University of Colorado Boulder
 
 /**
  * IO Type for phet-core Enumeration that supports serializing and deserializing values. Cannot be moved to the core
