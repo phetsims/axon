@@ -536,7 +536,7 @@ class Property extends PhetioObject {
 
   /**
    * Registers a listener with multiple properties, then notifies the listener immediately.
-   * @param {Property[]} properties
+   * @param {Array.<Property|TinyProperty>} properties
    * @param {function} listener function that takes values from the properties and returns nothing
    * @returns {Multilink}
    * @public
