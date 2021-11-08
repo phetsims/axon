@@ -377,7 +377,7 @@ class Property extends PhetioObject {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    *
-   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener - a function that takes a new value, old value, and this Property as arguments
+   * @param { (newValue:T,oldValue:T|null,property:Property<T>) => any | (newValue:T)=>any | ()=>any} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */
@@ -393,7 +393,7 @@ class Property extends PhetioObject {
   /**
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
-   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener - a function that takes a new value, old value, and this Property as arguments
+   * @param {(newValue:T,oldValue:T,property:Property<T>)=>void} listener - a function that takes a new value, old value, and this Property as arguments
    * @param {Object} [options]
    * @public
    */
@@ -407,7 +407,7 @@ class Property extends PhetioObject {
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    *
-   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener
+   * @param {(newValue:T,oldValue:T,property:Property<T>)=>any | (newValue:T)=>any} listener
    * @public
    */
   unlink( listener ) {
@@ -430,7 +430,7 @@ class Property extends PhetioObject {
    *
    * @param {*} object
    * @param {string} attributeName
-   * @returns {function}
+   * @returns { {(newValue:T)=>void}}
    * @public
    */
   linkAttribute( object, attributeName ) {
@@ -498,7 +498,7 @@ class Property extends PhetioObject {
 
   /**
    * Checks whether a listener is registered with this Property
-   * @param {function(newValue:T,oldValue:T,Property<T>>)} listener
+   * @param {(newValue:T,oldValue:T,property:Property<T>)=>void} listener
    * @returns {boolean}
    * @public
    */
