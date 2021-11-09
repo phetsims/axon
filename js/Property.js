@@ -176,7 +176,6 @@ class Property extends PhetioObject {
    * hasn't changed, this is a no-op.
    *
    * @param {T} value
-   * @returns {Property} this instance, for chaining.
    * @public
    */
   set( value ) {
@@ -191,7 +190,6 @@ class Property extends PhetioObject {
         this._notifyListeners( oldValue );
       }
     }
-    return this;
   }
 
   /**
