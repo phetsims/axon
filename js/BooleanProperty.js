@@ -15,6 +15,9 @@ import Property from './Property.js';
 // constants
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
+/**
+ * @extends Property<boolean>
+ */
 class BooleanProperty extends Property {
 
   /**

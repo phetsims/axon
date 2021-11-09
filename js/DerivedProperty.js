@@ -30,7 +30,10 @@ const getDerivedValue = ( derivation, dependencies ) => {
   return derivation( ...dependencies.map( property => property.get() ) );
 };
 
-/** @template T */
+/**
+ * @template T
+ * @extends Property<T>
+ */
 class DerivedProperty extends Property {
 
   /**

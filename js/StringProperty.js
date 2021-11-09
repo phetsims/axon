@@ -15,6 +15,9 @@ import Property from './Property.js';
 // constants
 const StringPropertyIO = Property.PropertyIO( StringIO );
 
+/**
+ * @extends Property<string>
+ */
 class StringProperty extends Property {
 
   /**
