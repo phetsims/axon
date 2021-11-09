@@ -60,7 +60,6 @@ class TinyProperty extends TinyEmitter {
    * @public
    *
    * @param {*} value
-   * @returns {TinyProperty} this instance, for chaining.
    */
   set( value ) {
     if ( !this.equalsValue( value ) ) {
@@ -70,7 +69,6 @@ class TinyProperty extends TinyEmitter {
 
       this.notifyListeners( oldValue );
     }
-    return this;
   }
 
   /**
