@@ -46,7 +46,6 @@ class TinyStaticProperty extends TinyProperty {
    * @override
    *
    * @param {*} value
-   * @returns {TinyStaticProperty} does not really return anything, but needed for type checking by TypeScript
    */
   set( value ) {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
