@@ -27,6 +27,9 @@ const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
+/**
+ * @extends Property<number>
+ */
 class NumberProperty extends Property {
 
   /**
