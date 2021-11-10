@@ -16,6 +16,7 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
+import stepTimer from './stepTimer.js';
 import validate from './validate.js';
 
 // constants
@@ -56,6 +57,13 @@ class NumberProperty extends Property {
         phetioReadOnly: true
       },
 
+      // {boolean} - By default, listeners are added to this Property and its provided rangeProperty to validate each
+      // time either is set, making sure the NumberProperty value is within the Range. In certain cases, it is best
+      // to defer this validation for a frame to allow these to go through an incorrect intermediate state, knowing
+      // that by the next frame they will be correct. This is for usages that don't have the ability to set both the
+      // number and range at the same time using NumberProperty.setValueAndRange.
+      validateOnNextFrame: false,
+
       // {Tandem}
       tandem: Tandem.OPTIONAL
     }, options );
@@ -94,8 +102,12 @@ class NumberProperty extends Property {
     // incremented/decremented.
     this.step = options.step;
 
+    // @private {boolean} - if true, validation will be deferred until the next frame so that the number and range can
+    // be changed independently.
+    this.validateOnNextFrame = options.validateOnNextFrame;
+
     // @private {function|null} validation for NumberProperty and its rangeProperty, null if assertions are disabled
-    this.validateNumberProperty = assert && ( value => {
+    this.validateNumberAndRangeProperty = assert && ( value => {
 
       // validate for integer
       ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
@@ -109,6 +121,10 @@ class NumberProperty extends Property {
       }
     } );
 
+    // @public (NumberPropertyTests) {function|null} - only applicable if options.validateOnNextFrame. Store the
+    // timeout so we only need to create it once per frame.
+    this.validationTimeout = null;
+
     // @public (read-only) {Property.<Range|null>}
     this.rangeProperty = null;
     if ( ownsRangeProperty ) {
@@ -121,8 +137,8 @@ class NumberProperty extends Property {
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
       'rangeProperty must be instrument if NumberProperty is instrumented' );
 
-    const rangePropertyObserver = range => {
-      this.validateNumberProperty && this.validateNumberProperty( this.value );
+    const rangePropertyObserver = () => {
+      this.validateNumberAndRangeProperty && this.validateNumberProperty( this.value );
     };
     this.rangeProperty.link( rangePropertyObserver );
 
@@ -131,13 +147,13 @@ class NumberProperty extends Property {
     this.addPhetioStateDependencies( [ this.rangeProperty ] );
 
     // verify that validValues meet other NumberProperty-specific validation criteria
-    if ( options.validValues && this.validateNumberProperty ) {
-      options.validValues.forEach( validValue => this.validateNumberProperty( validValue ) );
+    if ( options.validValues && this.validateNumberAndRangeProperty ) {
+      options.validValues.forEach( validValue => this.validateNumberAndRangeProperty( validValue ) );
     }
 
     // This puts validation at notification time instead of at value setting time. This is especially helpful as it
     // pertains to Property.prototype.setDeferred(), and setting a range and value together.
-    this.validateNumberProperty && this.link( value => {
+    this.validateNumberAndRangeProperty && this.link( value => {
       this.validateNumberProperty( value );
     } );
 
@@ -148,6 +164,11 @@ class NumberProperty extends Property {
       }
       else {
         this.rangeProperty.unlink( rangePropertyObserver );
+      }
+
+      if ( this.validationTimeout ) {
+        stepTimer.clearTimeout( this.validationTimeout );
+        this.validationTimeout = null;
       }
     };
 
@@ -230,6 +251,28 @@ class NumberProperty extends Property {
    */
   resetValueAndRange() {
     this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue );
+  }
+
+  /**
+   * Trigger validation of this NumberProperty's value as it pertains to its provided range.
+   * @private
+   */
+  validateNumberProperty() {
+    if ( this.validateNumberAndRangeProperty ) {
+      if ( this.validateOnNextFrame ) {
+
+        // We only need this once, it will get the most recent value for both the value and range
+        if ( !this.validationTimeout ) {
+          this.validationTimeout = stepTimer.setTimeout( () => {
+            this.validateNumberAndRangeProperty( this.value );
+            this.validationTimeout = null;
+          }, 0 );
+        }
+      }
+      else {
+        this.validateNumberAndRangeProperty( this.value );
+      }
+    }
   }
 }
 

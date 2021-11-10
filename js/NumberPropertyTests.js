@@ -12,6 +12,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
+import stepTimer from './stepTimer.js';
 
 QUnit.module( 'NumberProperty' );
 
@@ -216,4 +217,117 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
       } );
     }, 'uninstrumented range cannot be passed to instrumented number property' );
   }
+} );
+
+QUnit.test( 'Test NumberProperty.validateOnNextFrame', assert => {
+  assert.ok( true, 'all other tests require window.assert' );
+
+  let rangeProperty = new Property( new Range( 0, 10 ) );
+  let numberProperty = new NumberProperty( 0, { range: rangeProperty } );
+
+  window.assert && assert.throws( () => {
+    return new NumberProperty( 11, { range: rangeProperty } );
+  } );
+
+  numberProperty.setValueAndRange( 11, new Range( 0, 11 ) );
+
+  window.assert && assert.throws( () => {
+    numberProperty.value = 12;
+  } );
+  numberProperty = new NumberProperty( 10, { range: rangeProperty } );
+
+  rangeProperty.value = new Range( 0, 100 );
+
+  window.assert && assert.throws( () => {
+    rangeProperty.value = new Range( 20, 100 );
+  } );
+  rangeProperty = new Property( new Range( 0, 10 ) );
+
+
+  numberProperty = new NumberProperty( 0, { range: rangeProperty, validateOnNextFrame: true } );
+  stepTimer.emit( 10 );
+  assert.ok( numberProperty.validationTimeout === null, 'cleared out after emit' );
+
+  numberProperty.value = 100;
+  window.assert && assert.ok( numberProperty.validationTimeout !== null, 'new number value means new validationTimeout' );
+  rangeProperty.value = new Range( 0, 100 );
+  stepTimer.emit( 10 );
+  window.assert && assert.ok( numberProperty.validationTimeout === null, 'cleared out after emit' );
+
+  numberProperty.value = 101;
+  rangeProperty.value = new Range( 0, 10 );
+  if ( window.assert ) {
+    assert.throws( () => {
+      stepTimer.emit( 10 );
+    } );
+  }
+  else {
+    stepTimer.emit( 10 );
+  }
+
+  // It doesn't matter what the intermediate states are, just that by the time the next frame happens, the range and
+  // number are correct
+  numberProperty.value = 11;
+  numberProperty.value = 101;
+  rangeProperty.value = new Range( -1, 0 );
+  numberProperty.value = -100;
+  rangeProperty.value = new Range( -100, 0 );
+  stepTimer.emit( 10 );
+
+  assert.ok( numberProperty.value === -100 );
+  assert.ok( rangeProperty.value.min === -100 );
+  assert.ok( rangeProperty.value.max === 0 );
+  assert.ok( numberProperty.validationTimeout === null );
+
+  // Should not error out after numberProperty has been disposed
+  numberProperty.value = 100;
+  numberProperty.dispose();
+  stepTimer.emit( 10 );
+
+} );
+
+
+QUnit.test( 'Test NumberProperty.validateOnNextFrame with no rangeProperty', assert => {
+  assert.ok( true, 'all other tests require window.assert' );
+  let numberProperty = new NumberProperty( 0, { range: new Range( 0, 10 ), validateOnNextFrame: true } );
+  stepTimer.emit( 10 );
+
+  numberProperty.value = 100; // intermediate value is allowed
+  numberProperty.value = 10;
+  stepTimer.emit( 10 );
+
+  assert.ok( numberProperty.validationTimeout === null );
+
+  assert.ok( numberProperty.value === 10 );
+  assert.ok( numberProperty.range.min === 0 );
+  assert.ok( numberProperty.range.max === 10 );
+
+  numberProperty.value = 101;
+  if ( window.assert ) {
+    const validationTimeout = numberProperty.validationTimeout;
+    assert.throws( () => {
+      stepTimer.emit( 10 );
+    } );
+    stepTimer.removeListener( validationTimeout ); // workaround since the above throws breaks stepTimer a bit.
+  }
+  else {
+    stepTimer.emit( 10 );
+  }
+  numberProperty.dispose();
+  assert.ok( numberProperty.validationTimeout === null );
+
+  // No range provided, should still work
+  numberProperty = new NumberProperty( 0, { validateOnNextFrame: true } );
+  stepTimer.emit( 10 );
+
+  numberProperty.value = 100; // intermediate value is allowed
+  stepTimer.emit( 10 );
+  numberProperty.value = 10;
+  stepTimer.emit( 10 );
+
+  numberProperty.value = 1000000; // intermediate value is allowed
+  numberProperty.value = -10;
+  stepTimer.emit( 10 );
+
+  assert.ok( numberProperty.validationTimeout === null );
 } );
