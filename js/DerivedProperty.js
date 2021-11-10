@@ -38,7 +38,7 @@ class DerivedProperty extends Property {
 
   /**
    * @param {Array.<Property|TinyProperty>} dependencies - Properties that this Property's value is derived from
-   * @param {function} derivation - function that derives this Property's value, expects args in the same order as dependencies
+   * @param {(...x:any[])=>T} derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param {Object} [options] - see Property
    */
   constructor( dependencies, derivation, options ) {
