@@ -222,6 +222,7 @@ class DerivedProperty extends Property {
    * @returns {DerivedProperty.<boolean>}
    */
   static and( properties, options ) {
+    assert && assert( properties.length > 0, 'must provide a dependency' );
     return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
   }
 
@@ -234,6 +235,7 @@ class DerivedProperty extends Property {
    * @returns {DerivedProperty.<boolean>}
    */
   static or( properties, options ) {
+    assert && assert( properties.length > 0, 'must provide a dependency' );
     return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
   }
 
