@@ -11,7 +11,9 @@
     "../phet-core/js/EnumerationIO.js",
     "../dot/js/Range.js",
     "../dot/js/dot.js",
-    "phet-types.d.ts"
+    "../chipper/phet-types.d.ts",
+    "../chipper/node_modules/@types/lodash/index.d.ts",
+    "../chipper/node_modules/@types/qunit/index.d.ts"
   ],
   "exclude": [
     "../**/*test*",
