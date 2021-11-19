@@ -14,7 +14,7 @@ import ValidatorDef from './ValidatorDef.js';
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
  * @param {*} value
- * @param {ValidatorDef} validator
+ * @param {Object} validator - ValidatorDef
  * @param {string} [message] - make this an arg, instead of an option, for convenience. This message will be prepended to
  * a message in ValidatorDef that specifies which validator key fails, along with the value. It is best to end this
  * message with no punctuation.

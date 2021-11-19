@@ -1,5 +1,4 @@
 // Copyright 2013-2021, University of Colorado Boulder
-
 /**
  * An observable property which notifies listeners when the value changes.
  *
@@ -31,18 +30,50 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // autoincremented for unique IDs
 
-// This JSDoc template attribute allows us to treate Property as a generic type with type parameter T. TypeScript
-// knows how to read this template variable, and gives correct type information for Property<T>. For instance,
-// new Property<number>();
-// See https://stackoverflow.com/a/19322784/1009071
-/** @template T */
-class Property extends PhetioObject {
+type Listener<T> = ( newValue: T, oldValue: T | null, property: Property<T> ) => void;
+type Listener2<T> = ( newValue: T, oldValue: T, property: Property<T> ) => void;
+
+class Property<T> extends PhetioObject {
+
+  // Unique identifier for this Property.
+  private readonly id: number;
+
+  // (phet-io) Units, if any.  See units.js for valid values
+  units: string | null;
+
+  // Initial value
+  protected _initialValue: T | null;
+
+  validValues: T[] | undefined;
+
+  // emit is called when the value changes (or on link)
+  tinyProperty: TinyProperty;
+
+  // whether we are in the process of notifying listeners
+  private notifying: boolean;
+
+  // whether to allow reentry of calls to set
+  private reentrant: boolean;
+
+  // while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
+  // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
+  // send notifications.
+  protected isDeferred: boolean;
+
+  // the value that this Property will take after no longer deferred
+  protected deferredValue: T | null;
+
+  // whether a deferred value has been set
+  protected hasDeferredValue: boolean;
+
+  static CHANGED_EVENT_NAME: string;
+  static PropertyIO: ( parameterType: IOType ) => IOType;
 
   /**
-   * @param {T} value - the initial value of the property
-   * @param {Object} [options] - options
+   * @param value - the initial value of the property
+   * @param [options] - options
    */
-  constructor( value, options ) {
+  constructor( value: T, options?: any ) {
     options = merge( {
 
       tandem: Tandem.OPTIONAL, // workaround for https://github.com/phetsims/tandem/issues/50
@@ -81,11 +112,7 @@ class Property extends PhetioObject {
     }
 
     super( options );
-
-    // @public {number} - Unique identifier for this Property.
     this.id = globalId++;
-
-    // @public (phet-io) Units, if any.  See units.js for valid values
     this.units = options.units;
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
@@ -104,37 +131,23 @@ class Property extends PhetioObject {
                       options.tandem.name === 'property',
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
 
-    // @protected - Initial value
     this._initialValue = value;
-
-    // @public (read-only)
     this.validValues = options.validValues;
-
-    // @private - emit is called when the value changes (or on link)
     this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
 
     // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.
+    // @ts-ignore
     this.tinyProperty.useDeepEquality = options.useDeepEquality;
-
-    // @private whether we are in the process of notifying listeners
     this.notifying = false;
-
-    // @private whether to allow reentry of calls to set
     this.reentrant = options.reentrant;
-
-    // @public (read-only) - while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
-    // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
-    // send notifications.
     this.isDeferred = false;
-
-    // @protected {*} - the value that this Property will take after no longer deferred
     this.deferredValue = null;
-
-    // @private {boolean} whether a deferred value has been set
     this.hasDeferredValue = false;
 
     // Assertions regarding value validation
     if ( assert ) {
+
+      // @ts-ignore
       const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
 
       // Validate the value type's phetioType of the Property, not the PropertyIO itself.
@@ -146,16 +159,14 @@ class Property extends PhetioObject {
       ValidatorDef.validateValidator( validator );
 
       // validate the initial value as well as any changes in the future
-      this.link( value => validate( value, validator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
+      this.link( ( value: T ) => validate( value, validator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
     }
   }
 
   /**
    * Returns true if the value can be set externally, using .value= or set()
-   * @returns {boolean}
-   * @public
    */
-  isSettable() {
+  isSettable(): boolean {
     return true;
   }
 
@@ -163,10 +174,8 @@ class Property extends PhetioObject {
    * Gets the value.
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.
-   * @returns {T}
-   * @public
    */
-  get() {
+  get(): T {
     return this.tinyProperty.get();
   }
 
@@ -174,11 +183,8 @@ class Property extends PhetioObject {
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
-   *
-   * @param {T} value
-   * @public
    */
-  set( value ) {
+  set( value: T ): void {
     if ( !this.isDisposed ) {
       if ( this.isDeferred ) {
         this.deferredValue = value;
@@ -195,69 +201,48 @@ class Property extends PhetioObject {
   /**
    * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
    * when setting the value.
-   *
-   * @param {T} value
-   * @protected - for overriding only
    */
-  setPropertyValue( value ) {
+  protected setPropertyValue( value: T ): void {
     this.tinyProperty.setPropertyValue( value );
   }
 
   /**
    * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
    * typically only in situations where the initial value is unknowable at instantiation.
-   *
-   * @param {T} initialValue
-   * @public
    */
-  setInitialValue( initialValue ) {
+  setInitialValue( initialValue: T ): void {
     this._initialValue = initialValue;
   }
 
   /**
    * Returns true if and only if the specified value equals the value of this property
-   * @param {Object} value
-   * @returns {boolean}
-   * @protected
    */
-  equalsValue( value ) {
+  protected equalsValue( value: T ): boolean {
     return this.areValuesEqual( value, this.get() );
   }
 
   /**
    * See TinyProperty.areValuesEqual
-   * @param {*} a
-   * @param {*} b
-   * @returns {boolean}
-   * @public
    */
-  areValuesEqual( a, b ) {
+  areValuesEqual( a: T, b: T ): boolean {
     return this.tinyProperty.areValuesEqual( a, b );
   }
 
   /**
    * Returns the initial value of this Property.
-   * @public
-   *
-   * @returns {T}
    */
-  getInitialValue() {
+  getInitialValue(): T | null {
     return this._initialValue;
   }
 
-  /**
-   * @returns {T}
-   * @public
-   */
-  get initialValue() {
+  get initialValue(): T | null {
     return this.getInitialValue();
   }
 
   /**
-   * @param {T} oldValue
    * @private - but note that a few sims are calling this even though they shouldn't
    */
-  _notifyListeners( oldValue ) {
+  private _notifyListeners( oldValue: T | null ): void {
     const newValue = this.get();
 
     this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
@@ -286,9 +271,8 @@ class Property extends PhetioObject {
    * This method is unsafe for removing listeners because it assumes the listener list not modified, to save another allocation
    * Only provides the new reference as a callback (no oldvalue)
    * See https://github.com/phetsims/axon/issues/6
-   * @public
    */
-  notifyListenersStatic() {
+  notifyListenersStatic(): void {
     this._notifyListeners( null );
   }
 
@@ -297,12 +281,11 @@ class Property extends PhetioObject {
    * its deferred value (if any), and a follow-up action (return value) can be invoked to send out notifications
    * once other Properties have also taken their deferred values.
    *
-   * @param {boolean} isDeferred - whether the Property should be deferred or not
-   * @returns {function|null} - function to notify listeners after calling setDeferred(false),
-   *                          - null if isDeferred is true, or if the value is unchanged since calling setDeferred(true)
-   * @public
+   * @param isDeferred - whether the Property should be deferred or not
+   * @returns - function to notify listeners after calling setDeferred(false),
+   *          - null if isDeferred is true, or if the value is unchanged since calling setDeferred(true)
    */
-  setDeferred( isDeferred ) {
+  setDeferred( isDeferred: boolean ): ( () => void ) | null {
     assert && assert( !this.isDisposed, 'cannot defer Property if already disposed.' );
     assert && assert( typeof isDeferred === 'boolean', 'bad value for isDeferred' );
     if ( isDeferred ) {
@@ -317,7 +300,7 @@ class Property extends PhetioObject {
 
       // Take the new value
       if ( this.hasDeferredValue ) {
-        this.setPropertyValue( this.deferredValue );
+        this.setPropertyValue( this.deferredValue! );
         this.hasDeferredValue = false;
       }
 
@@ -334,30 +317,27 @@ class Property extends PhetioObject {
 
   /**
    * Resets the value to the initial value.
-   * @public
    */
-  reset() {
+  reset(): void {
+
+    // @ts-ignore
     this.set( this._initialValue );
   }
 
-  /**
-   * @returns {T}
-   */
-  get value() { return this.get(); }
+  get value(): T {
+    return this.get();
+  }
 
-  /**
-   * @param {T} newValue
-   */
-  set value( newValue ) { this.set( newValue ); }
+  set value( newValue: T ) {
+    this.set( newValue );
+  }
 
   /**
    * This function registers an order dependency between this Property and another. Basically this says that when
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
-   * @param {Array.<Property|TinyProperty>} dependencies
-   * @protected
    */
-  addPhetioStateDependencies( dependencies ) {
+  addPhetioStateDependencies( dependencies: Array<Property<any> | TinyProperty> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -366,6 +346,7 @@ class Property extends PhetioObject {
       if ( dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
+        // @ts-ignore
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
       }
     }
@@ -375,11 +356,11 @@ class Property extends PhetioObject {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    *
-   * @param { (newValue:T,oldValue:T|null,property:Property<T>) => any | (newValue:T)=>any | ()=>any} listener - a function that takes a new value, old value, and this Property as arguments
-   * @param {Object} [options]
+   * @param listener - a function that takes a new value, old value, and this Property as arguments
+   * @param [options]
    * @public
    */
-  link( listener, options ) {
+  link( listener: Listener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -391,11 +372,8 @@ class Property extends PhetioObject {
   /**
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
-   * @param {(newValue:T,oldValue:T,property:Property<T>)=>void} listener - a function that takes a new value, old value, and this Property as arguments
-   * @param {Object} [options]
-   * @public
    */
-  lazyLink( listener, options ) {
+  lazyLink( listener: Listener2<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -404,19 +382,15 @@ class Property extends PhetioObject {
 
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
-   *
-   * @param {(newValue:T,oldValue:T,property:Property<T>)=>any | (newValue:T)=>any} listener
-   * @public
    */
-  unlink( listener ) {
+  unlink( listener: Listener<T> ): void {
     this.tinyProperty.unlink( listener );
   }
 
   /**
    * Removes all listeners. If no listeners are registered, this is a no-op.
-   * @public
    */
-  unlinkAll() {
+  unlinkAll(): void {
     this.tinyProperty.unlinkAll();
   }
 
@@ -425,14 +399,9 @@ class Property extends PhetioObject {
    * Example: modelVisibleProperty.linkAttribute(view,'visible');
    *
    * NOTE: Duplicated with TinyProperty.linkAttribute
-   *
-   * @param {*} object
-   * @param {string} attributeName
-   * @returns { {(newValue:T)=>void}}
-   * @public
    */
-  linkAttribute( object, attributeName ) {
-    const handle = value => { object[ attributeName ] = value; };
+  linkAttribute( object: any, attributeName: string ): ( value: T ) => void {
+    const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
   }
@@ -440,36 +409,29 @@ class Property extends PhetioObject {
   /**
    * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
    * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-   *
-   * @param {function} listener
-   * @public
    */
-  unlinkAttribute( listener ) {
+  unlinkAttribute( listener: Listener<T> ): void {
     this.unlink( listener );
   }
 
   /**
    * Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
-   * @returns {string}
-   * @override
-   * @public
    */
-  toString() {return `Property#${this.id}{${this.get()}}`; }
+  toString(): string {
+    return `Property#${this.id}{${this.get()}}`;
+  }
 
-  /**
-   * @returns {string}
-   * @public
-   */
-  valueOf() {return this.toString();}
+  valueOf(): string {
+    return this.toString();
+  }
 
   /**
    * Convenience function for debugging a Property's value. It prints the new value on registration and when changed.
-   * @param {string} name - debug name to be printed on the console
-   * @returns {function} - the handle to the linked listener in case it needs to be removed later
-   * @public
+   * @param name - debug name to be printed on the console
+   * @returns - the handle to the linked listener in case it needs to be removed later
    */
-  debug( name ) {
-    const listener = value => console.log( name, value );
+  debug( name: string ): ( value: T ) => void {
+    const listener = ( value: T ) => console.log( name, value );
     this.link( listener );
     return listener;
   }
@@ -479,10 +441,12 @@ class Property extends PhetioObject {
    * @public
    */
   toggle() {
+
+    // @ts-ignore
     this.value = !this.value;
   }
 
-  // @public Ensures that the Property is eligible for GC
+  // Ensures that the Property is eligible for GC
   dispose() {
 
     // unregister any order dependencies for this Property for PhET-iO state
@@ -496,70 +460,58 @@ class Property extends PhetioObject {
 
   /**
    * Checks whether a listener is registered with this Property
-   * @param {(newValue:T,oldValue:T,property:Property<T>)=>void} listener
-   * @returns {boolean}
-   * @public
    */
-  hasListener( listener ) {
+  hasListener( listener: Listener<T> ): boolean {
     return this.tinyProperty.hasListener( listener );
   }
 
   /**
    * Returns the number of listeners.
-   * @returns {number}
-   * @public
    */
-  getListenerCount() {
+  getListenerCount(): number {
     return this.tinyProperty.getListenerCount();
   }
 
   /**
    * Invokes a callback once for each listener
-   * @param {function} callback - takes the listener as an argument
-   * @public (ShapePlacementBoard)
+   * @param callback - takes the listener as an argument
    */
-  forEachListener( callback ) {
+  forEachListener( callback: ( value: T ) => void ): void {
     this.tinyProperty.forEachListener( callback );
   }
 
   /**
    * Returns true if there are any listeners.
-   * @returns {boolean}
-   * @public
    */
-  hasListeners() {
+  hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
     return this.tinyProperty.hasListeners();
   }
 
   /**
    * Registers a listener with multiple properties, then notifies the listener immediately.
-   * @param {Array.<Property|TinyProperty>} properties
-   * @param {function} listener function that takes values from the properties and returns nothing
-   * @returns {Multilink}
-   * @public
+   * @param properties
+   * @param listener function that takes values from the properties and returns nothing
    */
-  static multilink( properties, listener ) {
+  static multilink( properties: Array<Property<any> | TinyProperty>, listener: any ): Multilink {
     return new Multilink( properties, listener, false );
   }
 
   /**
    * Registers an listener with multiple properties *without* an immediate callback with current values.
-   * @param {Property[]} properties
-   * @param {function} listener function that takes values from the properties and returns nothing
-   * @returns {Multilink}
-   * @public
+   * @param properties
+   * @param listener function that takes values from the properties and returns nothing
    */
-  static lazyMultilink( properties, listener ) {
+  static lazyMultilink( properties: Property<any>[], listener: any ): Multilink {
     return new Multilink( properties, listener, true );
   }
 
   /**
    * Unlinks an listener that was added with multilink or lazyMultilink.
-   * @param {Multilink} multilink
+   * @param multilink
    * @public
    */
-  static unmultilink( multilink ) {
+  static unmultilink( multilink: Multilink ) {
     multilink.dispose();
   }
 }
@@ -575,10 +527,8 @@ const cache = new Map();
 /**
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} parameterType
- * @returns {IOType}
  */
-Property.PropertyIO = parameterType => {
+Property.PropertyIO = ( parameterType: IOType ) => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
@@ -590,9 +540,9 @@ Property.PropertyIO = parameterType => {
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject: property => {
+      toStateObject: ( property: Property<any> ) => {
         assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-        const stateObject = {
+        const stateObject: any = {
           value: parameterType.toStateObject( property.value )
         };
 
@@ -609,12 +559,12 @@ Property.PropertyIO = parameterType => {
         stateObject.units = NullableIO( StringIO ).toStateObject( property.units );
         return stateObject;
       },
-      applyState: ( property, stateObject ) => {
+      applyState: ( property: Property<any>, stateObject: any ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
         property.set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
-          property.validValues = stateObject.validValues.map( valueStateObject => parameterType.fromStateObject( valueStateObject ) );
+          property.validValues = stateObject.validValues.map( ( valueStateObject: any ) => parameterType.fromStateObject( valueStateObject ) );
         }
       },
       stateSchema: {
@@ -626,7 +576,7 @@ Property.PropertyIO = parameterType => {
         getValue: {
           returnType: parameterType,
           parameterTypes: [],
-          implementation: function() {
+          implementation: function( this: Property<any> ) {
             return this.get();
           },
           documentation: 'Gets the current value.'
@@ -635,7 +585,7 @@ Property.PropertyIO = parameterType => {
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
-          implementation: function( value ) {
+          implementation: function( this: Property<any>, value: any ) {
             this.set( value );
           },
           documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
@@ -648,7 +598,7 @@ Property.PropertyIO = parameterType => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( listener ) {
+          implementation: function( this: any, listener: any ) {
             this.link( listener );
           },
           documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
@@ -661,7 +611,7 @@ Property.PropertyIO = parameterType => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( listener ) {
+          implementation: function( this: any, listener: any ) {
             this.lazyLink( listener );
           },
           documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
@@ -671,7 +621,7 @@ Property.PropertyIO = parameterType => {
         unlink: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-          implementation: function( listener ) {
+          implementation: function( this: any, listener: any ) {
             this.unlink( listener );
           },
           documentation: 'Removes a listener.'

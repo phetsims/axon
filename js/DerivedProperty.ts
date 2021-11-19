@@ -16,6 +16,7 @@ import axon from './axon.js';
 import Property from './Property.js';
 import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
+import TinyProperty from './TinyProperty.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
@@ -26,22 +27,24 @@ const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
  * @param {Property[]} dependencies
  * @returns {*}
  */
-const getDerivedValue = ( derivation, dependencies ) => {
+const getDerivedValue = ( derivation: ( a: any ) => any, dependencies: any ) => {
+
+  // @ts-ignore
   return derivation( ...dependencies.map( property => property.get() ) );
 };
 
-/**
- * @template T
- * @extends Property<T>
- */
-class DerivedProperty extends Property {
+class DerivedProperty<T> extends Property<T> {
+  dependencies: ( Property<any> | TinyProperty )[] | null;
+  derivation: ( ...x: any[] ) => T;
+  derivedPropertyListener: () => void;
+  static DerivedPropertyIO: ( parameterType: any ) => any;
 
   /**
-   * @param {Array.<Property|TinyProperty>} dependencies - Properties that this Property's value is derived from
-   * @param {(...x:any[])=>T} derivation - function that derives this Property's value, expects args in the same order as dependencies
-   * @param {Object} [options] - see Property
+   * @param dependencies - Properties that this Property's value is derived from
+   * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
+   * @param [options] - see Property
    */
-  constructor( dependencies, derivation, options ) {
+  constructor( dependencies: Array<Property<any> | TinyProperty>, derivation: ( ...x: any[] ) => T, options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -65,21 +68,17 @@ class DerivedProperty extends Property {
       assert && assert( options.phetioType.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
     }
 
-    this.dependencies = dependencies; // @private
+    this.dependencies = dependencies;
 
     // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
     // See https://github.com/phetsims/axon/issues/193
     this._initialValue = null;
 
-    // @private
     this.derivation = derivation;
-
-    // @private
     this.derivedPropertyListener = this.getDerivedPropertyListener.bind( this );
 
     dependencies.forEach( dependency => {
 
-      // this.dependencyListeners.set( dependency, listener );
       dependency.lazyLink( this.derivedPropertyListener );
 
       if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
@@ -88,6 +87,7 @@ class DerivedProperty extends Property {
         // to have the right value.
         // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
         // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
+        // @ts-ignore
         phetioStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
       }
     } );
@@ -95,16 +95,13 @@ class DerivedProperty extends Property {
 
   /**
    * DerivedProperty cannot have their value set externally, so this returns false.
-   * @returns {boolean}
-   * @override
-   * @public
    */
-  isSettable() {
+  isSettable(): boolean {
     return false;
   }
 
-  // @private - for bind
-  getDerivedPropertyListener() {
+  // for bind
+  private getDerivedPropertyListener(): void {
 
     // Just mark that there is a deferred value, then calculate the derivation below when setDeferred() is called.
     // This is in part supported by the PhET-iO state engine because it can account for intermediate states, such
@@ -117,12 +114,11 @@ class DerivedProperty extends Property {
     }
   }
 
-  // @public
-  dispose() {
+  dispose(): void {
 
     // Unlink from dependent Properties
-    for ( let i = 0; i < this.dependencies.length; i++ ) {
-      const dependency = this.dependencies[ i ];
+    for ( let i = 0; i < this.dependencies!.length; i++ ) {
+      const dependency = this.dependencies![ i ];
       if ( dependency.hasListener( this.derivedPropertyListener ) ) {
         dependency.unlink( this.derivedPropertyListener );
       }
@@ -135,54 +131,41 @@ class DerivedProperty extends Property {
   /**
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
-   * @param {T} value
-   * @override
-   * @public
    */
-  set( value ) {
-    if ( true ) { // eslint-disable-line
-      throw new Error( `Cannot set values directly to a DerivedProperty, tried to set: ${value}` );
-    }
-    return this;
+  set( value: T ): void {
+    throw new Error( `Cannot set values directly to a DerivedProperty, tried to set: ${value}` );
   }
 
   /**
    * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
    * when the dependencies change. Keep the newValue output in the string so the argument won't be stripped by minifier
    * (which would cause crashes like https://github.com/phetsims/axon/issues/15)
-   * @param {T} newValue
-   * @override
-   * @public
    */
-  set value( newValue ) { throw new Error( `Cannot es5-set values directly to a DerivedProperty, tried to set: ${newValue}` ); }
+  set value( newValue ) {
+    throw new Error( `Cannot es5-set values directly to a DerivedProperty, tried to set: ${newValue}` );
+  }
 
   /**
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
-   * @override
-   * @public
    */
-  reset() { throw new Error( 'Cannot reset a DerivedProperty directly' ); }
+  reset(): void {
+    throw new Error( 'Cannot reset a DerivedProperty directly' );
+  }
 
   /**
    * Prevent the retrieval of the initial value, since we don't store it.
    * See https://github.com/phetsims/axon/issues/193
-   * @public
-   * @override
-   * @returns {*}
    */
-  getInitialValue() { throw new Error( 'Cannot get the initial value of a DerivedProperty' ); }
+  getInitialValue(): T {
+    throw new Error( 'Cannot get the initial value of a DerivedProperty' );
+  }
 
   /**
    * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
-   * @override
-   * @public
-   *
-   * @param {boolean} isDeferred
-   * @returns {function|null}
    */
-  setDeferred( isDeferred ) {
+  setDeferred( isDeferred: boolean ) {
     assert && assert( typeof isDeferred === 'boolean' );
     if ( this.isDeferred && !isDeferred ) {
       this.deferredValue = getDerivedValue( this.derivation, this.dependencies );
@@ -193,36 +176,26 @@ class DerivedProperty extends Property {
   /**
    * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
    * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
-   * @returns {T}
-   * @override
-   * @public
    */
-  get value() { return super.get(); }
+  get value(): T {
+    return super.get();
+  }
 
   /**
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
-   * @public
-   *
-   * @param {Property.<*>} firstProperty
-   * @param {Property.<*>} secondProperty
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
    */
-  static valueEquals( firstProperty, secondProperty, options ) {
+  static valueEquals( firstProperty: Property<any>, secondProperty: Property<any>, options?: any ): DerivedProperty<boolean> {
     return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
   }
 
   /**
    * Creates a derived boolean Property whose value is true iff every input Property value is true.
-   * @public
-   *
-   * @param {Array.<Property.<boolean>>} properties
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
    */
-  static and( properties, options ) {
+  static and( properties: Property<boolean>[], options?: any ): DerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
+
+    // @ts-ignore
     return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
   }
 
@@ -234,48 +207,42 @@ class DerivedProperty extends Property {
    * @param {Object} [options] - Forwarded to the DerivedProperty
    * @returns {DerivedProperty.<boolean>}
    */
-  static or( properties, options ) {
+  static or( properties: Property<boolean>[], options?: any ): DerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
-    return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
+
+    // @ts-ignore
+    return new DerivedProperty<boolean>( properties, _.reduce.bind( null, properties, orFunction, false ), options );
   }
 
   /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
-   * @public
-   *
-   * @param {Property.<boolean>} propertyToInvert
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
    */
-  static not( propertyToInvert, options ) {
-    return new DerivedProperty( [ propertyToInvert ], x => !x, options );
+  static not( propertyToInvert: Property<boolean>, options?: any ): DerivedProperty<boolean> {
+    return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
 }
 
-const equalsFunction = ( a, b ) => {
+const equalsFunction = ( a: any, b: any ): boolean => {
   return a === b;
 };
 
-const andFunction = ( value, property ) => {
+const andFunction = ( value: any, property: Property<any> ) => {
   assert && assert( typeof property.value === 'boolean', 'boolean value required' );
   return value && property.value;
 };
 
-const orFunction = ( value, property ) => {
+const orFunction = ( value: any, property: Property<any> ) => {
   assert && assert( typeof property.value === 'boolean', 'boolean value required' );
   return value || property.value;
 };
 
-// {Map.<parameterType:IOType, IOType>} - Cache each parameterized DerivedPropertyIO so that
-// it is only created once.
-const cache = new Map();
+// Cache each parameterized DerivedPropertyIO so that it is only created once.
+const cache = new Map<IOType, IOType>();
 
 /**
  * Parametric IO Type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
  * IO Type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} parameterType
- * @returns {IOType}
  */
 DerivedProperty.DerivedPropertyIO = parameterType => {
   assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );
@@ -295,7 +262,11 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
+
+          // @ts-ignore
           implementation: function( value ) {
+
+            // @ts-ignore
             return this.set( value );
           },
           documentation: 'Errors out when you try to set a derived property.',

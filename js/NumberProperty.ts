@@ -1,5 +1,4 @@
 // Copyright 2016-2021, University of Colorado Boulder
-
 /**
  * Property whose value must be a number.
  *
@@ -20,7 +19,7 @@ import stepTimer from './stepTimer.js';
 import validate from './validate.js';
 
 // constants
-const VALID_INTEGER = { valueType: 'number', isValidValue: v => v % 1 === 0 };
+const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0 };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -31,14 +30,23 @@ const PropertyIOImpl = Property.PropertyIO( NumberIO );
 /**
  * @extends Property<number>
  */
-class NumberProperty extends Property {
+class NumberProperty extends Property<number> {
+  numberType: any;
+  step: any;
+  private readonly validateOnNextFrame: any;
+  private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
+  private validationTimeout: ( ( dt: number ) => void ) | null;
+  readonly rangeProperty: Property<Range | null>;
+  private readonly disposeNumberProperty: () => void;
+  static NumberPropertyIO: IOType;
+  resetNumberProperty: () => void;
 
   /**
    * @param {number} value - initial value
    * @param {Object} [options]
    * @constructor
    */
-  constructor( value, options ) {
+  constructor( value: number, options?: any ) {
 
     options = merge( {
       numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
@@ -110,13 +118,16 @@ class NumberProperty extends Property {
     this.validateNumberAndRangeProperty = assert && ( value => {
 
       // validate for integer
+      // @ts-ignore
       ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
 
       // validate range value type
+      // @ts-ignore
       validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
 
       // validate that value and range are compatible
       if ( this.rangeProperty.value ) {
+        // @ts-ignore
         validate( value, { isValidValue: value => this.rangeProperty.value.contains( value ) } );
       }
     } );
@@ -126,19 +137,13 @@ class NumberProperty extends Property {
     this.validationTimeout = null;
 
     // @public (read-only) {Property.<Range|null>}
-    this.rangeProperty = null;
-    if ( ownsRangeProperty ) {
-      this.rangeProperty = new Property( options.range, options.rangePropertyOptions );
-    }
-    else {
-      this.rangeProperty = options.range;
-    }
+    this.rangeProperty = ownsRangeProperty ? new Property( options.range, options.rangePropertyOptions ) : options.range;
     assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
       'rangeProperty must be instrument if NumberProperty is instrumented' );
 
     const rangePropertyObserver = () => {
-      this.validateNumberAndRangeProperty && this.validateNumberProperty( this.value );
+      this.validateNumberAndRangeProperty && this.validateNumberProperty();
     };
     this.rangeProperty.link( rangePropertyObserver );
 
@@ -148,14 +153,14 @@ class NumberProperty extends Property {
 
     // verify that validValues meet other NumberProperty-specific validation criteria
     if ( options.validValues && this.validateNumberAndRangeProperty ) {
+
+      // @ts-ignore
       options.validValues.forEach( validValue => this.validateNumberAndRangeProperty( validValue ) );
     }
 
     // This puts validation at notification time instead of at value setting time. This is especially helpful as it
     // pertains to Property.prototype.setDeferred(), and setting a range and value together.
-    this.validateNumberAndRangeProperty && this.link( value => {
-      this.validateNumberProperty( value );
-    } );
+    this.validateNumberAndRangeProperty && this.link( value => this.validateNumberProperty() );
 
     // @private
     this.disposeNumberProperty = () => {
@@ -167,7 +172,7 @@ class NumberProperty extends Property {
       }
 
       if ( this.validationTimeout ) {
-        stepTimer.clearTimeout( this.validationTimeout );
+        stepTimer.clearTimeout( this.validationTimeout! );
         this.validationTimeout = null;
       }
     };
@@ -222,11 +227,8 @@ class NumberProperty extends Property {
   /**
    * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
    * not fail after one but has been set not the other.
-   * @param {number} value
-   * @param {Range} range
-   * @public
    */
-  setValueAndRange( value, range ) {
+  setValueAndRange( value: number, range: Range ): void {
     assert && assert( range.contains( value ), `value ${value} is not in range [${range.min},${range.max}]` );
 
     // defer notification of listeners
@@ -250,7 +252,7 @@ class NumberProperty extends Property {
    * @public
    */
   resetValueAndRange() {
-    this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue );
+    this.setValueAndRange( this.initialValue!, this.rangeProperty.initialValue! );
   }
 
   /**
@@ -264,7 +266,7 @@ class NumberProperty extends Property {
         // We only need this once, it will get the most recent value for both the value and range
         if ( !this.validationTimeout ) {
           this.validationTimeout = stepTimer.setTimeout( () => {
-            this.validateNumberAndRangeProperty( this.value );
+            this.validateNumberAndRangeProperty!( this.value );
             this.validationTimeout = null;
           }, 0 );
         }
@@ -282,7 +284,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   parameterTypes: [ NumberIO ],
   documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
     VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
-  toStateObject: numberProperty => {
+  toStateObject: ( numberProperty: NumberProperty ) => {
 
     const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
 
@@ -295,7 +297,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     parentStateObject.step = NullableIO( NumberIO ).toStateObject( numberProperty.step );
     return parentStateObject;
   },
-  applyState: ( numberProperty, stateObject ) => {
+  applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
     // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
     PropertyIOImpl.applyState( numberProperty, stateObject );

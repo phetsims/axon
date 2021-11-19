@@ -16,7 +16,7 @@ class Timer extends TinyEmitter {
    * Adds a listener to be called back once after the specified time in milliseconds
    * @param {function} listener - called with no arguments
    * @param {number} timeout in milliseconds
-   * @returns {function} an internally-wrapped listener which can be removed with clearTimeout
+   * @returns {(dt:number)=>void} an internally-wrapped listener which can be removed with clearTimeout
    * @public
    */
   setTimeout( listener, timeout ) { // eslint-disable-line bad-sim-text
