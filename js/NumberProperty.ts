@@ -14,7 +14,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 import stepTimer from './stepTimer.js';
 import validate from './validate.js';
 
@@ -27,9 +27,19 @@ const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
-/**
- * @extends Property<number>
- */
+type NumberPropertyDefinedOptions = {
+  tandem: Tandem;
+  numberType: string;
+  range: Range | Property<Range | null> | null;
+  rangePropertyOptions: any;
+  step: number;
+  validateOnNextFrame: boolean;
+  valueType: string;
+};
+
+type NumberPropertyOptions = {
+} & Partial<NumberPropertyDefinedOptions> & PropertyOptions<number>;
+
 class NumberProperty extends Property<number> {
   numberType: any;
   step: any;
@@ -43,12 +53,11 @@ class NumberProperty extends Property<number> {
 
   /**
    * @param {number} value - initial value
-   * @param {Object} [options]
-   * @constructor
+   * @param {Object} [providedOptions]
    */
-  constructor( value: number, options?: any ) {
+  constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
-    options = merge( {
+    let options = merge( {
       numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
 
       // {Range|Property.<Range|null>|null} range
@@ -74,14 +83,14 @@ class NumberProperty extends Property<number> {
 
       // {Tandem}
       tandem: Tandem.OPTIONAL
-    }, options );
+    }, providedOptions ) as NumberPropertyDefinedOptions;
 
     // options that depend on other options
     options = merge( {
       rangePropertyOptions: {
         tandem: options.tandem.createTandem( 'rangeProperty' ) // must be 'rangeProperty', see assertion below
       }
-    }, options );
+    }, options ) as NumberPropertyDefinedOptions;
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), `invalid numberType: ${options.numberType}` );
     assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
@@ -95,7 +104,11 @@ class NumberProperty extends Property<number> {
     // client cannot specify superclass options that are controlled by NumberProperty
     assert && assert( !options.valueType, 'NumberProperty sets valueType' );
     options.valueType = 'number';
+
+    // @ts-ignore
     assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
+
+    // @ts-ignore
     options.phetioType = NumberProperty.NumberPropertyIO;
 
     const rangePropertyProvided = options.range && options.range instanceof Property;
@@ -137,6 +150,7 @@ class NumberProperty extends Property<number> {
     this.validationTimeout = null;
 
     // @public (read-only) {Property.<Range|null>}
+    // @ts-ignore
     this.rangeProperty = ownsRangeProperty ? new Property( options.range, options.rangePropertyOptions ) : options.range;
     assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
@@ -152,6 +166,7 @@ class NumberProperty extends Property<number> {
     this.addPhetioStateDependencies( [ this.rangeProperty ] );
 
     // verify that validValues meet other NumberProperty-specific validation criteria
+    // @ts-ignore
     if ( options.validValues && this.validateNumberAndRangeProperty ) {
 
       // @ts-ignore

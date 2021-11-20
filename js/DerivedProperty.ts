@@ -13,7 +13,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
@@ -33,6 +33,11 @@ const getDerivedValue = ( derivation: ( a: any ) => any, dependencies: any ) => 
   return derivation( ...dependencies.map( property => property.get() ) );
 };
 
+type DerivedPropertyDefinedOptions = {
+  tandem: Tandem,
+  phetioType?: IOType
+};
+
 class DerivedProperty<T> extends Property<T> {
   dependencies: ( Property<any> | TinyProperty )[] | null;
   derivation: ( ...x: any[] ) => T;
@@ -42,14 +47,14 @@ class DerivedProperty<T> extends Property<T> {
   /**
    * @param dependencies - Properties that this Property's value is derived from
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
-   * @param [options] - see Property
+   * @param [providedOptions] - see Property
    */
-  constructor( dependencies: Array<Property<any> | TinyProperty>, derivation: ( ...x: any[] ) => T, options?: any ) {
+  constructor( dependencies: Array<Property<any> | TinyProperty>, derivation: ( ...x: any[] ) => T, providedOptions?: PropertyOptions<T> ) {
 
-    options = merge( {
+    const options = merge( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
-    }, options );
+    }, providedOptions ) as DerivedPropertyDefinedOptions;
 
     assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( DERIVED_PROPERTY_IO_PREFIX ),
       `phetioType must be provided and start with ${DERIVED_PROPERTY_IO_PREFIX}` );
@@ -65,7 +70,7 @@ class DerivedProperty<T> extends Property<T> {
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
-      assert && assert( options.phetioType.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
+      assert && assert( options.phetioType!.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
     }
 
     this.dependencies = dependencies;

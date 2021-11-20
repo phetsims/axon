@@ -45,6 +45,7 @@ type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   validValues?: readonly T[];
   valueType?: any;
   arrayElementType?: any;
+  isValidValue?: any
 } & PhetioObjectOptions;
 
 class Property<T> extends PhetioObject {
@@ -663,4 +664,4 @@ Property.PropertyIO = ( parameterType: IOType ) => {
 };
 
 axon.register( 'Property', Property );
-export default Property;
+export { Property as default, PropertyOptions };
