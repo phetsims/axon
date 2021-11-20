@@ -7,7 +7,7 @@
  */
 
 import merge from '../../phet-core/js/merge.js';
-import PhetioObject from '../../tandem/js/PhetioObject.js';
+import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
@@ -32,6 +32,20 @@ let globalId = 0; // autoincremented for unique IDs
 
 type Listener<T> = ( newValue: T, oldValue: T | null, property: Property<T> ) => void;
 type Listener2<T> = ( newValue: T, oldValue: T, property: Property<T> ) => void;
+
+type PropertyDefinedOptions = {
+  tandem: Tandem;
+  useDeepEquality: boolean;
+  units: string | null,
+  reentrant: boolean,
+  onBeforeNotify: null | ( () => void )
+};
+
+type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
+  validValues?: readonly T[];
+  valueType?: any;
+  arrayElementType?: any;
+} & PhetioObjectOptions;
 
 class Property<T> extends PhetioObject {
 
@@ -71,10 +85,10 @@ class Property<T> extends PhetioObject {
 
   /**
    * @param value - the initial value of the property
-   * @param [options] - options
+   * @param [providedOptions]
    */
-  constructor( value: T, options?: any ) {
-    options = merge( {
+  constructor( value: T, providedOptions?: PropertyOptions<T> ) {
+    const options = merge( {
 
       tandem: Tandem.OPTIONAL, // workaround for https://github.com/phetsims/tandem/issues/50
 
@@ -97,17 +111,25 @@ class Property<T> extends PhetioObject {
 
       // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
-    }, options );
+    }, providedOptions ) as PropertyDefinedOptions;
 
     // Support non-validated Property
     if ( !ValidatorDef.containsValidatorKey( options ) ) {
+
+      // @ts-ignore
       options.isValidValue = () => true;
     }
 
     assert && options.units && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
     if ( options.units ) {
+
+      // @ts-ignore
       options.phetioEventMetadata = options.phetioEventMetadata || {};
+
+      // @ts-ignore
       assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'units' ), 'units should be supplied by Property, not elsewhere' );
+
+      // @ts-ignore
       options.phetioEventMetadata.units = options.units;
     }
 
@@ -119,10 +141,13 @@ class Property<T> extends PhetioObject {
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // This assertion helps in instrumenting code that has the tandem but not type
+
+      // @ts-ignore
       assert && assert( !!options.phetioType,
         `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
       // This assertion helps in instrumenting code that has the tandem but not type
+      // @ts-ignore
       assert && assert( !!options.phetioType.parameterTypes[ 0 ],
         `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
@@ -132,7 +157,11 @@ class Property<T> extends PhetioObject {
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
 
     this._initialValue = value;
+
+    // @ts-ignore
     this.validValues = options.validValues;
+
+    // @ts-ignore
     this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
 
     // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.

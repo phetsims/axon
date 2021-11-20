@@ -207,7 +207,7 @@ const ValidatorDef = {
   },
 
   /**
-   * @param {ValidatorDef} validator - object which may or may not contain validation keys
+   * @param {ValidatorDef|any} validator - object which may or may not contain validation keys
    * @returns {boolean}
    * @public
    */
