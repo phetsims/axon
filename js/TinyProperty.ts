@@ -12,44 +12,46 @@
 
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
+import Property from './Property.js';
+import IProperty from './IProperty.js';
+import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyProperty.js';
 
-class TinyProperty extends TinyEmitter {
+type ComparableObject = {
+  equals: ( a: any ) => boolean
+};
+
+class TinyProperty<T> extends TinyEmitter<[ T, T | null, TinyProperty<T> | Property<T> ]> implements IProperty<T> {
+
+  protected _value: T; // Store the internal value
+
+  // Forces use of the deep equality checks. Keeps some compatibility with the Property interface to have the equality
+  // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
+  protected useDeepEquality?: boolean;
 
   /**
    * @param {*} value - The initial value of the property
    * @param {function()} [onBeforeNotify]
    */
-  constructor( value, onBeforeNotify ) {
+  constructor( value: T, onBeforeNotify?: ( value: T ) => void ) {
     super( onBeforeNotify );
 
-    // @protected {*} - Store the internal value
     this._value = value;
-
-    // @protected {boolean|undefined} useDeepEquality - Forces use of the deep equality checks. Keeps some compatibility
-    // with the Property interface to have the equality check in this type too. Not defining in the general case for
-    // memory usage, only using if we notice this flag set.
   }
 
   /**
    * Returns the value.
-   * @public
    *
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.
-   *
-   * @returns {*}
    */
-  get() {
+  get(): T {
     return this._value;
   }
 
   /**
    * Returns the value.
-   * @public
-   *
-   * @returns {*}
    */
-  get value() {
+  get value(): T {
     return this.get();
   }
 
@@ -57,11 +59,8 @@ class TinyProperty extends TinyEmitter {
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
-   * @public
-   *
-   * @param {*} value
    */
-  set( value ) {
+  set( value: T ) {
     if ( !this.equalsValue( value ) ) {
       const oldValue = this._value;
 
@@ -73,33 +72,23 @@ class TinyProperty extends TinyEmitter {
 
   /**
    * Sets the value.
-   * @public
-   *
-   * @param {*} newValue
    */
-  set value( newValue ) {
+  set value( newValue: T ) {
     this.set( newValue );
   }
 
   /**
    * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
    * when setting the value.
-   * @public
-   *
-   * @param {*} value
    */
-  setPropertyValue( value ) {
+  setPropertyValue( value: T ) {
     this._value = value;
   }
 
   /**
    * Returns true if and only if the specified value equals the value of this property
-   * @protected
-   *
-   * @param {*} value
-   * @returns {boolean}
    */
-  equalsValue( value ) {
+  protected equalsValue( value: T ): boolean {
     return this.areValuesEqual( value, this._value );
   }
 
@@ -113,33 +102,28 @@ class TinyProperty extends TinyEmitter {
    *
    * Alternatively different implementation can be provided by subclasses or instances to change the equals
    * definition. See #10 and #73 and #115
-   *
-   * @param {*} a - should have the same type as TinyProperty element type
-   * @param {*} b - should have the same type as TinyProperty element type
-   * @returns {boolean}
    */
-  areValuesEqual( a, b ) {
-    if ( this.useDeepEquality && a && b && a.constructor === b.constructor ) {
+  areValuesEqual( a: T, b: T ): boolean {
+    if ( this.useDeepEquality ) {
+      const aObject = a as unknown as ComparableObject;
+      const bObject = b as unknown as ComparableObject;
 
-      assert && assert( !!a.equals, 'no equals function for 1st arg' );
-      assert && assert( !!b.equals, 'no equals function for 2nd arg' );
-      assert && assert( a.equals( b ) === b.equals( a ), 'incompatible equality checks' );
-      return a.equals( b );
+      if ( aObject && bObject && aObject.constructor === bObject.constructor ) {
+        assert && assert( !!aObject.equals, 'no equals function for 1st arg' );
+        assert && assert( !!bObject.equals, 'no equals function for 2nd arg' );
+        assert && assert( aObject.equals( bObject ) === bObject.equals( aObject ), 'incompatible equality checks' );
+        return aObject.equals( bObject );
+      }
     }
-    else {
 
-      // Reference equality for objects, value equality for primitives
-      return a === b;
-    }
+    // Reference equality for objects, value equality for primitives
+    return a === b;
   }
 
   /**
    * Directly notifies listeners of changes.
-   * @public
-   *
-   * @param {*} oldValue
    */
-  notifyListeners( oldValue ) {
+  notifyListeners( oldValue: T ) {
     // We use this._value here for performance, AND to avoid calling onAccessAttempt unnecessarily.
     this.emit( this._value, oldValue, this );
   }
@@ -147,11 +131,8 @@ class TinyProperty extends TinyEmitter {
   /**
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
-   * @public
-   *
-   * @param {function} listener a function of the form listener(newValue,oldValue)
    */
-  link( listener ) {
+  link( listener: PropertyLinkListener<T> ) {
     this.addListener( listener );
 
     listener( this._value, null, this ); // null should be used when an object is expected but unavailable
@@ -160,27 +141,20 @@ class TinyProperty extends TinyEmitter {
   /**
    * Add an listener to the TinyProperty, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
-   * @public
-   *
-   * @param {function} listener - a function with a single argument, which is the current value of the TinyProperty.
    */
-  lazyLink( listener ) {
-    this.addListener( listener );
+  lazyLink( listener: PropertyLazyLinkListener<T> ) {
+    this.addListener( listener as PropertyLinkListener<T> ); // Because it's a lazy link, it will never be called with null
   }
 
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
-   * @public
-   *
-   * @param {function} listener
    */
-  unlink( listener ) {
+  unlink( listener: PropertyLinkListener<T> ) {
     this.removeListener( listener );
   }
 
   /**
    * Removes all listeners. If no listeners are registered, this is a no-op.
-   * @public
    */
   unlinkAll() {
     this.removeAllListeners();
@@ -192,14 +166,9 @@ class TinyProperty extends TinyEmitter {
    * Example: modelVisibleProperty.linkAttribute(view, 'visible');
    *
    * NOTE: Duplicated with Property.linkAttribute
-   * @public
-   *
-   * @param {*} object
-   * @param {string} attributeName
-   * @returns {function}
    */
-  linkAttribute( object, attributeName ) {
-    const handle = value => { object[ attributeName ] = value; };
+  linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ) { // eslint-disable-line
+    const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
   }
@@ -207,36 +176,27 @@ class TinyProperty extends TinyEmitter {
   /**
    * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
    * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-   * @public
-   *
-   * @param {function} listener
    */
-  unlinkAttribute( listener ) {
+  unlinkAttribute( listener: PropertyLinkListener<T> ) {
     this.unlink( listener );
   }
 
   /**
-   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangably
-   * @public
-   * @returns {boolean} - always false
+   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
    */
-  isPhetioInstrumented() {
+  isPhetioInstrumented(): boolean {
     return false;
   }
 
   /**
    * Returns true if the value can be set externally, using .value= or set()
-   * @returns {boolean}
-   * @public
    */
-  isSettable() {
+  isSettable(): boolean {
     return true;
   }
 
   /**
    * Releases references.
-   * @public
-   * @override
    */
   dispose() {
     // Remove any listeners that are still attached (note that the emitter dispose would do this also, but without the
@@ -248,4 +208,4 @@ class TinyProperty extends TinyEmitter {
 }
 
 axon.register( 'TinyProperty', TinyProperty );
-export default TinyProperty;
+export { TinyProperty as default };

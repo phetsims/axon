@@ -12,42 +12,50 @@ import axon from './axon.js';
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
-class TinyEmitter {
+type EmitContext = {
+  index: number,
+  listenerArray?: Function[]
+};
+type Listener<T extends any[]> = ( ...args: T ) => void;
 
-  /**
-   * @param {function()|null} [onBeforeNotify]
-   */
-  constructor( onBeforeNotify ) {
+class TinyEmitter<T extends any[]> {
+
+  // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
+  // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.
+  changeCount?: ( count: number ) => void;
+
+  // Only defined when assertions are enabled - to keep track if it has been disposed or not
+  isDisposed?: boolean;
+
+  // If specified, this will be called before listeners are notified.
+  private readonly onBeforeNotify?: Listener<T> | null;
+
+  // The listeners that will be called on emit
+  private listeners: Set<Listener<T>>;
+
+  // During emit() keep track of iteration progress and guard listeners if mutated during emit()
+  private emitContexts: EmitContext[];
+
+  constructor( onBeforeNotify?: Listener<T> | null ) {
 
     if ( onBeforeNotify ) {
-
       assert && assert( typeof onBeforeNotify === 'function', 'onBeforeNotify should be a function' );
 
-      // @private {function()} - if specified, this will be called before listeners are notified.
       this.onBeforeNotify = onBeforeNotify;
     }
 
-    // @private {Set.<function>} - the listeners that will be called on emit
     this.listeners = new Set();
 
-    // @private {Object[]} - during emit() keep track of iteration progress and guard listeners if mutated during emit()
     this.emitContexts = [];
-
-    // @public {function|undefined} changeCount - Not defined usually because of memory usage. If defined, this will be
-    // called when the listener count changes, e.g. changeCount( {number} listenersAddedQuantity ), with the number
-    // being negative for listeners removed.
 
     // for production memory concerns; no need to keep this around.
     if ( assert ) {
-
-      // @private {boolean} - to keep track if it has been disposed or not
       this.isDisposed = false;
     }
   }
 
   /**
    * Disposes an Emitter. All listeners are removed.
-   * @public
    */
   dispose() {
     this.removeAllListeners();
@@ -59,9 +67,8 @@ class TinyEmitter {
 
   /**
    * Notify listeners
-   * @public
    */
-  emit( ...args ) {
+  emit( ...args: T ) {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // optional callback, before notifying listeners
@@ -76,7 +83,7 @@ class TinyEmitter {
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
-      const emitContext = {
+      const emitContext: EmitContext = {
         index: 0
         // listenerArray: [] // {Array.<function>|undefined} assigned if a mutation is made during emit
       };
@@ -106,10 +113,8 @@ class TinyEmitter {
 
   /**
    * Adds a listener which will be called during emit.
-   * @param {function} listener
-   * @public
    */
-  addListener( listener ) {
+  addListener( listener: Listener<T> ) {
     assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
     assert && assert( !this.hasListener( listener ), 'Cannot add the same listener twice' );
 
@@ -124,10 +129,8 @@ class TinyEmitter {
 
   /**
    * Removes a listener
-   * @param {function} listener
-   * @public
    */
-  removeListener( listener ) {
+  removeListener( listener: Listener<T> ) {
 
     // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
     // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
@@ -142,7 +145,6 @@ class TinyEmitter {
 
   /**
    * Removes all the listeners
-   * @public
    */
   removeAllListeners() {
 
@@ -157,9 +159,8 @@ class TinyEmitter {
   /**
    * If listeners are added/removed while emit() is in progress, we must make a defensive copy of the array of listeners
    * before changing the array, and use it for the rest of the notifications until the emit call has completed.
-   * @private
    */
-  guardListeners() {
+  private guardListeners() {
 
     for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
@@ -178,40 +179,31 @@ class TinyEmitter {
 
   /**
    * Checks whether a listener is registered with this Emitter
-   * @param {function} listener
-   * @returns {boolean}
-   * @public
    */
-  hasListener( listener ) {
+  hasListener( listener: Listener<T> ): boolean {
     assert && assert( arguments.length === 1, 'Emitter.hasListener should be called with 1 argument' );
     return this.listeners.has( listener );
   }
 
   /**
    * Returns true if there are any listeners.
-   * @returns {boolean}
-   * @public
    */
-  hasListeners() {
+  hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Emitter.hasListeners should be called without arguments' );
     return this.listeners.size > 0;
   }
 
   /**
    * Returns the number of listeners.
-   * @returns {number}
-   * @public
    */
-  getListenerCount() {
+  getListenerCount(): number {
     return this.listeners.size;
   }
 
   /**
-   * Invokes a callback once for each listener
-   * @param {function} callback - takes the listener as an argument
-   * @public (Property)
+   * Invokes a callback once for each listener - meant for Property's use
    */
-  forEachListener( callback ) {
+  forEachListener( callback: ( listener: Listener<T> ) => void ) {
     this.listeners.forEach( callback );
   }
 }

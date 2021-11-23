@@ -11,30 +11,25 @@
 
 import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
+import { PropertyLinkListener } from './IReadOnlyProperty.js';
 
-class TinyStaticProperty extends TinyProperty {
+class TinyStaticProperty<T> extends TinyProperty<T> {
 
-  /**
-   * @param {*} value - The initial value of the property
-   * @param {function} onAccessAttempt
-   */
-  constructor( value, onAccessAttempt ) {
+  // When set, it will be called whenever there is an attempt to read the value of this TinyStaticProperty.
+  private readonly onAccessAttempt: () => void;
+
+  constructor( value: T, onAccessAttempt: () => void ) {
     super( value );
 
     assert && assert( typeof onAccessAttempt === 'function' );
 
-    // @private {function} - When set, it will be called whenever there is an attempt to read the value of this TinyStaticProperty.
     this.onAccessAttempt = onAccessAttempt;
   }
 
   /**
    * Returns the value. Overridden to support onAccessAttempt.
-   * @public
-   * @override
-   *
-   * @returns {*}
    */
-  get() {
+  get() : T {
     this.onAccessAttempt();
 
     return super.get();
@@ -42,33 +37,22 @@ class TinyStaticProperty extends TinyProperty {
 
   /**
    * Don't set the value of a TinyStaticProperty!
-   * @public
-   * @override
-   *
-   * @param {*} value
    */
-  set( value ) {
+  set( value: T ) {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
   }
 
   /**
    * Returns true if the value can be set externally. Static Property values should only be mutated, not set.
-   * @returns {boolean}
-   * @override
-   * @public
    */
-  isSettable() {
+  isSettable(): boolean {
     return false;
   }
 
   /**
    * Directly notifies listeners of changes.
-   * @public
-   * @override
-   *
-   * @param {*} oldValue
    */
-  notifyListeners( oldValue ) {
+  notifyListeners( oldValue: T | null ) {
 
     // We use this.get() to ensure value is up to date with onAccessAttempt().
     this.emit( this.get(), oldValue, this );
@@ -77,12 +61,8 @@ class TinyStaticProperty extends TinyProperty {
   /**
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
-   * @public
-   * @override
-   *
-   * @param {function} listener a function of the form listener(newValue,oldValue)
    */
-  link( listener ) {
+  link( listener: PropertyLinkListener<T> ) {
     this.addListener( listener );
 
     // listener called with this.get() to ensure value is up to date with onAccessAttempt().
@@ -91,13 +71,8 @@ class TinyStaticProperty extends TinyProperty {
 
   /**
    * Returns true if and only if the specified value equals the value of this property
-   * @protected
-   * @override
-   *
-   * @param {*} value
-   * @returns {boolean}
    */
-  equalsValue( value ) {
+  protected equalsValue( value: T ): boolean {
 
     // checked with this.get() to ensure value is up to date with onAccessAttempt()
     return this.areValuesEqual( value, this.get() );

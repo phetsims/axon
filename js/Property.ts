@@ -23,15 +23,14 @@ import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
+import IProperty from './IProperty.js';
+import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyProperty.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // variables
 let globalId = 0; // autoincremented for unique IDs
-
-type Listener<T> = ( newValue: T, oldValue: T | null, property: Property<T> ) => void;
-type Listener2<T> = ( newValue: T, oldValue: T, property: Property<T> ) => void;
 
 type PropertyDefinedOptions = {
   tandem: Tandem;
@@ -48,7 +47,7 @@ type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   isValidValue?: any
 } & PhetioObjectOptions;
 
-class Property<T> extends PhetioObject {
+class Property<T> extends PhetioObject implements IProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;
@@ -62,13 +61,13 @@ class Property<T> extends PhetioObject {
   validValues: T[] | undefined;
 
   // emit is called when the value changes (or on link)
-  tinyProperty: TinyProperty;
+  tinyProperty: TinyProperty<T>;
 
   // whether we are in the process of notifying listeners
   private notifying: boolean;
 
   // whether to allow reentry of calls to set
-  private reentrant: boolean;
+  private readonly reentrant: boolean;
 
   // while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
   // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
@@ -367,7 +366,7 @@ class Property<T> extends PhetioObject {
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  addPhetioStateDependencies( dependencies: Array<Property<any> | TinyProperty> ): void {
+  addPhetioStateDependencies( dependencies: Array<Property<any> | TinyProperty<any>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -390,7 +389,7 @@ class Property<T> extends PhetioObject {
    * @param [options]
    * @public
    */
-  link( listener: Listener<T>, options?: any ): void {
+  link( listener: PropertyLinkListener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -403,7 +402,7 @@ class Property<T> extends PhetioObject {
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
-  lazyLink( listener: Listener2<T>, options?: any ): void {
+  lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -413,7 +412,7 @@ class Property<T> extends PhetioObject {
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    */
-  unlink( listener: Listener<T> ): void {
+  unlink( listener: PropertyLinkListener<T> ): void {
     this.tinyProperty.unlink( listener );
   }
 
@@ -440,7 +439,7 @@ class Property<T> extends PhetioObject {
    * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
    * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
    */
-  unlinkAttribute( listener: Listener<T> ): void {
+  unlinkAttribute( listener: PropertyLinkListener<T> ): void {
     this.unlink( listener );
   }
 
@@ -491,7 +490,7 @@ class Property<T> extends PhetioObject {
   /**
    * Checks whether a listener is registered with this Property
    */
-  hasListener( listener: Listener<T> ): boolean {
+  hasListener( listener: PropertyLinkListener<T> ): boolean {
     return this.tinyProperty.hasListener( listener );
   }
 
@@ -506,7 +505,7 @@ class Property<T> extends PhetioObject {
    * Invokes a callback once for each listener
    * @param callback - takes the listener as an argument
    */
-  forEachListener( callback: ( value: T ) => void ): void {
+  forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | Property<T> ] ) => void ) => void ): void {
     this.tinyProperty.forEachListener( callback );
   }
 
@@ -523,7 +522,7 @@ class Property<T> extends PhetioObject {
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
-  static multilink( properties: Array<Property<any> | TinyProperty>, listener: any ): Multilink {
+  static multilink( properties: Array<Property<any> | TinyProperty<any>>, listener: any ): Multilink {
     return new Multilink( properties, listener, false );
   }
 

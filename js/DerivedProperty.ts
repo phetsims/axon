@@ -39,7 +39,7 @@ type DerivedPropertyDefinedOptions = {
 };
 
 class DerivedProperty<T> extends Property<T> {
-  dependencies: ( Property<any> | TinyProperty )[] | null;
+  dependencies: ( Property<any> | TinyProperty<any> )[] | null;
   derivation: ( ...x: any[] ) => T;
   derivedPropertyListener: () => void;
   static DerivedPropertyIO: ( parameterType: any ) => any;
@@ -49,7 +49,7 @@ class DerivedProperty<T> extends Property<T> {
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param [providedOptions] - see Property
    */
-  constructor( dependencies: Array<Property<any> | TinyProperty>, derivation: ( ...x: any[] ) => T, providedOptions?: PropertyOptions<T> ) {
+  constructor( dependencies: Array<Property<any> | TinyProperty<any>>, derivation: ( ...x: any[] ) => T, providedOptions?: PropertyOptions<T> ) {
 
     const options = merge( {
       tandem: Tandem.OPTIONAL,
