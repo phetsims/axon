@@ -45,6 +45,13 @@ class BooleanProperty extends Property {
 
     super( value, options );
   }
+
+  /**
+   * @public
+   */
+  toggle() {
+    this.value = !this.value;
+  }
 }
 
 axon.register( 'BooleanProperty', BooleanProperty );

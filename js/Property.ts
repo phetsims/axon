@@ -462,16 +462,6 @@ class Property<T> extends PhetioObject implements IProperty<T> {
     return listener;
   }
 
-  /**
-   * Modifies the value of this Property with the ! operator.  Works for booleans and non-booleans.
-   * @public
-   */
-  toggle() {
-
-    // @ts-ignore
-    this.value = !this.value;
-  }
-
   // Ensures that the Property is eligible for GC
   dispose() {
 
