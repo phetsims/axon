@@ -10,7 +10,7 @@
   "extends": "../chipper/tsconfig-core.json",
   "references": [
     {
-      "path": "../phet-core/tsconfig.json"
+      "path": "../phet-core/tsconfig-module.json"
     }
   ],
   "include": [
