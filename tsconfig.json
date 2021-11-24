@@ -15,7 +15,9 @@
   ],
   "include": [
     "../tandem/js/**/*test*",
+    "../tandem/js/**/*Test*",
     "../axon/js/**/*test*",
+    "../axon/js/**/*Test*",
     "../chipper/phet-types.d.ts",
     "../chipper/node_modules/@types/lodash/index.d.ts",
     "../chipper/node_modules/@types/qunit/index.d.ts"
