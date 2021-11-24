@@ -25,6 +25,8 @@
   ],
   "exclude": [
     "../axon/js/**/*test*",
-    "../tandem/js/**/*test*"
+    "../axon/js/**/*Test*",
+    "../tandem/js/**/*test*",
+    "../tandem/js/**/*Test*"
   ]
 }
