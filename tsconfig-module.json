@@ -24,7 +24,7 @@
     "../chipper/node_modules/@types/qunit/index.d.ts"
   ],
   "exclude": [
-    "../**/*test*",
+    "../axon/js/**/*test*",
     "../tandem/js/**/*test*"
   ]
 }
