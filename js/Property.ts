@@ -32,6 +32,7 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // autoincremented for unique IDs
 
+// Options defined by Property
 type PropertyDefinedOptions = {
   tandem: Tandem;
   useDeepEquality: boolean;
@@ -40,6 +41,12 @@ type PropertyDefinedOptions = {
   onBeforeNotify: null | ( () => void )
 };
 
+// Options used in the contstructor
+type PropertyConstructorOptions = {
+  isValidValue?: any;
+} & PropertyDefinedOptions & Pick<PhetioObjectOptions, 'phetioEventMetadata' | 'phetioType'>;
+
+// Options that can be passed in
 type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   validValues?: readonly T[];
   valueType?: any;
@@ -111,25 +118,18 @@ class Property<T> extends PhetioObject implements IProperty<T> {
 
       // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
-    }, providedOptions ) as PropertyDefinedOptions;
+    }, providedOptions ) as PropertyConstructorOptions;
 
     // Support non-validated Property
     if ( !ValidatorDef.containsValidatorKey( options ) ) {
 
-      // @ts-ignore
       options.isValidValue = () => true;
     }
 
     assert && options.units && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
     if ( options.units ) {
-
-      // @ts-ignore
       options.phetioEventMetadata = options.phetioEventMetadata || {};
-
-      // @ts-ignore
       assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'units' ), 'units should be supplied by Property, not elsewhere' );
-
-      // @ts-ignore
       options.phetioEventMetadata.units = options.units;
     }
 
@@ -141,14 +141,11 @@ class Property<T> extends PhetioObject implements IProperty<T> {
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // This assertion helps in instrumenting code that has the tandem but not type
-
-      // @ts-ignore
       assert && assert( !!options.phetioType,
         `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
       // This assertion helps in instrumenting code that has the tandem but not type
-      // @ts-ignore
-      assert && assert( !!options.phetioType.parameterTypes[ 0 ],
+      assert && assert( options.phetioType!.parameterTypes[ 0 ],
         `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||
