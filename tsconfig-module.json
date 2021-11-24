@@ -10,14 +10,21 @@
   "extends": "../chipper/tsconfig-core.json",
   "references": [
     {
-      "path": "../joist/tsconfig-module.json"
+      "path": "../phet-core/tsconfig.json"
     }
   ],
   "include": [
-    "../tandem/js/**/*test*",
-    "../axon/js/**/*test*",
+    "../axon/js/**/*",
+    "../tandem/js/**/*",
+    "../phet-core/js/EnumerationIO.js",
+    "../dot/js/Range.js",
+    "../dot/js/dot.js",
     "../chipper/phet-types.d.ts",
     "../chipper/node_modules/@types/lodash/index.d.ts",
     "../chipper/node_modules/@types/qunit/index.d.ts"
+  ],
+  "exclude": [
+    "../**/*test*",
+    "../tandem/js/**/*test*"
   ]
 }
