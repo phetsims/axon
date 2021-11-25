@@ -8,6 +8,7 @@
 
 type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: IReadOnlyProperty<T> ) => void;
 type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: IReadOnlyProperty<T> ) => void;
+type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
 
 // See comments in Property.ts / TinyProperty.ts
 interface IReadOnlyProperty<T> {
@@ -16,7 +17,7 @@ interface IReadOnlyProperty<T> {
   areValuesEqual( a: T, b: T ): boolean;
   link( listener: PropertyLinkListener<T> ): void;
   lazyLink( listener: PropertyLazyLinkListener<T> ): void;
-  unlink( listener: PropertyLinkListener<T> ): void;
+  unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;
   linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ): PropertyLinkListener<T>; // eslint-disable-line
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
@@ -25,4 +26,4 @@ interface IReadOnlyProperty<T> {
   dispose(): void;
 }
 
-export { IReadOnlyProperty as default, PropertyLinkListener, PropertyLazyLinkListener };
+export { IReadOnlyProperty as default, PropertyListener, PropertyLinkListener, PropertyLazyLinkListener };

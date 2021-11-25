@@ -509,7 +509,7 @@ class Property<T> extends PhetioObject implements IProperty<T> {
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
-  static multilink( properties: Array<Property<any> | TinyProperty<any>>, listener: any ): Multilink {
+  static multilink( properties: Array<IProperty<any>>, listener: any ): Multilink {
     return new Multilink( properties, listener, false );
   }
 
@@ -518,7 +518,7 @@ class Property<T> extends PhetioObject implements IProperty<T> {
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
-  static lazyMultilink( properties: Property<any>[], listener: any ): Multilink {
+  static lazyMultilink( properties: IProperty<any>[], listener: any ): Multilink {
     return new Multilink( properties, listener, true );
   }
 

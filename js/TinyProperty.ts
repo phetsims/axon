@@ -19,10 +19,12 @@ import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyPrope
 type ComparableObject = {
   equals: ( a: any ) => boolean
 };
+type TinyPropertyEmitterParameters<T> = [ T, T | null, TinyProperty<T> | Property<T> ];
+type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
-class TinyProperty<T> extends TinyEmitter<[ T, T | null, TinyProperty<T> | Property<T> ]> implements IProperty<T> {
+class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {
 
-  protected _value: T; // Store the internal value
+  _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
 
   // Forces use of the deep equality checks. Keeps some compatibility with the Property interface to have the equality
   // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
@@ -32,7 +34,7 @@ class TinyProperty<T> extends TinyEmitter<[ T, T | null, TinyProperty<T> | Prope
    * @param {*} value - The initial value of the property
    * @param {function()} [onBeforeNotify]
    */
-  constructor( value: T, onBeforeNotify?: ( value: T ) => void ) {
+  constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
     super( onBeforeNotify );
 
     this._value = value;
@@ -208,4 +210,4 @@ class TinyProperty<T> extends TinyEmitter<[ T, T | null, TinyProperty<T> | Prope
 }
 
 axon.register( 'TinyProperty', TinyProperty );
-export { TinyProperty as default };
+export { TinyProperty as default, TinyPropertyEmitterParameters, TinyPropertyOnBeforeNotify };
