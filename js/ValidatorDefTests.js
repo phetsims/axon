@@ -7,7 +7,7 @@
  */
 
 import Enumeration from '../../phet-core/js/Enumeration.js';
-import Node from '../../scenery/js/nodes/Node.js';
+import { Node } from '../../scenery/js/imports.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
 import validate from './validate.js';
