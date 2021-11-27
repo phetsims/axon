@@ -650,4 +650,5 @@ Property.PropertyIO = ( parameterType: IOType ) => {
 };
 
 axon.register( 'Property', Property );
-export { Property as default, PropertyOptions };
+export { Property as default };
+export type { PropertyOptions };

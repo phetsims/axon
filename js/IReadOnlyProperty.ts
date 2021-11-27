@@ -26,4 +26,4 @@ interface IReadOnlyProperty<T> {
   dispose(): void;
 }
 
-export { IReadOnlyProperty as default, PropertyListener, PropertyLinkListener, PropertyLazyLinkListener };
+export type { IReadOnlyProperty as default, PropertyListener, PropertyLinkListener, PropertyLazyLinkListener };

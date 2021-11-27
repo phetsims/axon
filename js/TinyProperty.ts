@@ -210,4 +210,5 @@ class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> impl
 }
 
 axon.register( 'TinyProperty', TinyProperty );
-export { TinyProperty as default, TinyPropertyEmitterParameters, TinyPropertyOnBeforeNotify };
+export { TinyProperty as default };
+export type { TinyPropertyEmitterParameters, TinyPropertyOnBeforeNotify };
