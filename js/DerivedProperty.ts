@@ -119,6 +119,13 @@ class DerivedProperty<T> extends Property<T> {
     }
   }
 
+  /**
+   * Allows forcing a recomputation (as a possible workaround to listener order).
+   */
+  recomputeDerivation(): void {
+    this.getDerivedPropertyListener();
+  }
+
   dispose(): void {
 
     // Unlink from dependent Properties
