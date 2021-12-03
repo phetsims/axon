@@ -11,13 +11,13 @@ import Property from '../../../../axon/js/Property.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import StateSchema from '../../../../tandem/js/types/StateSchema.js';
 
-// {Map.<enumeration:Enumeration, IOType>} - Cache each parameterized RichEnumuerationIO so that it is only created once.
+// {Map.<enumeration:Enumeration, IOType>} - Cache each parameterized RichEnumerationIO so that it is only created once.
 const cache = new Map();
 
 /**
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-const RichEnumuerationIO = <T>( enumeration: any ): IOType => {
+const RichEnumerationIO = <T>( enumeration: any ): IOType => {
 
   if ( !cache.has( enumeration ) ) {
 
@@ -38,12 +38,12 @@ const RichEnumuerationIO = <T>( enumeration: any ): IOType => {
     // Enumeration supports additional documentation, so the values can be described.
     const additionalDocs = 'docs';//enumeration.phetioDocumentation ? ` ${enumeration.phetioDocumentation}` : '';
 
-    cache.set( enumeration, new IOType( `RichEnumuerationIO(${keys.join( '|' )})`, {
+    cache.set( enumeration, new IOType( `RichEnumerationIO(${keys.join( '|' )})`, {
       validValues: values,
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
       toStateObject: ( t: T ) => valueToKeyMap.get( t ),
       fromStateObject: ( stateObject: string ) => {
-        assert && assert( typeof stateObject === 'string', 'unsupported RichEnumuerationIO value type, expected string' );
+        assert && assert( typeof stateObject === 'string', 'unsupported RichEnumerationIO value type, expected string' );
         assert && assert( keys.indexOf( stateObject ) >= 0, `Unrecognized value: ${stateObject}` );
         return keyToValueMap.get( stateObject )!;
       },
@@ -60,7 +60,7 @@ class RichEnumerationProperty<T> extends Property<T> {
   constructor( EnumerationType: any, value: T, providedOptions?: any ) {
     providedOptions = providedOptions || {};
     providedOptions.validValues = _.values( EnumerationType ).filter( value => value instanceof EnumerationType );
-    providedOptions.phetioType = Property.PropertyIO( RichEnumuerationIO<T>( EnumerationType ) );
+    providedOptions.phetioType = Property.PropertyIO( RichEnumerationIO<T>( EnumerationType ) );
     super( value, providedOptions );
   }
 }
