@@ -19,7 +19,6 @@ interface IReadOnlyProperty<T> {
   lazyLink( listener: PropertyLazyLinkListener<T> ): void;
   unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;
-  linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ): PropertyLinkListener<T>; // eslint-disable-line
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
   isPhetioInstrumented(): boolean;
   isSettable(): boolean;
