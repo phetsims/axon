@@ -24,7 +24,8 @@ import units from './units.js';
 import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
 import IProperty from './IProperty.js';
-import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyProperty.js';
+import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import { MappedProperties } from './DerivedProperty.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -409,7 +410,7 @@ class Property<T> extends PhetioObject implements IProperty<T> {
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    */
-  unlink( listener: PropertyLinkListener<T> ): void {
+  unlink( listener: PropertyListener<T> ): void {
     this.tinyProperty.unlink( listener );
   }
 
@@ -509,7 +510,7 @@ class Property<T> extends PhetioObject implements IProperty<T> {
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
-  static multilink( properties: Array<IProperty<any>>, listener: any ): Multilink {
+  static multilink<Parameters extends any[]>( properties: MappedProperties<Parameters>, listener: ( ...params: Parameters ) => void ): Multilink<Parameters> {
     return new Multilink( properties, listener, false );
   }
 
@@ -518,16 +519,14 @@ class Property<T> extends PhetioObject implements IProperty<T> {
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
-  static lazyMultilink( properties: IProperty<any>[], listener: any ): Multilink {
+  static lazyMultilink<Parameters extends any[]>( properties: MappedProperties<Parameters>, listener: ( ...params: Parameters ) => void ): Multilink<Parameters> {
     return new Multilink( properties, listener, true );
   }
 
   /**
    * Unlinks an listener that was added with multilink or lazyMultilink.
-   * @param multilink
-   * @public
    */
-  static unmultilink( multilink: Multilink ) {
+  static unmultilink<Parameters extends any[]>( multilink: Multilink<Parameters> ) {
     multilink.dispose();
   }
 }

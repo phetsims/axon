@@ -16,31 +16,36 @@ import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
 import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import TinyProperty from './TinyProperty.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
-
-/**
- * Compute the derived value given a derivation and an array of dependencies
- * @param {function} derivation
- * @param {Property[]} dependencies
- * @returns {*}
- */
-const getDerivedValue = ( derivation: ( a: any ) => any, dependencies: any ) => {
-
-  // @ts-ignore
-  return derivation( ...dependencies.map( property => property.get() ) );
-};
 
 type DerivedPropertyDefinedOptions = {
   tandem: Tandem,
   phetioType?: IOType
 };
 
-class DerivedProperty<T> extends Property<T> {
-  dependencies: ( Property<any> | TinyProperty<any> )[] | null;
-  derivation: ( ...x: any[] ) => T;
+// Maps tuples/arrays from T => IReadOnlyProperty<T>
+type MappedProperties<Parameters extends any[]> = {
+  [ K in keyof Parameters ]: IReadOnlyProperty<Parameters[K]>;
+};
+
+// Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
+type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
+
+/**
+ * Compute the derived value given a derivation and an array of dependencies
+ */
+const getDerivedValue = <T, Parameters extends any[]>( derivation: Derivation<T, Parameters>, dependencies: MappedProperties<Parameters> ) => {
+
+  // @ts-ignore
+  return derivation( ...dependencies.map( property => property.get() ) );
+};
+
+class DerivedProperty<T, Parameters extends any[]> extends Property<T> implements IReadOnlyProperty<T> {
+  dependencies: MappedProperties<Parameters> | null;
+  derivation: Derivation<T, Parameters>;
   derivedPropertyListener: () => void;
   static DerivedPropertyIO: ( parameterType: any ) => any;
 
@@ -49,7 +54,7 @@ class DerivedProperty<T> extends Property<T> {
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param [providedOptions] - see Property
    */
-  constructor( dependencies: Array<Property<any> | TinyProperty<any>>, derivation: ( ...x: any[] ) => T, providedOptions?: PropertyOptions<T> ) {
+  constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: PropertyOptions<T> ) {
 
     const options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -99,6 +104,14 @@ class DerivedProperty<T> extends Property<T> {
   }
 
   /**
+   * Returns dependencies that are guaranteed to be defined internally.
+   */
+  private get definedDependencies(): MappedProperties<Parameters> {
+    assert && assert( this.dependencies !== null, 'Dependencies should be defined, has this Property been disposed?' );
+    return this.dependencies!;
+  }
+
+  /**
    * DerivedProperty cannot have their value set externally, so this returns false.
    */
   isSettable(): boolean {
@@ -115,7 +128,7 @@ class DerivedProperty<T> extends Property<T> {
       this.hasDeferredValue = true;
     }
     else {
-      super.set( getDerivedValue( this.derivation, this.dependencies ) );
+      super.set( getDerivedValue( this.derivation, this.definedDependencies ) );
     }
   }
 
@@ -128,9 +141,11 @@ class DerivedProperty<T> extends Property<T> {
 
   dispose(): void {
 
+    const dependencies = this.definedDependencies;
+
     // Unlink from dependent Properties
-    for ( let i = 0; i < this.dependencies!.length; i++ ) {
-      const dependency = this.dependencies![ i ];
+    for ( let i = 0; i < dependencies.length; i++ ) {
+      const dependency = dependencies[ i ];
       if ( dependency.hasListener( this.derivedPropertyListener ) ) {
         dependency.unlink( this.derivedPropertyListener );
       }
@@ -180,7 +195,7 @@ class DerivedProperty<T> extends Property<T> {
   setDeferred( isDeferred: boolean ) {
     assert && assert( typeof isDeferred === 'boolean' );
     if ( this.isDeferred && !isDeferred ) {
-      this.deferredValue = getDerivedValue( this.derivation, this.dependencies );
+      this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }
     return super.setDeferred( isDeferred );
   }
@@ -197,14 +212,14 @@ class DerivedProperty<T> extends Property<T> {
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
    */
-  static valueEquals( firstProperty: Property<any>, secondProperty: Property<any>, options?: any ): DerivedProperty<boolean> {
+  static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): DerivedProperty<boolean, [ U, V ]> {
     return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
   }
 
   /**
    * Creates a derived boolean Property whose value is true iff every input Property value is true.
    */
-  static and( properties: Property<boolean>[], options?: any ): DerivedProperty<boolean> {
+  static and( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): DerivedProperty<boolean, IReadOnlyProperty<boolean>[]> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -213,13 +228,8 @@ class DerivedProperty<T> extends Property<T> {
 
   /**
    * Creates a derived boolean Property whose value is true iff any input Property value is true.
-   * @public
-   *
-   * @param {Array.<Property.<boolean>>} properties
-   * @param {Object} [options] - Forwarded to the DerivedProperty
-   * @returns {DerivedProperty.<boolean>}
    */
-  static or( properties: Property<boolean>[], options?: any ): DerivedProperty<boolean> {
+  static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): DerivedProperty<boolean, IReadOnlyProperty<boolean>[]> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -229,7 +239,7 @@ class DerivedProperty<T> extends Property<T> {
   /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
    */
-  static not( propertyToInvert: Property<boolean>, options?: any ): DerivedProperty<boolean> {
+  static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: PropertyOptions<boolean> ): DerivedProperty<boolean, [ boolean ]> {
     return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
 }
@@ -293,3 +303,4 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
 
 axon.register( 'DerivedProperty', DerivedProperty );
 export default DerivedProperty;
+export type { MappedProperties, Derivation };

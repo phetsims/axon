@@ -17,20 +17,35 @@
  */
 
 import axon from './axon.js';
+import { MappedProperties } from './DerivedProperty.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 // constants
-const GET_PROPERTY_VALUE = property => property.get();
+const GET_PROPERTY_VALUE = <T>( property: IReadOnlyProperty<T> ): T => property.get();
 
-class Multilink {
+const valuesOfProperties = <Parameters extends any[]>( dependencies: MappedProperties<Parameters> ): Parameters => {
+  // Typescript can't figure out that the map gets us back to the Parameters type
+  return dependencies.map( GET_PROPERTY_VALUE ) as Parameters;
+};
+
+// Type of a derivation function, that takes the typed parameters (as a tuple type)
+type Callback<Parameters extends any[]> = ( ...params: Parameters ) => void;
+
+class Multilink<Parameters extends any[]> {
+
+  private dependencies: MappedProperties<Parameters> | null;
+  private dependencyListeners: Map<IReadOnlyProperty<any>, () => void>;
+
+  private isDisposed?: boolean;
 
   /**
-   * @param {Array.<Property|TinyProperty>} dependencies
-   * @param {function} callback function that expects args in the same order as dependencies
-   * @param {boolean} [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
+   * @param dependencies
+   * @param callback function that expects args in the same order as dependencies
+   * @param [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
    */
-  constructor( dependencies, callback, lazy ) {
+  constructor( dependencies: MappedProperties<Parameters>, callback: Callback<Parameters>, lazy?: boolean ) {
 
-    this.dependencies = dependencies; // @private
+    this.dependencies = dependencies;
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
@@ -44,7 +59,7 @@ class Multilink {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
         if ( !this.isDisposed ) {
-          callback( ...dependencies.map( GET_PROPERTY_VALUE ) );
+          callback( ...valuesOfProperties( dependencies ) );
         }
       };
       this.dependencyListeners.set( dependency, listener );
@@ -59,28 +74,39 @@ class Multilink {
 
     // Send initial call back but only if we are non-lazy
     if ( !lazy ) {
-      callback( ...dependencies.map( GET_PROPERTY_VALUE ) );
+      callback( ...valuesOfProperties( dependencies ) );
     }
 
     // @private - whether the Multilink has been disposed
     this.isDisposed = false;
   }
 
+  /**
+   * Returns dependencies that are guaranteed to be defined internally.
+   */
+  private get definedDependencies(): MappedProperties<Parameters> {
+    assert && assert( this.dependencies !== null, 'Dependencies should be defined, has this Property been disposed?' );
+    return this.dependencies!;
+  }
+
   // @public
   dispose() {
     assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
 
+    const dependencies = this.definedDependencies;
+
     // Unlink from dependent properties
-    for ( let i = 0; i < this.dependencies.length; i++ ) {
-      const dependency = this.dependencies[ i ];
-      const listener = this.dependencyListeners.get( dependency );
+    for ( let i = 0; i < dependencies.length; i++ ) {
+      const dependency = dependencies[ i ];
+      const listener = this.dependencyListeners.get( dependency )!;
+      assert && assert( listener, 'The listener should exist' );
+
       if ( dependency.hasListener( listener ) ) {
         dependency.unlink( listener );
       }
     }
     this.dependencies = null;
     this.dependencyListeners.clear();
-    this.dependencyListeners = null;
     this.isDisposed = true;
   }
 }

@@ -15,11 +15,13 @@ interface IReadOnlyProperty<T> {
   get() : T;
   get value() : T;
   areValuesEqual( a: T, b: T ): boolean;
-  link( listener: PropertyLinkListener<T> ): void;
-  lazyLink( listener: PropertyLazyLinkListener<T> ): void;
+  link( listener: PropertyLinkListener<T>, options?: any ): void;
+  lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void;
+  linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ): any; // eslint-disable-line
   unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
+  hasListener( listener: PropertyLinkListener<T> ): boolean;
   isPhetioInstrumented(): boolean;
   isSettable(): boolean;
   dispose(): void;

@@ -13,7 +13,7 @@
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import IProperty from './IProperty.js';
-import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyProperty.js';
+import { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 
 type ComparableObject = {
   equals: ( a: any ) => boolean
@@ -150,8 +150,8 @@ class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> impl
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    */
-  unlink( listener: PropertyLinkListener<T> ) {
-    this.removeListener( listener );
+  unlink( listener: PropertyListener<T> ) {
+    this.removeListener( listener as PropertyLinkListener<T> );
   }
 
   /**
