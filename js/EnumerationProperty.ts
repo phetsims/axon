@@ -6,26 +6,25 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
 import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
 
-/**
- * @extends Property<any>
- */
-class EnumerationProperty extends Property {
+type IEnumeration<T> = {
+  VALUES: T[];
+};
+
+class EnumerationProperty<T> extends Property<T> {
+  enumeration: IEnumeration<T>;
 
   /**
    * @param {Enumeration} enumeration
    * @param {*} initialValue - one of the values from enumeration
    * @param {Object} [options]
    */
-  constructor( enumeration, initialValue, options ) {
-
-    assert && assert( enumeration instanceof Enumeration, `invalid enumeration: ${enumeration}` );
-    assert && assert( enumeration.includes( initialValue ), `invalid initialValue: ${initialValue}` );
+  constructor( enumeration: IEnumeration<T>, initialValue: T, options: any ) {
+    assert && assert( enumeration.VALUES.includes( initialValue ), `invalid initialValue: ${initialValue}` );
 
     if ( options ) {
 
