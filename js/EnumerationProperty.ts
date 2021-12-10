@@ -23,7 +23,7 @@ class EnumerationProperty<T> extends Property<T> {
    * @param {*} initialValue - one of the values from enumeration
    * @param {Object} [options]
    */
-  constructor( enumeration: IEnumeration<T>, initialValue: T, options: any ) {
+  constructor( enumeration: IEnumeration<T>, initialValue: T, options?: any ) {
     assert && assert( enumeration.VALUES.includes( initialValue ), `invalid initialValue: ${initialValue}` );
 
     if ( options ) {
