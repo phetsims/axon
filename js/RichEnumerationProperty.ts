@@ -19,9 +19,9 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Property, { PropertyOptions } from '../../../../axon/js/Property.js';
-import IOType from '../../../../tandem/js/types/IOType.js';
-import StateSchema from '../../../../tandem/js/types/StateSchema.js';
+import Property, { PropertyOptions } from './Property.js';
+import IOType from '../../tandem/js/types/IOType.js';
+import StateSchema from '../../tandem/js/types/StateSchema.js';
 
 // Cannot model as Constructor = new (...args) because we want to have private constructors
 type RichEnumeration = Function & { [ key: string ]: any };
