@@ -16,62 +16,56 @@
  * Object.keys(T) => ['a', 'b']
  * Object.values(T) => [T, T]
  *
+ * Note how keys only picks up 'a' and 'b'.  Therefore, we can use Object.keys to infer the RichEnumerationType values
+ * rather than having to re-list them in values or equivalent.
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import Property, { PropertyOptions } from './Property.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import StateSchema from '../../tandem/js/types/StateSchema.js';
+import RichEnumeration from '../../phet-core/js/RichEnumeration.js';
 
-// Cannot model as Constructor = new (...args) because we want to have private constructors
-type RichEnumeration = Function & { [ key: string ]: any };
+type RichEnumerationType<T> = {
+  rich: RichEnumeration<T>;
+  phetioDocumentation?: string;
+};
 
 class RichEnumerationProperty<T> extends Property<T> {
-  constructor( Enumeration: RichEnumeration, value: T, providedOptions?: PropertyOptions<T> ) {
+  constructor( Enumeration: RichEnumerationType<T>, value: T, providedOptions?: PropertyOptions<T> ) {
     providedOptions = providedOptions || {};
-    providedOptions.validValues = Object.values( Enumeration ).filter( value => value instanceof Enumeration );
+    providedOptions.validValues = Enumeration.rich.values;
     providedOptions.phetioType = Property.PropertyIO( RichEnumerationIO<T>( Enumeration ) );
     super( value, providedOptions );
   }
 }
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<RichEnumeration, IOType>();
+const cache = new Map<RichEnumerationType<any>, IOType>();
 
-const RichEnumerationIO = <T>( Enumeration: RichEnumeration ): IOType => {
+const RichEnumerationIO = <T>( Enumeration: RichEnumerationType<T> ): IOType => {
 
   // This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
   if ( !cache.has( Enumeration ) ) {
 
-    // This work is only done once per RichEnumeration
-    const keyToValueMap = new Map<string, T>();
-    const valueToKeyMap = new Map<T, string>();
-
-    for ( const key in Enumeration ) {
-      const value = Enumeration[ key ];
-      if ( value instanceof Enumeration ) {
-        keyToValueMap.set( key, value );
-        valueToKeyMap.set( value, key );
-      }
-    }
-
-    const keys = Array.from( keyToValueMap.keys() );
-    const values = Array.from( keyToValueMap.values() );
-
     // Enumeration supports additional documentation, so the values can be described.
-    const additionalDocs = 'docs';//enumeration.phetioDocumentation ? ` ${enumeration.phetioDocumentation}` : '';
+    const additionalDocs = Enumeration.phetioDocumentation ? ` ${Enumeration.phetioDocumentation}` : '';
+
+    const keys = Enumeration.rich.keys;
+    const values = Enumeration.rich.values;
 
     cache.set( Enumeration, new IOType( `RichEnumerationIO(${keys.join( '|' )})`, {
       validValues: values,
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
-      toStateObject: ( t: T ) => valueToKeyMap.get( t ),
+      toStateObject: ( t: T ) => Enumeration.rich.getKey( t ),
       fromStateObject: ( stateObject: string ): T => {
         assert && assert( typeof stateObject === 'string', 'unsupported RichEnumerationIO value type, expected string' );
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
-        return keyToValueMap.get( stateObject )!;
+        return Enumeration.rich.getValue( stateObject )!;
       },
       stateSchema: StateSchema.asValue( `${keys.join( '|' )}`, {
-        isValidValue: ( v: string ) => keys.includes( v )
+        isValidValue: ( key: string ) => keys.includes( key )
       } )
     } ) );
   }
