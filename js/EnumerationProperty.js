@@ -11,19 +11,14 @@ import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
 
-type IEnumeration<T> = {
-  VALUES: T[];
-};
-
-class EnumerationProperty<T> extends Property<T> {
-  enumeration: IEnumeration<T>;
+class EnumerationProperty extends Property {
 
   /**
    * @param {Enumeration} enumeration
    * @param {*} initialValue - one of the values from enumeration
    * @param {Object} [options]
    */
-  constructor( enumeration: IEnumeration<T>, initialValue: T, options?: any ) {
+  constructor( enumeration, initialValue, options ) {
     assert && assert( enumeration.VALUES.includes( initialValue ), `invalid initialValue: ${initialValue}` );
 
     if ( options ) {
