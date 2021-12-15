@@ -14,7 +14,7 @@ import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
-import phetioStateHandlerSingleton from './propertyStateHandlerSingleton.js';
+import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
@@ -98,7 +98,7 @@ class DerivedProperty<T, Parameters extends any[]> extends Property<T> implement
         // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
         // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
         // @ts-ignore
-        phetioStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
+        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
       }
     } );
   }
