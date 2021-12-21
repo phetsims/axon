@@ -7,7 +7,7 @@
  */
 
 import Property, { PropertyOptions } from './Property.js';
-import IRichEnumeration from '../../phet-core/js/IRichEnumeration.js';
+import { RichEnumerationContainer } from '../../phet-core/js/IRichEnumeration.js';
 import RichEnumerationIO from './RichEnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 
@@ -20,13 +20,13 @@ class RichEnumerationProperty<T> extends Property<T> {
    * @param value
    * @param providedOptions
    */
-  constructor( enumerationContainer: { enum: IRichEnumeration<T> }, value: T, providedOptions?: RichEnumerationPropertyOptions<T> ) {
+  constructor( enumerationContainer: RichEnumerationContainer<T>, value: T, providedOptions?: RichEnumerationPropertyOptions<T> ) {
 
     assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by RichEnumerationProperty' );
     assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by RichEnumerationProperty' );
 
     const options = merge( {}, providedOptions, {
-      validValues: enumerationContainer.enum.values,
+      validValues: enumerationContainer.enumeration.values,
       phetioType: Property.PropertyIO( RichEnumerationIO<T>( enumerationContainer ) )
     } );
 

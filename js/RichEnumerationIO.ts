@@ -1,13 +1,13 @@
 // Copyright 2021, University of Colorado Boulder
-import IRichEnumeration from '../../phet-core/js/IRichEnumeration.js';
+import IRichEnumeration, { RichEnumerationContainer } from '../../phet-core/js/IRichEnumeration.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import StateSchema from '../../tandem/js/types/StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once.
 const cache = new Map<IRichEnumeration<any>, IOType>();
 
-const RichEnumerationIO = <T>( enumerationContainer: { enum: IRichEnumeration<T> } ): IOType => {
-  const enumeration = enumerationContainer.enum;
+const RichEnumerationIO = <T>( enumerationContainer: RichEnumerationContainer<T> ): IOType => {
+  const enumeration = enumerationContainer.enumeration;
 
   // This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
   if ( !cache.has( enumeration ) ) {
