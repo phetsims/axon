@@ -10,10 +10,11 @@ import Property, { PropertyOptions } from './Property.js';
 import { RichEnumerationContainer } from '../../phet-core/js/IRichEnumeration.js';
 import RichEnumerationIO from './RichEnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
+import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 
 type RichEnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues' | 'phetioType'>;
 
-class RichEnumerationProperty<T> extends Property<T> {
+class RichEnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
   /**
    * @param enumerationContainer - for convenience at the client site, this is an object that contains a RichEnumeration named "enum"
