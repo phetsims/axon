@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import IRichEnumeration, { RichEnumerationContainer } from '../../phet-core/js/IRichEnumeration.js';
 import IOType from '../../tandem/js/types/IOType.js';
