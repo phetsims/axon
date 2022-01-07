@@ -6,7 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import { Node } from '../../scenery/js/imports.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
@@ -84,12 +84,12 @@ QUnit.test( 'Test isValidValidator and validateValidator', assert => {
   }, 'Object literal  is not a valid valueType' );
 } );
 
-QUnit.test( 'Test valueType: {Array.<number|null|string|function|Enumeration>}', assert => {
+QUnit.test( 'Test valueType: {Array.<number|null|string|function|EnumerationDeprecated>}', assert => {
   assert.ok( ValidatorDef.isValueValid( null, { valueType: null } ), 'null is valid' );
   assert.ok( ValidatorDef.isValueValid( 7, { valueType: [ 'number', null ] } ), '7 is valid for null and number' );
   assert.ok( ValidatorDef.isValueValid( null, { valueType: [ 'number', null ] } ), 'null is valid for null and number' );
   assert.ok( ValidatorDef.isValueValid( new Node(), { valueType: [ 'number', null, Node ] } ), 'Node is valid' );
-  assert.ok( ValidatorDef.isValueValid( Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] ), { valueType: [ Enumeration, null, Node ] } ), 'Node is valid' );
+  assert.ok( ValidatorDef.isValueValid( EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] ), { valueType: [ EnumerationDeprecated, null, Node ] } ), 'Node is valid' );
   assert.ok( !ValidatorDef.isValueValid( 'hello', { valueType: [ 'number', null, Node ] } ), 'string not valid' );
 
   window.assert && assert.throws( () => validate( true, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate boolean' );
@@ -97,13 +97,13 @@ QUnit.test( 'Test valueType: {Array.<number|null|string|function|Enumeration>}',
   window.assert && assert.throws( () => validate( undefined, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
   window.assert && assert.throws( () => validate( () => {}, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
 
-  const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+  const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   window.assert && assert.throws( () => validate( () => {}, { valueType: [ Birds, 'string' ] } ), 'number and string do not validate undefined' );
 } );
 
-QUnit.test( 'Test valueType: {Enumeration}', assert => {
+QUnit.test( 'Test valueType: {EnumerationDeprecated}', assert => {
 
-  const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+  const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   assert.ok( ValidatorDef.isValidValidator( { valueType: Birds } ), 'good valueType' );
   assert.ok( ValidatorDef.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
   window.assert && assert.throws( () => ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );

@@ -9,10 +9,10 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import axon from './axon.js';
 
-const PropertyStatePhase = Enumeration.byKeys( [ 'UNDEFER', 'NOTIFY' ] );
+const PropertyStatePhase = EnumerationDeprecated.byKeys( [ 'UNDEFER', 'NOTIFY' ] );
 
 axon.register( 'PropertyStatePhase', PropertyStatePhase );
 export default PropertyStatePhase;

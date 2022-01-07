@@ -6,14 +6,14 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
 import EnumerationProperty from './EnumerationProperty.js';
 
 QUnit.module( 'EnumerationProperty' );
 QUnit.test( 'EnumerationProperty', assert => {
 
-  const Birds = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+  const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   let birdProperty = null;
 
   // constructor value
@@ -54,8 +54,8 @@ QUnit.test( 'EnumerationProperty', assert => {
 
 QUnit.test( 'EnumerationIO validation', assert => {
 
-    const Birds1 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-    const Birds2 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
+    const Birds1 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+    const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
     assert.ok( Birds1 !== Birds2, 'different Enumerations' );
     assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
     let birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
@@ -64,7 +64,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
     // constructor value
     window.assert && assert.throws( () => {
       birdProperty.set( Birds2.ROBIN );
-    }, 'cannot use same string value from other Enumeration instance' );
+    }, 'cannot use same string value from other EnumerationDeprecated instance' );
 
     // new instance of birdProperty since it got messed up in the above assert.
     birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
@@ -76,10 +76,10 @@ QUnit.test( 'EnumerationIO validation', assert => {
   }
 );
 
-QUnit.test( 'validValues as a subset of Enumeration values', assert => {
+QUnit.test( 'validValues as a subset of EnumerationDeprecated values', assert => {
 
-  const Birds1 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-  const Birds2 = Enumeration.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
+  const Birds1 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
+  const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
   assert.ok( Birds1 !== Birds2, 'different Enumerations' );
   assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
 
@@ -96,6 +96,6 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 
   window.assert && assert.throws( () => {
     enumerationProperty1.value = Birds2.ROBIN;
-  }, 'not a valid value, from a different Enumeration' );
+  }, 'not a valid value, from a different EnumerationDeprecated' );
 
 } );

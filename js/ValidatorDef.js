@@ -16,7 +16,7 @@
  * A validator that accepts any Object:
  * { valueType: Object }
  *
- * A validator that accepts Enumeration values:
+ * A validator that accepts EnumerationDeprecated values:
  * { valueType: MyEnumeration }
  * and/or
  * { validValues: MyEnumeration.VALUES }
@@ -28,7 +28,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 
@@ -175,7 +175,7 @@ const ValidatorDef = {
   validateValueType( valueType, options ) {
     if ( !( typeof valueType === 'function' ||
             typeof valueType === 'string' ||
-            valueType instanceof Enumeration ||
+            valueType instanceof EnumerationDeprecated ||
             valueType === null ||
             valueType === undefined ) ) {
       assert && options.assertions && assert( false,
@@ -353,7 +353,7 @@ const ValidatorDef = {
       assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should have been an array, value=${value}`, message ) );
       return false;
     }
-    else if ( valueType instanceof Enumeration && !valueType.includes( value ) ) {
+    else if ( valueType instanceof EnumerationDeprecated && !valueType.includes( value ) ) {
       assert && assert( false, this.formulateAssertionMessage( `value is not a member of Enumeration ${valueType}`, message ) );
       return false;
     }
