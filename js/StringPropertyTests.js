@@ -75,7 +75,7 @@ QUnit.test( 'Test StringProperty', assert => {
 
   window.assert && assert.throws( () => {
     p = new StringProperty( 'hello', { phetioType: StringIO } );
-  }, 'EnumerationProperty sets phetioType' );
+  }, 'EnumerationDeprecatedProperty sets phetioType' );
 
   assert.ok( true, 'so we have at least 1 test in this set' );
 } );

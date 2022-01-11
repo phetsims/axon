@@ -1,27 +1,27 @@
 // Copyright 2019-2022, University of Colorado Boulder
 
 /**
- * QUnit Tests for EnumerationProperty
+ * QUnit Tests for EnumerationDeprecatedProperty
  *
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
-import EnumerationProperty from './EnumerationProperty.js';
+import EnumerationDeprecatedProperty from './EnumerationDeprecatedProperty.js';
 
-QUnit.module( 'EnumerationProperty' );
-QUnit.test( 'EnumerationProperty', assert => {
+QUnit.module( 'EnumerationDeprecatedProperty' );
+QUnit.test( 'EnumerationDeprecatedProperty', assert => {
 
   const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   let birdProperty = null;
 
   // constructor value
   assert.ok( () => {
-    birdProperty = new EnumerationProperty( Birds, Birds.ROBIN );
+    birdProperty = new EnumerationDeprecatedProperty( Birds, Birds.ROBIN );
   }, 'good constructor value' );
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( true );
+    birdProperty = new EnumerationDeprecatedProperty( true );
   }, 'invalid constructor value' );
 
   // set value
@@ -32,23 +32,23 @@ QUnit.test( 'EnumerationProperty', assert => {
     birdProperty.set( 5 );
   }, 'bad set value' );
 
-  // superclass options that are not supported by EnumerationProperty
+  // superclass options that are not supported by EnumerationDeprecatedProperty
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { isValidValue: () => true } );
-  }, 'EnumerationProperty does not support isValidValue' );
+    birdProperty = new EnumerationDeprecatedProperty( Birds, Birds.ROBIN, { isValidValue: () => true } );
+  }, 'EnumerationDeprecatedProperty does not support isValidValue' );
 
-  // superclass options that are controlled by EnumerationProperty
+  // superclass options that are controlled by EnumerationDeprecatedProperty
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { valueType: Birds } );
-  }, 'EnumerationProperty sets valueType' );
+    birdProperty = new EnumerationDeprecatedProperty( Birds, Birds.ROBIN, { valueType: Birds } );
+  }, 'EnumerationDeprecatedProperty sets valueType' );
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( Birds, Birds.ROBIN, { phetioType: EnumerationIO } );
-  }, 'EnumerationProperty sets phetioType' );
+    birdProperty = new EnumerationDeprecatedProperty( Birds, Birds.ROBIN, { phetioType: EnumerationIO } );
+  }, 'EnumerationDeprecatedProperty sets phetioType' );
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( Birds, { phetioType: EnumerationIO } );
+    birdProperty = new EnumerationDeprecatedProperty( Birds, { phetioType: EnumerationIO } );
   }, 'Did not include initial value' );
   window.assert && assert.throws( () => {
-    birdProperty = new EnumerationProperty( {} );
+    birdProperty = new EnumerationDeprecatedProperty( {} );
   }, 'That is not an enumeration' );
 } );
 
@@ -58,8 +58,8 @@ QUnit.test( 'EnumerationIO validation', assert => {
     const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
     assert.ok( Birds1 !== Birds2, 'different Enumerations' );
     assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
-    let birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
-    const birdProperty2 = new EnumerationProperty( Birds2, Birds2.ROBIN );
+    let birdProperty = new EnumerationDeprecatedProperty( Birds1, Birds1.ROBIN );
+    const birdProperty2 = new EnumerationDeprecatedProperty( Birds2, Birds2.ROBIN );
 
     // constructor value
     window.assert && assert.throws( () => {
@@ -67,7 +67,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
     }, 'cannot use same string value from other EnumerationDeprecated instance' );
 
     // new instance of birdProperty since it got messed up in the above assert.
-    birdProperty = new EnumerationProperty( Birds1, Birds1.ROBIN );
+    birdProperty = new EnumerationDeprecatedProperty( Birds1, Birds1.ROBIN );
 
     birdProperty.set( Birds1.WREN );
 
@@ -84,7 +84,7 @@ QUnit.test( 'validValues as a subset of EnumerationDeprecated values', assert =>
   assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
 
 
-  const enumerationProperty1 = new EnumerationProperty( Birds1, Birds1.ROBIN, { validValues: [ Birds1.ROBIN, Birds1.JAY ] } );
+  const enumerationProperty1 = new EnumerationDeprecatedProperty( Birds1, Birds1.ROBIN, { validValues: [ Birds1.ROBIN, Birds1.JAY ] } );
 
   enumerationProperty1.value = Birds1.JAY;
   assert.ok( enumerationProperty1.value === Birds1.JAY, 'basic test for when assertions are not enabled' );

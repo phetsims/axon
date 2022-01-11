@@ -14,7 +14,7 @@ import './DynamicPropertyTests.js';
 import './EmitterIOTests.js';
 import './EmitterTests.js';
 import './EnabledComponentTests.js';
-import './EnumerationPropertyTests.js';
+import './EnumerationPropertyDeprecatedTests.js';
 import './NumberPropertyTests.js';
 import './PropertyStateHandlerTests.js';
 import './PropertyTests.js';

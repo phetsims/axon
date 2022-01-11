@@ -15,7 +15,7 @@ import './CallbackTimer.js';
 import './DerivedProperty.js';
 import './DynamicProperty.js';
 import './Emitter.js';
-import './EnumerationProperty.js';
+import './EnumerationDeprecatedProperty.js';
 import './Multilink.js';
 import './NumberProperty.js';
 import './createObservableArray.js';

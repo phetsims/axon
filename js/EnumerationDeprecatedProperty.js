@@ -11,7 +11,7 @@ import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
 
-class EnumerationProperty extends Property {
+class EnumerationDeprecatedProperty extends Property {
 
   /**
    * @param {EnumerationDeprecated} enumeration
@@ -23,12 +23,12 @@ class EnumerationProperty extends Property {
 
     if ( options ) {
 
-      // client cannot specify superclass options that are not supported by EnumerationProperty
-      assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'EnumerationProperty does not support isValidValue' );
+      // client cannot specify superclass options that are not supported by EnumerationDeprecatedProperty
+      assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'EnumerationDeprecatedProperty does not support isValidValue' );
 
-      // client cannot specify superclass options that are controlled by EnumerationProperty
-      assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationProperty sets valueType' );
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationProperty sets phetioType' );
+      // client cannot specify superclass options that are controlled by EnumerationDeprecatedProperty
+      assert && assert( !options.hasOwnProperty( 'valueType' ), 'EnumerationDeprecatedProperty sets valueType' );
+      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'EnumerationDeprecatedProperty sets phetioType' );
     }
 
     options = merge( {
@@ -44,5 +44,5 @@ class EnumerationProperty extends Property {
   }
 }
 
-axon.register( 'EnumerationProperty', EnumerationProperty );
-export default EnumerationProperty;
+axon.register( 'EnumerationDeprecatedProperty', EnumerationDeprecatedProperty );
+export default EnumerationDeprecatedProperty;

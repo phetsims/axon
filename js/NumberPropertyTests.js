@@ -91,7 +91,7 @@ QUnit.test( 'Test NumberProperty', assert => {
 
   window.assert && assert.throws( () => {
     p = new NumberProperty( 0, { phetioType: NumberIO } );
-  }, 'EnumerationProperty sets phetioType' );
+  }, 'EnumerationDeprecatedProperty sets phetioType' );
 
   assert.ok( true, 'one assertion for when assert is not enabled' );
 
