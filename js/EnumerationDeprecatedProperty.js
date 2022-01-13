@@ -6,7 +6,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
+import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';

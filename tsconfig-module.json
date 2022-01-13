@@ -16,7 +16,6 @@
   "include": [
     "../axon/js/**/*",
     "../tandem/js/**/*",
-    "../phet-core/js/EnumerationIO.js",
     "../dot/js/Range.js",
     "../dot/js/dot.js",
     "../chipper/phet-types.d.ts",

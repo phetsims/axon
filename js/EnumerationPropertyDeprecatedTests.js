@@ -7,7 +7,7 @@
  */
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
+import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import EnumerationDeprecatedProperty from './EnumerationDeprecatedProperty.js';
 
 QUnit.module( 'EnumerationDeprecatedProperty' );

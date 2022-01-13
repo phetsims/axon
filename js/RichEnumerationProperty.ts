@@ -7,7 +7,7 @@
  */
 
 import Property, { PropertyOptions } from './Property.js';
-import RichEnumerationIO from './RichEnumerationIO.js';
+import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 
@@ -26,7 +26,7 @@ class RichEnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
     const options = merge( {}, providedOptions, {
       validValues: value.enumeration!.values,
-      phetioType: Property.PropertyIO( RichEnumerationIO<T>( {
+      phetioType: Property.PropertyIO( EnumerationIO<T>( {
         enumeration: value.enumeration!
       } ) )
     } );
