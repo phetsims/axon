@@ -14,8 +14,8 @@ type StringEnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues
 class StringEnumerationProperty<T> extends Property<T> {
   constructor( values: readonly T[], value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
 
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by RichEnumerationProperty' );
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by RichEnumerationProperty' );
+    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by EnumerationProperty' );
+    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by EnumerationProperty' );
 
     const options = merge( {}, providedOptions, {
       validValues: values,

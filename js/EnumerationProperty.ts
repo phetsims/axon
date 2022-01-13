@@ -11,18 +11,18 @@ import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 
-type RichEnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues' | 'phetioType'>;
+type EnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues' | 'phetioType'>;
 
-class RichEnumerationProperty<T extends EnumerationValue> extends Property<T> {
+class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
   /**
    * @param value
    * @param providedOptions
    */
-  constructor( value: T, providedOptions?: RichEnumerationPropertyOptions<T> ) {
+  constructor( value: T, providedOptions?: EnumerationPropertyOptions<T> ) {
 
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by RichEnumerationProperty' );
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by RichEnumerationProperty' );
+    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by EnumerationProperty' );
+    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by EnumerationProperty' );
 
     const options = merge( {}, providedOptions, {
       validValues: value.enumeration!.values,
@@ -35,4 +35,4 @@ class RichEnumerationProperty<T extends EnumerationValue> extends Property<T> {
   }
 }
 
-export default RichEnumerationProperty;
+export default EnumerationProperty;
