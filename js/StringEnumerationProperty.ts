@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 import Property, { PropertyOptions } from './Property.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import merge from '../../phet-core/js/merge.js';
