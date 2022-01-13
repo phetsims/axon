@@ -179,7 +179,7 @@ const ValidatorDef = {
             valueType === null ||
             valueType === undefined ) ) {
       assert && options.assertions && assert( false,
-        `valueType must be {function|string|Enumeration|null|undefined}, valueType=${valueType}` );
+        `valueType must be {function|string|EnumerationDeprecated|null|undefined}, valueType=${valueType}` );
       return false;
     }
 
@@ -354,7 +354,7 @@ const ValidatorDef = {
       return false;
     }
     else if ( valueType instanceof EnumerationDeprecated && !valueType.includes( value ) ) {
-      assert && assert( false, this.formulateAssertionMessage( `value is not a member of Enumeration ${valueType}`, message ) );
+      assert && assert( false, this.formulateAssertionMessage( `value is not a member of EnumerationDeprecated ${valueType}`, message ) );
       return false;
     }
     else if ( typeof valueType === 'function' && !( value instanceof valueType ) ) { // constructor
