@@ -10,22 +10,14 @@
 import merge from '../../phet-core/js/merge.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 
 // constants
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
-/**
- * @extends Property<boolean>
- */
-class BooleanProperty extends Property {
+class BooleanProperty extends Property<boolean> {
 
-  /**
-   * @param {boolean} value - initial value
-   * @param {Object} [options]
-   * @constructor
-   */
-  constructor( value, options ) {
+  constructor( value: boolean, options: PropertyOptions<boolean> ) {
 
     if ( options ) {
 
@@ -46,9 +38,6 @@ class BooleanProperty extends Property {
     super( value, options );
   }
 
-  /**
-   * @public
-   */
   toggle() {
     this.value = !this.value;
   }
