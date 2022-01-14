@@ -7,6 +7,7 @@
  */
 
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
 import Property from './Property.js';
@@ -19,6 +20,7 @@ class EnumerationDeprecatedProperty extends Property {
    * @param {Object} [options]
    */
   constructor( enumeration, initialValue, options ) {
+    assert && assert( enumeration instanceof EnumerationDeprecated, 'likely you are using the new and improved Enumeration, better use EnumerationProperty too.' );
     assert && assert( enumeration.VALUES.includes( initialValue ), `invalid initialValue: ${initialValue}` );
 
     if ( options ) {
