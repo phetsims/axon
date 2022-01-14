@@ -17,7 +17,7 @@ const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
 class BooleanProperty extends Property<boolean> {
 
-  constructor( value: boolean, options: PropertyOptions<boolean> ) {
+  constructor( value: boolean, options?: PropertyOptions<boolean> ) {
 
     if ( options ) {
 
