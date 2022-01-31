@@ -18,7 +18,7 @@ type EmitContext = {
 };
 type Listener<T extends any[]> = ( ...args: T ) => void;
 
-class TinyEmitter<T extends any[]> {
+class TinyEmitter<T extends any[] = []> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
   // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.
