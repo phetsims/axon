@@ -11,7 +11,7 @@ import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import merge from '../../phet-core/js/merge.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 
-type EnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues' | 'phetioType'>;
+type EnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'phetioType'>;
 
 class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
@@ -21,15 +21,12 @@ class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
    */
   constructor( value: T, providedOptions?: EnumerationPropertyOptions<T> ) {
 
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'validValues' ), 'validValues is supplied by EnumerationProperty' );
-    assert && assert( !providedOptions || !providedOptions.hasOwnProperty( 'phetioType' ), 'phetioType is supplied by EnumerationProperty' );
-
-    const options = merge( {}, providedOptions, {
+    const options = merge( {
       validValues: value.enumeration!.values,
       phetioType: Property.PropertyIO( EnumerationIO<T>( {
         enumeration: value.enumeration!
       } ) )
-    } );
+    }, providedOptions );
 
     super( value, options );
   }
