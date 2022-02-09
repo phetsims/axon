@@ -7,21 +7,22 @@
  * @author Michael Kauzmann(PhET Interactive Simulations)
  */
 
-import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import axon from './axon.js';
-import BooleanProperty from './BooleanProperty.js';
+import BooleanProperty, { BooleanPropertyOptions } from './BooleanProperty.js';
 
 const TANDEM_NAME = 'enabledProperty';
 
+type EnabledPropertySelfOptions = {
+  checkTandemName?: boolean;
+};
+
+type EnabledPropertyOptions = EnabledPropertySelfOptions & BooleanPropertyOptions;
+
 class EnabledProperty extends BooleanProperty {
+  constructor( initialEnabled: boolean, providedOptions?: EnabledPropertyOptions ) {
 
-  /**
-   * @param {boolean} initialEnabled
-   * @param {Object} [options]
-   */
-  constructor( initialEnabled, options ) {
-
-    options = merge( {
+    const options = optionize<EnabledPropertyOptions, EnabledPropertySelfOptions, BooleanPropertyOptions>( {
       phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
       phetioFeatured: true,
 
@@ -30,7 +31,7 @@ class EnabledProperty extends BooleanProperty {
       // you can opt out of the name check. This should be used sparingly. For instance, for the example above, it may
       // be better to do this.mass1.enabledProperty anyways.
       checkTandemName: true
-    }, options );
+    }, providedOptions );
 
     if ( assert && options && options.tandem && options.tandem.supplied && options.checkTandemName ) {
       assert && assert( options.tandem.name === TANDEM_NAME, `EnabledProperty tandems should be named ${TANDEM_NAME}` );
@@ -39,12 +40,9 @@ class EnabledProperty extends BooleanProperty {
     super( initialEnabled, options );
   }
 
-  /**
-   * @public
-   * @returns {string}
-   */
-  static get TANDEM_NAME() { return TANDEM_NAME; }
+  static get TANDEM_NAME(): string { return TANDEM_NAME; }
 }
 
 axon.register( 'EnabledProperty', EnabledProperty );
 export default EnabledProperty;
+export type { EnabledPropertyOptions };

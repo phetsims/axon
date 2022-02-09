@@ -9,78 +9,77 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import EnabledProperty from './EnabledProperty.js';
+import EnabledProperty, { EnabledPropertyOptions } from './EnabledProperty.js';
 import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
+import IProperty from './IProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {
-
-  // {Property.<boolean>} if not provided, a Property will be created
   enabledProperty: null,
-
-  // {boolean} initial value of enabledProperty if we create it, ignored if enabledProperty is provided
   enabled: true,
-
-  // {Object|null} options to enabledProperty if we create it, ignored if enabledProperty is provided
   enabledPropertyOptions: null,
-
-  // {boolean} - Whether or not the default-created enabledProperty should be instrumented for PhET-iO. Ignored if
-  // options.enabledProperty is provided.
   phetioEnabledPropertyInstrumented: true,
+  tandem: Tandem.OPTIONAL
+} as const;
+
+type EnabledComponentOptions = {
+  // if not provided, a Property will be created
+  enabledProperty?: IProperty<boolean> | null;
+
+  // initial value of enabledProperty if we create it, ignored if enabledProperty is provided
+  enabled?: boolean;
+
+  // options to enabledProperty if we create it, ignored if enabledProperty is provided
+  enabledPropertyOptions?: EnabledPropertyOptions | null;
+
+  // Whether or not the default-created enabledProperty should be instrumented for PhET-iO. Ignored if
+  // options.enabledProperty is provided.
+  phetioEnabledPropertyInstrumented?: boolean;
 
   // phet-io
-  tandem: Tandem.OPTIONAL
+  tandem?: Tandem;
 };
 
 class EnabledComponent {
 
-  /**
-   * @param {Object} [options]
-   */
-  constructor( options ) {
-    options = merge( {}, DEFAULT_OPTIONS, options );
+  enabledProperty: IProperty<boolean>;
+
+  private disposeEnabledComponent: () => void;
+
+  constructor( providedOptions?: EnabledComponentOptions ) {
+    const options = optionize<EnabledComponentOptions, EnabledComponentOptions>( {}, DEFAULT_OPTIONS, providedOptions );
 
     const ownsEnabledProperty = !options.enabledProperty;
 
     assert && options.enabledPropertyOptions && assert( !( !options.phetioEnabledPropertyInstrumented && options.enabledPropertyOptions.tandem ),
       'incompatible options. Cannot specify phetioEnabledPropertyInstrumented opt out and a Tandem via enabledPropertyOptions.' );
 
-    // @public
     this.enabledProperty = options.enabledProperty || new EnabledProperty( options.enabled, merge( {
       tandem: options.phetioEnabledPropertyInstrumented ? options.tandem.createTandem( EnabledProperty.TANDEM_NAME ) : Tandem.OPT_OUT
     }, options.enabledPropertyOptions ) );
 
-    // @private - called by dispose
     this.disposeEnabledComponent = () => {
       ownsEnabledProperty && this.enabledProperty.dispose();
     };
   }
 
-  /**
-   * @public
-   * @param {boolean} enabled
-   */
-  setEnabled( enabled ) { this.enabledProperty.value = enabled; }
+  setEnabled( enabled: boolean ) { this.enabledProperty.value = enabled; }
 
-  // @public
-  set enabled( value ) { this.setEnabled( value ); }
+  set enabled( value: boolean ) { this.setEnabled( value ); }
 
-  /**
-   * @public
-   * @returns {boolean}
-   */
-  isEnabled() { return this.enabledProperty.value; }
+  isEnabled(): boolean { return this.enabledProperty.value; }
 
-  // @public
-  get enabled() { return this.isEnabled(); }
+  get enabled(): boolean { return this.isEnabled(); }
 
-  // @public
   dispose() {
     this.disposeEnabledComponent();
   }
 }
 
 axon.register( 'EnabledComponent', EnabledComponent );
+
 export default EnabledComponent;
+export type { EnabledComponentOptions };

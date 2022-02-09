@@ -10,6 +10,7 @@
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -19,22 +20,76 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import ValidatorDef from './ValidatorDef.js';
 
-/**
- * @param {Object} [options]
- * @returns {ObservableArrayDef}
- */
-const createObservableArray = options => {
+// NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
+type ObservableArrayListener<T> = ( element: T ) => void;
+type Predicate<T> = ( element: T ) => boolean;
+type ObservableArrayStateObject<T> = { array: any[] }; // eslint-disable-line -- futureproof type param if we type this
+type FakeRandom<T> = { shuffle: ( arr: T[] ) => T[] }; // // We don't import because of the repo dependency
+type ObservableArrayOptions<T> = {
+  length?: number;
+  elements?: T[];
+  tandem?: Tandem;
 
-  assertMutuallyExclusiveOptions( options, [ 'length' ], [ 'elements' ] );
+  // Possibly passed through to the Emitter
+  phetioType?: IOType;
+  phetioState?: boolean;
+  phetioDocumentation?: string;
+};
+type ObservableArray<T> = {
+  // NOTE: Do we want to return T to avoid checks?
+  get: ( index: number ) => T | undefined;
 
-  options = merge( {
+  addItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
+  removeItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
+  addItemRemovedListener: ( listener: ObservableArrayListener<T> ) => void;
+  removeItemRemovedListener: ( listener: ObservableArrayListener<T> ) => void;
+  add: ( element: T ) => void;
+  addAll: ( elements: T[] ) => void;
+  remove: ( element: T ) => void;
+  removeAll: ( elements: T[] ) => void;
+  clear: () => void;
+  count: ( predicate: Predicate<T> ) => number;
+  find: ( predicate: Predicate<T>, fromIndex?: number ) => T | undefined,
+  shuffle: ( random: FakeRandom<T> ) => void;
+  getArrayCopy: () => T[];
+  dispose: () => void;
+  toStateObject: () => ObservableArrayStateObject<T>;
+  applyState: ( state: ObservableArrayStateObject<T> ) => void;
+
+  // listen only please
+  elementAddedEmitter: Emitter<[T]>;
+  elementRemovedEmitter: Emitter<[T]>;
+  lengthProperty: NumberProperty;
+
+  //TODO https://github.com/phetsims/axon/issues/334 Move to "prototype" above or drop support
+  reset: () => void;
+
+  // Possibly passed through to the Emitter
+  phetioElementType?: IOType;
+} & T[];
+
+// Typed for internal usage
+type PrivateObservableArray<T> = {
+  // Make it possible to use the targetArray in the overridden methods.
+  targetArray: T[];
+
+  observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
+} & ObservableArray<T>;
+
+type SpecifiedObservableArrayOptions<T> = Omit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
+
+const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> ): ObservableArray<T> => {
+
+  assertMutuallyExclusiveOptions( providedOptions, [ 'length' ], [ 'elements' ] );
+
+  const options = optionize<ObservableArrayOptions<T>, SpecifiedObservableArrayOptions<T>>( {
 
     // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
 
     length: 0,
     elements: [],
     tandem: Tandem.OPTIONAL
-  }, options );
+  }, providedOptions );
 
   let emitterParameterOptions = null;
   if ( options.phetioType ) {
@@ -42,7 +97,10 @@ const createObservableArray = options => {
     assert && assert( options.phetioType.typeName.startsWith( 'ObservableArrayIO' ) );
     emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
   }
+  // NOTE: Improve with ValidatorDef
+  // @ts-ignore
   else if ( ValidatorDef.isValidValidator( options ) ) {
+    // @ts-ignore
     const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
     emitterParameterOptions = merge( { name: 'value' }, validator );
   }
@@ -51,13 +109,13 @@ const createObservableArray = options => {
   }
 
   // notifies when an element has been added
-  const elementAddedEmitter = new Emitter( {
+  const elementAddedEmitter = new Emitter<[T]>( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
 
   // notifies when an element has been removed
-  const elementRemovedEmitter = new Emitter( {
+  const elementRemovedEmitter = new Emitter<[T]>( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
@@ -70,7 +128,7 @@ const createObservableArray = options => {
   } );
 
   // The underlying array which is wrapped by the Proxy
-  const targetArray = [];
+  const targetArray: T[] = [];
 
   // Verify that lengthProperty is updated before listeners are notified, but not when setting PhET-iO State,
   // This is because we cannot specify ordering dependencies between Properties and ObservableArrays,
@@ -91,7 +149,7 @@ const createObservableArray = options => {
   } );
 
   // The Proxy which will intercept method calls and trigger notifications.
-  const observableArray = new Proxy( targetArray, {
+  const observableArray: PrivateObservableArray<T> = new Proxy( targetArray, {
 
     /**
      * Trap for getting a property or method.
@@ -101,9 +159,10 @@ const createObservableArray = options => {
      * @returns {*} - the requested value
      * @private
      */
-    get: function( array, key, receiver ) {
+    get: function( array: T[], key: string | symbol, receiver ): any {
       assert && assert( array === targetArray, 'array should match the targetArray' );
       if ( methods.hasOwnProperty( key ) ) {
+        // @ts-ignore
         return methods[ key ];
       }
       else {
@@ -113,15 +172,14 @@ const createObservableArray = options => {
 
     /**
      * Trap for setting a property value.
-     * @param {Object[]} array - the targetArray
-     * @param {string} key
+     * @param array - the targetArray
+     * @param key
      * @param {*} newValue
-     * @returns {boolean} - success
-     * @private
+     * @returns - success
      */
-    set: function( array, key, newValue ) {
+    set: function( array: T[], key: string | symbol, newValue: any ): boolean {
       assert && assert( array === targetArray, 'array should match the targetArray' );
-      const oldValue = array[ key ];
+      const oldValue = array[ key as any ];
 
       let removedElements = null;
 
@@ -138,7 +196,7 @@ const createObservableArray = options => {
         lengthProperty.value = array.length;
 
         if ( oldValue !== undefined ) {
-          elementRemovedEmitter.emit( array[ key ] );
+          elementRemovedEmitter.emit( array[ key as any ] );
         }
         if ( newValue !== undefined ) {
           elementAddedEmitter.emit( newValue );
@@ -155,12 +213,12 @@ const createObservableArray = options => {
 
     /**
      * This is the trap for the delete operator.
-     * @param {Object[]} array - the targetArray
-     * @param {string} key
-     * @returns {boolean} - success
+     * @param array - the targetArray
+     * @param key
+     * @returns success
      * @private
      */
-    deleteProperty: function( array, key ) {
+    deleteProperty: function( array: T[], key: string | symbol ): boolean {
       assert && assert( array === targetArray, 'array should match the targetArray' );
 
       // If we're using the bracket operator [index] of Array, then parse the index between the brackets.
@@ -168,7 +226,7 @@ const createObservableArray = options => {
 
       let removed;
       if ( Number.isInteger( numberKey ) && numberKey >= 0 ) {
-        removed = array[ key ];
+        removed = array[ key as any ];
       }
       const returnValue = Reflect.deleteProperty( array, key );
       if ( removed !== undefined ) {
@@ -177,12 +235,9 @@ const createObservableArray = options => {
 
       return returnValue;
     }
-  } );
+  } ) as PrivateObservableArray<T>;
 
-  // @private - Make it possible to use the targetArray in the overridden methods above.
   observableArray.targetArray = targetArray;
-
-  // @public (listen only)
   observableArray.elementAddedEmitter = elementAddedEmitter;
   observableArray.elementRemovedEmitter = elementRemovedEmitter;
   observableArray.lengthProperty = lengthProperty;
@@ -208,7 +263,9 @@ const createObservableArray = options => {
    * PhET-iO support
    *******************************************/
   if ( options.tandem.supplied ) {
-    observableArray.phetioElementType = options.phetioType.parameterTypes[ 0 ];
+    assert && assert( options.phetioType );
+
+    observableArray.phetioElementType = options.phetioType!.parameterTypes[ 0 ];
 
     // @private - for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
@@ -223,13 +280,16 @@ const createObservableArray = options => {
  * provides that functionality.
  * @private
  */
-class ObservableArrayPhetioObject extends PhetioObject {
+class ObservableArrayPhetioObject<T> extends PhetioObject {
+
+  // internal, don't use
+  observableArray: ObservableArray<T>;
 
   /**
-   * @param {ObservableArrayDef} observableArray
-   * @param {Object} [options] - same as the options to the parent ObservableArrayDef
+   * @param observableArray
+   * @param [options] - same as the options to the parent ObservableArrayDef
    */
-  constructor( observableArray, options ) {
+  constructor( observableArray: ObservableArray<T>, options?: ObservableArrayOptions<T> ) {
 
     options = merge( {
       phetioType: ObservableArrayIO
@@ -237,7 +297,6 @@ class ObservableArrayPhetioObject extends PhetioObject {
 
     super( options );
 
-    // @private
     this.observableArray = observableArray;
   }
 }
@@ -250,68 +309,82 @@ const methods = {
    *******************************************/
 
   // @public
-  pop( ...args ) {
-    const initialLength = this.targetArray.length;
-    const returnValue = Array.prototype.pop.apply( this.targetArray, args );
-    this.lengthProperty.value = this.length;
-    initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
+  pop( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const initialLength = thisArray.targetArray.length;
+    const returnValue = Array.prototype.pop.apply( thisArray.targetArray, args as any );
+    thisArray.lengthProperty.value = thisArray.length;
+    initialLength > 0 && thisArray.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
 
   // @public
-  shift( ...args ) {
-    const initialLength = this.targetArray.length;
-    const returnValue = Array.prototype.shift.apply( this.targetArray, args );
-    this.lengthProperty.value = this.length;
-    initialLength > 0 && this.elementRemovedEmitter.emit( returnValue );
+  shift( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const initialLength = thisArray.targetArray.length;
+    const returnValue = Array.prototype.shift.apply( thisArray.targetArray, args as any );
+    thisArray.lengthProperty.value = thisArray.length;
+    initialLength > 0 && thisArray.elementRemovedEmitter.emit( returnValue );
     return returnValue;
   },
 
   // @public
-  push( ...args ) {
-    const returnValue = Array.prototype.push.apply( this.targetArray, args );
-    this.lengthProperty.value = this.length;
+  push( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const returnValue = Array.prototype.push.apply( thisArray.targetArray, args );
+    thisArray.lengthProperty.value = thisArray.length;
     for ( let i = 0; i < arguments.length; i++ ) {
-      this.elementAddedEmitter.emit( args[ i ] );
+      thisArray.elementAddedEmitter.emit( args[ i ] );
     }
     return returnValue;
   },
 
   // @public
-  unshift( ...args ) {
-    const returnValue = Array.prototype.unshift.apply( this.targetArray, args );
-    this.lengthProperty.value = this.length;
+  unshift( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const returnValue = Array.prototype.unshift.apply( thisArray.targetArray, args );
+    thisArray.lengthProperty.value = thisArray.length;
     for ( let i = 0; i < args.length; i++ ) {
-      this.elementAddedEmitter.emit( args[ i ] );
+      thisArray.elementAddedEmitter.emit( args[ i ] );
     }
     return returnValue;
   },
 
   // @public
-  splice( ...args ) {
-    const returnValue = Array.prototype.splice.apply( this.targetArray, args );
-    this.lengthProperty.value = this.length;
+  splice( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const returnValue = Array.prototype.splice.apply( thisArray.targetArray, args as any );
+    thisArray.lengthProperty.value = thisArray.length;
     const deletedElements = returnValue;
     for ( let i = 2; i < args.length; i++ ) {
-      this.elementAddedEmitter.emit( args[ i ] );
+      thisArray.elementAddedEmitter.emit( args[ i ] );
     }
-    deletedElements.forEach( deletedElement => this.elementRemovedEmitter.emit( deletedElement ) );
+    deletedElements.forEach( deletedElement => thisArray.elementRemovedEmitter.emit( deletedElement ) );
     return returnValue;
   },
 
   // @public
-  copyWithin( ...args ) {
-    const before = this.targetArray.slice();
-    const returnValue = Array.prototype.copyWithin.apply( this.targetArray, args );
-    reportDifference( before, this );
+  copyWithin( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const before = thisArray.targetArray.slice();
+    const returnValue = Array.prototype.copyWithin.apply( thisArray.targetArray, args as any );
+    reportDifference( before, thisArray );
     return returnValue;
   },
 
   // @public
-  fill( ...args ) {
-    const before = this.targetArray.slice();
-    const returnValue = Array.prototype.fill.apply( this.targetArray, args );
-    reportDifference( before, this );
+  fill( ...args: any[] ): any {
+    const thisArray = this as PrivateObservableArray<any>;
+
+    const before = thisArray.targetArray.slice();
+    const returnValue = Array.prototype.fill.apply( thisArray.targetArray, args as any );
+    reportDifference( before, thisArray );
     return returnValue;
   },
 
@@ -322,46 +395,46 @@ const methods = {
    *******************************************/
 
   // @public
-  get: function( index ) {return this[ index ];},
+  get: function( index: number ) { return ( this as PrivateObservableArray<any> )[ index ]; },
 
   // @public
-  addItemAddedListener: function( listener ) { this.elementAddedEmitter.addListener( listener ); },
+  addItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.addListener( listener ); },
 
   // @public
-  removeItemAddedListener: function( listener ) { this.elementAddedEmitter.removeListener( listener ); },
+  removeItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.removeListener( listener ); },
 
   // @public
-  addItemRemovedListener: function( listener ) { this.elementRemovedEmitter.addListener( listener ); },
+  addItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.addListener( listener ); },
 
   // @public
-  removeItemRemovedListener: function( listener ) { this.elementRemovedEmitter.removeListener( listener ); },
+  removeItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.removeListener( listener ); },
 
   // @public
-  add: function( element ) { this.push( element );},
+  add: function( element: any ) { ( this as PrivateObservableArray<any> ).push( element );},
 
   // @public
-  addAll: function( elements ) { this.push( ...elements );},
+  addAll: function( elements: any[] ) { ( this as PrivateObservableArray<any> ).push( ...elements );},
 
   // @public
-  remove: function( element ) { arrayRemove( this, element );},
+  remove: function( element: any ) { arrayRemove( ( this as PrivateObservableArray<any> ), element );},
 
   // @public
-  removeAll: function( elements ) {
-    elements.forEach( element => arrayRemove( this, element ) );
+  removeAll: function( elements: any[] ) {
+    elements.forEach( element => arrayRemove( ( this as PrivateObservableArray<any> ), element ) );
   },
 
   // @public
   clear: function() {
-    while ( this.length > 0 ) {
-      this.pop();
+    while ( ( this as PrivateObservableArray<any> ).length > 0 ) {
+      ( this as PrivateObservableArray<any> ).pop();
     }
   },
 
   // @public
-  count: function( predicate ) {
+  count: function( predicate: Predicate<any> ) {
     let count = 0;
-    for ( let i = 0; i < this.length; i++ ) {
-      if ( predicate( this[ i ] ) ) {
+    for ( let i = 0; i < ( this as PrivateObservableArray<any> ).length; i++ ) {
+      if ( predicate( ( this as PrivateObservableArray<any> )[ i ] ) ) {
         count++;
       }
     }
@@ -369,35 +442,36 @@ const methods = {
   },
 
   // @public
-  find: function( predicate, fromIndex ) {
+  find: function( predicate: Predicate<any>, fromIndex?: number ) {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
-    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
+    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < ( this as PrivateObservableArray<any> ).length,
       `fromIndex out of bounds: ${fromIndex}` );
-    return _.find( this, predicate, fromIndex );
+    return _.find( ( this as PrivateObservableArray<any> ), predicate, fromIndex );
   },
 
   // @public
-  shuffle: function( random ) {
+  shuffle: function( random: FakeRandom<any> ) {
     assert && assert( random, 'random must be supplied' );
 
     // preserve the same _array reference in case any clients got a reference to it with getArray()
-    const shuffled = random.shuffle( this );
+    const shuffled = random.shuffle( ( this as PrivateObservableArray<any> ) );
 
     // Act on the targetArray so that removal and add notifications aren't sent.
-    this.targetArray.length = 0;
-    Array.prototype.push.apply( this.targetArray, shuffled );
+    ( this as PrivateObservableArray<any> ).targetArray.length = 0;
+    Array.prototype.push.apply( ( this as PrivateObservableArray<any> ).targetArray, shuffled );
   },
 
   // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
   // @public
-  getArrayCopy: function() { return this.slice(); },
+  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
 
   // @public
   dispose: function() {
-    this.elementAddedEmitter.dispose();
-    this.elementRemovedEmitter.dispose();
-    this.lengthProperty.dispose();
-    this.observableArrayPhetioObject && this.observableArrayPhetioObject.dispose();
+    const thisArray = this as PrivateObservableArray<any>;
+    thisArray.elementAddedEmitter.dispose();
+    thisArray.elementRemovedEmitter.dispose();
+    thisArray.lengthProperty.dispose();
+    thisArray.observableArrayPhetioObject && thisArray.observableArrayPhetioObject.dispose();
   },
 
   /******************************************
@@ -406,13 +480,13 @@ const methods = {
 
   // @public
   toStateObject: function() {
-    return { array: this.map( item => this.phetioElementType.toStateObject( item ) ) };
+    return { array: ( this as PrivateObservableArray<any> ).map( item => ( this as PrivateObservableArray<any> ).phetioElementType!.toStateObject( item ) ) };
   },
 
   // @public
-  applyState: function( stateObject ) {
-    this.length = 0;
-    const elements = stateObject.array.map( paramStateObject => this.phetioElementType.fromStateObject( paramStateObject ) );
+  applyState: function( stateObject: ObservableArrayStateObject<any> ) {
+    ( this as PrivateObservableArray<any> ).length = 0;
+    const elements = stateObject.array.map( paramStateObject => ( this as PrivateObservableArray<any> ).phetioElementType!.fromStateObject( paramStateObject ) );
     this.push( ...elements );
   }
 };
@@ -420,10 +494,8 @@ const methods = {
 /**
  * For copyWithin and fill, which have more complex behavior, we treat the array as a black box, making a shallow copy
  * before the operation in order to identify what has been added and removed.
- * @param {Object[]} shallowCopy
- * @param {ObservableArrayDef} observableArray
  */
-const reportDifference = ( shallowCopy, observableArray ) => {
+const reportDifference = ( shallowCopy: any[], observableArray: PrivateObservableArray<any> ) => {
 
   const before = shallowCopy;
   const after = observableArray.targetArray.slice();
@@ -449,13 +521,13 @@ const cache = new Map();
  * ObservableArrayIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
  * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
-const ObservableArrayIO = parameterType => {
+const ObservableArrayIO = ( parameterType: IOType ) => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
       valueType: ObservableArrayPhetioObject,
       parameterTypes: [ parameterType ],
-      toStateObject: observableArrayPhetioObject => observableArrayPhetioObject.observableArray.toStateObject(),
-      applyState: ( observableArrayPhetioObject, state ) => observableArrayPhetioObject.observableArray.applyState( state ),
+      toStateObject: ( observableArrayPhetioObject: ObservableArrayPhetioObject<any> ) => observableArrayPhetioObject.observableArray.toStateObject(),
+      applyState: ( observableArrayPhetioObject: ObservableArrayPhetioObject<any>, state: ObservableArrayStateObject<any> ) => observableArrayPhetioObject.observableArray.applyState( state ),
       stateSchema: {
         array: ArrayIO( parameterType )
       }
@@ -469,3 +541,5 @@ createObservableArray.ObservableArrayIO = ObservableArrayIO;
 
 axon.register( 'createObservableArray', createObservableArray );
 export default createObservableArray;
+export { ObservableArrayIO };
+export type { ObservableArray, ObservableArrayOptions };

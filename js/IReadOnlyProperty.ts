@@ -25,6 +25,8 @@ interface IReadOnlyProperty<T> {
   isPhetioInstrumented(): boolean;
   isSettable(): boolean;
   dispose(): void;
+
+  isDisposed?: boolean;
 }
 
 export type { IReadOnlyProperty as default, PropertyListener, PropertyLinkListener, PropertyLazyLinkListener };
