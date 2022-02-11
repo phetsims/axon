@@ -330,3 +330,4 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 
 axon.register( 'NumberProperty', NumberProperty );
 export default NumberProperty;
+export type { NumberPropertyOptions };
