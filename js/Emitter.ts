@@ -9,35 +9,40 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
-import Action from './Action.js';
+import Action, { ActionOptions } from './Action.js';
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-// This JSDoc template attribute allows us to treate Property as a generic type with type parameter T. TypeScript
-// knows how to read this template variable, and gives correct type information for Emitter<[T]>.
-// For instance, new Emitter<[]>() or new Emitter<[number,string]>()
-// See https://stackoverflow.com/a/19322784/1009071
-/** @template T */
-class Emitter extends Action {
+type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
 
-  /**
-   * @param {Object} [options]
-   */
-  constructor( options ) {
+type EmitterSelfOptions = {
+  onBeforeNotify?: ( () => void ) | null
+};
+type EmitterOptions = EmitterSelfOptions & ActionOptions;
 
-    options = merge( {
+class Emitter<T extends IntentionalAny[] = []> extends Action<T> {
+
+  private readonly tinyEmitter: TinyEmitter<T>;
+
+  static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
+
+  constructor( providedOptions?: EmitterOptions ) {
+
+    const options = optionize<EmitterOptions, EmitterSelfOptions, ActionOptions>( {
+
       phetioOuterType: Emitter.EmitterIO,
 
-      // {function()|null} - if specified, runs before listeners are notified. Typically used to ensure a consistent state
-      //                   - or accomplish any work that must be done before any listeners are notified.
+      // if specified, runs before listeners are notified. Typically used to ensure a consistent state or accomplish any
+      // work that must be done before any listeners are notified.
       onBeforeNotify: null
-    }, options );
+    }, providedOptions );
 
-    super( ( ...args ) => {
+    super( ( ...args: T ) => {
       assert && assert( self.tinyEmitter instanceof TinyEmitter,
         'Emitter should not emit until after its constructor has completed' );
 
@@ -46,15 +51,13 @@ class Emitter extends Action {
 
     const self = this;
 
-    // @private - provide Emitter functionality via composition
+    // provide Emitter functionality via composition
     this.tinyEmitter = new TinyEmitter( options.onBeforeNotify );
   }
 
   /**
    * Emitter instances should not be calling Action.execute, instead see Emitter.emit().
    * See the second half of https://github.com/phetsims/axon/issues/243 for discussion.
-   * @override
-   * @public
    */
   execute() {
     assert && assert( false, 'This should not be called, use Emitter.emit() instead.' );
@@ -62,17 +65,13 @@ class Emitter extends Action {
 
   /**
    * Emit to notify listeners; implemented by executing the action of the parent class.
-   * @public
-   * @param {T} args
    */
-  emit( ...args ) {
+  emit( ...args: T ) {
     super.execute.apply( this, args );
   }
 
   /**
    * Disposes an Emitter. All listeners are removed.
-   * @public
-   * @override
    */
   dispose() {
     this.tinyEmitter.dispose();
@@ -81,25 +80,20 @@ class Emitter extends Action {
 
   /**
    * Adds a listener which will be called during emit.
-   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
-   * @public
    */
-  addListener( listener ) {
+  addListener( listener: Listener<T> ) {
     this.tinyEmitter.addListener( listener );
   }
 
   /**
    * Removes a listener
-   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
-   * @public
    */
-  removeListener( listener ) {
+  removeListener( listener: Listener<T> ) {
     this.tinyEmitter.removeListener( listener );
   }
 
   /**
    * Removes all the listeners
-   * @public
    */
   removeAllListeners() {
     this.tinyEmitter.removeAllListeners();
@@ -107,18 +101,13 @@ class Emitter extends Action {
 
   /**
    * Checks whether a listener is registered with this Emitter
-   * @param {(v0:T[0],v1:T[1],v2:T[2])=>void} listener
-   * @returns {boolean}
-   * @public
    */
-  hasListener( listener ) {
+  hasListener( listener: Listener<T> ) {
     return this.tinyEmitter.hasListener( listener );
   }
 
   /**
    * Returns true if there are any listeners.
-   * @returns {boolean}
-   * @public
    */
   hasListeners() {
     return this.tinyEmitter.hasListeners();
@@ -126,16 +115,13 @@ class Emitter extends Action {
 
   /**
    * Returns the number of listeners.
-   * @returns {number}
-   * @public
    */
   getListenerCount() {
     return this.tinyEmitter.getListenerCount();
   }
 }
 
-
-const paramToTypeName = param => param.typeName;
+const paramToTypeName = ( param: IOType ) => param.typeName;
 
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
@@ -172,7 +158,7 @@ Emitter.EmitterIO = parameterTypes => {
         addListener: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: function( listener ) {
+          implementation: function( this: Emitter, listener: Listener<any> ) {
             this.addListener( listener );
           },
           documentation: 'Adds a listener which will be called when the emitter emits.'
@@ -180,7 +166,7 @@ Emitter.EmitterIO = parameterTypes => {
         removeListener: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: function( listener ) {
+          implementation: function( this: Emitter, listener: Listener<any> ) {
             this.removeListener( listener );
           },
           documentation: 'Remove a listener.'
@@ -190,7 +176,9 @@ Emitter.EmitterIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Emitter.emit`'s dynamic number of arguments
-          implementation: function( ...args ) {
+          implementation: function( this: Emitter, ...args: any[] ) {
+
+            // @ts-ignore
             this.emit( ...args );
           },
           documentation: 'Emits a single event to all listeners.',

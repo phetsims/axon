@@ -9,8 +9,8 @@
  */
 
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
-import merge from '../../phet-core/js/merge.js';
-import PhetioObject from '../../tandem/js/PhetioObject.js';
+import optionize from '../../phet-core/js/optionize.js';
+import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -21,8 +21,21 @@ import ValidatorDef from './ValidatorDef.js';
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
+type Constructor = new ( ...args: any[] ) => {};
+
+type ValueType = Constructor | string | null;
+
+type Parameter = {
+  name?: string;
+  phetioType?: IOType;
+  phetioDocumentation?: string;
+  phetioPrivate?: boolean;
+  valueType?: ValueType | ValueType[];
+  validValues?: any[]
+};
+
 // Simulations have thousands of Emitters, so we re-use objects where possible.
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: Parameter[] = [];
 assert && Object.freeze( EMPTY_ARRAY );
 
 // allowed keys to options.parameters
@@ -35,22 +48,36 @@ const PARAMETER_KEYS = [
   // the PhET-iO API, phetioPrivate parameters must not ever be before a public one. For example
   // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
   'phetioPrivate'
+
+  // @ts-ignore
 ].concat( ValidatorDef.VALIDATOR_KEYS );
 
 const PHET_IO_STATE_DEFAULT = false;
 
 // helper closures
-const paramToPhetioType = param => param.phetioType;
-const paramToName = param => param.name;
+const paramToPhetioType = ( param: Parameter ) => param.phetioType!;
+const paramToName = ( param: Parameter ) => param.name!;
 
-class Action extends PhetioObject {
+type ActionSelfOptions = {
+  parameters?: Parameter[];
+  phetioOuterType?: ( t: IOType[] ) => IOType;
+};
+export type ActionOptions = ActionSelfOptions & PhetioObjectOptions;
+
+class Action<T extends any[] = []> extends PhetioObject {
+
+  private readonly _parameters: Parameter[];
+  private readonly _action: () => void;
+  private readonly _phetioOuterType: ( t: IOType[] ) => IOType;
+
+  static ActionIO: ( parameterTypes: IOType[] ) => IOType;
 
   /**
-   * @param {function} action - the function that is called when this Action occurs
-   * @param {Object} [options]
+   * @param action - the function that is called when this Action occurs
+   * @param providedOptions
    */
-  constructor( action, options ) {
-    options = merge( {
+  constructor( action: ( ...args: T ) => any, providedOptions?: ActionOptions ) {
+    const options = optionize<ActionOptions, ActionSelfOptions, PhetioObjectOptions, 'tandem' | 'phetioDocumentation'>( {
 
       // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
       parameters: EMPTY_ARRAY,
@@ -65,7 +92,7 @@ class Action extends PhetioObject {
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
       phetioDocumentation: 'A function that executes.'
-    }, options );
+    }, providedOptions );
 
     assert && Action.validateParameters( options.parameters, options.tandem.supplied );
     assert && assert( typeof action === 'function', 'action should be a function' );
@@ -95,10 +122,9 @@ class Action extends PhetioObject {
     // @public (only for testing) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
     this._parameters = options.parameters;
 
-    // @private {function}
     this._action = action;
 
-    // @private - only needed for dispose, see options for doc
+    // only needed for dispose, see options for doc
     this._phetioOuterType = options.phetioOuterType;
   }
 
@@ -106,9 +132,8 @@ class Action extends PhetioObject {
    * @param {object} parameters
    * @param {boolean} tandemSupplied - proxy for whether the PhetioObject is instrumented.  We cannot call
    *                                 - PhetioObject.isPhetioInstrumented() until after the supercall, so we use this beforehand.
-   * @private
    */
-  static validateParameters( parameters, tandemSupplied ) {
+  private static validateParameters( parameters: Parameter[], tandemSupplied: boolean ) {
 
     // validate the parameters object
     validate( parameters, { valueType: Array } );
@@ -124,7 +149,7 @@ class Action extends PhetioObject {
       assert && assert( Object.getPrototypeOf( parameter ) === Object.prototype,
         'Extra prototype on parameter object is a code smell' );
 
-      reachedPhetioPrivate = reachedPhetioPrivate || parameter.phetioPrivate;
+      reachedPhetioPrivate = reachedPhetioPrivate || parameter.phetioPrivate!;
       assert && reachedPhetioPrivate && assert( parameter.phetioPrivate,
         'after first phetioPrivate parameter, all subsequent parameters must be phetioPrivate' );
 
@@ -136,6 +161,7 @@ class Action extends PhetioObject {
         'name', 'phetioType', 'phetioDocumentation'
       ] );
 
+      // @ts-ignore
       assert && assert( _.intersection( Object.keys( parameter ), ValidatorDef.VALIDATOR_KEYS ).length > 0,
         `validator must be specified for parameter ${i}` );
 
@@ -147,6 +173,7 @@ class Action extends PhetioObject {
       assert && Object.freeze( parameters[ i ] );
 
       // validate the options passed in to validate each Action argument
+      // @ts-ignore
       ValidatorDef.validateValidator( parameter );
     }
 
@@ -157,9 +184,8 @@ class Action extends PhetioObject {
   /**
    * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
    * @returns {Object} - the data, keys dependent on parameter metadata
-   * @private
    */
-  getPhetioData( ...args ) {
+  getPhetioData( ...args: T ) {
 
     assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
 
@@ -172,6 +198,8 @@ class Action extends PhetioObject {
       for ( let i = 0; i < this._parameters.length; i++ ) {
         const element = this._parameters[ i ];
         if ( !element.phetioPrivate ) {
+
+          // @ts-ignore
           data[ element.name ] = element.phetioType.toStateObject( args[ i ] );
         }
       }
@@ -181,17 +209,13 @@ class Action extends PhetioObject {
 
   /**
    * Get the phetioDocumentation compiled from all the parameters
-   * @param {boolean} currentPhetioDocumentation
-   * @param {Object} parameters - see options.parameters
-   * @private
-   * @returns {string}
    */
-  static getPhetioDocumentation( currentPhetioDocumentation, parameters ) {
-    const paramToDocString = param => {
+  private static getPhetioDocumentation( currentPhetioDocumentation: string, parameters: Parameter[] ): string {
+    const paramToDocString = ( param: Parameter ) => {
 
       const docText = param.phetioDocumentation ? ` - ${param.phetioDocumentation}` : '';
 
-      return `<li>${param.name}: ${param.phetioType.typeName}${docText}</li>`;
+      return `<li>${param.name}: ${param.phetioType!.typeName}${docText}</li>`;
     };
 
     return currentPhetioDocumentation + ( parameters.length === 0 ? '<br>No parameters.' : `${'<br>The parameters are:<br/>' +
@@ -201,9 +225,8 @@ class Action extends PhetioObject {
   /**
    * Invokes the action.
    * @params - expected parameters are based on options.parameters, see constructor
-   * @public
    */
-  execute( ...args ) {
+  execute( ...args: T ) {
     if ( assert ) {
       assert( args.length === this._parameters.length,
         `Emitted unexpected number of args. Expected: ${this._parameters.length} and received ${args.length}`
@@ -213,7 +236,7 @@ class Action extends PhetioObject {
         validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
 
         // valueType overrides the phetioType validator so we don't use that one if there is a valueType
-        if ( parameter.phetioType && !this._parameters.valueType ) {
+        if ( parameter.phetioType && !parameter.valueType ) {
           validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
         }
       }
@@ -224,19 +247,20 @@ class Action extends PhetioObject {
       getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
+    // @ts-ignore
     this._action.apply( null, args );
 
     this.phetioEndEvent();
   }
 }
 
-const paramToTypeName = param => param.typeName;
+const paramToTypeName = ( param: IOType ) => param.typeName;
 
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
 const cache = new Map();
 
-Action.ActionIO = parameterTypes => {
+Action.ActionIO = ( parameterTypes: IOType[] ) => {
   const key = parameterTypes.map( paramToTypeName ).join( ',' );
   if ( !cache.has( key ) ) {
     cache.set( key, new IOType( `ActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
@@ -253,7 +277,9 @@ Action.ActionIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Action.execute`'s dynamic number of arguments
-          implementation: function( ...args ) {
+          implementation: function( ...args: any[] ) {
+
+            // @ts-ignore
             this.execute( ...args );
           },
           documentation: 'Executes the function the Action is wrapping.',
