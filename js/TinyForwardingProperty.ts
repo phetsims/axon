@@ -14,7 +14,7 @@ import axon from './axon.js';
 import Property from './Property.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import IProperty from './IProperty.js';
-import { PropertyLinkListener, PropertyLazyLinkListener } from './IReadOnlyProperty.js';
+import { PropertyLazyLinkListener } from './IReadOnlyProperty.js';
 
 type NodeLike = {
   updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: IProperty<T> | null, newProperty?: IProperty<T> | null ) => void,
@@ -99,10 +99,11 @@ class TinyForwardingProperty<T> extends TinyProperty<T> {
 
     if ( this.targetProperty ) {
       this.targetProperty.lazyLink( this.forwardingListener );
+      this.setPropertyValue( this.targetProperty.value );
     }
     else {
       // If we're switching away from a targetProperty, prefer no notification (so set our value to the last value)
-      this._value = oldValue;
+      this.setPropertyValue( oldValue );
     }
 
     const newValue = this.get();
@@ -119,23 +120,8 @@ class TinyForwardingProperty<T> extends TinyProperty<T> {
    * Notify this Property's listeners when the targetProperty changes.
    * For performance, keep this listener on the prototype.
    */
-  private onTargetPropertyChange( value: T, oldValue: T ) {
-    this.notifyListeners( oldValue );
-  }
-
-  /**
-   * Gets the value.
-   *
-   * You can also use the es5 getter (property.value) but this means is provided for inner loops
-   * or internal code that must be fast.
-   */
-  get(): T {
-    if ( this.targetProperty ) {
-      return this.targetProperty.value;
-    }
-    else {
-      return super.get();
-    }
+  private onTargetPropertyChange( value: T ) {
+    super.set( value );
   }
 
   /**
@@ -152,27 +138,6 @@ class TinyForwardingProperty<T> extends TinyProperty<T> {
       super.set( value );
     }
     return this;
-  }
-
-  /**
-   * Directly notifies listeners of changes. This needs to be an override to make sure that the value of the targetProperty
-   * is used if it exists.
-   */
-  notifyListeners( oldValue: T ) {
-
-    // NOTE: This is overridden to use this.get(), since we need to hook up forwarding.
-    this.emit( this.get(), oldValue, this );
-  }
-
-  /**
-   * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
-   * notification provides the current value for newValue and null for oldValue.
-   * @override - So we can call the slightly more expensive getter, instead of the direct access
-   */
-  link( listener: PropertyLinkListener<T> ) {
-    this.addListener( listener );
-
-    listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
   }
 
   /**
