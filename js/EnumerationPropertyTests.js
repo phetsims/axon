@@ -88,7 +88,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
   }
 );
 
-QUnit.test( 'validValues as a subset of EnumerationDeprecated values', assert => {
+QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 
 
   class Bird1 extends EnumerationValue {
@@ -121,5 +121,41 @@ QUnit.test( 'validValues as a subset of EnumerationDeprecated values', assert =>
 
   window.assert && assert.throws( () => {
     enumerationProperty1.value = Bird2.ROBIN;
-  }, 'not a valid value, from a different EnumerationDeprecated' );
+  }, 'not a valid value, from a different Enumeration' );
+} );
+
+
+QUnit.test( 'Subtyping EnumerationValues', assert => {
+
+  class Raptor extends EnumerationValue {
+    static HAWK = new Raptor();
+    static EAGLE = new Raptor();
+    static enumeration = new Enumeration( Raptor, { phetioDocumentation: 'the second one' } );
+  }
+
+  class Bird extends Raptor {
+    static ROBIN = new Bird();
+    static JAY = new Bird();
+    static WREN = new Bird();
+    static enumeration = new Enumeration( Bird, {
+      instanceType: Raptor
+    } );
+  }
+
+  let enumerationProperty = new EnumerationProperty( Raptor.HAWK );
+
+  // This is unfortunate, but the enumeration is by default gathered by the initial value of EnumerationProperty
+  window.assert && assert.throws( () => {
+    enumerationProperty.value = Bird.ROBIN;
+  } );
+
+  enumerationProperty = new EnumerationProperty( Raptor.HAWK, {
+    enumeration: Bird.enumeration
+  } );
+
+  enumerationProperty.value = Bird.ROBIN;
+  enumerationProperty.value = Bird.HAWK;
+  enumerationProperty.value = Raptor.EAGLE;
+  enumerationProperty.value = Bird.WREN;
+  enumerationProperty.value = Bird.EAGLE;
 } );
