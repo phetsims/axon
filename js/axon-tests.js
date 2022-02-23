@@ -15,6 +15,7 @@ import './EmitterIOTests.js';
 import './EmitterTests.js';
 import './EnabledComponentTests.js';
 import './EnumerationPropertyDeprecatedTests.js';
+import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
 import './PropertyStateHandlerTests.js';
 import './PropertyTests.js';
