@@ -144,6 +144,8 @@ QUnit.test( 'Subtyping EnumerationValues', assert => {
 
   let enumerationProperty = new EnumerationProperty( Raptor.HAWK );
 
+  assert.ok( true, 'when assertions are not enabled' );
+
   // This is unfortunate, but the enumeration is by default gathered by the initial value of EnumerationProperty
   window.assert && assert.throws( () => {
     enumerationProperty.value = Bird.ROBIN;
