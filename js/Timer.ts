@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+// Copyright 2019-2022, University of Colorado Boulder
 
 /**
  * Timer so that other modules can run timing related code through the simulation's requestAnimationFrame. Use its
