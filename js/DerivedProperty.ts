@@ -17,6 +17,7 @@ import Property, { PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
+import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
@@ -101,6 +102,14 @@ class DerivedProperty<T, Parameters extends any[]> extends Property<T> implement
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
       }
     } );
+  }
+
+  /**
+   * Determines whether this DerivedProperty has a specific dependency.
+   * @param dependency
+   */
+  public hasDependency( dependency: IReadOnlyProperty<Parameters[IntentionalAny]> ): boolean {
+    return this.definedDependencies.includes( dependency );
   }
 
   /**
