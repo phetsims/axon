@@ -44,9 +44,9 @@ const getDerivedValue = <T, Parameters extends any[]>( derivation: Derivation<T,
 };
 
 class DerivedProperty<T, Parameters extends any[]> extends Property<T> implements IReadOnlyProperty<T> {
-  dependencies: MappedProperties<Parameters> | null;
-  derivation: Derivation<T, Parameters>;
-  derivedPropertyListener: () => void;
+  private dependencies: MappedProperties<Parameters> | null;
+  private readonly derivation: Derivation<T, Parameters>;
+  private readonly derivedPropertyListener: () => void;
   static DerivedPropertyIO: ( parameterType: any ) => any;
 
   /**
