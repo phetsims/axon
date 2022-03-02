@@ -44,6 +44,10 @@ const getDerivedValue = <T, Parameters extends any[]>( derivation: Derivation<T,
   return derivation( ...dependencies.map( property => property.get() ) );
 };
 
+/**
+ * T = type of the derived value
+ * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
+ */
 class DerivedProperty<T, Parameters extends any[]> extends Property<T> implements IReadOnlyProperty<T> {
   private dependencies: MappedProperties<Parameters> | null;
   private readonly derivation: Derivation<T, Parameters>;
