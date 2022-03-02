@@ -193,7 +193,6 @@ class DerivedProperty<T, Parameters extends any[]> extends Property<T> implement
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
    */
   setDeferred( isDeferred: boolean ) {
-    assert && assert( typeof isDeferred === 'boolean' );
     if ( this.isDeferred && !isDeferred ) {
       this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }
