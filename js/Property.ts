@@ -55,6 +55,9 @@ type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   isValidValue?: any
 } & PhetioObjectOptions;
 
+// a Property (can't be a TinyProperty) with all of the value-mutation removed.
+export type ReadOnlyProperty<T> = Omit<Property<T>, 'set' | 'reset'> & { readonly value: T; };
+
 class Property<T> extends PhetioObject implements IProperty<T> {
 
   // Unique identifier for this Property.
