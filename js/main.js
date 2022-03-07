@@ -7,7 +7,6 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import './Action.js';
 import './animationFrameTimer.js';
 import axon from './axon.js';
 import './BooleanProperty.js';

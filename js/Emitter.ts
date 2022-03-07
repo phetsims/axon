@@ -14,18 +14,21 @@ import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
-import Action, { ActionOptions } from './Action.js';
+import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
+
+// By default, Emitters are not stateful
+const PHET_IO_STATE_DEFAULT = false;
 
 type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
 
 type EmitterSelfOptions = {
   onBeforeNotify?: ( () => void ) | null
 };
-type EmitterOptions = EmitterSelfOptions & ActionOptions;
+type EmitterOptions = EmitterSelfOptions & Partial<PhetioDataHandlerOptions>;
 
-class Emitter<T extends IntentionalAny[] = []> extends Action<T> {
+class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
   private readonly tinyEmitter: TinyEmitter<T>;
 
@@ -33,41 +36,42 @@ class Emitter<T extends IntentionalAny[] = []> extends Action<T> {
 
   constructor( providedOptions?: EmitterOptions ) {
 
-    const options = optionize<EmitterOptions, EmitterSelfOptions, ActionOptions>( {
+    const options = optionize<EmitterOptions, EmitterSelfOptions, PhetioDataHandlerOptions, 'phetioOuterType'>( {
 
       phetioOuterType: Emitter.EmitterIO,
 
+      phetioState: PHET_IO_STATE_DEFAULT,
+
       // if specified, runs before listeners are notified. Typically used to ensure a consistent state or accomplish any
       // work that must be done before any listeners are notified.
+      // TODO: do we need to support this in Emitter? There are no usages, https://github.com/phetsims/phet-io/issues/1543
       onBeforeNotify: null
     }, providedOptions );
 
-    super( ( ...args: T ) => {
-      assert && assert( self.tinyEmitter instanceof TinyEmitter,
-        'Emitter should not emit until after its constructor has completed' );
-
-      self.tinyEmitter.emit( ...args );
-    }, options );
-
-    const self = this;
+    super( options );
 
     // provide Emitter functionality via composition
     this.tinyEmitter = new TinyEmitter( options.onBeforeNotify );
   }
 
   /**
-   * Emitter instances should not be calling Action.execute, instead see Emitter.emit().
-   * See the second half of https://github.com/phetsims/axon/issues/243 for discussion.
-   */
-  execute() {
-    assert && assert( false, 'This should not be called, use Emitter.emit() instead.' );
-  }
-
-  /**
-   * Emit to notify listeners; implemented by executing the action of the parent class.
+   * Emit to notify listeners
    */
   emit( ...args: T ) {
-    super.execute.apply( this, args );
+
+    // handle phet-io data stream for the emitted event
+    this.phetioStartEvent( 'emitted', {
+
+      // TODO: bind this instead of a function for each Emitter? https://github.com/phetsims/phet-io/issues/1543
+      getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
+    } );
+
+    assert && assert( this.tinyEmitter instanceof TinyEmitter,
+      'Emitter should not emit until after its constructor has completed' );
+
+    this.tinyEmitter.emit( ...args );
+
+    this.phetioEndEvent();
   }
 
   /**
@@ -151,9 +155,12 @@ Emitter.EmitterIO = parameterTypes => {
   if ( !cache.has( key ) ) {
     cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
       valueType: Emitter,
-      supertype: Action.ActionIO( parameterTypes ),
       documentation: 'Emits when an event occurs and calls added listeners.',
       parameterTypes: parameterTypes,
+      events: [ 'emitted' ],
+      metadataDefaults: {
+        phetioState: PHET_IO_STATE_DEFAULT
+      },
       methods: {
         addListener: {
           returnType: VoidIO,

@@ -27,7 +27,6 @@ QUnit.test( 'Emitter Constructing and options', assert => {
     assert.throws( () => { e1.emit( '2, 2' ); }, 'Wrong parameter type string' );
     assert.throws( () => { e1.emit( undefined ); }, 'Wrong parameter type undefined' );
     assert.throws( () => { e1.emit( null ); }, 'Wrong parameter type null' );
-    assert.throws( () => e1.execute( 1 ), 'Do not use the Action method API' );
   }
 
   // emitting with an object as parameter
