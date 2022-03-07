@@ -96,51 +96,87 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import merge from '../../phet-core/js/merge.js';
+import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import IProperty from './IProperty.js';
+import Property, { PropertyOptions } from './Property.js';
+import TinyProperty from './TinyProperty.js';
+import optionize from '../../phet-core/js/optionize.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
-/**
- *  @template T
- *  @extends Property<T>
- */
-class DynamicProperty extends Property {
+type INullableProperty<T> = IProperty<T | null> | IProperty<T>;
+
+type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
+  // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be
+  // made to derive( valuePropertyProperty.value ).
+  bidirectional?: boolean;
+
+  // If valuePropertyProperty.value === null, this dynamicProperty will act instead like
+  // derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map function is
+  // provided, it will be applied to this defaultValue to determine our Property's value.
+  defaultValue?: InnerValueType,
+
+  // Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level documentation for usage.
+  // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
+  derive?: ( ( outerValue: OuterValueType ) => IProperty<InnerValueType> ) | KeysMatching<OuterValueType, IProperty<InnerValueType>>;
+
+  // Maps our input Property value to/from this Property's value. See top-level documentation for usage.
+  // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
+  map?: ( ( innerValue: InnerValueType ) => ThisValueType ) | KeysMatching<InnerValueType, ThisValueType>;
+  inverseMap?: ( ( value: ThisValueType ) => InnerValueType ) | KeysMatching<ThisValueType, InnerValueType>;
+};
+
+export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> = SelfOptions<ThisValueType, InnerValueType, OuterValueType> & PropertyOptions<ThisValueType>;
+
+// ThisValueType: The value type of the resulting DynamicProperty
+// InnerValueType: The value type of the inner (derived) Property, whose value gets mapped to ThisValueType and back
+// OuterValueType: The value type of the main passed-in Property (whose value may be derived to the InnerValueType)
+// e.g.:
+// class Foo { colorProperty: Property<Color> }
+// new DynamicProperty<number, Color, Foo>( someFooProperty, {
+//   derive: 'colorProperty',
+//   map: ( color: Color ) => color.alpha
+// } );
+// Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
+// InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
+class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = IProperty<InnerValueType>> extends Property<ThisValueType> {
+
+  // Set to true when this Property's value is changing from an external source.
+  isExternallyChanging: boolean;
+
+  private defaultValue: InnerValueType;
+  private derive: ( u: OuterValueType ) => IProperty<InnerValueType>;
+  private map: ( v: InnerValueType ) => ThisValueType;
+  private inverseMap: ( t: ThisValueType ) => InnerValueType;
+  private bidirectional: boolean;
+  private valuePropertyProperty: INullableProperty<OuterValueType>;
+  private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) => void;
+  private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
   /**
-   * @constructor
-   * @extends {Property}
-   *
-   * @param {Property.<*|null>} valuePropertyProperty - If the value is null, it is considered disconnected. If the
-   *                                                    'derive' option is not used, then this should always have the
-   *                                                    type {Property.<Property.<*>|null>}
-   * @param {Object} [options] - options
+   * @param valuePropertyProperty - If the value is null, it is considered disconnected.
+   * @param [options] - options
    */
-  constructor( valuePropertyProperty, options ) {
+  constructor( valuePropertyProperty: INullableProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
-    options = merge( {
-      // {boolean} - If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the
-      //             time) will also be made to derive( valuePropertyProperty.value ).
+    const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>( {
       bidirectional: false,
-
-      // {*} - If valuePropertyProperty.value === null, this dynamicProperty will act instead like
-      //       derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map
-      //       function is provided, it will be applied to this defaultValue to determine our Property's value.
-      defaultValue: null,
-
-      // {function|string} - Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level
-      //                     documentation for usage. Uses the Lodash path specification (if it's a string).
+      defaultValue: null as unknown as InnerValueType,
       derive: _.identity,
-
-      // {function|string} - Maps our input Property value to/from this Property's value. See top-level documentation
-      //                     for usage. Uses the Lodash path specification (if it's a string).
       map: _.identity,
       inverseMap: _.identity
-    }, options );
+    }, providedOptions );
 
-    assert && assert( valuePropertyProperty instanceof Property, 'valuePropertyProperty should be a Property' );
+    assert && assert( valuePropertyProperty instanceof Property || valuePropertyProperty instanceof TinyProperty,
+      'valuePropertyProperty should be a Property or TinyProperty' );
 
-    const derive = typeof options.derive === 'string' ? _.property( options.derive ) : options.derive;
-    const map = typeof options.map === 'string' ? _.property( options.map ) : options.map;
+    const optionsDerive = options.derive;
+    const optionsMap = options.map;
+    const optionsInverseMap = options.inverseMap;
+
+    const derive: ( ( u: OuterValueType ) => IProperty<InnerValueType> ) = typeof optionsDerive === 'function' ? optionsDerive : ( ( u: OuterValueType ) => u[ optionsDerive ] as unknown as IProperty<InnerValueType> );
+    const map: ( ( v: InnerValueType ) => ThisValueType ) = typeof optionsMap === 'function' ? optionsMap : ( ( v: InnerValueType ) => v[ optionsMap ] as unknown as ThisValueType );
+    const inverseMap: ( ( t: ThisValueType ) => InnerValueType ) = typeof optionsInverseMap === 'function' ? optionsInverseMap : ( ( t: ThisValueType ) => t[ optionsInverseMap ] as unknown as InnerValueType );
 
     // Use the Property's initial value
     const initialValue = valuePropertyProperty.value === null ?
@@ -149,23 +185,12 @@ class DynamicProperty extends Property {
 
     super( initialValue, options );
 
-    // @private {*}
     this.defaultValue = options.defaultValue;
-
-    // @private {function}
     this.derive = derive;
     this.map = map;
-
-    // @private {function}
-    this.inverseMap = typeof options.inverseMap === 'string' ? _.property( options.inverseMap ) : options.inverseMap;
-
-    // @private {boolean}
+    this.inverseMap = inverseMap;
     this.bidirectional = options.bidirectional;
-
-    // @private {Property.<*|null>}
     this.valuePropertyProperty = valuePropertyProperty;
-
-    // @public {boolean} - Set to true when this Property's value is changing from an external source.
     this.isExternallyChanging = false;
 
     // If we can't reset(), then we won't store the initial value.
@@ -174,10 +199,7 @@ class DynamicProperty extends Property {
       this._initialValue = null;
     }
 
-    // @private {function}
     this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
-
-    // @private {function}
     this.propertyListener = this.onPropertyChange.bind( this );
 
     // Rehook our listener to whatever is the active Property.
@@ -192,14 +214,13 @@ class DynamicProperty extends Property {
 
   /**
    * Listener added to the active inner Property.
-   * @private
    *
-   * @param {*} value - Should be either our defaultValue (if valuePropertyProperty.value is null), or
-   *                    derive( valuePropertyProperty.value ).value otherwise.
-   * @param {*} oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
-   * @param {Property.<*>|null} innerProperty
+   * @param value - Should be either our defaultValue (if valuePropertyProperty.value is null), or
+   *                derive( valuePropertyProperty.value ).value otherwise.
+   * @param oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
+   * @param innerProperty
    */
-  onPropertyPropertyChange( value, oldValue, innerProperty ) {
+  private onPropertyPropertyChange( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) {
 
     // If the value of the inner Property is already the inverse of our value, we will never attempt to update our
     // own value in an attempt to limit "ping-ponging" cases mainly due to numerical error. Otherwise it would be
@@ -209,7 +230,7 @@ class DynamicProperty extends Property {
       const currentProperty = this.derive( this.valuePropertyProperty.value );
       // Notably, we only want to cancel interactions if the Property that sent the notification is still the Property
       // we are paying attention to.
-      if ( currentProperty === innerProperty && innerProperty.equalsValue( this.inverseMap( this.value ) ) ) {
+      if ( currentProperty === innerProperty && innerProperty.areValuesEqual( this.inverseMap( this.value ), innerProperty.get() ) ) {
         return;
       }
     }
@@ -220,14 +241,13 @@ class DynamicProperty extends Property {
 
   /**
    * Listener added to the outer Property.
-   * @private
    *
-   * @param {*|null} newPropertyValue - If derive is not provided then it should be a {Property.<*>|null}
-   * @param {*|null|undefined} oldPropertyValue - If derive is not provided then it should be a {Property.<*>|null}.
+   * @param newPropertyValue - If derive is not provided then it should be a {Property.<*>|null}
+   * @param oldPropertyValue - If derive is not provided then it should be a {Property.<*>|null}.
    *                                              We additionally handle the initial link() case where this is
    *                                              undefined.
    */
-  onPropertyChange( newPropertyValue, oldPropertyValue ) {
+  private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) {
     if ( oldPropertyValue ) {
       this.derive( oldPropertyValue ).unlink( this.propertyPropertyListener );
     }
@@ -242,11 +262,8 @@ class DynamicProperty extends Property {
 
   /**
    * Listener added to ourself when we are bidirectional
-   * @private
-   *
-   * @param {*} value
    */
-  onSelfChange( value ) {
+  private onSelfChange( value: ThisValueType ) {
     assert && assert( this.bidirectional );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -264,7 +281,6 @@ class DynamicProperty extends Property {
 
   /**
    * Disposes this Property
-   * @public
    */
   dispose() {
     this.valuePropertyProperty.unlink( this.propertyListener );
@@ -277,20 +293,20 @@ class DynamicProperty extends Property {
   }
 
   /**
-   * Resets the current property.
-   * @public
+   * Resets the current property (if it's a Property instead of a TinyProperty)
    */
   reset() {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
     if ( this.valuePropertyProperty.value !== null ) {
-      this.derive( this.valuePropertyProperty.value ).reset();
+      const property = this.derive( this.valuePropertyProperty.value );
+      assert && assert( property instanceof Property );
+      ( property as Property<InnerValueType> ).reset();
     }
   }
 
   /**
    * Prevent getting this Property manually if it is not marked as bidirectional.
-   * @public
    */
   getInitialValue() {
     assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
@@ -300,12 +316,8 @@ class DynamicProperty extends Property {
 
   /**
    * Prevent setting this Property manually if it is not marked as bidirectional.
-   * @public
-   * @override
-   *
-   * @param {*} value
    */
-  set( value ) {
+  set( value: ThisValueType ) {
     assert && assert( this.bidirectional,
       `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}` );
 
@@ -317,11 +329,8 @@ class DynamicProperty extends Property {
 
   /**
    * Returns true if this Property value can be set externally, by set() or .value =
-   * @returns {boolean}
-   * @override
-   * @public
    */
-  isSettable() {
+  isSettable(): boolean {
     return super.isSettable() && this.bidirectional;
   }
 }
