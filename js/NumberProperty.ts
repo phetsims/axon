@@ -56,7 +56,7 @@ export const isSteppedProperty = ( property: Property<number> ): property is Ran
 };
 export const isRangedSteppedProperty = ( property: Property<number> ): property is RangedSteppedProperty => {
   return isRangedProperty( property ) && isSteppedProperty( property );
-}
+};
 
 class NumberProperty extends Property<number> {
   numberType: any;

@@ -76,7 +76,7 @@ class UnitConversionProperty extends MappedProperty<number, number> {
     if ( ( property as NumberProperty ).rangeProperty ) {
       this._rangeListener = ( range: Range | null ) => {
         if ( range === null ) {
-          return null;
+          this.rangeProperty.value = null;
         }
         else {
           const min = map( range.min );
