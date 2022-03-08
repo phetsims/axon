@@ -14,6 +14,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import stepTimer from './stepTimer.js';
 import validate from './validate.js';
@@ -39,6 +40,23 @@ type NumberPropertyDefinedOptions = {
 
 type NumberPropertyOptions = {
 } & Partial<NumberPropertyDefinedOptions> & PropertyOptions<number>;
+
+// Minimal types for ranged/stepped Properties
+export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
+export type SteppedProperty = Property<number> & { step: number };
+export type RangedSteppedProperty = RangedProperty & SteppedProperty;
+
+// User-defined type guards for ranged/stepped Properties. Only use these when you know that a null value won't be set
+// to the range
+export const isRangedProperty = ( property: Property<number> ): property is RangedProperty => {
+  return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
+};
+export const isSteppedProperty = ( property: Property<number> ): property is RangedProperty => {
+  return typeof ( property as SteppedProperty ).step === 'number';
+};
+export const isRangedSteppedProperty = ( property: Property<number> ): property is RangedSteppedProperty => {
+  return isRangedProperty( property ) && isSteppedProperty( property );
+}
 
 class NumberProperty extends Property<number> {
   numberType: any;
@@ -289,6 +307,36 @@ class NumberProperty extends Property<number> {
       else {
         this.validateNumberAndRangeProperty( this.value );
       }
+    }
+  }
+
+  // Returns a casted version with a guaranteed non-null range
+  asRanged(): RangedProperty {
+    if ( isRangedProperty( this ) ) {
+      return this;
+    }
+    else {
+      throw new Error( 'Not a RangedProperty' );
+    }
+  }
+
+  // Returns a casted version with a guaranteed non-null step
+  asStepped(): SteppedProperty {
+    if ( isSteppedProperty( this ) ) {
+      return this;
+    }
+    else {
+      throw new Error( 'Not a SteppedProperty' );
+    }
+  }
+
+  // Returns a casted version with a guaranteed non-null step and range
+  asRangedStepped(): RangedSteppedProperty {
+    if ( isRangedSteppedProperty( this ) ) {
+      return this;
+    }
+    else {
+      throw new Error( 'Not a RangedSteppedProperty' );
     }
   }
 }

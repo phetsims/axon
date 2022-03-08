@@ -104,7 +104,7 @@ import TinyProperty from './TinyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
-type INullableProperty<T> = IProperty<T | null> | IProperty<T>;
+export type INullableProperty<T> = IProperty<T | null> | IProperty<T>;
 
 type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be
@@ -145,10 +145,10 @@ class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueT
   isExternallyChanging: boolean;
 
   private defaultValue: InnerValueType;
-  private derive: ( u: OuterValueType ) => IProperty<InnerValueType>;
-  private map: ( v: InnerValueType ) => ThisValueType;
-  private inverseMap: ( t: ThisValueType ) => InnerValueType;
-  private bidirectional: boolean;
+  protected derive: ( u: OuterValueType ) => IProperty<InnerValueType>;
+  protected map: ( v: InnerValueType ) => ThisValueType;
+  protected inverseMap: ( t: ThisValueType ) => InnerValueType;
+  protected bidirectional: boolean;
   private valuePropertyProperty: INullableProperty<OuterValueType>;
   private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
