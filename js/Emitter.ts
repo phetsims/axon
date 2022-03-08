@@ -52,6 +52,7 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
    * Emit to notify listeners
    */
   emit( ...args: T ) {
+    assert && this.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
