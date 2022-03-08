@@ -42,8 +42,6 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
       phetioState: PHET_IO_STATE_DEFAULT
     }, providedOptions );
 
-    assert && assert( !options.hasOwnProperty( 'onBeforeNotify' ), 'in emitter' );
-
     super( options );
 
     // provide Emitter functionality via composition

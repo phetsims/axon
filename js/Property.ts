@@ -125,8 +125,6 @@ class Property<T> extends PhetioObject implements IProperty<T> {
 
     }, providedOptions ) as PropertyConstructorOptions;
 
-    assert && assert( !options.hasOwnProperty( 'onBeforeNotify' ), 'in property' );
-
     // Support non-validated Property
     if ( !ValidatorDef.containsValidatorKey( options ) ) {
 
