@@ -17,16 +17,15 @@ import VoidIO from '../../tandem/js/types/VoidIO.js';
 import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
+import Tandem from '../../tandem/js/Tandem.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
 type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
 
-type EmitterSelfOptions = {
-  onBeforeNotify?: ( () => void ) | null
-};
-type EmitterOptions = EmitterSelfOptions & Partial<PhetioDataHandlerOptions>;
+type SelfOptions = {};
+type EmitterOptions = SelfOptions & Partial<PhetioDataHandlerOptions>;
 
 class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
@@ -36,22 +35,19 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
   constructor( providedOptions?: EmitterOptions ) {
 
-    const options = optionize<EmitterOptions, EmitterSelfOptions, PhetioDataHandlerOptions, 'phetioOuterType'>( {
+    const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions, 'phetioOuterType'>( {
 
       phetioOuterType: Emitter.EmitterIO,
 
-      phetioState: PHET_IO_STATE_DEFAULT,
-
-      // if specified, runs before listeners are notified. Typically used to ensure a consistent state or accomplish any
-      // work that must be done before any listeners are notified.
-      // TODO: do we need to support this in Emitter? There are no usages, https://github.com/phetsims/phet-io/issues/1543
-      onBeforeNotify: null
+      phetioState: PHET_IO_STATE_DEFAULT
     }, providedOptions );
+
+    assert && assert( !options.hasOwnProperty( 'onBeforeNotify' ), 'in emitter' );
 
     super( options );
 
     // provide Emitter functionality via composition
-    this.tinyEmitter = new TinyEmitter( options.onBeforeNotify );
+    this.tinyEmitter = new TinyEmitter();
   }
 
   /**
@@ -59,10 +55,9 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
    */
   emit( ...args: T ) {
 
-    // handle phet-io data stream for the emitted event
-    this.phetioStartEvent( 'emitted', {
-
-      // TODO: bind this instead of a function for each Emitter? https://github.com/phetsims/phet-io/issues/1543
+    // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
+    // called so many times that it is worth the optimization for PhET brand.
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
       getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
@@ -71,7 +66,7 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
     this.tinyEmitter.emit( ...args );
 
-    this.phetioEndEvent();
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
   }
 
   /**

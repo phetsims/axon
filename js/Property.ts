@@ -38,8 +38,7 @@ type PropertyDefinedOptions = {
   tandem: Tandem;
   useDeepEquality: boolean;
   units: string | null,
-  reentrant: boolean,
-  onBeforeNotify: null | ( () => void )
+  reentrant: boolean
 };
 
 // Options used in the contstructor
@@ -120,15 +119,13 @@ class Property<T> extends PhetioObject implements IProperty<T> {
       // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
       // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
       // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
-      reentrant: false,
-
-      // {function()|null} - if specified, runs before listeners are notified. Typically used to ensure a consistent state
-      //                   - or accomplish any work that must be done before any listeners are notified.
-      onBeforeNotify: null
+      reentrant: false
 
       // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
 
     }, providedOptions ) as PropertyConstructorOptions;
+
+    assert && assert( !options.hasOwnProperty( 'onBeforeNotify' ), 'in property' );
 
     // Support non-validated Property
     if ( !ValidatorDef.containsValidatorKey( options ) ) {
@@ -281,7 +278,9 @@ class Property<T> extends PhetioObject implements IProperty<T> {
   private _notifyListeners( oldValue: T | null ): void {
     const newValue = this.get();
 
-    this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
+    // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
+    // called so many times that it is worth the optimization for PhET brand.
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
       getData: () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
@@ -298,7 +297,7 @@ class Property<T> extends PhetioObject implements IProperty<T> {
     this.tinyProperty.emit( newValue, oldValue, this ); // cannot use tinyProperty.notifyListeners because it uses the wrong this
     this.notifying = false;
 
-    this.phetioEndEvent();
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
   }
 
   /**
