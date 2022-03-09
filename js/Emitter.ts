@@ -11,7 +11,7 @@
 
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import { PickOptional } from '../../phet-core/js/types/PickOptional.js';
+import PickOptional from '../../phet-core/js/types/PickOptional.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -20,6 +20,7 @@ import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
 
+// By default, Emitters are not stateful
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
