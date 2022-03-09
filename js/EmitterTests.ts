@@ -1,5 +1,4 @@
 // Copyright 2018-2022, University of Colorado Boulder
-// @ts-nocheck
 /**
  * QUnit tests for Emitter
  *
@@ -15,50 +14,25 @@ QUnit.module( 'Emitter' );
 QUnit.test( 'Emitter Constructing and options', assert => {
 
   assert.ok( true, 'Token test in case assertions are disabled, because each test must have at least one assert.' );
-  const e1 = new Emitter( {
+  const e1 = new Emitter<[ number ]>( {
     parameters: [ { valueType: 'number' } ]
   } );
 
   e1.emit( 1 );
 
-  if ( window.assert ) {
-    assert.throws( () => { e1.emit( 2, 2 ); }, 'Wrong number of emitting parameters' );
-    assert.throws( () => { e1.emit( true ); }, 'Wrong parameter type bool' );
-    assert.throws( () => { e1.emit( '2, 2' ); }, 'Wrong parameter type string' );
-    assert.throws( () => { e1.emit( undefined ); }, 'Wrong parameter type undefined' );
-    assert.throws( () => { e1.emit( null ); }, 'Wrong parameter type null' );
-  }
-
   // emitting with an object as parameter
-  const e2 = new Emitter( {
+  const e2: Emitter<[ Emitter, Object, () => void ]> = new Emitter( {
     parameters: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
   } );
 
   e2.emit( new Emitter(), {}, () => {} );
 
-  if ( window.assert ) {
-    assert.throws( () => { e2.emit( 2, 2 ); }, 'Wrong number of emitting parameters, for e2' );
-    assert.throws( () => { e2.emit( true ); }, 'Wrong parameter type bool, for e2' );
-    assert.throws( () => { e2.emit( '2, 2' ); }, 'Wrong parameter type string, for e2' );
-    assert.throws( () => { e2.emit( undefined ); }, 'Wrong parameter type undefined, for e2' );
-    assert.throws( () => { e2.emit( null ); }, 'Wrong parameter type null, for e2' );
-    assert.throws( () => { e2.emit( new Emitter(), 7, () => {} ); }, 'Should catch second argument as wrong type' );
-    assert.throws( () => { e2.emit( new Emitter() ); }, 'Should catch not enough arguments' );
-  }
-
-  const e3 = new Emitter( {
+  const e3 = new Emitter<[ number, string | null ]>( {
     parameters: [ { valueType: 'number' }, { valueType: [ 'string', null ] } ]
   } );
 
   e3.emit( 1, 'hi' );
   e3.emit( 1, null );
-
-  if ( window.assert ) {
-    assert.throws( () => { e3.emit( 1 ); }, 'Wrong parameter type undefined' );
-    assert.throws( () => { e3.emit( 1, undefined ); }, 'Wrong parameter type undefined' );
-    assert.throws( () => { e3.emit( 1, 0 ); }, 'Wrong parameter type 0' );
-    assert.throws( () => { e3.emit( 1, { hello: 'hi' } ); }, 'Wrong parameter type object' );
-  }
 } );
 
 QUnit.test( 'Test emit timing Emitter', assert => {
@@ -78,7 +52,7 @@ QUnit.test( 'Test emit timing Emitter', assert => {
   const e1 = new Emitter();
   e1.addListener( () => {} );
 
-  const testEmitter = ( emitter, numberOfLoopings ) => {
+  const testEmitter = ( emitter: Emitter, numberOfLoopings: number ) => {
 
     const start = Date.now();
 
@@ -96,7 +70,7 @@ QUnit.test( 'Test emit timing Emitter', assert => {
 } );
 
 QUnit.test( 'Emitter Basics', assert => {
-  const stack = [];
+  const stack: string[] = [];
   const emitter = new Emitter(); // eslint-disable-line no-undef
   const a = () => {
     stack.push( 'a' );
@@ -117,20 +91,20 @@ QUnit.test( 'Emitter Basics', assert => {
 } );
 
 QUnit.test( 'Emitter Tricks', assert => {
-  const entries = [];
+  const entries: Array<{ listener: string, arg: string }> = [];
 
-  const emitter = new Emitter( {
+  const emitter = new Emitter<[ string ]>( {
     parameters: [ { valueType: 'string' } ]
   } );
 
-  const a = arg => {
+  const a = ( arg: string ) => {
     entries.push( { listener: 'a', arg: arg } );
 
     if ( arg === 'first' ) {
       emitter.emit( 'second' );
     }
   };
-  const b = arg => {
+  const b = ( arg: string ) => {
     entries.push( { listener: 'b', arg: arg } );
 
     if ( arg === 'second' ) {
@@ -138,7 +112,7 @@ QUnit.test( 'Emitter Tricks', assert => {
       emitter.emit( 'third' );
     }
   };
-  const c = arg => {
+  const c = ( arg: string ) => {
     entries.push( { listener: 'c', arg: arg } );
   };
 
