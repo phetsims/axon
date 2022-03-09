@@ -24,12 +24,15 @@ import Tandem from '../../tandem/js/Tandem.js';
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
-type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
+// undefined and never are not allows as parameters to Emitter
+type EmitterParameter = Exclude<IntentionalAny, undefined | never>;
+
+type Listener<T extends EmitterParameter[]> = ( ...args: T ) => void;
 
 type SelfOptions = {};
 type EmitterOptions = SelfOptions & Omit<PhetioDataHandlerOptions, 'phetioOuterType'> & PickOptional<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
-class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
+class Emitter<T extends EmitterParameter[] = []> extends PhetioDataHandler<T> {
 
   // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;
