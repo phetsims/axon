@@ -49,7 +49,7 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
   /**
    * Emit to notify listeners
    */
-  emit( ...args: T ) {
+  emit( ...args: T ): void {
     assert && assert( this.tinyEmitter instanceof TinyEmitter, 'Emitter should not emit until constructor complete' );
     assert && this.validateArguments( ...args );
 
@@ -67,7 +67,7 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
   /**
    * Disposes an Emitter. All listeners are removed.
    */
-  dispose() {
+  dispose(): void {
     this.tinyEmitter.dispose();
     super.dispose();
   }
@@ -75,47 +75,47 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
   /**
    * Adds a listener which will be called during emit.
    */
-  addListener( listener: Listener<T> ) {
+  addListener( listener: Listener<T> ): void {
     this.tinyEmitter.addListener( listener );
   }
 
   /**
    * Removes a listener
    */
-  removeListener( listener: Listener<T> ) {
+  removeListener( listener: Listener<T> ): void {
     this.tinyEmitter.removeListener( listener );
   }
 
   /**
    * Removes all the listeners
    */
-  removeAllListeners() {
+  removeAllListeners(): void {
     this.tinyEmitter.removeAllListeners();
   }
 
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  hasListener( listener: Listener<T> ) {
+  hasListener( listener: Listener<T> ): boolean {
     return this.tinyEmitter.hasListener( listener );
   }
 
   /**
    * Returns true if there are any listeners.
    */
-  hasListeners() {
+  hasListeners(): boolean {
     return this.tinyEmitter.hasListeners();
   }
 
   /**
    * Returns the number of listeners.
    */
-  getListenerCount() {
+  getListenerCount(): number {
     return this.tinyEmitter.getListenerCount();
   }
 }
 
-const paramToTypeName = ( param: IOType ) => param.typeName;
+const getTypeName = ( ioType: IOType ) => ioType.typeName;
 
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
@@ -140,10 +140,10 @@ const cache = new Map<string, IOType>();
  */
 Emitter.EmitterIO = parameterTypes => {
 
-  const key = parameterTypes.map( paramToTypeName ).join( ',' );
+  const key = parameterTypes.map( getTypeName ).join( ',' );
 
   if ( !cache.has( key ) ) {
-    cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+    cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
       valueType: Emitter,
       documentation: 'Emits when an event occurs and calls added listeners.',
       parameterTypes: parameterTypes,
