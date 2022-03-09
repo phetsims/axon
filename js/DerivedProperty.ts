@@ -17,7 +17,7 @@ import Property, { PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
-import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';

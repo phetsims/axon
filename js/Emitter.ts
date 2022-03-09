@@ -10,7 +10,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import { PickOptional } from '../../phet-core/js/types/PickOptional.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
