@@ -11,6 +11,7 @@
 
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
+import { PickOptional } from '../../phet-core/js/types/PickOptional.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -25,7 +26,7 @@ const PHET_IO_STATE_DEFAULT = false;
 type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
 
 type SelfOptions = {};
-type EmitterOptions = SelfOptions & Partial<PhetioDataHandlerOptions>;
+type EmitterOptions = SelfOptions & Omit<PhetioDataHandlerOptions, 'phetioOuterType'> & PickOptional<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
