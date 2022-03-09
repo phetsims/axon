@@ -29,6 +29,7 @@ type EmitterOptions = SelfOptions & Partial<PhetioDataHandlerOptions>;
 
 class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
+  // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;
 
   static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
@@ -36,15 +37,11 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
   constructor( providedOptions?: EmitterOptions ) {
 
     const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions, 'phetioOuterType'>( {
-
       phetioOuterType: Emitter.EmitterIO,
-
       phetioState: PHET_IO_STATE_DEFAULT
     }, providedOptions );
 
     super( options );
-
-    // provide Emitter functionality via composition
     this.tinyEmitter = new TinyEmitter();
   }
 
@@ -52,6 +49,7 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
    * Emit to notify listeners
    */
   emit( ...args: T ) {
+    assert && assert( this.tinyEmitter instanceof TinyEmitter, 'Emitter should not emit until constructor complete' );
     assert && this.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
@@ -59,9 +57,6 @@ class Emitter<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
       getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
-
-    assert && assert( this.tinyEmitter instanceof TinyEmitter,
-      'Emitter should not emit until after its constructor has completed' );
 
     this.tinyEmitter.emit( ...args );
 
@@ -123,7 +118,7 @@ const paramToTypeName = ( param: IOType ) => param.typeName;
 
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
-const cache = new Map();
+const cache = new Map<string, IOType>();
 
 /**
  * IO Type for Emitter.
@@ -188,7 +183,7 @@ Emitter.EmitterIO = parameterTypes => {
       }
     } ) );
   }
-  return cache.get( key );
+  return cache.get( key )!;
 };
 
 axon.register( 'Emitter', Emitter );
