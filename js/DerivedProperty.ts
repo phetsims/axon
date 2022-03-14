@@ -28,12 +28,12 @@ type DerivedPropertyDefinedOptions = {
 };
 
 // Maps tuples/arrays from T => IReadOnlyProperty<T>
-type MappedProperties<Parameters extends any[]> = {
+export type MappedProperties<Parameters extends any[]> = {
   [ K in keyof Parameters ]: IReadOnlyProperty<Parameters[K]>;
 };
 
 // Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
-type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
+export type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
 
 /**
  * Compute the derived value given a derivation and an array of dependencies
@@ -48,7 +48,7 @@ const getDerivedValue = <T, Parameters extends any[]>( derivation: Derivation<T,
  * T = type of the derived value
  * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
  */
-class DerivedProperty<T, Parameters extends any[]> extends Property<T> implements IReadOnlyProperty<T> {
+export default class DerivedProperty<T, Parameters extends any[]> extends Property<T> implements IReadOnlyProperty<T> {
   private dependencies: MappedProperties<Parameters> | null;
   private readonly derivation: Derivation<T, Parameters>;
   private readonly derivedPropertyListener: () => void;
@@ -314,5 +314,3 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
 };
 
 axon.register( 'DerivedProperty', DerivedProperty );
-export default DerivedProperty;
-export type { MappedProperties, Derivation };

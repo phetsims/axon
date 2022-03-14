@@ -38,11 +38,10 @@ type SuperOptions<ThisValueType, InputValueType> = Omit<DynamicPropertyOptions<T
 
 export type MappedPropertyOptions<ThisValueType, InputValueType> = SelfOptions<ThisValueType, InputValueType> & SuperOptions<ThisValueType, InputValueType>;
 
-class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, IProperty<InputValueType>> {
+export default class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, IProperty<InputValueType>> {
   constructor( property: IProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
     super( new TinyProperty( property ), providedOptions );
   }
 }
 
 axon.register( 'MappedProperty', MappedProperty );
-export default MappedProperty;

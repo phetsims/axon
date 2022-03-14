@@ -12,16 +12,16 @@ import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
 
-type EnumerationPropertySelfOptions<T extends EnumerationValue> = {
+type SelfOptions<T extends EnumerationValue> = {
 
   // By default, this will be taken from the initial value, but if subtyping enumerations, you must provide this
   // manually to make sure it is set to the correct, subtype value, see https://github.com/phetsims/phet-core/issues/102
   enumeration?: Enumeration<T>
 };
 
-type EnumerationPropertyOptions<T extends EnumerationValue> = EnumerationPropertySelfOptions<T> & Omit<PropertyOptions<T>, 'phetioType'>;
+export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & Omit<PropertyOptions<T>, 'phetioType'>;
 
-class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
+export default class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
   /**
    * @param value
@@ -29,7 +29,7 @@ class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
    */
   constructor( value: T, providedOptions?: EnumerationPropertyOptions<T> ) {
 
-    const firstOptions = optionize<EnumerationPropertyOptions<T>, EnumerationPropertySelfOptions<T>, PropertyOptions<T>>( {
+    const firstOptions = optionize<EnumerationPropertyOptions<T>, SelfOptions<T>, PropertyOptions<T>>( {
       enumeration: value.enumeration!
     }, providedOptions );
 
@@ -43,5 +43,3 @@ class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
     super( value, options );
   }
 }
-
-export default EnumerationProperty;

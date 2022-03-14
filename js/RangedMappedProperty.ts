@@ -15,9 +15,9 @@ import TinyProperty from './TinyProperty.js';
 import Property from './Property.js';
 
 type RangedMappedPropertySelfOptions = { range: Range };
-type RangedMappedPropertyOptions = RangedMappedPropertySelfOptions & MappedPropertyOptions<number, number>;
+export type RangedMappedPropertyOptions = RangedMappedPropertySelfOptions & MappedPropertyOptions<number, number>;
 
-class RangedMappedProperty extends MappedProperty<number, number> implements RangedProperty {
+export default class RangedMappedProperty extends MappedProperty<number, number> implements RangedProperty {
 
   range: Range;
   readonly rangeProperty: IProperty<Range>;
@@ -31,4 +31,3 @@ class RangedMappedProperty extends MappedProperty<number, number> implements Ran
 }
 
 axon.register( 'RangedMappedProperty', RangedMappedProperty );
-export default RangedMappedProperty;

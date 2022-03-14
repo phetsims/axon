@@ -32,7 +32,7 @@ type Listener<T extends EmitterParameter[]> = ( ...args: T ) => void;
 type SelfOptions = {};
 type EmitterOptions = SelfOptions & Omit<PhetioDataHandlerOptions, 'phetioOuterType'> & PickOptional<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
-class Emitter<T extends EmitterParameter[] = []> extends PhetioDataHandler<T> {
+export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDataHandler<T> {
 
   // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;
@@ -192,4 +192,3 @@ Emitter.EmitterIO = parameterTypes => {
 };
 
 axon.register( 'Emitter', Emitter );
-export default Emitter;

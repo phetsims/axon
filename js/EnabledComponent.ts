@@ -25,7 +25,7 @@ const DEFAULT_OPTIONS = {
   tandem: Tandem.OPTIONAL
 } as const;
 
-type EnabledComponentOptions = {
+export type EnabledComponentOptions = {
   // if not provided, a Property will be created
   enabledProperty?: IProperty<boolean> | null;
 
@@ -43,7 +43,7 @@ type EnabledComponentOptions = {
   tandem?: Tandem;
 };
 
-class EnabledComponent {
+export default class EnabledComponent {
 
   enabledProperty: IProperty<boolean>;
 
@@ -80,6 +80,3 @@ class EnabledComponent {
 }
 
 axon.register( 'EnabledComponent', EnabledComponent );
-
-export default EnabledComponent;
-export type { EnabledComponentOptions };

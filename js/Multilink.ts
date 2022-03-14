@@ -31,7 +31,7 @@ const valuesOfProperties = <Parameters extends any[]>( dependencies: MappedPrope
 // Type of a derivation function, that takes the typed parameters (as a tuple type)
 type Callback<Parameters extends any[]> = ( ...params: Parameters ) => void;
 
-class Multilink<Parameters extends any[]> {
+export default class Multilink<Parameters extends any[]> {
 
   private dependencies: MappedProperties<Parameters> | null;
   private dependencyListeners: Map<IReadOnlyProperty<any>, () => void>;
@@ -112,5 +112,3 @@ class Multilink<Parameters extends any[]> {
 }
 
 axon.register( 'Multilink', Multilink );
-
-export default Multilink;

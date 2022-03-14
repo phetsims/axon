@@ -38,7 +38,7 @@ type NumberPropertyDefinedOptions = {
   valueType: string;
 };
 
-type NumberPropertyOptions = {
+export type NumberPropertyOptions = {
 } & Partial<NumberPropertyDefinedOptions> & PropertyOptions<number>;
 
 // Minimal types for ranged/stepped Properties
@@ -58,7 +58,7 @@ export const isRangedSteppedProperty = ( property: Property<number> ): property 
   return isRangedProperty( property ) && isSteppedProperty( property );
 };
 
-class NumberProperty extends Property<number> {
+export default class NumberProperty extends Property<number> {
   numberType: any;
   step: any;
   private readonly validateOnNextFrame: any;
@@ -377,5 +377,3 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 } );
 
 axon.register( 'NumberProperty', NumberProperty );
-export default NumberProperty;
-export type { NumberPropertyOptions };

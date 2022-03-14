@@ -25,7 +25,7 @@ type ObservableArrayListener<T> = ( element: T ) => void;
 type Predicate<T> = ( element: T ) => boolean;
 type ObservableArrayStateObject<T> = { array: any[] }; // eslint-disable-line -- futureproof type param if we type this
 type FakeRandom<T> = { shuffle: ( arr: T[] ) => T[] }; // // We don't import because of the repo dependency
-type ObservableArrayOptions<T> = {
+export type ObservableArrayOptions<T> = {
   length?: number;
   elements?: T[];
   tandem?: Tandem;
@@ -542,4 +542,4 @@ createObservableArray.ObservableArrayIO = ObservableArrayIO;
 axon.register( 'createObservableArray', createObservableArray );
 export default createObservableArray;
 export { ObservableArrayIO };
-export type { ObservableArray, ObservableArrayOptions };
+export type { ObservableArray };

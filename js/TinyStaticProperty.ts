@@ -13,7 +13,7 @@ import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
 import { PropertyLinkListener } from './IReadOnlyProperty.js';
 
-class TinyStaticProperty<T> extends TinyProperty<T> {
+export default class TinyStaticProperty<T> extends TinyProperty<T> {
 
   // When set, it will be called whenever there is an attempt to read the value of this TinyStaticProperty.
   private readonly onAccessAttempt: () => void;
@@ -80,4 +80,3 @@ class TinyStaticProperty<T> extends TinyProperty<T> {
 }
 
 axon.register( 'TinyStaticProperty', TinyStaticProperty );
-export default TinyStaticProperty;

@@ -18,10 +18,10 @@ import { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from
 type ComparableObject = {
   equals: ( a: any ) => boolean
 };
-type TinyPropertyEmitterParameters<T> = [ T, T | null, IProperty<T> ];
-type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
+export type TinyPropertyEmitterParameters<T> = [ T, T | null, IProperty<T> ];
+export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
-class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {
+export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {
 
   _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
 
@@ -209,5 +209,3 @@ class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> impl
 }
 
 axon.register( 'TinyProperty', TinyProperty );
-export { TinyProperty as default };
-export type { TinyPropertyEmitterParameters, TinyPropertyOnBeforeNotify };

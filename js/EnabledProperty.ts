@@ -13,16 +13,16 @@ import BooleanProperty, { BooleanPropertyOptions } from './BooleanProperty.js';
 
 const TANDEM_NAME = 'enabledProperty';
 
-type EnabledPropertySelfOptions = {
+type SelfOptions = {
   checkTandemName?: boolean;
 };
 
-type EnabledPropertyOptions = EnabledPropertySelfOptions & BooleanPropertyOptions;
+export type EnabledPropertyOptions = SelfOptions & BooleanPropertyOptions;
 
-class EnabledProperty extends BooleanProperty {
+export default class EnabledProperty extends BooleanProperty {
   constructor( initialEnabled: boolean, providedOptions?: EnabledPropertyOptions ) {
 
-    const options = optionize<EnabledPropertyOptions, EnabledPropertySelfOptions, BooleanPropertyOptions>( {
+    const options = optionize<EnabledPropertyOptions, SelfOptions, BooleanPropertyOptions>( {
       phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
       phetioFeatured: true,
 
@@ -44,5 +44,3 @@ class EnabledProperty extends BooleanProperty {
 }
 
 axon.register( 'EnabledProperty', EnabledProperty );
-export default EnabledProperty;
-export type { EnabledPropertyOptions };

@@ -21,7 +21,7 @@ type NodeLike = {
   isPhetioInstrumented: () => boolean
 };
 
-class TinyForwardingProperty<T> extends TinyProperty<T> {
+export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
   // Set in setTargetProperty() - public for read-only NodeTests
   targetProperty?: IProperty<T> | null;
@@ -206,4 +206,3 @@ class TinyForwardingProperty<T> extends TinyProperty<T> {
 }
 
 axon.register( 'TinyForwardingProperty', TinyForwardingProperty );
-export default TinyForwardingProperty;

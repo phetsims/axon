@@ -41,9 +41,9 @@ type UnitConversionPropertySelfOptions = {
   map?: ( input: number ) => number;
   inverseMap?: ( output: number ) => number;
 };
-type UnitConversionPropertyOptions = UnitConversionPropertySelfOptions & MappedPropertyOptions<number, number>;
+export type UnitConversionPropertyOptions = UnitConversionPropertySelfOptions & MappedPropertyOptions<number, number>;
 
-class UnitConversionProperty extends MappedProperty<number, number> {
+export default class UnitConversionProperty extends MappedProperty<number, number> {
 
   readonly rangeProperty: IProperty<Range | null>;
 
@@ -118,4 +118,3 @@ class UnitConversionProperty extends MappedProperty<number, number> {
 }
 
 axon.register( 'UnitConversionProperty', UnitConversionProperty );
-export default UnitConversionProperty;

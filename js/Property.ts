@@ -47,7 +47,7 @@ type PropertyConstructorOptions = {
 } & PropertyDefinedOptions & Pick<PhetioObjectOptions, 'phetioEventMetadata' | 'phetioType'>;
 
 // Options that can be passed in
-type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
+export type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   validValues?: readonly T[];
   valueType?: any;
   arrayElementType?: any;
@@ -63,7 +63,7 @@ export interface ReadOnlyProperty<T> extends Property<T> {
   reset: unknown & any;
 }
 
-class Property<T> extends PhetioObject implements IProperty<T> {
+export default class Property<T> extends PhetioObject implements IProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;
@@ -655,5 +655,3 @@ Property.PropertyIO = ( parameterType: IOType ) => {
 };
 
 axon.register( 'Property', Property );
-export { Property as default };
-export type { PropertyOptions };

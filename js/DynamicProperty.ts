@@ -139,7 +139,7 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // } );
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
-class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = IProperty<InnerValueType>> extends Property<ThisValueType> {
+export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = IProperty<InnerValueType>> extends Property<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   isExternallyChanging: boolean;
@@ -336,4 +336,3 @@ class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueT
 }
 
 axon.register( 'DynamicProperty', DynamicProperty );
-export default DynamicProperty;

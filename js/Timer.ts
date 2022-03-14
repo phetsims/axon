@@ -12,7 +12,7 @@ import TinyEmitter from './TinyEmitter.js';
 
 type TimerListener = ( dt: number ) => void;
 
-class Timer extends TinyEmitter<[number]> {
+export default class Timer extends TinyEmitter<[number]> {
 
   /**
    * Adds a listener to be called back once after the specified time in milliseconds
@@ -92,4 +92,3 @@ class Timer extends TinyEmitter<[number]> {
 }
 
 axon.register( 'Timer', Timer );
-export default Timer;

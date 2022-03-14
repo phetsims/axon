@@ -15,9 +15,9 @@ import Property, { PropertyOptions } from './Property.js';
 // constants
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
-type BooleanPropertyOptions = PropertyOptions<boolean>;
+export type BooleanPropertyOptions = PropertyOptions<boolean>;
 
-class BooleanProperty extends Property<boolean> {
+export default class BooleanProperty extends Property<boolean> {
 
   constructor( value: boolean, options?: BooleanPropertyOptions ) {
 
@@ -46,5 +46,3 @@ class BooleanProperty extends Property<boolean> {
 }
 
 axon.register( 'BooleanProperty', BooleanProperty );
-export default BooleanProperty;
-export type { BooleanPropertyOptions };
