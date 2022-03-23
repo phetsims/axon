@@ -17,8 +17,8 @@ import IProperty from './IProperty.js';
 import { PropertyLazyLinkListener } from './IReadOnlyProperty.js';
 
 type NodeLike = {
-  updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: IProperty<T> | null, newProperty?: IProperty<T> | null ) => void,
-  isPhetioInstrumented: () => boolean
+  updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: IProperty<T> | null, newProperty?: IProperty<T> | null ) => void;
+  isPhetioInstrumented: () => boolean;
 };
 
 export default class TinyForwardingProperty<T> extends TinyProperty<T> {

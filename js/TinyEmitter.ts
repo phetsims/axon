@@ -13,8 +13,8 @@ import axon from './axon.js';
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
 type EmitContext = {
-  index: number,
-  listenerArray?: Function[]
+  index: number;
+  listenerArray?: Function[];
 };
 type Listener<T extends any[]> = ( ...args: T ) => void;
 

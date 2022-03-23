@@ -16,7 +16,7 @@ import IProperty from './IProperty.js';
 import { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 
 type ComparableObject = {
-  equals: ( a: any ) => boolean
+  equals: ( a: any ) => boolean;
 };
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, IProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;

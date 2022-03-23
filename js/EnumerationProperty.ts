@@ -16,7 +16,7 @@ type SelfOptions<T extends EnumerationValue> = {
 
   // By default, this will be taken from the initial value, but if subtyping enumerations, you must provide this
   // manually to make sure it is set to the correct, subtype value, see https://github.com/phetsims/phet-core/issues/102
-  enumeration?: Enumeration<T>
+  enumeration?: Enumeration<T>;
 };
 
 export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & Omit<PropertyOptions<T>, 'phetioType'>;

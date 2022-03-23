@@ -37,8 +37,8 @@ let globalId = 0; // autoincremented for unique IDs
 type PropertyDefinedOptions = {
   tandem: Tandem;
   useDeepEquality: boolean;
-  units: string | null,
-  reentrant: boolean
+  units: string | null;
+  reentrant: boolean;
 };
 
 // Options used in the contstructor
@@ -51,7 +51,7 @@ export type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
   validValues?: readonly T[];
   valueType?: any;
   arrayElementType?: any;
-  isValidValue?: any
+  isValidValue?: any;
 } & PhetioObjectOptions;
 
 // a Property (can't be a TinyProperty) with all of the value-mutation removed.

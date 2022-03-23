@@ -114,7 +114,7 @@ type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If valuePropertyProperty.value === null, this dynamicProperty will act instead like
   // derive( valuePropertyProperty.value ) === new Property( defaultValue ). Note that if a custom map function is
   // provided, it will be applied to this defaultValue to determine our Property's value.
-  defaultValue?: InnerValueType,
+  defaultValue?: InnerValueType;
 
   // Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])

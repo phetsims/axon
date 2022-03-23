@@ -23,8 +23,8 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
 type DerivedPropertyDefinedOptions = {
-  tandem: Tandem,
-  phetioType?: IOType
+  tandem: Tandem;
+  phetioType?: IOType;
 };
 
 // Maps tuples/arrays from T => IReadOnlyProperty<T>

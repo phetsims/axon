@@ -91,7 +91,7 @@ QUnit.test( 'Emitter Basics', assert => {
 } );
 
 QUnit.test( 'Emitter Tricks', assert => {
-  const entries: Array<{ listener: string, arg: string }> = [];
+  const entries: Array<{ listener: string; arg: string }> = [];
 
   const emitter = new Emitter<[ string ]>( {
     parameters: [ { valueType: 'string' } ]
