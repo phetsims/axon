@@ -10,7 +10,7 @@
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
-type TimerListener = ( dt: number ) => void;
+export type TimerListener = ( dt: number ) => void;
 
 export default class Timer extends TinyEmitter<[number]> {
 
