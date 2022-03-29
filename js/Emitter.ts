@@ -59,7 +59,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( 'emitted', {
-      getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
+      data: this.getPhetioData( ...args )
     } );
 
     this.tinyEmitter.emit( ...args );
