@@ -1,5 +1,7 @@
 // Copyright 2019-2022, University of Colorado Boulder
 
+// @ts-nocheck
+
 /**
  * The definition file for "validators" used to validate values. This file holds associated logic that validates the
  * schema of the "validator" object, as well as testing if a value adheres to the restrictions provided by a validator.
