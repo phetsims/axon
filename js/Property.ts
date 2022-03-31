@@ -26,6 +26,7 @@ import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from
 import { MappedProperties } from './DerivedProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import ValidatorDef, { Validator } from './ValidatorDef.js';
+import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -98,6 +99,8 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   static CHANGED_EVENT_NAME: string;
   static PropertyIO: ( parameterType: IOType ) => IOType;
 
+  private readonly validator: Validator<T>;
+
   /**
    * @param value - the initial value of the property
    * @param [providedOptions]
@@ -163,21 +166,21 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     this.deferredValue = null;
     this.hasDeferredValue = false;
 
+    this.validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+
     // Assertions regarding value validation
     if ( assert ) {
 
-      const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
-
       // Validate the value type's phetioType of the Property, not the PropertyIO itself.
       // For example, for PropertyIO( BooleanIO ), assign this validator's phetioType to be BooleanIO's validator.
-      if ( validator.phetioType ) {
-        assert( !!validator.phetioType.parameterTypes[ 0 ], 'unexpected number of parameters for Property' );
-        validator.phetioType = validator.phetioType.parameterTypes[ 0 ];
+      if ( this.validator.phetioType ) {
+        assert( !!this.validator.phetioType.parameterTypes[ 0 ], 'unexpected number of parameters for Property' );
+        this.validator.phetioType = this.validator.phetioType.parameterTypes[ 0 ];
       }
-      ValidatorDef.validateValidator( validator );
+      ValidatorDef.validateValidator( this.validator );
 
       // validate the initial value as well as any changes in the future
-      this.link( ( value: T ) => validate( value, validator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
+      this.link( ( value: T ) => validate( value, this.validator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
     }
   }
 
@@ -456,6 +459,10 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     return listener;
   }
 
+  isValueValid( value: T ) {
+    return ValidatorDef.isValueValid( value, this.validator, VALIDATE_OPTIONS_FALSE );
+  }
+
   // Ensures that the Property is eligible for GC
   dispose() {
 
@@ -586,6 +593,14 @@ Property.PropertyIO = ( parameterType: IOType ) => {
           parameterTypes: [],
           implementation: function( this: Property<any> ) {
             return this.get();
+          },
+          documentation: 'Gets the current value.'
+        },
+        isValueValid: {
+          returnType: BooleanIO,
+          parameterTypes: [ parameterType ],
+          implementation: function( this: Property<any>, value: any ) {
+            return this.isValueValid( value );
           },
           documentation: 'Gets the current value.'
         },
