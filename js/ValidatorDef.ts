@@ -62,9 +62,9 @@ const ASSERTIONS_FALSE: ValidationOptions = { assertions: false };
 const ASSERTIONS_TRUE: ValidationOptions = { assertions: true };
 
 type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
-export type Validator = {
+export type Validator<T = any> = {
   valueType?: ValueType | ValueType[];
-  validValues?: any[] | null;
+  validValues?: readonly T[] | null;
   isValidValue?: ( v?: any ) => boolean | null | void;
   arrayElementType?: ValueType;
   phetioType?: IOType;

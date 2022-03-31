@@ -6,7 +6,6 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import merge from '../../phet-core/js/merge.js';
 import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -22,37 +21,37 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
-import ValidatorDef from './ValidatorDef.js';
 import IProperty from './IProperty.js';
 import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import { MappedProperties } from './DerivedProperty.js';
+import optionize from '../../phet-core/js/optionize.js';
+import ValidatorDef, { Validator } from './ValidatorDef.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // variables
-let globalId = 0; // autoincremented for unique IDs
+let globalId = 0; // auto-incremented for unique IDs
 
 // Options defined by Property
-type PropertyDefinedOptions = {
-  tandem: Tandem;
-  useDeepEquality: boolean;
-  units: string | null;
-  reentrant: boolean;
+type SelfOptions = {
+
+  // useDeepEquality: true => Use the `equals` method on the values
+  // useDeepEquality: false => Use === for equality test
+  useDeepEquality?: boolean;
+
+  // units for the number, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
+  units?: string | null;
+
+  // Whether reentrant calls to 'set' are allowed.
+  // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
+  // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
+  // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
+  reentrant?: boolean;
 };
 
-// Options used in the contstructor
-type PropertyConstructorOptions = {
-  isValidValue?: any;
-} & PropertyDefinedOptions & Pick<PhetioObjectOptions, 'phetioEventMetadata' | 'phetioType'>;
-
 // Options that can be passed in
-export type PropertyOptions<T> = Partial<PropertyDefinedOptions> & {
-  validValues?: readonly T[];
-  valueType?: any;
-  arrayElementType?: any;
-  isValidValue?: any;
-} & PhetioObjectOptions;
+export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
 // a Property (can't be a TinyProperty) with all of the value-mutation removed.
 export interface ReadOnlyProperty<T> extends Property<T> {
@@ -104,26 +103,15 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    * @param [providedOptions]
    */
   constructor( value: T, providedOptions?: PropertyOptions<T> ) {
-    const options = merge( {
+    const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions, 'tandem'>( {
 
-      tandem: Tandem.OPTIONAL, // workaround for https://github.com/phetsims/tandem/issues/50
-
-      // useDeepEquality: true => Use the `equals` method on the values
-      // useDeepEquality: false => Use === for equality test
       useDeepEquality: false,
-
-      // {string|null} units for the number, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
       units: null,
+      reentrant: false,
 
-      // {boolean} Whether reentrant calls to 'set' are allowed.
-      // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
-      // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
-      // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
-      reentrant: false
-
-      // Property also supports validator options, see ValidatorDef.VALIDATOR_KEYS.
-
-    }, providedOptions ) as PropertyConstructorOptions;
+      // phet-io
+      tandem: Tandem.OPTIONAL
+    }, providedOptions );
 
     // Support non-validated Property
     if ( !ValidatorDef.containsValidatorKey( options ) ) {
@@ -178,7 +166,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     // Assertions regarding value validation
     if ( assert ) {
 
-      // @ts-ignore
       const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
 
       // Validate the value type's phetioType of the Property, not the PropertyIO itself.
