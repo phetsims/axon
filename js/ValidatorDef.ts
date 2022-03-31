@@ -18,7 +18,7 @@
  * A validator that accepts any Object:
  * { valueType: Object }
  *
- * A validator that accepts EnumerationDeprecated values:
+ * A validator that accepts EnumerationDeprecated values (NOTE! This is deprecated, use the new class-based enumeration pattern as the valueType):
  * { valueType: MyEnumeration }
  * and/or
  * { validValues: MyEnumeration.VALUES }
@@ -31,19 +31,48 @@
  */
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import merge from '../../phet-core/js/merge.js';
+import Constructor from '../../phet-core/js/types/Constructor.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import optionize from '../../phet-core/js/optionize.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 
-// constants
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
-// constants
-const ASSERTIONS_FALSE = { assertions: false };
-const ASSERTIONS_TRUE = { assertions: true };
+// Options passed to ValidatorDef functions.
+export type ValidationOptions = {
+
+  // if true, throw an assertion instead of returning a boolean as to whether the value is valid
+  assertions?: boolean;
+}
+
+export type IsValidValueOptions = {
+
+  // By default validation will always check the validity of the  validator itself.  However, for types like
+  // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
+  // wastes cpu. Hence cases like those can opt-out
+  validateValidator?: boolean;
+
+  // if provided, this will provide supplemental information to the assertion messages in addition to the
+  // validate-key-specific message that will be given.
+  message?: string | null;
+} & ValidationOptions;
+
+const ASSERTIONS_FALSE: ValidationOptions = { assertions: false };
+const ASSERTIONS_TRUE: ValidationOptions = { assertions: true };
+
+type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
+export type Validator = {
+  valueType?: ValueType | ValueType[];
+  validValues?: any[] | null;
+  isValidValue?: ( v?: any ) => boolean | null | void;
+  arrayElementType?: ValueType;
+  phetioType?: IOType;
+}
 
 // Key names are verbose so this can be mixed into other contexts like AXON/Property. `undefined` and `null` have the
 // same semantics so that we can use this feature without having extend and allocate new objects at every validation.
-const VALIDATOR_KEYS = [
+const VALIDATOR_KEYS: Array<keyof Validator> = [
 
   // {function|string|null} type of the value.
   // If {function}, the function must be a constructor.
@@ -79,27 +108,14 @@ const VALIDATOR_KEYS = [
   'phetioType'
 ];
 
-/**
- * @typedef {Object} ValidatorDef
- * See above documentation for details
- * @property {function} [isValidValue]
- * @property {*} [valueType]
- * @property {Array.<*>} [validValues]
- * @property {Array.<*>} [arrayElementType]
- * @property {function()} [phetioType] - IO Type
- */
-const ValidatorDef = {
+class ValidatorDef {
 
   /**
    * Throws assertion errors if the validator is invalid.
-   * @param {ValidatorDef} validator
-   * @param {Object} [options]
-   * @returns {boolean}
-   * @public
    */
-  isValidValidator( validator, options ) {
+  static isValidValidator( validator: Validator, providedOptions?: ValidationOptions ): boolean {
 
-    options = options || ASSERTIONS_FALSE;// Poor man's extend
+    const options = providedOptions || ASSERTIONS_FALSE;// Poor man's extend
 
     if ( !( validator instanceof Object ) ) {
       assert && options.assertions && assert( false,
@@ -165,7 +181,7 @@ const ValidatorDef = {
       return ValidatorDef.isValidValidator( validator.phetioType.validator, options );
     }
     return true;
-  },
+  }
 
   /**
    * Validate that the valueType is of the expected format.
@@ -174,7 +190,7 @@ const ValidatorDef = {
    * @param {Object} [options] - required, options from isValidValidator
    * @returns {boolean} - true if valid
    */
-  validateValueType( valueType, options ) {
+  static validateValueType( valueType, options ) {
     if ( !( typeof valueType === 'function' ||
             typeof valueType === 'string' ||
             valueType instanceof EnumerationDeprecated ||
@@ -193,62 +209,46 @@ const ValidatorDef = {
       }
     }
     return true;
-  },
+  }
 
   /**
    * Throws assertion errors if the validator is invalid.
-   * @param {ValidatorDef} validator
-   * @public
    */
-  validateValidator( validator ) {
-    if ( assert ) {
+  static validateValidator( validator: Validator ): void {
 
-      // Specify that assertions should be thrown if there are problems during the validation check.
-      ValidatorDef.isValidValidator( validator, ASSERTIONS_TRUE );
-    }
-  },
+    // Specify that assertions should be thrown if there are problems during the validation check.
+    assert && ValidatorDef.isValidValidator( validator, ASSERTIONS_TRUE );
+  }
 
   /**
-   * @param {ValidatorDef|any} validator - object which may or may not contain validation keys
-   * @returns {boolean}
-   * @public
+   * @param validator - object which may or may not contain validation keys
    */
-  containsValidatorKey( validator ) {
+  static containsValidatorKey( validator: IntentionalAny ): boolean {
     for ( let i = 0; i < VALIDATOR_KEYS.length; i++ ) {
       if ( validator.hasOwnProperty( VALIDATOR_KEYS[ i ] ) ) {
         return true;
       }
     }
     return false;
-  },
+  }
 
-  /**
-   * @private
-   * @param {string} genericMessage
-   * @param {string} [specificMessage] - provided as an option to this.isValueValid()
-   */
-  formulateAssertionMessage( genericMessage, specificMessage ) {
+  private static formulateAssertionMessage( genericMessage: string, specificMessage: string ): string {
     if ( specificMessage ) {
       genericMessage = `${specificMessage}: ${genericMessage}`;
     }
     return genericMessage;
-  },
+  }
 
   /**
    * Determines whether a value is valid (returning a boolean value), and optionally throws an assertion error if the
    * value is not valid.  The reason assertions are (optionally) thrown from this method is so that we can have more
    * specific error messages.
    *
-   * @param {Object|null} value
-   * @param {ValidatorDef} validator
-   * @param {Object} [options]
-   * @returns {boolean} - whether the value is valid
    * @throws {Error} assertion error if not valid and options.assertions is true
-   * @public
    */
-  isValueValid( value, validator, options ) {
+  static isValueValid( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): boolean {
 
-    options = merge( {
+    const options = optionize<IsValidValueOptions>( {
 
       // {boolean} - By default validation will always check the validity of the  validator itself.  However, for types like
       // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
@@ -261,7 +261,7 @@ const ValidatorDef = {
       // {string} - if provided, this will provide supplemental information to the assertion messages in addition to the
       // validate-key-specific message that will be given.
       message: null
-    }, options );
+    }, providedOptions );
 
     // Use the same policy for whether to throw assertions when checking the validator itself.
     if ( options.validateValidator && !axon.ValidatorDef.isValidValidator( validator, options ) ) {
@@ -334,19 +334,12 @@ const ValidatorDef = {
       return false;
     }
     return true;
-  },
+  }
 
   /**
-   * @param {Object|null} value
-   * @param {string|function|null|undefined} valueType - see above definition, Array is not allowed in this method
-   * @param {string} [message] - Optional, more specific message about the context of the failure, to be added to
-   * valueType-specific assertion messages.
-   * @param {Object} [options] - not optional, should be passed in from isValidValue
-   * @returns {boolean} - whether the value is a validType
    * @throws {Error} assertion error if not valid and options.assertions is true
-   * @private
    */
-  isValueValidValueType( value, valueType, message, options ) {
+  private static isValueValidValueType( value: IntentionalAny, valueType: ValueType, message: string | null, options: ValidationOptions ): boolean {
     if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
       assert && options.assertions && assert( false, this.formulateAssertionMessage( `value should have typeof ${valueType}, value=${value}`, message ) );
       return false;
@@ -369,15 +362,22 @@ const ValidatorDef = {
     }
     return true;
   }
-};
+
+  static readonly VALIDATOR_KEYS = VALIDATOR_KEYS;
+
+  /**
+   * General validator for validating that a string doesn't have template variables in it.
+   */
+  static readonly STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR: Validator = {
+    valueType: 'string',
+    isValidValue: v => !/\{\{\w*\}\}/.test( v )
+  };
+}
 
 /**
  * Validate a type that can be a type, or an array of multiple types.
- * @param {*} type - see valueType documentation
- * @param {Object} [options] - see isValidValidator
- * @returns {boolean}
  */
-const validateValueOrElementType = ( type, options ) => {
+const validateValueOrElementType = ( type: ValueType, options?: ValidationOptions ): boolean => {
   if ( Array.isArray( type ) ) {
 
     // If not every type in the list is valid, then return false, pass options through verbatim.
@@ -393,21 +393,6 @@ const validateValueOrElementType = ( type, options ) => {
   return true;
 };
 
-/**
- * @public
- * @type {string[]}
- */
-ValidatorDef.VALIDATOR_KEYS = VALIDATOR_KEYS;
-
-/**
- * General validator for validating that a string doesn't have template variables in it.
- * @public
- * @type {ValidatorDef}
- */
-ValidatorDef.STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR = {
-  valueType: 'string',
-  isValidValue: v => !/\{\{\w*\}\}/.test( v )
-};
 
 axon.register( 'ValidatorDef', ValidatorDef );
 export default ValidatorDef;

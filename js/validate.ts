@@ -9,30 +9,29 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import merge from '../../phet-core/js/merge.js';
 import axon from './axon.js';
-import ValidatorDef from './ValidatorDef.js';
+import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import ValidatorDef, { IsValidValueOptions, Validator } from './ValidatorDef.js';
 
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
- * @param {*} value
- * @param {Object} validator - ValidatorDef
- * @param {string} [message] - make this an arg, instead of an option, for convenience. This message will be prepended to
+ * @param value
+ * @param validator - ValidatorDef
+ * @param [message] - make this an arg, instead of an option, for convenience. This message will be prepended to
  * a message in ValidatorDef that specifies which validator key fails, along with the value. It is best to end this
  * message with no punctuation.
- * @param {Object} [options] - see ValidatorDef.isValueValid() for options
- * @returns {*} - returns the input value for chaining
- * @public
+ * @param [providedOptions] - see ValidatorDef.isValueValid() for options
  */
-const validate = ( value, validator, message, options ) => {
+const validate = ( value: IntentionalAny, validator: Validator, message?: string, providedOptions?: IsValidValueOptions ): void => {
 
   if ( assert ) {
-    options && assert( !options.hasOwnProperty( message ), 'prefer parameter to options for message' );
+    providedOptions && assert( !providedOptions.hasOwnProperty( message ), 'prefer parameter to options for message' );
 
-    options = merge( {
+    const options = optionize<IsValidValueOptions, {}>( {
       assertions: true,
       message: message // use a parameter and merge it in here for convenience
-    }, options );
+    }, providedOptions );
 
     // Throws an error if not valid
     ValidatorDef.isValueValid( value, validator, options );
