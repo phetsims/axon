@@ -23,6 +23,7 @@ export default interface IReadOnlyProperty<T> {
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
   hasListener( listener: PropertyLinkListener<T> ): boolean;
   isPhetioInstrumented(): boolean;
+  get phetioFeatured(): boolean;
   isSettable(): boolean;
   dispose(): void;
 

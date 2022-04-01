@@ -168,7 +168,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    *
    * NOTE: Duplicated with Property.linkAttribute
    */
-  linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ) { // eslint-disable-line
+  linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ) { // eslint-disable-line
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
@@ -186,6 +186,13 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
    */
   isPhetioInstrumented(): boolean {
+    return false;
+  }
+
+  /**
+   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
+   */
+  get phetioFeatured(): boolean {
     return false;
   }
 
