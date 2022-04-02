@@ -23,7 +23,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
-// undefined and never are not allows as parameters to Emitter
+// undefined and never are not allowed as parameters to Emitter
 type EmitterParameter = Exclude<IntentionalAny, undefined | never>;
 
 type Listener<T extends EmitterParameter[]> = ( ...args: T ) => void;
