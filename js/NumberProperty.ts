@@ -8,6 +8,7 @@
 
 import Range from '../../dot/js/Range.js';
 import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
@@ -25,21 +26,30 @@ const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
 
+type NumberType = 'Integer' | 'FloatingPoint';
+
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
-type NumberPropertyDefinedOptions = {
-  tandem: Tandem;
-  numberType: string;
-  range: Range | Property<Range | null> | null;
-  rangePropertyOptions: any;
-  step: number;
-  validateOnNextFrame: boolean;
-  valueType: string;
+type SelfOptions = {
+  numberType?: NumberType;
+  range?: Range | Property<Range | null> | null;
+
+  // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
+  rangePropertyOptions?: Partial<PropertyOptions<Range>>;
+
+  // used by PhET-iO Studio to control this Property
+  step?: number | null;
+
+  // By default, listeners are added to this Property and its provided rangeProperty to validate each
+  // time either is set, making sure the NumberProperty value is within the Range. In certain cases, it is best
+  // to defer this validation for a frame to allow these to go through an incorrect intermediate state, knowing
+  // that by the next frame they will be correct. This is for usages that don't have the ability to set both the
+  // number and range at the same time using NumberProperty.setValueAndRange.
+  validateOnNextFrame?: boolean;
 };
 
-export type NumberPropertyOptions = {
-} & Partial<NumberPropertyDefinedOptions> & PropertyOptions<number>;
+export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType'>;
 
 // Minimal types for ranged/stepped Properties
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
@@ -51,7 +61,7 @@ export type RangedSteppedProperty = RangedProperty & SteppedProperty;
 export const isRangedProperty = ( property: Property<number> ): property is RangedProperty => {
   return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
 };
-export const isSteppedProperty = ( property: Property<number> ): property is RangedProperty => {
+export const isSteppedProperty = ( property: Property<number> ): property is SteppedProperty => {
   return typeof ( property as SteppedProperty ).step === 'number';
 };
 export const isRangedSteppedProperty = ( property: Property<number> ): property is RangedSteppedProperty => {
@@ -59,32 +69,36 @@ export const isRangedSteppedProperty = ( property: Property<number> ): property 
 };
 
 export default class NumberProperty extends Property<number> {
-  numberType: any;
-  step: any;
-  private readonly validateOnNextFrame: any;
+
+  // Used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
+  // @readonly, but cannot set as such because it is set by PhET-iO state.
+  numberType: NumberType;
+
+  // If defined, provides a step that the NumberProperty can be incremented/decremented.
+  // @readonly, but cannot set as such because it is set by PhET-iO state.
+  step: number | null;
+
+  // if true, validation will be deferred until the next frame so that the number and range can be changed independently.
+  private readonly validateOnNextFrame: boolean;
+
+  // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
   private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
-  private validationTimeout: ( ( dt: number ) => void ) | null;
+
+  // Public only for (NumberPropertyTests) - only applicable if options.validateOnNextFrame. Store the timeout so we
+  // only need to create it once per frame.
+  public validationTimeout: ( ( dt: number ) => void ) | null;
   readonly rangeProperty: Property<Range | null>;
   private readonly disposeNumberProperty: () => void;
   static NumberPropertyIO: IOType;
-  resetNumberProperty: () => void;
+  private readonly resetNumberProperty: () => void;
 
-  /**
-   * @param {number} value - initial value
-   * @param {Object} [providedOptions]
-   */
   constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
-    let options = merge( {
-      numberType: 'FloatingPoint', // {string} see VALID_NUMBER_TYPES
-
-      // {Range|Property.<Range|null>|null} range
+    let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>, 'tandem'>( {
+      numberType: 'FloatingPoint',
       range: null,
-
-      // {number|null} step - used by PhET-iO Studio to control this Property
       step: null,
 
-      // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
       // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
       rangePropertyOptions: {
         phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
@@ -92,23 +106,18 @@ export default class NumberProperty extends Property<number> {
         phetioReadOnly: true
       },
 
-      // {boolean} - By default, listeners are added to this Property and its provided rangeProperty to validate each
-      // time either is set, making sure the NumberProperty value is within the Range. In certain cases, it is best
-      // to defer this validation for a frame to allow these to go through an incorrect intermediate state, knowing
-      // that by the next frame they will be correct. This is for usages that don't have the ability to set both the
-      // number and range at the same time using NumberProperty.setValueAndRange.
       validateOnNextFrame: false,
 
       // {Tandem}
       tandem: Tandem.OPTIONAL
-    }, providedOptions ) as NumberPropertyDefinedOptions;
+    }, providedOptions );
 
     // options that depend on other options
     options = merge( {
       rangePropertyOptions: {
         tandem: options.tandem.createTandem( 'rangeProperty' ) // must be 'rangeProperty', see assertion below
       }
-    }, options ) as NumberPropertyDefinedOptions;
+    }, options );
 
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), `invalid numberType: ${options.numberType}` );
     assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
@@ -116,17 +125,13 @@ export default class NumberProperty extends Property<number> {
     assert && options.step && assert( typeof options.step === 'number', `invalid step:${options.step}` );
 
     assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
-    assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem.name === 'rangeProperty',
+    assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem!.name === 'rangeProperty',
       'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
 
     // client cannot specify superclass options that are controlled by NumberProperty
     assert && assert( !options.valueType, 'NumberProperty sets valueType' );
     options.valueType = 'number';
 
-    // @ts-ignore
-    assert && assert( !options.phetioType, 'NumberProperty sets phetioType' );
-
-    // @ts-ignore
     options.phetioType = NumberProperty.NumberPropertyIO;
 
     const rangePropertyProvided = options.range && options.range instanceof Property;
@@ -134,42 +139,32 @@ export default class NumberProperty extends Property<number> {
 
     super( value, options );
 
-    // @public (read-only) - used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
     this.numberType = options.numberType;
-
-    // @public {number|null} (read-only - If defined, provides a step that the NumberProperty can be
-    // incremented/decremented.
     this.step = options.step;
-
-    // @private {boolean} - if true, validation will be deferred until the next frame so that the number and range can
-    // be changed independently.
     this.validateOnNextFrame = options.validateOnNextFrame;
-
-    // @private {function|null} validation for NumberProperty and its rangeProperty, null if assertions are disabled
     this.validateNumberAndRangeProperty = assert && ( value => {
 
       // validate for integer
-      // @ts-ignore
       ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
 
       // validate range value type
-      // @ts-ignore
       validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
 
       // validate that value and range are compatible
       if ( this.rangeProperty.value ) {
-        // @ts-ignore
-        validate( value, { isValidValue: value => this.rangeProperty.value.contains( value ) } );
+        validate( value, { isValidValue: value => this.rangeProperty.value!.contains( value ) } );
       }
     } );
 
-    // @public (NumberPropertyTests) {function|null} - only applicable if options.validateOnNextFrame. Store the
-    // timeout so we only need to create it once per frame.
     this.validationTimeout = null;
 
-    // @public (read-only) {Property.<Range|null>}
-    // @ts-ignore
-    this.rangeProperty = ownsRangeProperty ? new Property( options.range, options.rangePropertyOptions ) : options.range;
+    if ( options.range instanceof Property ) {
+      this.rangeProperty = options.range;
+    }
+    else {
+      this.rangeProperty = new Property( options.range, options.rangePropertyOptions );
+    }
+
     assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
       'rangeProperty must be instrument if NumberProperty is instrumented' );
@@ -184,18 +179,17 @@ export default class NumberProperty extends Property<number> {
     this.addPhetioStateDependencies( [ this.rangeProperty ] );
 
     // verify that validValues meet other NumberProperty-specific validation criteria
-    // @ts-ignore
     if ( options.validValues && this.validateNumberAndRangeProperty ) {
-
-      // @ts-ignore
-      options.validValues.forEach( validValue => this.validateNumberAndRangeProperty( validValue ) );
+      for ( let i = 0; i < options.validValues.length; i++ ) {
+        const validValue = options.validValues[ i ];
+        this.validateNumberAndRangeProperty( validValue );
+      }
     }
 
     // This puts validation at notification time instead of at value setting time. This is especially helpful as it
     // pertains to Property.prototype.setDeferred(), and setting a range and value together.
     this.validateNumberAndRangeProperty && this.link( value => this.validateNumberProperty() );
 
-    // @private
     this.disposeNumberProperty = () => {
       if ( ownsRangeProperty ) {
         this.rangeProperty.dispose();
@@ -210,17 +204,12 @@ export default class NumberProperty extends Property<number> {
       }
     };
 
-    // @private
     this.resetNumberProperty = () => {
       ownsRangeProperty && this.rangeProperty.reset();
     };
   }
 
-  /**
-   * @public
-   * @returns {Range|null}
-   */
-  get range() {
+  get range(): Range | null {
     return this.rangeProperty.value;
   }
 
@@ -228,19 +217,12 @@ export default class NumberProperty extends Property<number> {
    * Convenience function for setting the rangeProperty. Note: be careful using this function, as validation will occur
    * immediately, and if the value is outside of this new Range an error will occur. See this.setValueAndRange() for
    *  way to set both at once without assertion errors.
-   *
-   * @public
-   * @param {Range} range
    */
-  set range( range ) {
+  set range( range: Range | null ) {
     this.rangeProperty.value = range;
   }
 
-  /**
-   * @public
-   * @overrides
-   */
-  reset() {
+  override reset(): void {
     super.reset();
 
     // Do subclass-specific reset after the value has been reset, because this reset may change the range
@@ -248,11 +230,7 @@ export default class NumberProperty extends Property<number> {
     this.resetNumberProperty();
   }
 
-  /**
-   * @public
-   * @override
-   */
-  dispose() {
+  override dispose(): void {
     this.disposeNumberProperty();
     super.dispose();
   }
@@ -282,17 +260,15 @@ export default class NumberProperty extends Property<number> {
   /**
    * Resets the value and range atomically.
    * If you use setValueAndRange, you'll likely need to use this instead of reset.
-   * @public
    */
-  resetValueAndRange() {
+  resetValueAndRange(): void {
     this.setValueAndRange( this.initialValue!, this.rangeProperty.initialValue! );
   }
 
   /**
    * Trigger validation of this NumberProperty's value as it pertains to its provided range.
-   * @private
    */
-  validateNumberProperty() {
+  private validateNumberProperty(): void {
     if ( this.validateNumberAndRangeProperty ) {
       if ( this.validateOnNextFrame ) {
 
@@ -365,6 +341,7 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
     numberProperty.step = stateObject.step;
+
     numberProperty.numberType = stateObject.numberType;
   },
   stateSchema: {

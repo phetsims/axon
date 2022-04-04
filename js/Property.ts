@@ -79,7 +79,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   // emit is called when the value changes (or on link)
   tinyProperty: TinyProperty<T>;
 
-  // whether we are in the process of notifying listeners
+  // whether we are in the process of notifying listeners; changed in some Property test files with @ts-ignore
   private notifying: boolean;
 
   // whether to allow reentry of calls to set

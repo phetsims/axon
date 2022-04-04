@@ -1,7 +1,5 @@
 // Copyright 2017-2022, University of Colorado Boulder
 
-// @ts-nocheck
-
 /**
  * QUnit tests for NumberProperty
  *
@@ -11,7 +9,6 @@
 
 import Range from '../../dot/js/Range.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
 import stepTimer from './stepTimer.js';
@@ -20,20 +17,26 @@ QUnit.module( 'NumberProperty' );
 
 QUnit.test( 'Test NumberProperty', assert => {
 
-  let p = null;
+  let p = new NumberProperty( 42 ); // highly random, do not change
 
   // valueType
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p = new NumberProperty( 'foo' );
   }, 'initial value has invalid valueType' );
   p = new NumberProperty( 0 );
   p.value = 1;
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p.value = 'foo';
   }, 'set value has invalid valueType' );
 
   // numberType
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p = new NumberProperty( 0, { numberType: 0 } );
   }, 'bad numberType' );
   p = new NumberProperty( 0, { numberType: 'FloatingPoint' } );
@@ -56,6 +59,8 @@ QUnit.test( 'Test NumberProperty', assert => {
 
   // range
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p = new NumberProperty( 0, { range: [ 0, 10 ] } );
   }, 'bad range' );
   window.assert && assert.throws( () => {
@@ -79,9 +84,13 @@ QUnit.test( 'Test NumberProperty', assert => {
   p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
   p.value = 5;
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p.value = 11;
   }, 'set value is greater than range.max' );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p.value = -1;
   }, 'set value is less than range.min' );
 
@@ -89,14 +98,6 @@ QUnit.test( 'Test NumberProperty', assert => {
   window.assert && assert.throws( () => {
     p = new NumberProperty( 0, { units: 'elephants' } );
   }, 'bad units' );
-
-
-  window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, { phetioType: NumberIO } );
-  }, 'EnumerationDeprecatedProperty sets phetioType' );
-
-  assert.ok( true, 'one assertion for when assert is not enabled' );
-
 
   ///////////////////////////////
   p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
@@ -112,12 +113,16 @@ QUnit.test( 'Test NumberProperty', assert => {
 QUnit.test( 'Test NumberProperty range option as Property', assert => {
 
   let rangeProperty = new Property( new Range( 0, 1 ) );
-  let p = null;
+  let p = new NumberProperty( 4 );
 
   // valueType
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p = new NumberProperty( 0, { range: 'hi' } );
   }, 'incorrect range type' );
+
+  // @ts-ignore
   p = new NumberProperty( 0, { range: rangeProperty } );
   assert.ok( p.rangeProperty === rangeProperty, 'rangeProperty should be set' );
   assert.ok( p.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
@@ -138,6 +143,8 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   p.dispose();
   rangeProperty.dispose();
   rangeProperty = new Property( new Range( 0, 1 ) );
+
+  // @ts-ignore
   p = new NumberProperty( 0, { range: rangeProperty } );
   rangeProperty.value = new Range( 0, 10 );
   p.value = 2;
@@ -166,16 +173,19 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   assert.ok( pRangeCalled === 0, 'p.rangeProperty is still deferred, should not call listeners' );
   const notifyPListeners = p.setDeferred( false );
 
+
   if ( window.assert ) {
     assert.throws( () => {
-      notifyPListeners();
+      notifyPListeners && notifyPListeners();
     }, 'rangeProperty is not yet undeferred and so has the wrong value' );
+
+    // @ts-ignore
     p.notifying = false; // since the above threw an error, reset
   }
   const notifyRangeListeners = p.rangeProperty.setDeferred( false );
-  notifyPListeners();
+  notifyPListeners && notifyPListeners();
   assert.ok( pCalled === 1, 'p listeners should have been called' );
-  notifyRangeListeners();
+  notifyRangeListeners && notifyRangeListeners();
   assert.ok( pRangeCalled === 1, 'p.rangeProperty is still deferred, should not call listeners' );
 
   p.setValueAndRange( -100, new Range( -101, -99 ) );
@@ -211,7 +221,7 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
   p.dispose();
 
   if ( Tandem.PHET_IO_ENABLED ) {
-    const uninstrumentedRangeProperty = new Property( new Range( 0, 1 ) );
+    const uninstrumentedRangeProperty = new Property<Range | null>( new Range( 0, 1 ) );
     window.assert && assert.throws( () => {
       return new NumberProperty( 0, {
         range: uninstrumentedRangeProperty,
@@ -224,7 +234,7 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
 QUnit.test( 'Test NumberProperty.validateOnNextFrame', assert => {
   assert.ok( true, 'all other tests require window.assert' );
 
-  let rangeProperty = new Property( new Range( 0, 10 ) );
+  let rangeProperty = new Property<Range | null>( new Range( 0, 10 ) );
   let numberProperty = new NumberProperty( 0, { range: rangeProperty } );
 
   window.assert && assert.throws( () => {
@@ -243,7 +253,7 @@ QUnit.test( 'Test NumberProperty.validateOnNextFrame', assert => {
   window.assert && assert.throws( () => {
     rangeProperty.value = new Range( 20, 100 );
   } );
-  rangeProperty = new Property( new Range( 0, 10 ) );
+  rangeProperty = new Property<Range | null>( new Range( 0, 10 ) );
 
 
   numberProperty = new NumberProperty( 0, { range: rangeProperty, validateOnNextFrame: true } );
@@ -298,11 +308,12 @@ QUnit.test( 'Test NumberProperty.validateOnNextFrame with no rangeProperty', ass
   numberProperty.value = 10;
   stepTimer.emit( 10 );
 
-  assert.ok( numberProperty.validationTimeout === null );
+  assert.ok( numberProperty.validationTimeout === null, 'should be null1' );
 
-  assert.ok( numberProperty.value === 10 );
-  assert.ok( numberProperty.range.min === 0 );
-  assert.ok( numberProperty.range.max === 10 );
+  assert.ok( numberProperty.value === 10, 'value' );
+  assert.ok( numberProperty.range !== null, 'should not be null' );
+  assert.ok( numberProperty.range!.min === 0, 'min' );
+  assert.ok( numberProperty.range!.max === 10, 'max' );
 
   numberProperty.value = 101;
   if ( window.assert ) {
@@ -310,13 +321,14 @@ QUnit.test( 'Test NumberProperty.validateOnNextFrame with no rangeProperty', ass
     assert.throws( () => {
       stepTimer.emit( 10 );
     } );
-    stepTimer.removeListener( validationTimeout ); // workaround since the above throws breaks stepTimer a bit.
+    assert.ok( validationTimeout, 'should not be null' );
+    stepTimer.removeListener( validationTimeout! ); // workaround since the above throws breaks stepTimer a bit.
   }
   else {
     stepTimer.emit( 10 );
   }
   numberProperty.dispose();
-  assert.ok( numberProperty.validationTimeout === null );
+  assert.ok( numberProperty.validationTimeout === null, 'should be null2' );
 
   // No range provided, should still work
   numberProperty = new NumberProperty( 0, { validateOnNextFrame: true } );
@@ -332,4 +344,26 @@ QUnit.test( 'Test NumberProperty.validateOnNextFrame with no rangeProperty', ass
   stepTimer.emit( 10 );
 
   assert.ok( numberProperty.validationTimeout === null );
+} );
+
+
+QUnit.test( 'NumberProperty assertion signatures', assert => {
+  assert.ok( true, 'all other tests are written to ensure typescript type checking' );
+  const numberProperty = new NumberProperty( 0, { step: 2 } ).asStepped();
+
+  if ( numberProperty.step === null ) {
+    assert.ok( false, 'should never happen' );
+  }
+
+  assert.ok( numberProperty.step === 2, 'steppable' );
+
+  // as number
+  assert.ok( numberProperty.step === 2, 'steppable' );
+
+  const numberProperty2 = new NumberProperty( 0 );
+  assert.ok( numberProperty2.step === null, 'not steppable' );
+
+  window.assert && assert.throws( () => {
+    new NumberProperty( 0 ).asStepped();
+  } );
 } );
