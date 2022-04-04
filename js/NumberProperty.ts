@@ -320,22 +320,16 @@ export default class NumberProperty extends Property<number> {
     }
   }
 
-  // Returns a casted version with a guaranteed non-null step
-  asStepped(): SteppedProperty {
-    if ( isSteppedProperty( this ) ) {
-      return this;
-    }
-    else {
+  // Casts this to version with a guaranteed non-null step
+  asStepped(): asserts this is SteppedProperty {
+    if ( !isSteppedProperty( this ) ) {
       throw new Error( 'Not a SteppedProperty' );
     }
   }
 
-  // Returns a casted version with a guaranteed non-null step and range
-  asRangedStepped(): RangedSteppedProperty {
-    if ( isRangedSteppedProperty( this ) ) {
-      return this;
-    }
-    else {
+  // Casts this to version with a guaranteed non-null step and range
+  asRangedStepped(): asserts this is RangedSteppedProperty {
+    if ( !isRangedSteppedProperty( this ) ) {
       throw new Error( 'Not a RangedSteppedProperty' );
     }
   }
