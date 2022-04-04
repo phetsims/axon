@@ -1,5 +1,7 @@
 // Copyright 2017-2022, University of Colorado Boulder
 
+// @ts-nocheck
+
 /**
  * QUnit tests for NumberProperty
  *
