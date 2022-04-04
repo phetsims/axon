@@ -19,9 +19,11 @@ import IReadOnlyProperty from './IReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import stepTimer from './stepTimer.js';
 import validate from './validate.js';
+import ValidatorDef from './ValidatorDef.js';
 
 // constants
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0 };
+const VALID_RANGE_TYPE = { isValidValue: ( value: any ) => ( value instanceof Range || value === null ) };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -144,16 +146,11 @@ export default class NumberProperty extends Property<number> {
     this.validateOnNextFrame = options.validateOnNextFrame;
     this.validateNumberAndRangeProperty = assert && ( value => {
 
-      // validate for integer
-      ( options.numberType === 'Integer' ) && validate( value, VALID_INTEGER );
+      // validate that the number is correct
+      assert && assert( this.isValueValid( value ) );
 
       // validate range value type
-      validate( this.rangeProperty.value, { isValidValue: value => ( value instanceof Range || value === null ) } );
-
-      // validate that value and range are compatible
-      if ( this.rangeProperty.value ) {
-        validate( value, { isValidValue: value => this.rangeProperty.value!.contains( value ) } );
-      }
+      validate( this.rangeProperty.value, VALID_RANGE_TYPE );
     } );
 
     this.validationTimeout = null;
@@ -284,6 +281,21 @@ export default class NumberProperty extends Property<number> {
         this.validateNumberAndRangeProperty( this.value );
       }
     }
+  }
+
+  // Add NumberProperty-specific validation to the isValueValid function
+  override isValueValid( value: number ): boolean {
+
+    // validate for integer
+    if ( this.numberType === 'Integer' && !ValidatorDef.isValueValid( value, VALID_INTEGER ) ) {
+      return false;
+    }
+
+    // validate that value and range are compatible
+    if ( this.rangeProperty.value && !this.rangeProperty.value.contains( value ) ) {
+      return false;
+    }
+    return super.isValueValid( value );
   }
 
   // Returns a casted version with a guaranteed non-null range

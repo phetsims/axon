@@ -459,7 +459,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     return listener;
   }
 
-  isValueValid( value: T ) {
+  isValueValid( value: T ): boolean {
     return ValidatorDef.isValueValid( value, this.validator, VALIDATE_OPTIONS_FALSE );
   }
 
