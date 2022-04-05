@@ -16,6 +16,7 @@ import stepTimer from './stepTimer.js';
 QUnit.module( 'NumberProperty' );
 
 QUnit.test( 'Test NumberProperty', assert => {
+  assert.ok( true, 'one test needed when running without assertions' );
 
   let p = new NumberProperty( 42 ); // highly random, do not change
 
