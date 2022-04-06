@@ -54,15 +54,6 @@ type SelfOptions = {
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
-// a Property (can't be a TinyProperty) with all of the value-mutation removed.
-export interface ReadOnlyProperty<T> extends Property<T> {
-  readonly value: T;
-
-  // Any solution with Omit<Property<T>, 'set' | 'reset'> was failing, as it wasn't assignable to PhetioObject
-  set: unknown & any;
-  reset: unknown & any;
-}
-
 export default class Property<T> extends PhetioObject implements IProperty<T> {
 
   // Unique identifier for this Property.
