@@ -40,9 +40,6 @@ type SelfOptions = {
   // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
   rangePropertyOptions?: Partial<PropertyOptions<Range>>;
 
-  // used by PhET-iO Studio to control this Property
-  step?: number | null;
-
   // By default, listeners are added to this Property and its provided rangeProperty to validate each
   // time either is set, making sure the NumberProperty value is within the Range. In certain cases, it is best
   // to defer this validation for a frame to allow these to go through an incorrect intermediate state, knowing
@@ -53,21 +50,13 @@ type SelfOptions = {
 
 export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType'>;
 
-// Minimal types for ranged/stepped Properties
+// Minimal types for ranged Properties
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
-export type SteppedProperty = Property<number> & { step: number };
-export type RangedSteppedProperty = RangedProperty & SteppedProperty;
 
-// User-defined type guards for ranged/stepped Properties. Only use these when you know that a null value won't be set
+// User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
 // to the range
 export const isRangedProperty = ( property: Property<number> ): property is RangedProperty => {
   return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
-};
-export const isSteppedProperty = ( property: Property<number> ): property is SteppedProperty => {
-  return typeof ( property as SteppedProperty ).step === 'number';
-};
-export const isRangedSteppedProperty = ( property: Property<number> ): property is RangedSteppedProperty => {
-  return isRangedProperty( property ) && isSteppedProperty( property );
 };
 
 export default class NumberProperty extends Property<number> {
@@ -75,10 +64,6 @@ export default class NumberProperty extends Property<number> {
   // Used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
   // @readonly, but cannot set as such because it is set by PhET-iO state.
   numberType: NumberType;
-
-  // If defined, provides a step that the NumberProperty can be incremented/decremented.
-  // @readonly, but cannot set as such because it is set by PhET-iO state.
-  step: number | null;
 
   // if true, validation will be deferred until the next frame so that the number and range can be changed independently.
   private readonly validateOnNextFrame: boolean;
@@ -99,7 +84,6 @@ export default class NumberProperty extends Property<number> {
     let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>, 'tandem'>( {
       numberType: 'FloatingPoint',
       range: null,
-      step: null,
 
       // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
       rangePropertyOptions: {
@@ -124,7 +108,6 @@ export default class NumberProperty extends Property<number> {
     assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), `invalid numberType: ${options.numberType}` );
     assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
       `invalid range${options.range}` );
-    assert && options.step && assert( typeof options.step === 'number', `invalid step:${options.step}` );
 
     assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
     assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem!.name === 'rangeProperty',
@@ -142,7 +125,6 @@ export default class NumberProperty extends Property<number> {
     super( value, options );
 
     this.numberType = options.numberType;
-    this.step = options.step;
     this.validateOnNextFrame = options.validateOnNextFrame;
     this.validateNumberAndRangeProperty = assert && ( value => {
 
@@ -307,26 +289,6 @@ export default class NumberProperty extends Property<number> {
       throw new Error( 'Not a RangedProperty' );
     }
   }
-
-  // Returns a casted version with a guaranteed non-null step
-  asStepped(): SteppedProperty {
-    if ( isSteppedProperty( this ) ) {
-      return this;
-    }
-    else {
-      throw new Error( 'Not a SteppedProperty' );
-    }
-  }
-
-  // Returns a casted version with a guaranteed non-null step and range
-  asRangedStepped(): RangedSteppedProperty {
-    if ( isRangedSteppedProperty( this ) ) {
-      return this;
-    }
-    else {
-      throw new Error( 'Not a RangedSteppedProperty' );
-    }
-  }
 }
 
 NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
@@ -345,14 +307,12 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     const hasRangePhetioID = numberProperty.rangeProperty && numberProperty.rangeProperty.isPhetioInstrumented();
     parentStateObject.rangePhetioID = hasRangePhetioID ? StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID ) : null;
 
-    parentStateObject.step = NullableIO( NumberIO ).toStateObject( numberProperty.step );
     return parentStateObject;
   },
   applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
     // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
-    numberProperty.step = stateObject.step;
 
     numberProperty.numberType = stateObject.numberType;
   },
@@ -360,7 +320,6 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     numberType: StringIO,
     range: NullableIO( Range.RangeIO ),
     rangePhetioID: NullableIO( StringIO ),
-    step: NullableIO( NumberIO ),
     value: NumberIO
   }
 } );

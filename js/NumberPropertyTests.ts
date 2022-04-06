@@ -346,25 +346,3 @@ QUnit.test( 'Test NumberProperty.validateOnNextFrame with no rangeProperty', ass
 
   assert.ok( numberProperty.validationTimeout === null );
 } );
-
-
-QUnit.test( 'NumberProperty assertion signatures', assert => {
-  assert.ok( true, 'all other tests are written to ensure typescript type checking' );
-  const numberProperty = new NumberProperty( 0, { step: 2 } ).asStepped();
-
-  if ( numberProperty.step === null ) {
-    assert.ok( false, 'should never happen' );
-  }
-
-  assert.ok( numberProperty.step === 2, 'steppable' );
-
-  // as number
-  assert.ok( numberProperty.step === 2, 'steppable' );
-
-  const numberProperty2 = new NumberProperty( 0 );
-  assert.ok( numberProperty2.step === null, 'not steppable' );
-
-  window.assert && assert.throws( () => {
-    new NumberProperty( 0 ).asStepped();
-  } );
-} );
