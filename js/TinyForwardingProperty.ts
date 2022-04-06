@@ -129,7 +129,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    */
-  set( value: T ): this {
+  override set( value: T ): this {
     if ( this.targetProperty ) {
       assert && assert( this.targetProperty.isSettable(), 'targetProperty must be settable' );
       this.targetProperty.set( value );
@@ -198,7 +198,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
     }
   }
 
-  dispose() {
+  override dispose() {
     this.targetProperty && this.forwardingListener && this.targetProperty.unlink( this.forwardingListener );
     this.disposeOwnedPhetioProperty();
     super.dispose();

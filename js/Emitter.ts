@@ -70,7 +70,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Disposes an Emitter. All listeners are removed.
    */
-  dispose(): void {
+  override dispose(): void {
     this.tinyEmitter.dispose();
     super.dispose();
   }

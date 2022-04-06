@@ -29,7 +29,7 @@ type DerivedPropertyDefinedOptions = {
 
 // Maps tuples/arrays from T => IReadOnlyProperty<T>
 export type MappedProperties<Parameters extends any[]> = {
-  [ K in keyof Parameters ]: IReadOnlyProperty<Parameters[K]>;
+  [K in keyof Parameters]: IReadOnlyProperty<Parameters[K]>;
 };
 
 // Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
@@ -127,7 +127,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
   /**
    * DerivedProperty cannot have their value set externally, so this returns false.
    */
-  isSettable(): boolean {
+  override isSettable(): boolean {
     return false;
   }
 
@@ -152,7 +152,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
     this.getDerivedPropertyListener();
   }
 
-  dispose(): void {
+  override dispose(): void {
 
     const dependencies = this.definedDependencies;
 
@@ -172,7 +172,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
    */
-  set( value: T ): void {
+  override set( value: T ): void {
     throw new Error( `Cannot set values directly to a DerivedProperty, tried to set: ${value}` );
   }
 
@@ -181,7 +181,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * when the dependencies change. Keep the newValue output in the string so the argument won't be stripped by minifier
    * (which would cause crashes like https://github.com/phetsims/axon/issues/15)
    */
-  set value( newValue ) {
+  override set value( newValue ) {
     throw new Error( `Cannot es5-set values directly to a DerivedProperty, tried to set: ${newValue}` );
   }
 
@@ -189,7 +189,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
    */
-  reset(): void {
+  override reset(): void {
     throw new Error( 'Cannot reset a DerivedProperty directly' );
   }
 
@@ -197,7 +197,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Prevent the retrieval of the initial value, since we don't store it.
    * See https://github.com/phetsims/axon/issues/193
    */
-  getInitialValue(): T {
+  override getInitialValue(): T {
     throw new Error( 'Cannot get the initial value of a DerivedProperty' );
   }
 
@@ -205,7 +205,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
    */
-  setDeferred( isDeferred: boolean ) {
+  override setDeferred( isDeferred: boolean ) {
     if ( this.isDeferred && !isDeferred ) {
       this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }
@@ -216,7 +216,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
    * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
    */
-  get value(): T {
+  override get value(): T {
     return super.get();
   }
 

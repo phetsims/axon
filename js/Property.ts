@@ -440,11 +440,11 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   /**
    * Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
    */
-  toString(): string {
+  override toString(): string {
     return `Property#${this.id}{${this.get()}}`;
   }
 
-  valueOf(): string {
+  override valueOf(): string {
     return this.toString();
   }
 
@@ -464,7 +464,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   // Ensures that the Property is eligible for GC
-  dispose() {
+  override dispose() {
 
     // unregister any order dependencies for this Property for PhET-iO state
     if ( this.isPhetioInstrumented() ) {

@@ -206,7 +206,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   /**
    * Releases references.
    */
-  dispose() {
+  override dispose() {
     // Remove any listeners that are still attached (note that the emitter dispose would do this also, but without the
     // potentially-needed extra logic of changeCount, etc.)
     this.unlinkAll();

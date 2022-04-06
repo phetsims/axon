@@ -282,7 +282,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Disposes this Property
    */
-  dispose() {
+  override dispose() {
     this.valuePropertyProperty.unlink( this.propertyListener );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -295,7 +295,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Resets the current property (if it's a Property instead of a TinyProperty)
    */
-  reset() {
+  override reset() {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -308,7 +308,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Prevent getting this Property manually if it is not marked as bidirectional.
    */
-  getInitialValue() {
+  override getInitialValue() {
     assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
 
     return super.getInitialValue();
@@ -317,7 +317,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Prevent setting this Property manually if it is not marked as bidirectional.
    */
-  set( value: ThisValueType ) {
+  override set( value: ThisValueType ) {
     assert && assert( this.bidirectional,
       `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}` );
 
@@ -330,7 +330,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Returns true if this Property value can be set externally, by set() or .value =
    */
-  isSettable(): boolean {
+  override isSettable(): boolean {
     return super.isSettable() && this.bidirectional;
   }
 }

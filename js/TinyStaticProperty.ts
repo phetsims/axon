@@ -29,7 +29,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Returns the value. Overridden to support onAccessAttempt.
    */
-  get() : T {
+  override get(): T {
     this.onAccessAttempt();
 
     return super.get();
@@ -38,21 +38,21 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Don't set the value of a TinyStaticProperty!
    */
-  set( value: T ) {
+  override set( value: T ) {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
   }
 
   /**
    * Returns true if the value can be set externally. Static Property values should only be mutated, not set.
    */
-  isSettable(): boolean {
+  override isSettable(): boolean {
     return false;
   }
 
   /**
    * Directly notifies listeners of changes.
    */
-  notifyListeners( oldValue: T | null ) {
+  override notifyListeners( oldValue: T | null ) {
 
     // We use this.get() to ensure value is up to date with onAccessAttempt().
     this.emit( this.get(), oldValue, this );
@@ -62,7 +62,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    */
-  link( listener: PropertyLinkListener<T> ) {
+  override link( listener: PropertyLinkListener<T> ) {
     this.addListener( listener );
 
     // listener called with this.get() to ensure value is up to date with onAccessAttempt().
@@ -72,7 +72,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Returns true if and only if the specified value equals the value of this property
    */
-  protected equalsValue( value: T ): boolean {
+  protected override equalsValue( value: T ): boolean {
 
     // checked with this.get() to ensure value is up to date with onAccessAttempt()
     return this.areValuesEqual( value, this.get() );
