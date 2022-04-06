@@ -14,6 +14,7 @@ import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import IProperty from './IProperty.js';
 import { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import Tandem from '../../tandem/js/Tandem.js';
 
 type ComparableObject = {
   equals: ( a: any ) => boolean;
@@ -201,6 +202,13 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    */
   isSettable(): boolean {
     return true;
+  }
+
+  /**
+   * To match the Property-like interface for usages that take Property | TinyProperty
+   */
+  get tandem(): Tandem {
+    return Tandem.OPT_OUT;
   }
 
   /**
