@@ -8,7 +8,6 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import merge from '../../phet-core/js/merge.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -18,14 +17,14 @@ import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import optionize from '../../phet-core/js/optionize.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
-type DerivedPropertyDefinedOptions = {
-  tandem: Tandem;
-  phetioType?: IOType;
-};
+type SelfOptions = {};
+
+export type DerivePropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 
 // Maps tuples/arrays from T => IReadOnlyProperty<T>
 export type MappedProperties<Parameters extends any[]> = {
@@ -59,12 +58,12 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param [providedOptions] - see Property
    */
-  constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: PropertyOptions<T> ) {
+  constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: DerivePropertyOptions<T> ) {
 
-    const options = merge( {
+    const options = optionize<DerivePropertyOptions<T>, SelfOptions, PropertyOptions<T>, 'tandem'>( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
-    }, providedOptions ) as DerivedPropertyDefinedOptions;
+    }, providedOptions );
 
     assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( DERIVED_PROPERTY_IO_PREFIX ),
       `phetioType must be provided and start with ${DERIVED_PROPERTY_IO_PREFIX}` );
