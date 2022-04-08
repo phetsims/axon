@@ -24,7 +24,7 @@ const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
 type SelfOptions = {};
 
-export type DerivePropertyOptions<T> = SelfOptions & PropertyOptions<T>;
+export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 
 // Maps tuples/arrays from T => IReadOnlyProperty<T>
 export type MappedProperties<Parameters extends any[]> = {
@@ -58,9 +58,9 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param [providedOptions] - see Property
    */
-  constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: DerivePropertyOptions<T> ) {
+  constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: DerivedPropertyOptions<T> ) {
 
-    const options = optionize<DerivePropertyOptions<T>, SelfOptions, PropertyOptions<T>, 'tandem'>( {
+    const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>, 'tandem'>( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, providedOptions );
