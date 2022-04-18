@@ -1,48 +1,42 @@
-// Copyright 2016-2021, University of Colorado Boulder
+// Copyright 2016-2022, University of Colorado Boulder
 
-// @ts-nocheck
 /**
- * Property whose value must be a string.
+ * StringProperty is a Property whose value is a string.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 
 // constants
 const StringPropertyIO = Property.PropertyIO( StringIO );
 
-/**
- * @extends Property<string>
- */
-class StringProperty extends Property {
+type SelfOptions = {};
 
-  /**
-   * @param {string} value - initial value
-   * @param {Object} [options]
-   * @constructor
-   */
-  constructor( value, options ) {
+export type StringPropertyOptions = SelfOptions & Omit<PropertyOptions<string>, 'valueType' | 'phetioType'>;
+
+export default class StringProperty extends Property<string> {
+
+  constructor( value: string, providedOptions?: StringPropertyOptions ) {
 
     // client cannot specify superclass options that are controlled by StringProperty
-    if ( options ) {
-      assert && assert( !options.hasOwnProperty( 'valueType' ), 'StringProperty sets valueType' );
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'StringProperty sets phetioType' );
+    if ( providedOptions ) {
+      assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'StringProperty sets valueType' );
+      assert && assert( !providedOptions.hasOwnProperty( 'phetioType' ), 'StringProperty sets phetioType' );
     }
 
     // Fill in superclass options that are controlled by StringProperty.
-    options = merge( {
+    const options = optionize<StringPropertyOptions, SelfOptions, PropertyOptions<string>>( {
       valueType: 'string',
       phetioType: StringPropertyIO
-    }, options );
+    }, providedOptions );
 
     super( value, options );
   }
 }
 
 axon.register( 'StringProperty', StringProperty );
-export default StringProperty;
