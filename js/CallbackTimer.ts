@@ -1,53 +1,79 @@
-// Copyright 2019-2021, University of Colorado Boulder
+// Copyright 2019-2022, University of Colorado Boulder
 
-// @ts-nocheck
 /**
- * timer that calls a set of registered callbacks.
- * Utilizes AXON/timer, but provides a higher level of abstraction, hiding the details of managing the timer.
+ * CallbackTimer is a timer that calls a set of registered callbacks.
+ * It utilizes AXON/stepTimer, but provides a higher level of abstraction, hiding the details of managing stepTimer.
  *
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import axon from './axon.js';
 import stepTimer from './stepTimer.js';
+import { TimerListener } from './Timer.js';
 
-class CallbackTimer {
+export type CallbackTimerCallback = () => void;
 
-  /**
-   * @param {Object} [options]
-   * @constructor
-   */
-  constructor( options ) {
+type SelfOptions = {
 
-    options = merge( {
-      callback: null, // {function} convenience for adding 1 callback
-      delay: 400, // {number} start to fire continuously after pressing for this long (milliseconds)
-      interval: 100 // {number} fire continuously at this interval (milliseconds)
-    }, options );
+  // convenience for adding 1 callback
+  callback?: CallbackTimerCallback;
+
+  // start to fire continuously after pressing for this long, in ms
+  delay?: number;
+
+  // fire continuously at this interval, in ms
+  interval?: number;
+};
+
+export type CallbackTimerOptions = SelfOptions;
+
+export default class CallbackTimer {
+
+  private readonly callbacks: CallbackTimerCallback[];
+
+  // initial delay between when start is called and the timer first fires, in ms
+  private readonly delay: number;
+
+  // fire the timer at this continuous interval, in ms
+  private readonly interval: number;
+
+  // identifier for timer associated with the initial delay
+  private delayID: TimerListener | null;
+
+  // identifier for timer associated with the continuous interval
+  private intervalID: TimerListener | null;
+
+  // has the timer fired since it was started?
+  private fired: boolean;
+
+  constructor( providedOptions?: CallbackTimerOptions ) {
+
+    const options = optionize<CallbackTimerOptions, Omit<SelfOptions, 'callback'>>( {
+      delay: 400,
+      interval: 100
+    }, providedOptions );
 
     // validate options
     assert && assert( options.delay >= 0, `bad value for delay: ${options.delay}` );
     assert && assert( options.interval > 0, `bad value for interval: ${options.interval}` );
 
-    this.delay = options.delay; // @private
-    this.interval = options.interval; // @private
+    this.delay = options.delay;
+    this.interval = options.interval;
 
-    this.callbacks = []; // @private
+    this.callbacks = [];
     if ( options.callback ) { this.callbacks.push( options.callback ); }
 
-    this.delayID = null; // @private identifier for timer associated with the initial delay
-    this.intervalID = null; // @private identifier for timer associates with the continuous interval
-    this.fired = false;  // @private has the timer fired since it was started?
+    this.delayID = null;
+    this.intervalID = null;
+    this.fired = false;
   }
 
-  // @public Is the timer running?
-  isRunning() {
+  public isRunning(): boolean {
     return ( this.delayID !== null || this.intervalID !== null );
   }
 
-  // @public Starts the timer.
-  start() {
+  public start(): void {
     if ( !this.isRunning() ) {
       this.fired = false;
       this.delayID = stepTimer.setTimeout( () => {
@@ -62,10 +88,9 @@ class CallbackTimer {
 
   /**
    * Stops the timer.
-   * @param {boolean} fire - should we fire if we haven't fired already?
-   * @public
+   * @param fire - should we fire if we haven't fired already?
    */
-  stop( fire ) {
+  public stop( fire: boolean ): void {
     if ( this.isRunning() ) {
       if ( this.delayID ) {
         stepTimer.clearTimeout( this.delayID );
@@ -81,15 +106,13 @@ class CallbackTimer {
     }
   }
 
-  // @public Adds a {function} callback.
-  addCallback( callback ) {
+  public addCallback( callback: CallbackTimerCallback ): void {
     if ( this.callbacks.indexOf( callback ) === -1 ) {
       this.callbacks.push( callback );
     }
   }
 
-  // @public Removes a {function} callback.
-  removeCallback( callback ) {
+  public removeCallback( callback: CallbackTimerCallback ): void {
     const index = this.callbacks.indexOf( callback );
     if ( index !== -1 ) {
       this.callbacks.splice( index, 1 );
@@ -97,11 +120,9 @@ class CallbackTimer {
   }
 
   /**
-   * Calls all callbacks.
-   * Clients are free to call this when the timer is not running.
-   * @public
+   * Calls all callbacks. Clients are free to call this when the timer is not running.
    */
-  fire() {
+  public fire() {
     const callbacksCopy = this.callbacks.slice( 0 );
     for ( let i = 0; i < callbacksCopy.length; i++ ) {
       callbacksCopy[ i ]();
@@ -109,15 +130,10 @@ class CallbackTimer {
     this.fired = true;
   }
 
-  /**
-   * @public
-   */
-  dispose() {
+  public dispose(): void {
     this.stop( false );
     this.callbacks.length = 0;
   }
 }
 
 axon.register( 'CallbackTimer', CallbackTimer );
-
-export default CallbackTimer;
