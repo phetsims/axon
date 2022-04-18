@@ -1,5 +1,6 @@
 // Copyright 2019-2021, University of Colorado Boulder
 
+// @ts-nocheck
 /**
  * timer that calls a set of registered callbacks.
  * Utilizes AXON/timer, but provides a higher level of abstraction, hiding the details of managing the timer.

@@ -1,5 +1,6 @@
 // Copyright 2016-2021, University of Colorado Boulder
 
+// @ts-nocheck
 /**
  * Property whose value must be a string.
  *
