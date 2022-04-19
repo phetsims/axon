@@ -22,7 +22,7 @@ export type EnabledPropertyOptions = SelfOptions & BooleanPropertyOptions;
 export default class EnabledProperty extends BooleanProperty {
   constructor( initialEnabled: boolean, providedOptions?: EnabledPropertyOptions ) {
 
-    const options = optionize<EnabledPropertyOptions, SelfOptions, BooleanPropertyOptions>( {
+    const options = optionize<EnabledPropertyOptions, SelfOptions, BooleanPropertyOptions>()( {
       phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
       phetioFeatured: true,
 

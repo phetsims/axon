@@ -40,7 +40,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
 
   constructor( providedOptions?: EmitterOptions ) {
 
-    const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions, 'phetioOuterType'>( {
+    const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions>()( {
       phetioOuterType: Emitter.EmitterIO,
       phetioState: PHET_IO_STATE_DEFAULT
     }, providedOptions );

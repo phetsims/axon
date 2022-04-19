@@ -28,7 +28,7 @@ const validate = ( value: IntentionalAny, validator: Validator, message?: string
   if ( assert ) {
     providedOptions && assert( !providedOptions.hasOwnProperty( message ), 'prefer parameter to options for message' );
 
-    const options = optionize<IsValidValueOptions, {}>( {
+    const options = optionize<IsValidValueOptions, {}>()( {
       assertions: true,
       message: message // use a parameter and merge it in here for convenience
     }, providedOptions );

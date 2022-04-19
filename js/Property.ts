@@ -97,7 +97,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    * @param [providedOptions]
    */
   constructor( value: T, providedOptions?: PropertyOptions<T> ) {
-    const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions, 'tandem'>( {
+    const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions>()( {
 
       useDeepEquality: false,
       units: null,

@@ -82,7 +82,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   assertMutuallyExclusiveOptions( providedOptions, [ 'length' ], [ 'elements' ] );
 
-  const options = optionize<ObservableArrayOptions<T>, SpecifiedObservableArrayOptions<T>>( {
+  const options = optionize<ObservableArrayOptions<T>, SpecifiedObservableArrayOptions<T>>()( {
 
     // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
 

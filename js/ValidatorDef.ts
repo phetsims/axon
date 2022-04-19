@@ -248,7 +248,7 @@ class ValidatorDef {
    */
   static isValueValid( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): boolean {
 
-    const options = optionize<IsValidValueOptions>( {
+    const options = optionize<IsValidValueOptions>()( {
 
       // {boolean} - By default validation will always check the validity of the  validator itself.  However, for types like
       // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits

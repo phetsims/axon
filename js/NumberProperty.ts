@@ -81,7 +81,7 @@ export default class NumberProperty extends Property<number> {
 
   constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
-    let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>, 'tandem'>( {
+    let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>>()( {
       numberType: 'FloatingPoint',
       range: null,
 

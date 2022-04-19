@@ -11,7 +11,7 @@
 
 import EnabledProperty, { EnabledPropertyOptions } from './EnabledProperty.js';
 import merge from '../../phet-core/js/merge.js';
-import optionize from '../../phet-core/js/optionize.js';
+import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
@@ -50,7 +50,8 @@ export default class EnabledComponent {
   private disposeEnabledComponent: () => void;
 
   constructor( providedOptions?: EnabledComponentOptions ) {
-    const options = optionize<EnabledComponentOptions, EnabledComponentOptions>( {}, DEFAULT_OPTIONS, providedOptions );
+
+    const options = optionize3<EnabledComponentOptions, EnabledComponentOptions>()( {}, DEFAULT_OPTIONS, providedOptions );
 
     const ownsEnabledProperty = !options.enabledProperty;
 

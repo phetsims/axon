@@ -49,7 +49,7 @@ export default class CallbackTimer {
 
   constructor( providedOptions?: CallbackTimerOptions ) {
 
-    const options = optionize<CallbackTimerOptions, Omit<SelfOptions, 'callback'>>( {
+    const options = optionize<CallbackTimerOptions, Omit<SelfOptions, 'callback'>>()( {
       delay: 400,
       interval: 100
     }, providedOptions );

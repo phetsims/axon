@@ -159,7 +159,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    */
   constructor( valuePropertyProperty: INullableProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
-    const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>( {
+    const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>()( {
       bidirectional: false,
       defaultValue: null as unknown as InnerValueType,
       derive: _.identity,

@@ -60,7 +60,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    */
   constructor( dependencies: MappedProperties<Parameters>, derivation: Derivation<T, Parameters>, providedOptions?: DerivedPropertyOptions<T> ) {
 
-    const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>, 'tandem'>( {
+    const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true // derived properties can be read but not set by PhET-iO
     }, providedOptions );

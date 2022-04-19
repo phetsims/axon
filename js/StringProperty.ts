@@ -30,7 +30,7 @@ export default class StringProperty extends Property<string> {
     }
 
     // Fill in superclass options that are controlled by StringProperty.
-    const options = optionize<StringPropertyOptions, SelfOptions, PropertyOptions<string>>( {
+    const options = optionize<StringPropertyOptions, SelfOptions, PropertyOptions<string>>()( {
       valueType: 'string',
       phetioType: StringPropertyIO
     }, providedOptions );
