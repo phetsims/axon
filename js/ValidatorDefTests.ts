@@ -47,6 +47,13 @@ QUnit.test( 'Test containsValidatorKey', assert => {
     validValue: [],
     valueType: []
   } ), 'still have valueType and be ok even though it doesn\'t have validValues' );
+
+  assert.ok( !ValidatorDef.containsValidatorKey( undefined ), 'undefined: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( null ), 'null: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( 5 ), 'number: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( { fdsaf: true } ), 'undefined: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( new IOType( 'TestIO', { valueType: 'string' } ) ), 'undefined: no validator key' );
+  assert.ok( ValidatorDef.containsValidatorKey( { valueType: 'fdsaf' } ), 'has valueType, even though valueType has the wrong value' );
 } );
 
 
@@ -236,12 +243,18 @@ QUnit.test( 'validationMessage is presented for all validation errors', assert =
   testContainsErrorMessage( 'hi', { phetioType: ioType }, ioTypeValidationMessage );
 } );
 
-QUnit.test( 'Validator.containsValidatorKey', assert => {
+QUnit.test( 'test Validator.validators', assert => {
 
-  assert.ok( !ValidatorDef.containsValidatorKey( undefined ), 'undefined: no validator key' );
-  assert.ok( !ValidatorDef.containsValidatorKey( null ), 'null: no validator key' );
-  assert.ok( !ValidatorDef.containsValidatorKey( 5 ), 'number: no validator key' );
-  assert.ok( !ValidatorDef.containsValidatorKey( { fdsaf: true } ), 'undefined: no validator key' );
-  assert.ok( !ValidatorDef.containsValidatorKey( new IOType( 'TestIO', { valueType: 'string' } ) ), 'undefined: no validator key' );
-  assert.ok( ValidatorDef.containsValidatorKey( { valueType: 'fdsaf' } ), 'has valueType, even though valueType has the wrong value' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ), 'correct validator' );
+
+  // @ts-ignore
+  assert.ok( ValidatorDef.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, { isValidValue: 7 } ] } ), 'incorrect validator' );
+
+  // @ts-ignore
+  assert.ok( ValidatorDef.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, 7 ] } ), 'incorrect validator2' );
+
+  assert.ok( ValidatorDef.getValidationError( '7', { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
+  assert.ok( ValidatorDef.getValidationError( true, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
+  assert.ok( ValidatorDef.getValidationError( undefined, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
+  assert.ok( !ValidatorDef.getValidationError( false, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
 } );

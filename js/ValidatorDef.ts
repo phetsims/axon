@@ -24,6 +24,9 @@
  * A validator that accepts a string or a number greater than 2:
  * { isValidValue: value => { typeof value === 'string' || (typeof value === 'number' && value > 2)} }
  *
+ * A validator for a number that should be an even number greater than 10
+ * { valueType: 'number', validators: [ { isValidValue: v => v > 10 }, { isValidValue: v => v%2 === 0 }] }
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
@@ -48,20 +51,7 @@ export type IsValidValueOptions = {
 
 type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
 export type Validator<T = any> = {
-  valueType?: ValueType | ValueType[];
-  validValues?: readonly T[];
-  isValidValue?: ( v?: any ) => boolean;
-  arrayElementType?: ValueType;
-  phetioType?: IOType;
 
-  // if provided, this will provide supplemental information to the assertion/validation messages in addition to the
-  // validate-key-specific message that will be given.
-  validationMessage?: string;
-}
-
-// Key names are verbose so this can be mixed into other contexts like AXON/Property. `undefined` and `null` have the
-// same semantics so that we can use this feature without having extend and allocate new objects at every validation.
-const VALIDATOR_KEYS: Array<keyof Validator> = [
   // Type of the value.
   // If {function}, the function must be a constructor.
   // If {string}, the string must be one of the primitive types listed in TYPEOF_STRINGS.
@@ -74,26 +64,44 @@ const VALIDATOR_KEYS: Array<keyof Validator> = [
   // valueType: 'number',
   // valueType: [ 'number', null ]
   // valueType: [ 'number', 'string', Node, null ]
-  'valueType',
+  valueType?: ValueType | ValueType[];
 
   // Valid values for this Property. Unused if null.
   // Example:
   // validValues: [ 'horizontal', 'vertical' ]
-  'validValues',
+  validValues?: readonly T[];
 
   // Function that validates the value. Single argument is the value, returns boolean. Unused if null.
   // Example:
   // isValidValue: function( value ) { return Number.isInteger( value ) && value >= 0; }
-  'isValidValue',
+  isValidValue?: ( v?: any ) => boolean;
 
   // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
   // elements of an array. For this option to valid, `valueType` must either be omitted, or be `Array`. It is assumed that
   // valueType is `Array`.
-  'arrayElementType',
+  arrayElementType?: ValueType;
 
   // A IOType used to specify the public typing for PhET-iO. Each IOType must have a
   // `validator` key specified that can be used for validation. See IOType for an example.
-  'phetioType'
+  phetioType?: IOType;
+
+  // if provided, this will provide supplemental information to the assertion/validation messages in addition to the
+  // validate-key-specific message that will be given.
+  validationMessage?: string;
+
+  // A list of Validator objects, each of which must pass to be a valid value
+  validators?: Validator<T>[];
+}
+
+// Key names are verbose so this can be mixed into other contexts like AXON/Property. `undefined` and `null` have the
+// same semantics so that we can use this feature without having extend and allocate new objects at every validation.
+const VALIDATOR_KEYS: Array<keyof Validator> = [
+  'valueType',
+  'validValues',
+  'isValidValue',
+  'arrayElementType',
+  'phetioType',
+  'validators'
 ];
 
 export default class ValidatorDef {
@@ -112,8 +120,9 @@ export default class ValidatorDef {
             validator.hasOwnProperty( 'valueType' ) ||
             validator.hasOwnProperty( 'arrayElementType' ) ||
             validator.hasOwnProperty( 'validValues' ) ||
-            validator.hasOwnProperty( 'phetioType' ) ) ) {
-      return this.combineErrorMessages( 'validator must have at least one of: isValidValue, valueType, validValues, phetioType, arrayElementType', validator.validationMessage );
+            validator.hasOwnProperty( 'phetioType' ) ||
+            validator.hasOwnProperty( 'validators' ) ) ) {
+      return this.combineErrorMessages( `validator must have at least one of: ${VALIDATOR_KEYS.join( ',' )}`, validator.validationMessage );
     }
 
     if ( validator.hasOwnProperty( 'valueType' ) ) {
@@ -180,6 +189,19 @@ export default class ValidatorDef {
         return this.combineErrorMessages( phetioTypeValidationError, validator.validationMessage );
       }
     }
+
+    if ( validator.hasOwnProperty( 'validators' ) ) {
+      const validators = validator.validators!;
+
+      for ( let i = 0; i < validators.length; i++ ) {
+        const subValidator = validators[ i ];
+        const subValidationError = ValidatorDef.getValidatorValidationError( subValidator );
+        if ( subValidationError ) {
+          return this.combineErrorMessages( `validators[${i}] invalid: ${subValidationError}`, validator.validationMessage );
+        }
+      }
+    }
+
     return null;
   }
 
@@ -325,6 +347,19 @@ export default class ValidatorDef {
         return this.combineErrorMessages( `value failed phetioType validator: ${value}, error: ${phetioTypeValidationError}`, validator.validationMessage );
       }
     }
+
+    if ( validator.hasOwnProperty( 'validators' ) ) {
+      const validators = validator.validators!;
+
+      for ( let i = 0; i < validators.length; i++ ) {
+        const subValidator = validators[ i ];
+        const subValidationError = ValidatorDef.getValidationError( value, subValidator );
+        if ( subValidationError ) {
+          return this.combineErrorMessages( `Failed validation for validators[${i}]: ${subValidationError}`, validator.validationMessage );
+        }
+      }
+    }
+
     return null;
   }
 
