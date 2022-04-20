@@ -166,9 +166,11 @@ export default class ValidatorDef {
       const validatorWithoutValidValues = _.omit( validator, 'validValues' );
       if ( ValidatorDef.containsValidatorKey( validatorWithoutValidValues ) ) {
         for ( let i = 0; i < validator.validValues.length; i++ ) {
-          const validValueValidationError = ValidatorDef.getValidationError( validator.validValues[ i ], validatorWithoutValidValues );
+          const validValue = validator.validValues[ i ];
+          const validValueValidationError = ValidatorDef.getValidationError( validValue, validatorWithoutValidValues );
           if ( validValueValidationError ) {
-            return `Item not valid in validValues: ${validator.validValues[ i ]}, error: ${validValueValidationError}`;
+            return this.combineErrorMessages(
+              `Item not valid in validValues: ${validValue}, error: ${validValueValidationError}`, validator.validationMessage );
           }
         }
       }
@@ -342,7 +344,7 @@ export default class ValidatorDef {
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
 
       // @ts-ignore - until phetioType is in TypeScript
-      const phetioTypeValidationError = ValidatorDef.getValidationError( value, validator.phetioType!.validator );
+      const phetioTypeValidationError = ValidatorDef.getValidationError( value, validator.phetioType!.validator, options );
       if ( phetioTypeValidationError ) {
         return this.combineErrorMessages( `value failed phetioType validator: ${value}, error: ${phetioTypeValidationError}`, validator.validationMessage );
       }
@@ -353,7 +355,7 @@ export default class ValidatorDef {
 
       for ( let i = 0; i < validators.length; i++ ) {
         const subValidator = validators[ i ];
-        const subValidationError = ValidatorDef.getValidationError( value, subValidator );
+        const subValidationError = ValidatorDef.getValidationError( value, subValidator, options );
         if ( subValidationError ) {
           return this.combineErrorMessages( `Failed validation for validators[${i}]: ${subValidationError}`, validator.validationMessage );
         }

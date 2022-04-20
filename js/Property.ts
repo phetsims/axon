@@ -89,7 +89,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   static CHANGED_EVENT_NAME: string;
   static PropertyIO: ( parameterType: IOType ) => IOType;
 
-  private readonly valueTypeValidator: Validator<T>;
+  protected readonly valueTypeValidator: Validator<T>;
 
   /**
    * @param value - the initial value of the property
@@ -454,8 +454,11 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   isValueValid( value: T ): boolean {
-    const response = ValidatorDef.getValidationError( value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
-    return response === null;
+    return this.getValidationError( value ) === null;
+  }
+
+  getValidationError( value: T ): string | null {
+    return ValidatorDef.getValidationError( value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
   }
 
   // Ensures that the Property is eligible for GC
@@ -591,13 +594,13 @@ Property.PropertyIO = ( parameterType: IOType ) => {
           },
           documentation: 'Gets the current value.'
         },
-        isValueValid: {
+        getValidationError: {
           returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
           implementation: function( this: Property<any>, value: any ) {
-            return this.isValueValid( value );
+            return this.getValidationError( value );
           },
-          documentation: 'Gets the current value.'
+          documentation: 'Gets any potential validation that the provided value fails. Returns null if value is valid.'
         },
 
         setValue: {

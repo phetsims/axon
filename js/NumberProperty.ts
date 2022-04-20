@@ -19,11 +19,9 @@ import IReadOnlyProperty from './IReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import stepTimer from './stepTimer.js';
 import validate from './validate.js';
-import ValidatorDef from './ValidatorDef.js';
 
-// constants
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
-const VALID_RANGE_TYPE = { isValidValue: ( value: any ) => ( value instanceof Range || value === null ) };
+const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
@@ -48,7 +46,7 @@ type SelfOptions = {
   validateOnNextFrame?: boolean;
 };
 
-export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType'>;
+export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
 
 // Minimal types for ranged Properties
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
@@ -93,6 +91,7 @@ export default class NumberProperty extends Property<number> {
       },
 
       validateOnNextFrame: false,
+      validators: [],
 
       // {Tandem}
       tandem: Tandem.OPTIONAL
@@ -114,44 +113,47 @@ export default class NumberProperty extends Property<number> {
       'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
 
     // client cannot specify superclass options that are controlled by NumberProperty
-    assert && assert( !options.valueType, 'NumberProperty sets valueType' );
     options.valueType = 'number';
-
     options.phetioType = NumberProperty.NumberPropertyIO;
 
     const rangePropertyProvided = options.range && options.range instanceof Property;
     const ownsRangeProperty = !rangePropertyProvided;
 
+    let rangeProperty: Property<Range | null>;
+    if ( options.range instanceof Property ) {
+      rangeProperty = options.range;
+    }
+    else {
+      rangeProperty = new Property( options.range, options.rangePropertyOptions );
+    }
+
+    if ( options.numberType === 'Integer' ) {
+      options.validators.push( VALID_INTEGER );
+    }
+    options.validators.push( {
+      isValidValue: v => {
+        const range = rangeProperty.value;
+        return range === null || range.contains( v );
+      },
+      validationMessage: 'Number must be within rangeProperty value.'
+    } );
+
     super( value, options );
 
     this.numberType = options.numberType;
     this.validateOnNextFrame = options.validateOnNextFrame;
-    this.validateNumberAndRangeProperty = assert && ( value => {
-
-      // validate that the number is correct
-      assert && assert( this.isValueValid( value ) );
-
-      // validate range value type
-      validate( this.rangeProperty.value, VALID_RANGE_TYPE );
-    } );
-
+    this.rangeProperty = rangeProperty;
     this.validationTimeout = null;
 
-    if ( options.range instanceof Property ) {
-      this.rangeProperty = options.range;
-    }
-    else {
-      this.rangeProperty = new Property( options.range, options.rangePropertyOptions );
-    }
-
-    assert && assert( this.rangeProperty instanceof Property, 'this.rangeProperty should be a Property' );
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
       'rangeProperty must be instrument if NumberProperty is instrumented' );
 
     const rangePropertyObserver = () => {
-      this.validateNumberAndRangeProperty && this.validateNumberProperty();
+
+      // TODO: support validateOnNextFrame, https://github.com/phetsims/studio/issues/253
+      validate( this.value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
     };
-    this.rangeProperty.link( rangePropertyObserver );
+    assert && this.rangeProperty.link( rangePropertyObserver );
 
     // For PhET-iO State, make sure that both the range and this value are correct before firing notifications (where the assertions are).
     this.rangeProperty.addPhetioStateDependencies( [ this ] );
@@ -165,15 +167,11 @@ export default class NumberProperty extends Property<number> {
       }
     }
 
-    // This puts validation at notification time instead of at value setting time. This is especially helpful as it
-    // pertains to Property.prototype.setDeferred(), and setting a range and value together.
-    this.validateNumberAndRangeProperty && this.link( value => this.validateNumberProperty() );
-
     this.disposeNumberProperty = () => {
       if ( ownsRangeProperty ) {
         this.rangeProperty.dispose();
       }
-      else {
+      else if ( assert ) {
         this.rangeProperty.unlink( rangePropertyObserver );
       }
 
@@ -245,6 +243,7 @@ export default class NumberProperty extends Property<number> {
   }
 
   /**
+   * TODO: likely remove me, https://github.com/phetsims/studio/issues/253
    * Trigger validation of this NumberProperty's value as it pertains to its provided range.
    */
   private validateNumberProperty(): void {
@@ -263,21 +262,6 @@ export default class NumberProperty extends Property<number> {
         this.validateNumberAndRangeProperty( this.value );
       }
     }
-  }
-
-  // Add NumberProperty-specific validation to the isValueValid function
-  override isValueValid( value: number ): boolean {
-
-    // validate for integer
-    if ( this.numberType === 'Integer' && !ValidatorDef.isValueValid( value, VALID_INTEGER ) ) {
-      return false;
-    }
-
-    // validate that value and range are compatible
-    if ( this.rangeProperty.value && !this.rangeProperty.value.contains( value ) ) {
-      return false;
-    }
-    return super.isValueValid( value );
   }
 
   // Returns a casted version with a guaranteed non-null range

@@ -26,7 +26,6 @@ const validate = ( value: IntentionalAny, validator: Validator, providedOptions?
     // Throws an error if not valid
     const result = ValidatorDef.getValidationError( value, validator, providedOptions );
     if ( result ) {
-
       const prunedValidator = _.pick( validator, ValidatorDef.VALIDATOR_KEYS );
       assert && assert( false, 'validation failed:', result, 'prunedValidator:', prunedValidator );
     }
