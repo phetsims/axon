@@ -49,8 +49,8 @@ export type IsValidValueOptions = {
 type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
 export type Validator<T = any> = {
   valueType?: ValueType | ValueType[];
-  validValues?: readonly T[] | null;
-  isValidValue?: ( v?: any ) => boolean | null | void;
+  validValues?: readonly T[];
+  isValidValue?: ( v?: any ) => boolean;
   arrayElementType?: ValueType;
   phetioType?: IOType;
 
