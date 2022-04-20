@@ -29,12 +29,18 @@ const validate = ( value: IntentionalAny, validator: Validator, message?: string
     providedOptions && assert( !providedOptions.hasOwnProperty( message ), 'prefer parameter to options for message' );
 
     const options = optionize<IsValidValueOptions, {}>()( {
-      assertions: true,
+
+      // TODO: support this message https://github.com/phetsims/studio/issues/253
       message: message // use a parameter and merge it in here for convenience
     }, providedOptions );
 
     // Throws an error if not valid
-    ValidatorDef.isValueValid( value, validator, options );
+    const result = ValidatorDef.getValidationError( value, validator, options );
+    if ( result ) {
+
+      const prunedValidator = _.pick( validator, ValidatorDef.VALIDATOR_KEYS );
+      assert && assert( false, 'validation failed: ', result, 'prunedValidator', prunedValidator );
+    }
   }
 };
 

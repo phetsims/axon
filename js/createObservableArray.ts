@@ -98,9 +98,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
   }
   // NOTE: Improve with ValidatorDef
-  // @ts-ignore
-  else if ( ValidatorDef.isValidValidator( options ) ) {
-    // @ts-ignore
+  else if ( !ValidatorDef.getValidatorValidationError( options ) ) {
     const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
     emitterParameterOptions = merge( { name: 'value' }, validator );
   }

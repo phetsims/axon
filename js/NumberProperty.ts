@@ -22,7 +22,7 @@ import validate from './validate.js';
 import ValidatorDef from './ValidatorDef.js';
 
 // constants
-const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0 };
+const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALID_RANGE_TYPE = { isValidValue: ( value: any ) => ( value instanceof Range || value === null ) };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1

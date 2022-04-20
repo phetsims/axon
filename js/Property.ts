@@ -26,7 +26,6 @@ import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from
 import { MappedProperties } from './DerivedProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import ValidatorDef, { Validator } from './ValidatorDef.js';
-import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -454,7 +453,8 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   isValueValid( value: T ): boolean {
-    return ValidatorDef.isValueValid( value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
+    const response = ValidatorDef.getValidationError( value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
+    return response === null;
   }
 
   // Ensures that the Property is eligible for GC
@@ -591,7 +591,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
           documentation: 'Gets the current value.'
         },
         isValueValid: {
-          returnType: BooleanIO,
+          returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
           implementation: function( this: Property<any>, value: any ) {
             return this.isValueValid( value );

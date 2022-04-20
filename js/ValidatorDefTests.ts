@@ -8,10 +8,13 @@
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import { Node } from '../../scenery/js/imports.js';
+import BooleanIO from '../../tandem/js/types/BooleanIO.js';
+import IOType from '../../tandem/js/types/IOType.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
+import Property from './Property.js';
 import validate from './validate.js';
-import ValidatorDef from './ValidatorDef.js';
+import ValidatorDef, { Validator } from './ValidatorDef.js';
 
 // constants
 const ASSERTIONS_TRUE = { assertions: true };
@@ -47,7 +50,7 @@ QUnit.test( 'Test containsValidatorKey', assert => {
 } );
 
 
-QUnit.test( 'Test isValidValidator and validateValidator', assert => {
+QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => {
   window.assert && assert.throws( () => ValidatorDef.validateValidator( {
     valueType: Array,
 
@@ -55,45 +58,37 @@ QUnit.test( 'Test isValidValidator and validateValidator', assert => {
     isValidValue: 4
   } ), 'isValidValue should be function' );
 
-  window.assert && assert.throws( () => ValidatorDef.isValidValidator( {
+  window.assert && assert.ok( typeof ValidatorDef.getValidatorValidationError( {
     valueType: Array,
     validValues: [ 'hi' ]
 
-  }, ASSERTIONS_TRUE ), 'validValues contains invalid value' );
+  } ) === 'string', 'validValues contains invalid value' );
 
-  assert.ok( ValidatorDef.isValidValidator( { valueType: 'number' } ), 'good valueType' );
-
-  // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { validValue: 'number' } ), 'no validator keys supplied' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: 'number' } ), 'good valueType' );
 
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { validValue: 4 } ), 'no validator keys supplied' );
-  assert.ok( !ValidatorDef.isValidValidator( { valueType: 'blaradysharady' } ), 'invalid valueType string' );
-  assert.ok( ValidatorDef.isValidValidator( { isValidValue: () => {} } ), 'isValidValue is a function' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { validValue: 'number' } ), 'no validator keys supplied' );
 
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { isValidValue: 'hi' } ), 'isValidValue should not be string' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { validValue: 4 } ), 'no validator keys supplied' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { valueType: 'blaradysharady' } ), 'invalid valueType string' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { isValidValue: () => {} } ), 'isValidValue is a function' );
 
-  assert.ok( ValidatorDef.isValidValidator( { valueType: null } ), 'null is valid' );
-  assert.ok( ValidatorDef.isValidValidator( { valueType: [ 'number', null ] } ), 'array of null and number is valid' );
-  assert.ok( ValidatorDef.isValidValidator( { valueType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
-  assert.ok( !ValidatorDef.isValidValidator( { valueType: [ 'numberf', null, Node ] } ), 'numberf is not a valid valueType' );
+  // @ts-ignore
+  assert.ok( ValidatorDef.getValidatorValidationError( { isValidValue: 'hi' } ), 'isValidValue should not be string' );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( undefined, { valueType: [ 'number', 'sstring' ] }, ASSERTIONS_TRUE );
-  }, 'sstring is not a valid valueType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: null } ), 'null is valid' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: [ 'number', null ] } ), 'array of null and number is valid' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { valueType: [ 'numberf', null, Node ] } ), 'numberf is not a valid valueType' );
 
-  window.assert && assert.throws( () => {
+  assert.ok( !ValidatorDef.isValueValid( undefined, { valueType: [ 'number', 'sstring' ] } ), 'sstring is not a valid valueType' );
 
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { valueType: [ 7 ] }, ASSERTIONS_TRUE );
-  }, '7 is not a valid valueType' );
+  // @ts-ignore
+  assert.ok( !ValidatorDef.isValueValid( undefined, { valueType: [ 7 ] }, ASSERTIONS_TRUE ), '7 is not a valid valueType' );
 
-  window.assert && assert.throws( () => {
-
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { valueType: [ 'number', {} ] }, ASSERTIONS_TRUE );
-  }, 'Object literal  is not a valid valueType' );
+  // @ts-ignore
+  assert.ok( !ValidatorDef.isValueValid( undefined, { valueType: [ 'number', {} ] }, ASSERTIONS_TRUE ), 'Object literal  is not a valid valueType' );
 } );
 
 QUnit.test( 'Test valueType: {Array.<number|null|string|function|EnumerationDeprecated>}', assert => {
@@ -118,31 +113,32 @@ QUnit.test( 'Test valueType: {Array.<number|null|string|function|EnumerationDepr
 QUnit.test( 'Test valueType: {EnumerationDeprecated}', assert => {
 
   const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-  assert.ok( ValidatorDef.isValidValidator( { valueType: Birds } ), 'good valueType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: Birds } ), 'good valueType' );
 
   // @ts-ignore
   assert.ok( ValidatorDef.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
-  window.assert && assert.throws( () => ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );
+  assert.ok( !ValidatorDef.isValueValid( 4, { valueType: Birds } ), 'bad value' );
 } );
 
 QUnit.test( 'Test phetioType', assert => {
 
+  // Stub phetioType here for testing. ts-ignores may be able to be removed when IOType is in typescript.
   // @ts-ignore
-  assert.ok( ValidatorDef.isValidValidator( { phetioType: { validator: { valueType: 'number' } } } ), 'good phetioType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { phetioType: { validator: { valueType: 'number' } } } ), 'good phetioType' );
   // @ts-ignore
-  assert.ok( ValidatorDef.isValidValidator( { phetioType: { validator: { isValidValue: () => true } } } ), 'good phetioType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { phetioType: { validator: { isValidValue: () => true } } } ), 'good phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: { notValidator: { isValidValue: () => true } } } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: { notValidator: { isValidValue: () => true } } } ), 'bad phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: { isValidValue: 'number' } } } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: { validator: { isValidValue: 'number' } } } ), 'bad phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: {} } } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: { validator: {} } } ), 'bad phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: { validator: null } } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: { validator: null } } ), 'bad phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: 'null' } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: 'null' } ), 'bad phetioType' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { phetioType: null } ), 'bad phetioType' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { phetioType: null } ), 'bad phetioType' );
 
   assert.ok( ValidatorDef.isValueValid( 'hello', { phetioType: StringIO } ), 'string valid' );
   assert.ok( !ValidatorDef.isValueValid( null, { phetioType: StringIO } ), 'null not valid' );
@@ -167,18 +163,18 @@ QUnit.test( 'Test arrayElementType', assert => {
     arrayElementType: null
   } ), 'arrayElementType expected should not have valueType or for it to be "Array"' );
 
-  assert.ok( ValidatorDef.isValidValidator( { arrayElementType: 'number' } ), 'good valueType' );
-  assert.ok( ValidatorDef.isValidValidator( { valueType: Array, arrayElementType: 'number' } ), 'does not matter if valueType: Array is provided' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { arrayElementType: 'number' } ), 'good valueType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { valueType: Array, arrayElementType: 'number' } ), 'does not matter if valueType: Array is provided' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 'number' } ), 'no validator keys supplied' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { arrayElementTypes: 'number' } ), 'no validator keys supplied' );
   // @ts-ignore
-  assert.ok( !ValidatorDef.isValidValidator( { arrayElementTypes: 4 } ), 'no validator keys supplied' );
-  assert.ok( !ValidatorDef.isValidValidator( { arrayElementType: 'blaradysharady' } ), 'invalid valueType string' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { arrayElementTypes: 4 } ), 'no validator keys supplied' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { arrayElementType: 'blaradysharady' } ), 'invalid valueType string' );
 
-  assert.ok( ValidatorDef.isValidValidator( { arrayElementType: null } ), 'null is valid' );
-  assert.ok( ValidatorDef.isValidValidator( { arrayElementType: [ 'number', null ] } ), 'array of null and number is valid' );
-  assert.ok( ValidatorDef.isValidValidator( { arrayElementType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
-  assert.ok( !ValidatorDef.isValidValidator( { arrayElementType: [ 'numberf', null, Node ] } ), 'numberf is not a valid arrayElementType' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { arrayElementType: null } ), 'null is valid' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { arrayElementType: [ 'number', null ] } ), 'array of null and number is valid' );
+  assert.ok( !ValidatorDef.getValidatorValidationError( { arrayElementType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
+  assert.ok( ValidatorDef.getValidatorValidationError( { arrayElementType: [ 'numberf', null, Node ] } ), 'numberf is not a valid arrayElementType' );
   assert.ok( ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5 ], { arrayElementType: [ 'number' ] } ), 'number array ok' );
   assert.ok( !ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number' ] } ), 'number array bad with null' );
   assert.ok( ValidatorDef.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number', null ] } ), 'number array ok with null' );
@@ -188,47 +184,63 @@ QUnit.test( 'Test arrayElementType', assert => {
   assert.ok( ValidatorDef.isValueValid( [ [ 4 ], [ 'other' ], null, [] ], { arrayElementType: [ Array, null ] } ), 'array {array|null}' );
   assert.ok( ValidatorDef.isValueValid( [ [ 4 ], [ 'other' ], null, 432, [] ], { arrayElementType: [ Array, null, 'number' ] } ), 'array {array|null|number}' );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ] }, ASSERTIONS_TRUE );
-  }, 'undefined is not a valid arrayElementType' );
+  assert.ok( ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ] } ) !== null, ' undefined as a value for array!' );
 
-  window.assert && assert.throws( () => {
+  // @ts-ignore
+  assert.ok( ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] } ) !== null, '7 is not a valid arrayElementType' );
 
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] }, ASSERTIONS_TRUE );
-  }, '7 is not a valid arrayElementType' );
+  // @ts-ignore
+  assert.ok( ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] } ) !== null, 'Object literal  is not a valid arrayElementType' );
 
-  window.assert && assert.throws( () => {
+  assert.ok( ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] } ) !== null );
 
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] }, ASSERTIONS_TRUE );
-  }, 'Object literal  is not a valid arrayElementType' );
+  assert.ok( ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] } ) !== null );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] }, ASSERTIONS_TRUE );
-  }, 'sstring is not a valid arrayElementType' );
+  assert.ok( ValidatorDef.isValueValid( [ 5 ], { arrayElementType: [ 'string' ] } ) !== null );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] }, ASSERTIONS_TRUE );
-  }, 'sstring is not a valid arrayElementType' );
+  assert.ok( ValidatorDef.isValueValid( [ null, 3, 4, 5, undefined ], { arrayElementType: [ 'number', null ] } ) !== null );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( [ 5 ], { arrayElementType: [ 'string' ] }, ASSERTIONS_TRUE );
-  }, 'sstring is not a valid arrayElementType' );
+  // @ts-ignore
+  assert.ok( ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] } ) !== null, '7 is not a valid arrayElementType' );
 
-  window.assert && assert.throws( () => {
-    ValidatorDef.isValueValid( [ null, 3, 4, 5, undefined ], { arrayElementType: [ 'number', null ] }, ASSERTIONS_TRUE );
-  }, 'sstring is not a valid arrayElementType' );
+  // @ts-ignore
+  assert.ok( ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] } ) !== null, 'Object literal  is not a valid arrayElementType' );
+} );
 
-  window.assert && assert.throws( () => {
+QUnit.test( 'validationMessage is presented for all validation errors', assert => {
 
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { arrayElementType: [ 7 ] }, ASSERTIONS_TRUE );
-  }, '7 is not a valid arrayElementType' );
+  const testContainsErrorMessage = ( value: any, validator: Validator, message = validator.validationMessage ) => {
+    assert.ok( message, 'should have a message' );
+    const validationError = ValidatorDef.getValidationError( value, validator );
+    assert.ok( validationError && validationError.includes( message! ), message );
+  };
 
-  window.assert && assert.throws( () => {
+  testContainsErrorMessage( 5, { valueType: 'boolean', validationMessage: 'valueType boolean, value number' } );
+  testContainsErrorMessage( true, { valueType: 'number', validationMessage: 'valueType number, value boolean' } );
+  testContainsErrorMessage( true, { valueType: [ 'string', 'number' ], validationMessage: 'valueType string`,number value boolean' } );
+  testContainsErrorMessage( true, { valueType: [ null, 'number' ], validationMessage: 'valueType null,number value boolean' } );
+  testContainsErrorMessage( false, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:false' } );
+  testContainsErrorMessage( 5, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:5' } );
+  testContainsErrorMessage( true, { arrayElementType: 'boolean', validationMessage: 'arrayElementType with value:true' } );
+  testContainsErrorMessage( [ 4 ], { arrayElementType: 'boolean', validationMessage: 'arrayElementType with value:4' } );
+  testContainsErrorMessage( [ 4, true, 'hi' ], { arrayElementType: [ 'boolean', 'number' ], validationMessage: 'arrayElementType with value:[hi]' } );
+  testContainsErrorMessage( 4, { isValidValue: v => v === 3, validationMessage: 'isValidValue 3, value 4' } );
+  testContainsErrorMessage( 'oh hello', { phetioType: Property.PropertyIO( BooleanIO ), validationMessage: 'isValidValue 3, value string' } );
 
-    // @ts-ignore
-    ValidatorDef.isValueValid( undefined, { arrayElementType: [ 'number', {} ] }, ASSERTIONS_TRUE );
-  }, 'Object literal  is not a valid arrayElementType' );
+  const ioType = new IOType( 'TestIO', { valueType: 'boolean' } );
+  const ioTypeValidationMessage = 'should be a boolean from this IOType in tests';
+
+  // @ts-ignore, should be fixed once IOType is in typescript, but we still may not be able to mutate it.
+  ioType.validator.validationMessage = ioTypeValidationMessage;
+  testContainsErrorMessage( 'hi', { phetioType: ioType }, ioTypeValidationMessage );
+} );
+
+QUnit.test( 'Validator.containsValidatorKey', assert => {
+
+  assert.ok( !ValidatorDef.containsValidatorKey( undefined ), 'undefined: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( null ), 'null: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( 5 ), 'number: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( { fdsaf: true } ), 'undefined: no validator key' );
+  assert.ok( !ValidatorDef.containsValidatorKey( new IOType( 'TestIO', { valueType: 'string' } ) ), 'undefined: no validator key' );
+  assert.ok( ValidatorDef.containsValidatorKey( { valueType: 'fdsaf' } ), 'has valueType, even though valueType has the wrong value' );
 } );
