@@ -10,36 +10,25 @@
  */
 
 import axon from './axon.js';
-import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import ValidatorDef, { IsValidValueOptions, Validator } from './ValidatorDef.js';
 
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
  * @param value
- * @param validator - ValidatorDef
- * @param [message] - make this an arg, instead of an option, for convenience. This message will be prepended to
- * a message in ValidatorDef that specifies which validator key fails, along with the value. It is best to end this
- * message with no punctuation.
+ * @param validator - provide a validationMessage to provide extra context to the validation
  * @param [providedOptions] - see ValidatorDef.isValueValid() for options
  */
-const validate = ( value: IntentionalAny, validator: Validator, message?: string, providedOptions?: IsValidValueOptions ): void => {
+const validate = ( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): void => {
 
   if ( assert ) {
-    providedOptions && assert( !providedOptions.hasOwnProperty( message ), 'prefer parameter to options for message' );
-
-    const options = optionize<IsValidValueOptions, {}>()( {
-
-      // TODO: support this message https://github.com/phetsims/studio/issues/253
-      message: message // use a parameter and merge it in here for convenience
-    }, providedOptions );
 
     // Throws an error if not valid
-    const result = ValidatorDef.getValidationError( value, validator, options );
+    const result = ValidatorDef.getValidationError( value, validator, providedOptions );
     if ( result ) {
 
       const prunedValidator = _.pick( validator, ValidatorDef.VALIDATOR_KEYS );
-      assert && assert( false, 'validation failed: ', result, 'prunedValidator', prunedValidator );
+      assert && assert( false, 'validation failed:', result, 'prunedValidator:', prunedValidator );
     }
   }
 };

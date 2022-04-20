@@ -44,10 +44,6 @@ export type IsValidValueOptions = {
   // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
   // wastes cpu. Hence cases like those can opt-out
   validateValidator?: boolean;
-
-  // if provided, this will provide supplemental information to the assertion messages in addition to the
-  // validate-key-specific message that will be given.
-  message?: string | null;
 };
 
 type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
@@ -249,8 +245,7 @@ export default class ValidatorDef {
   static getValidationError( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): string | null {
 
     const options = optionize<IsValidValueOptions>()( {
-      validateValidator: true,
-      message: ''
+      validateValidator: true
     }, providedOptions );
 
     if ( options.validateValidator ) {

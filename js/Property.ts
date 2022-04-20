@@ -157,6 +157,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     this.hasDeferredValue = false;
 
     this.valueTypeValidator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+    this.valueTypeValidator.validationMessage = this.valueTypeValidator.validationMessage || 'Property value not valid';
 
     if ( this.valueTypeValidator.phetioType ) {
 
@@ -173,7 +174,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
       ValidatorDef.validateValidator( this.valueTypeValidator );
 
       // validate the initial value as well as any changes in the future
-      this.link( ( value: T ) => validate( value, this.valueTypeValidator, 'Property value not valid', VALIDATE_OPTIONS_FALSE ) );
+      this.link( ( value: T ) => validate( value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE ) );
     }
   }
 
