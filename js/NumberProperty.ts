@@ -17,7 +17,6 @@ import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
-import stepTimer from './stepTimer.js';
 import validate from './validate.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
@@ -38,12 +37,6 @@ type SelfOptions = {
   // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
   rangePropertyOptions?: Partial<PropertyOptions<Range>>;
 
-  // By default, listeners are added to this Property and its provided rangeProperty to validate each
-  // time either is set, making sure the NumberProperty value is within the Range. In certain cases, it is best
-  // to defer this validation for a frame to allow these to go through an incorrect intermediate state, knowing
-  // that by the next frame they will be correct. This is for usages that don't have the ability to set both the
-  // number and range at the same time using NumberProperty.setValueAndRange.
-  validateOnNextFrame?: boolean;
 };
 
 export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
@@ -63,15 +56,9 @@ export default class NumberProperty extends Property<number> {
   // @readonly, but cannot set as such because it is set by PhET-iO state.
   numberType: NumberType;
 
-  // if true, validation will be deferred until the next frame so that the number and range can be changed independently.
-  private readonly validateOnNextFrame: boolean;
-
   // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
   private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
 
-  // Public only for (NumberPropertyTests) - only applicable if options.validateOnNextFrame. Store the timeout so we
-  // only need to create it once per frame.
-  public validationTimeout: ( ( dt: number ) => void ) | null;
   readonly rangeProperty: Property<Range | null>;
   private readonly disposeNumberProperty: () => void;
   static NumberPropertyIO: IOType;
@@ -90,7 +77,6 @@ export default class NumberProperty extends Property<number> {
         phetioReadOnly: true
       },
 
-      validateOnNextFrame: false,
       validators: [],
 
       // {Tandem}
@@ -141,16 +127,12 @@ export default class NumberProperty extends Property<number> {
     super( value, options );
 
     this.numberType = options.numberType;
-    this.validateOnNextFrame = options.validateOnNextFrame;
     this.rangeProperty = rangeProperty;
-    this.validationTimeout = null;
 
     assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
       'rangeProperty must be instrument if NumberProperty is instrumented' );
 
     const rangePropertyObserver = () => {
-
-      // TODO: support validateOnNextFrame, https://github.com/phetsims/studio/issues/253
       validate( this.value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
     };
     assert && this.rangeProperty.link( rangePropertyObserver );
@@ -173,11 +155,6 @@ export default class NumberProperty extends Property<number> {
       }
       else if ( assert ) {
         this.rangeProperty.unlink( rangePropertyObserver );
-      }
-
-      if ( this.validationTimeout ) {
-        stepTimer.clearTimeout( this.validationTimeout! );
-        this.validationTimeout = null;
       }
     };
 
@@ -240,28 +217,6 @@ export default class NumberProperty extends Property<number> {
    */
   resetValueAndRange(): void {
     this.setValueAndRange( this.initialValue!, this.rangeProperty.initialValue! );
-  }
-
-  /**
-   * TODO: likely remove me, https://github.com/phetsims/studio/issues/253
-   * Trigger validation of this NumberProperty's value as it pertains to its provided range.
-   */
-  private validateNumberProperty(): void {
-    if ( this.validateNumberAndRangeProperty ) {
-      if ( this.validateOnNextFrame ) {
-
-        // We only need this once, it will get the most recent value for both the value and range
-        if ( !this.validationTimeout ) {
-          this.validationTimeout = stepTimer.setTimeout( () => {
-            this.validateNumberAndRangeProperty!( this.value );
-            this.validationTimeout = null;
-          }, 0 );
-        }
-      }
-      else {
-        this.validateNumberAndRangeProperty( this.value );
-      }
-    }
   }
 
   // Returns a casted version with a guaranteed non-null range
