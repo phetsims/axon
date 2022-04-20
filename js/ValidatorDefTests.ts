@@ -72,7 +72,8 @@ QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => 
   // @ts-ignore
   assert.ok( ValidatorDef.getValidatorValidationError( { validValue: 4 } ), 'no validator keys supplied' );
   assert.ok( ValidatorDef.getValidatorValidationError( { valueType: 'blaradysharady' } ), 'invalid valueType string' );
-  assert.ok( !ValidatorDef.getValidatorValidationError( { isValidValue: () => {} } ), 'isValidValue is a function' );
+
+  assert.ok( !ValidatorDef.getValidatorValidationError( { isValidValue: () => true } ), 'isValidValue is a function' );
 
   // @ts-ignore
   assert.ok( ValidatorDef.getValidatorValidationError( { isValidValue: 'hi' } ), 'isValidValue should not be string' );
