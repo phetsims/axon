@@ -133,7 +133,7 @@ export default class NumberProperty extends Property<number> {
       'rangeProperty must be instrument if NumberProperty is instrumented' );
 
     const rangePropertyObserver = () => {
-      validate( this.value, this.valueTypeValidator, VALIDATE_OPTIONS_FALSE );
+      validate( this.value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
     };
     assert && this.rangeProperty.link( rangePropertyObserver );
 
