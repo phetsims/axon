@@ -89,7 +89,6 @@ export default class Multilink<Parameters extends any[]> {
     return this.dependencies!;
   }
 
-  // @public
   dispose() {
     assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
 

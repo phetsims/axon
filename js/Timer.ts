@@ -55,7 +55,6 @@ export default class Timer extends TinyEmitter<[number]> {
    * @param listener - called with no arguments
    * @param interval - in milliseconds
    * @returns an internally-wrapped listener which can be removed with clearInterval
-   * @public
    */
   setInterval( listener: () => void, interval: number ): TimerListener { // eslint-disable-line bad-sim-text
     let elapsed = 0;

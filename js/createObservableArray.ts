@@ -57,8 +57,8 @@ type ObservableArray<T> = {
   applyState: ( state: ObservableArrayStateObject<T> ) => void;
 
   // listen only please
-  elementAddedEmitter: Emitter<[T]>;
-  elementRemovedEmitter: Emitter<[T]>;
+  elementAddedEmitter: Emitter<[ T ]>;
+  elementRemovedEmitter: Emitter<[ T ]>;
   lengthProperty: NumberProperty;
 
   //TODO https://github.com/phetsims/axon/issues/334 Move to "prototype" above or drop support
@@ -107,13 +107,13 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   }
 
   // notifies when an element has been added
-  const elementAddedEmitter = new Emitter<[T]>( {
+  const elementAddedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
 
   // notifies when an element has been removed
-  const elementRemovedEmitter = new Emitter<[T]>( {
+  const elementRemovedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ]
   } );
@@ -306,7 +306,6 @@ const methods = {
    * Overridden Array methods
    *******************************************/
 
-  // @public
   pop( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -317,7 +316,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   shift( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -328,7 +326,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   push( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -340,7 +337,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   unshift( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -352,7 +348,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   splice( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -366,7 +361,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   copyWithin( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -376,7 +370,6 @@ const methods = {
     return returnValue;
   },
 
-  // @public
   fill( ...args: any[] ): any {
     const thisArray = this as PrivateObservableArray<any>;
 
@@ -391,44 +384,22 @@ const methods = {
    * TODO https://github.com/phetsims/axon/issues/334 consider deleting after migration
    * TODO https://github.com/phetsims/axon/issues/334 if not deleted, rename 'Item' with 'Element'
    *******************************************/
-
-  // @public
   get: function( index: number ) { return ( this as PrivateObservableArray<any> )[ index ]; },
-
-  // @public
   addItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.addListener( listener ); },
-
-  // @public
   removeItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.removeListener( listener ); },
-
-  // @public
   addItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.addListener( listener ); },
-
-  // @public
   removeItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.removeListener( listener ); },
-
-  // @public
   add: function( element: any ) { ( this as PrivateObservableArray<any> ).push( element );},
-
-  // @public
   addAll: function( elements: any[] ) { ( this as PrivateObservableArray<any> ).push( ...elements );},
-
-  // @public
   remove: function( element: any ) { arrayRemove( ( this as PrivateObservableArray<any> ), element );},
-
-  // @public
   removeAll: function( elements: any[] ) {
     elements.forEach( element => arrayRemove( ( this as PrivateObservableArray<any> ), element ) );
   },
-
-  // @public
   clear: function() {
     while ( ( this as PrivateObservableArray<any> ).length > 0 ) {
       ( this as PrivateObservableArray<any> ).pop();
     }
   },
-
-  // @public
   count: function( predicate: Predicate<any> ) {
     let count = 0;
     for ( let i = 0; i < ( this as PrivateObservableArray<any> ).length; i++ ) {
@@ -438,16 +409,12 @@ const methods = {
     }
     return count;
   },
-
-  // @public
   find: function( predicate: Predicate<any>, fromIndex?: number ) {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
     assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < ( this as PrivateObservableArray<any> ).length,
       `fromIndex out of bounds: ${fromIndex}` );
     return _.find( ( this as PrivateObservableArray<any> ), predicate, fromIndex );
   },
-
-  // @public
   shuffle: function( random: FakeRandom<any> ) {
     assert && assert( random, 'random must be supplied' );
 
@@ -459,11 +426,7 @@ const methods = {
     Array.prototype.push.apply( ( this as PrivateObservableArray<any> ).targetArray, shuffled );
   },
 
-  // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
-  // @public
-  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
-
-  // @public
+  // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
   dispose: function() {
     const thisArray = this as PrivateObservableArray<any>;
     thisArray.elementAddedEmitter.dispose();
@@ -475,13 +438,9 @@ const methods = {
   /******************************************
    * PhET-iO
    *******************************************/
-
-  // @public
   toStateObject: function() {
     return { array: ( this as PrivateObservableArray<any> ).map( item => ( this as PrivateObservableArray<any> ).phetioElementType!.toStateObject( item ) ) };
   },
-
-  // @public
   applyState: function( stateObject: ObservableArrayStateObject<any> ) {
     ( this as PrivateObservableArray<any> ).length = 0;
     const elements = stateObject.array.map( paramStateObject => ( this as PrivateObservableArray<any> ).phetioElementType!.fromStateObject( paramStateObject ) );
@@ -534,7 +493,6 @@ const ObservableArrayIO = ( parameterType: IOType ) => {
   return cache.get( parameterType );
 };
 
-// @public
 createObservableArray.ObservableArrayIO = ObservableArrayIO;
 
 axon.register( 'createObservableArray', createObservableArray );

@@ -97,7 +97,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   /**
    * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
    * wrapped value changes, and whether onValue is triggered.
-   * @public (Property)
+   * (Property)
    *
    * useDeepEquality: true => Use the `equals` method on the values
    * useDeepEquality: false => Use === for equality test

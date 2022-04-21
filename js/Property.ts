@@ -375,7 +375,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    *
    * @param listener - a function that takes a new value, old value, and this Property as arguments
    * @param [options]
-   * @public
    */
   link( listener: PropertyLinkListener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
