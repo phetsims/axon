@@ -223,7 +223,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
    */
-  static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): DerivedProperty<boolean, [ U, V ]> {
+  static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): IReadOnlyProperty<boolean> {
     return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
   }
 
@@ -240,7 +240,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
   /**
    * Creates a derived boolean Property whose value is true iff any input Property value is true.
    */
-  static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): DerivedProperty<boolean, IReadOnlyProperty<boolean>[]> {
+  static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): IReadOnlyProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore

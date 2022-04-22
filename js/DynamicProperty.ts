@@ -104,7 +104,7 @@ import TinyProperty from './TinyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
-export type INullableProperty<T> = IProperty<T | null> | IProperty<T>;
+export type INullableProperty<T> = IReadOnlyProperty<T | null> | IReadOnlyProperty<T>;
 
 type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be
@@ -157,7 +157,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
    * @param [options] - options
    */
-  constructor( valuePropertyProperty: INullableProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
+  constructor( valuePropertyProperty: INullableProperty<OuterValueType> | IReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
     const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>()( {
       bidirectional: false,
