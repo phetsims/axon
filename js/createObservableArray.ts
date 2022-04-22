@@ -426,7 +426,9 @@ const methods = {
     Array.prototype.push.apply( ( this as PrivateObservableArray<any> ).targetArray, shuffled );
   },
 
-  // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
+  // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
+  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
+
   dispose: function() {
     const thisArray = this as PrivateObservableArray<any>;
     thisArray.elementAddedEmitter.dispose();
