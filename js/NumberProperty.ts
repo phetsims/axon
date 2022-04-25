@@ -61,7 +61,6 @@ export default class NumberProperty extends Property<number> {
 
   readonly rangeProperty: Property<Range | null>;
   private readonly disposeNumberProperty: () => void;
-  static NumberPropertyIO: IOType;
   private readonly resetNumberProperty: () => void;
 
   constructor( value: number, providedOptions?: NumberPropertyOptions ) {
@@ -243,28 +242,28 @@ export default class NumberProperty extends Property<number> {
 
     return parentStateObject;
   }
+
+  static NumberPropertyIO = new IOType( 'NumberPropertyIO', {
+    valueType: NumberProperty,
+    supertype: PropertyIOImpl,
+    parameterTypes: [ NumberIO ],
+    documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
+      VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
+    toStateObject: ( numberProperty: NumberProperty ) => {
+      return numberProperty.toStateObject();
+    },
+    applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
+      // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
+
+      PropertyIOImpl.applyState( numberProperty, stateObject );
+    },
+    stateSchema: {
+      numberType: StringIO,
+      range: NullableIO( Range.RangeIO ),
+      rangePhetioID: NullableIO( StringIO ),
+      value: NumberIO
+    }
+  } );
 }
-
-NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
-  valueType: NumberProperty,
-  supertype: PropertyIOImpl,
-  parameterTypes: [ NumberIO ],
-  documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
-    VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
-  toStateObject: ( numberProperty: NumberProperty ) => {
-    return numberProperty.toStateObject();
-  },
-  applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
-    // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
-
-    PropertyIOImpl.applyState( numberProperty, stateObject );
-  },
-  stateSchema: {
-    numberType: StringIO,
-    range: NullableIO( Range.RangeIO ),
-    rangePhetioID: NullableIO( StringIO ),
-    value: NumberIO
-  }
-} );
 
 axon.register( 'NumberProperty', NumberProperty );
