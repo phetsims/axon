@@ -23,9 +23,8 @@ const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
-const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ];
-
-type NumberType = 'Integer' | 'FloatingPoint';
+const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ] as const;
+type NumberType = typeof VALID_NUMBER_TYPES[number];
 
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
@@ -89,11 +88,6 @@ export default class NumberProperty extends Property<number> {
       }
     }, options );
 
-    assert && assert( _.includes( VALID_NUMBER_TYPES, options.numberType ), `invalid numberType: ${options.numberType}` );
-    assert && assert( options.range instanceof Range || options.range instanceof Property || options.range === null,
-      `invalid range${options.range}` );
-
-    assert && assert( options.rangePropertyOptions instanceof Object, 'rangePropertyOptions should be an Object' );
     assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem!.name === 'rangeProperty',
       'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
 

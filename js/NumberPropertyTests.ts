@@ -34,11 +34,6 @@ QUnit.test( 'Test NumberProperty', assert => {
   }, 'set value has invalid valueType' );
 
   // numberType
-  window.assert && assert.throws( () => {
-
-    // @ts-ignore
-    p = new NumberProperty( 0, { numberType: 0 } );
-  }, 'bad numberType' );
   p = new NumberProperty( 0, { numberType: 'FloatingPoint' } );
   p.value = 1;
   p.value = 1.2;
