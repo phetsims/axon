@@ -34,6 +34,6 @@ import './TinyStaticProperty.js';
 import './UnitConversionProperty.js';
 import './units.js';
 import './validate.js';
-import './ValidatorDef.js';
+import './Validation.js';
 
 export default axon;

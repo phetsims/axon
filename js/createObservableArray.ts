@@ -18,7 +18,7 @@ import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
-import ValidatorDef from './ValidatorDef.js';
+import Validation from './Validation.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -97,9 +97,9 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     assert && assert( options.phetioType.typeName.startsWith( 'ObservableArrayIO' ) );
     emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
   }
-  // NOTE: Improve with ValidatorDef
-  else if ( !ValidatorDef.getValidatorValidationError( options ) ) {
-    const validator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+  // NOTE: Improve with Validation
+  else if ( !Validation.getValidatorValidationError( options ) ) {
+    const validator = _.pick( options, Validation.VALIDATOR_KEYS );
     emitterParameterOptions = merge( { name: 'value' }, validator );
   }
   else {

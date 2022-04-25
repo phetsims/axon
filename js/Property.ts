@@ -25,7 +25,7 @@ import IProperty from './IProperty.js';
 import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import { MappedProperties } from './DerivedProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
-import ValidatorDef, { Validator } from './ValidatorDef.js';
+import Validation, { Validator } from './Validation.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -107,7 +107,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     }, providedOptions );
 
     // Support non-validated Property
-    if ( !ValidatorDef.containsValidatorKey( options ) ) {
+    if ( !Validation.containsValidatorKey( options ) ) {
 
       options.isValidValue = () => true;
     }
@@ -156,7 +156,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     this.deferredValue = null;
     this.hasDeferredValue = false;
 
-    this.valueValidator = _.pick( options, ValidatorDef.VALIDATOR_KEYS );
+    this.valueValidator = _.pick( options, Validation.VALIDATOR_KEYS );
     this.valueValidator.validationMessage = this.valueValidator.validationMessage || 'Property value not valid';
 
     if ( this.valueValidator.phetioType ) {
@@ -171,7 +171,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
 
     // Assertions regarding value validation
     if ( assert ) {
-      ValidatorDef.validateValidator( this.valueValidator );
+      Validation.validateValidator( this.valueValidator );
 
       // validate the initial value as well as any changes in the future
       this.link( ( value: T ) => validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE ) );
@@ -457,7 +457,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   getValidationError( value: T ): string | null {
-    return ValidatorDef.getValidationError( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
+    return Validation.getValidationError( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
   }
 
   // Ensures that the Property is eligible for GC

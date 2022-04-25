@@ -23,6 +23,6 @@ import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
 import './TinyForwardingPropertyTests.js';
 import './TinyPropertyTests.js';
-import './ValidatorDefTests.js';
+import './ValidationTests.js';
 
 qunitStart();

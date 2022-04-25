@@ -7,24 +7,24 @@
  *
  * Examples:
  *
- * A {ValidatorDef} (commonly know as "validator") that only accepts number values:
+ * A Validator that only accepts number values:
  * { valueType: 'number' }
  *
- * A validator that only accepts the numbers "2" or "3":
+ * A Validator that only accepts the numbers "2" or "3":
  * { valueType: 'number', validValues: [ 2, 3 ] }
  *
- * A validator that accepts any Object:
+ * A Validator that accepts any Object:
  * { valueType: Object }
  *
- * A validator that accepts EnumerationDeprecated values (NOTE! This is deprecated, use the new class-based enumeration pattern as the valueType):
+ * A Validator that accepts EnumerationDeprecated values (NOTE! This is deprecated, use the new class-based enumeration pattern as the valueType):
  * { valueType: MyEnumeration }
  * and/or
  * { validValues: MyEnumeration.VALUES }
  *
- * A validator that accepts a string or a number greater than 2:
+ * A Validator that accepts a string or a number greater than 2:
  * { isValidValue: value => { typeof value === 'string' || (typeof value === 'number' && value > 2)} }
  *
- * A validator for a number that should be an even number greater than 10
+ * A Validator for a number that should be an even number greater than 10
  * { valueType: 'number', validators: [ { isValidValue: v => v > 10 }, { isValidValue: v => v%2 === 0 }] }
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -104,7 +104,7 @@ const VALIDATOR_KEYS: Array<keyof Validator> = [
   'validators'
 ];
 
-export default class ValidatorDef {
+export default class Validation {
 
   /**
    * @returns an error string if incorrect, otherwise null if valid
@@ -126,7 +126,7 @@ export default class ValidatorDef {
     }
 
     if ( validator.hasOwnProperty( 'valueType' ) ) {
-      const valueTypeValidationError = ValidatorDef.getValueOrElementTypeValidationError( validator.valueType! );
+      const valueTypeValidationError = Validation.getValueOrElementTypeValidationError( validator.valueType! );
       if ( valueTypeValidationError ) {
         return this.combineErrorMessages(
           `Invalid valueType: ${validator.valueType}, error: ${valueTypeValidationError}`,
@@ -140,7 +140,7 @@ export default class ValidatorDef {
           validator.validationMessage );
 
       }
-      const arrayElementTypeError = ValidatorDef.getValueOrElementTypeValidationError( validator.arrayElementType! );
+      const arrayElementTypeError = Validation.getValueOrElementTypeValidationError( validator.arrayElementType! );
       if ( arrayElementTypeError ) {
         return this.combineErrorMessages( `Invalid arrayElementType: ${arrayElementTypeError}`,
           validator.validationMessage );
@@ -164,10 +164,10 @@ export default class ValidatorDef {
 
       // Make sure each validValue matches the other rules, if any.
       const validatorWithoutValidValues = _.omit( validator, 'validValues' );
-      if ( ValidatorDef.containsValidatorKey( validatorWithoutValidValues ) ) {
+      if ( Validation.containsValidatorKey( validatorWithoutValidValues ) ) {
         for ( let i = 0; i < validator.validValues.length; i++ ) {
           const validValue = validator.validValues[ i ];
-          const validValueValidationError = ValidatorDef.getValidationError( validValue, validatorWithoutValidValues );
+          const validValueValidationError = Validation.getValidationError( validValue, validatorWithoutValidValues );
           if ( validValueValidationError ) {
             return this.combineErrorMessages(
               `Item not valid in validValues: ${validValue}, error: ${validValueValidationError}`, validator.validationMessage );
@@ -186,7 +186,7 @@ export default class ValidatorDef {
       }
 
       // @ts-ignore - until phetioType is in TypeScript
-      const phetioTypeValidationError = ValidatorDef.getValidatorValidationError( validator.phetioType.validator );
+      const phetioTypeValidationError = Validation.getValidatorValidationError( validator.phetioType.validator );
       if ( phetioTypeValidationError ) {
         return this.combineErrorMessages( phetioTypeValidationError, validator.validationMessage );
       }
@@ -197,7 +197,7 @@ export default class ValidatorDef {
 
       for ( let i = 0; i < validators.length; i++ ) {
         const subValidator = validators[ i ];
-        const subValidationError = ValidatorDef.getValidatorValidationError( subValidator );
+        const subValidationError = Validation.getValidatorValidationError( subValidator );
         if ( subValidationError ) {
           return this.combineErrorMessages( `validators[${i}] invalid: ${subValidationError}`, validator.validationMessage );
         }
@@ -231,7 +231,7 @@ export default class ValidatorDef {
 
   static validateValidator( validator: Validator ): void {
     if ( assert ) {
-      const error = ValidatorDef.getValidatorValidationError( validator );
+      const error = Validation.getValidatorValidationError( validator );
       error && assert( false, error );
     }
   }
@@ -273,7 +273,7 @@ export default class ValidatorDef {
     }, providedOptions );
 
     if ( options.validateValidator ) {
-      const validatorValidationError = ValidatorDef.getValidatorValidationError( validator );
+      const validatorValidationError = Validation.getValidatorValidationError( validator );
       if ( validatorValidationError ) {
         return validatorValidationError;
       }
@@ -285,7 +285,7 @@ export default class ValidatorDef {
       if ( Array.isArray( valueType ) ) {
 
         // Only one should be valid, so error out if none of them returned valid (valid=null)
-        if ( !_.some( valueType.map( ( typeInArray: ValueType ) => !ValidatorDef.getValueTypeValidationError( value, typeInArray, validator.validationMessage ) ) ) ) {
+        if ( !_.some( valueType.map( ( typeInArray: ValueType ) => !Validation.getValueTypeValidationError( value, typeInArray, validator.validationMessage ) ) ) ) {
           return this.combineErrorMessages(
             `value not valid for any valueType in ${valueType.toString().substring( 0, 100 )}, value: ${value}`,
             validator.validationMessage );
@@ -293,7 +293,7 @@ export default class ValidatorDef {
       }
       else if ( valueType ) {
 
-        const valueTypeValidationError = ValidatorDef.getValueTypeValidationError( value, valueType, validator.validationMessage );
+        const valueTypeValidationError = Validation.getValueTypeValidationError( value, valueType, validator.validationMessage );
         if ( valueTypeValidationError ) {
 
           // getValueTypeValidationError will add the validationMessage for us
@@ -306,7 +306,7 @@ export default class ValidatorDef {
       const arrayElementType = validator.arrayElementType;
 
       // If using arrayElementType, then the value should be an array.
-      const arrayValidationError = ValidatorDef.getValidationError( value, ARRAY_VALIDATOR, options );
+      const arrayValidationError = Validation.getValidationError( value, ARRAY_VALIDATOR, options );
       if ( arrayValidationError ) {
         return this.combineErrorMessages( arrayValidationError, validator.validationMessage );
       }
@@ -318,14 +318,14 @@ export default class ValidatorDef {
         if ( Array.isArray( arrayElementType ) ) {
 
           // If none of the elements return null, then the value type is invalid
-          if ( !_.some( arrayElementType.map( typeInArray => !ValidatorDef.getValueTypeValidationError( arrayElement, typeInArray ) ) ) ) {
+          if ( !_.some( arrayElementType.map( typeInArray => !Validation.getValueTypeValidationError( arrayElement, typeInArray ) ) ) ) {
             return this.combineErrorMessages( `array element not valid for any arrayElementType in ${arrayElementType}, value: ${arrayElement}`, validator.validationMessage );
           }
         }
         else {
 
           // if not an array, then just check the array element
-          const arrayElementValidationError = ValidatorDef.getValueTypeValidationError( arrayElement, validator.arrayElementType!, validator.validationMessage );
+          const arrayElementValidationError = Validation.getValueTypeValidationError( arrayElement, validator.arrayElementType!, validator.validationMessage );
           if ( arrayElementValidationError ) {
 
             // getValueTypeValidationError will add the validationMessage for us
@@ -344,7 +344,7 @@ export default class ValidatorDef {
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
 
       // @ts-ignore - until phetioType is in TypeScript
-      const phetioTypeValidationError = ValidatorDef.getValidationError( value, validator.phetioType!.validator, options );
+      const phetioTypeValidationError = Validation.getValidationError( value, validator.phetioType!.validator, options );
       if ( phetioTypeValidationError ) {
         return this.combineErrorMessages( `value failed phetioType validator: ${value}, error: ${phetioTypeValidationError}`, validator.validationMessage );
       }
@@ -355,7 +355,7 @@ export default class ValidatorDef {
 
       for ( let i = 0; i < validators.length; i++ ) {
         const subValidator = validators[ i ];
-        const subValidationError = ValidatorDef.getValidationError( value, subValidator, options );
+        const subValidationError = Validation.getValidationError( value, subValidator, options );
         if ( subValidationError ) {
           return this.combineErrorMessages( `Failed validation for validators[${i}]: ${subValidationError}`, validator.validationMessage );
         }
@@ -394,14 +394,14 @@ export default class ValidatorDef {
       // If not every type in the list is valid, then return false, pass options through verbatim.
       for ( let i = 0; i < type.length; i++ ) {
         const typeElement = type[ i ];
-        const error = ValidatorDef.getValueTypeValidatorValidationError( typeElement );
+        const error = Validation.getValueTypeValidatorValidationError( typeElement );
         if ( error ) {
           return `Array value invalid: ${error}`;
         }
       }
     }
     else if ( type ) {
-      const error = ValidatorDef.getValueTypeValidatorValidationError( type );
+      const error = Validation.getValueTypeValidatorValidationError( type );
       if ( error ) {
         return `Value type invalid: ${error}`;
       }
@@ -421,4 +421,4 @@ export default class ValidatorDef {
   };
 }
 
-axon.register( 'ValidatorDef', ValidatorDef );
+axon.register( 'Validation', Validation );

@@ -11,22 +11,19 @@
 
 import axon from './axon.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import ValidatorDef, { IsValidValueOptions, Validator } from './ValidatorDef.js';
+import Validation, { IsValidValueOptions, Validator } from './Validation.js';
 
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
- * @param value
- * @param validator - provide a validationMessage to provide extra context to the validation
- * @param [providedOptions] - see ValidatorDef.isValueValid() for options
  */
 const validate = ( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): void => {
 
   if ( assert ) {
 
     // Throws an error if not valid
-    const result = ValidatorDef.getValidationError( value, validator, providedOptions );
+    const result = Validation.getValidationError( value, validator, providedOptions );
     if ( result ) {
-      const prunedValidator = _.pick( validator, ValidatorDef.VALIDATOR_KEYS );
+      const prunedValidator = _.pick( validator, Validation.VALIDATOR_KEYS );
       assert && assert( false, 'validation failed:', result, 'prunedValidator:', prunedValidator );
     }
   }
