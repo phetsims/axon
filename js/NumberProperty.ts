@@ -54,7 +54,7 @@ export default class NumberProperty extends Property<number> {
 
   // Used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
   // @readonly, but cannot set as such because it is set by PhET-iO state.
-  numberType: NumberType;
+  private readonly numberType: NumberType;
 
   // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
   private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
@@ -228,6 +228,21 @@ export default class NumberProperty extends Property<number> {
       throw new Error( 'Not a RangedProperty' );
     }
   }
+
+  /**
+   * Get parent state and append NumberProperty-specific metadata to it.
+   */
+  toStateObject() {
+    const parentStateObject = PropertyIOImpl.toStateObject( this );
+
+    parentStateObject.numberType = StringIO.toStateObject( this.numberType );
+    parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( this.rangeProperty.value );
+
+    const hasRangePhetioID = this.rangeProperty && this.rangeProperty.isPhetioInstrumented();
+    parentStateObject.rangePhetioID = hasRangePhetioID ? StringIO.toStateObject( this.rangeProperty.tandem.phetioID ) : null;
+
+    return parentStateObject;
+  }
 }
 
 NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
@@ -237,23 +252,12 @@ NumberProperty.NumberPropertyIO = new IOType( 'NumberPropertyIO', {
   documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
     VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
   toStateObject: ( numberProperty: NumberProperty ) => {
-
-    const parentStateObject = PropertyIOImpl.toStateObject( numberProperty );
-
-    parentStateObject.numberType = StringIO.toStateObject( numberProperty.numberType );
-    parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( numberProperty.rangeProperty.value );
-
-    const hasRangePhetioID = numberProperty.rangeProperty && numberProperty.rangeProperty.isPhetioInstrumented();
-    parentStateObject.rangePhetioID = hasRangePhetioID ? StringIO.toStateObject( numberProperty.rangeProperty.tandem.phetioID ) : null;
-
-    return parentStateObject;
+    return numberProperty.toStateObject();
   },
   applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
     // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
     PropertyIOImpl.applyState( numberProperty, stateObject );
-
-    numberProperty.numberType = stateObject.numberType;
   },
   stateSchema: {
     numberType: StringIO,
