@@ -512,7 +512,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   /**
-   * Registers an listener with multiple properties *without* an immediate callback with current values.
+   * Registers a listener with multiple properties *without* an immediate callback with current values.
    * @param properties
    * @param listener function that takes values from the properties and returns nothing
    */
