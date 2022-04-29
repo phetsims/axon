@@ -120,7 +120,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * Notify this Property's listeners when the targetProperty changes.
    * For performance, keep this listener on the prototype.
    */
-  private onTargetPropertyChange( value: T ) {
+  private onTargetPropertyChange( value: T ): void {
     super.set( value );
   }
 
@@ -163,7 +163,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param tandemName
    * @param createProperty - creates an "owned" Property
    */
-  initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ) {
+  initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ): void {
     assert && assert( typeof tandemName === 'string' );
     assert && assert( typeof createProperty === 'function' );
     assert && assert( !this.phetioInitialized, 'already initialized' );
@@ -191,14 +191,14 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   /**
    * This currently also involves deleting the field.
    */
-  private disposeOwnedPhetioProperty() {
+  private disposeOwnedPhetioProperty(): void {
     if ( this.ownedPhetioProperty ) {
       this.ownedPhetioProperty.dispose();
       delete this.ownedPhetioProperty; // back to original value
     }
   }
 
-  override dispose() {
+  override dispose(): void {
     this.targetProperty && this.forwardingListener && this.targetProperty.unlink( this.forwardingListener );
     this.disposeOwnedPhetioProperty();
     super.dispose();

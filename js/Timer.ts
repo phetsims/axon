@@ -44,7 +44,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Clear a scheduled timeout. If there was no timeout, nothing is done.
    */
-  clearTimeout( listener: TimerListener ) {
+  clearTimeout( listener: TimerListener ): void {
     if ( this.hasListener( listener ) ) {
       this.removeListener( listener );
     }
@@ -76,7 +76,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Clear a scheduled interval. If there was no interval, nothing is done.
    */
-  clearInterval( listener: TimerListener ) {
+  clearInterval( listener: TimerListener ): void {
     if ( this.hasListener( listener ) ) {
       this.removeListener( listener );
     }
@@ -85,7 +85,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Run a callback on the next frame. This method is largely for clarity.
    */
-  runOnNextTick( listener: () => void ) {
+  runOnNextTick( listener: () => void ): void {
     this.setTimeout( listener, 0 );
   }
 }

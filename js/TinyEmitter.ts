@@ -57,7 +57,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Disposes an Emitter. All listeners are removed.
    */
-  dispose() {
+  dispose(): void {
     this.removeAllListeners();
 
     if ( assert ) {
@@ -68,7 +68,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Notify listeners
    */
-  emit( ...args: T ) {
+  emit( ...args: T ): void {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // optional callback, before notifying listeners
@@ -114,7 +114,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Adds a listener which will be called during emit.
    */
-  addListener( listener: Listener<T> ) {
+  addListener( listener: Listener<T> ): void {
     assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
     assert && assert( !this.hasListener( listener ), 'Cannot add the same listener twice' );
 
@@ -130,7 +130,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Removes a listener
    */
-  removeListener( listener: Listener<T> ) {
+  removeListener( listener: Listener<T> ): void {
 
     // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
     // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
@@ -146,7 +146,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Removes all the listeners
    */
-  removeAllListeners() {
+  removeAllListeners(): void {
 
     const size = this.listeners.size;
 
@@ -160,7 +160,7 @@ export default class TinyEmitter<T extends any[] = []> {
    * If listeners are added/removed while emit() is in progress, we must make a defensive copy of the array of listeners
    * before changing the array, and use it for the rest of the notifications until the emit call has completed.
    */
-  private guardListeners() {
+  private guardListeners(): void {
 
     for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
@@ -203,7 +203,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Invokes a callback once for each listener - meant for Property's use
    */
-  forEachListener( callback: ( listener: Listener<T> ) => void ) {
+  forEachListener( callback: ( listener: Listener<T> ) => void ): void {
     this.listeners.forEach( callback );
   }
 }

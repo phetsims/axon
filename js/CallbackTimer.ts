@@ -122,7 +122,7 @@ export default class CallbackTimer {
   /**
    * Calls all callbacks. Clients are free to call this when the timer is not running.
    */
-  public fire() {
+  public fire(): void {
     const callbacksCopy = this.callbacks.slice( 0 );
     for ( let i = 0; i < callbacksCopy.length; i++ ) {
       callbacksCopy[ i ]();

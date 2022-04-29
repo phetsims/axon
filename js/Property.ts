@@ -461,7 +461,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   // Ensures that the Property is eligible for GC
-  override dispose() {
+  override dispose(): void {
 
     // unregister any order dependencies for this Property for PhET-iO state
     if ( this.isPhetioInstrumented() ) {
@@ -523,7 +523,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   /**
    * Unlinks an listener that was added with multilink or lazyMultilink.
    */
-  static unmultilink<Parameters extends any[]>( multilink: Multilink<Parameters> ) {
+  static unmultilink<Parameters extends any[]>( multilink: Multilink<Parameters> ): void {
     multilink.dispose();
   }
 }

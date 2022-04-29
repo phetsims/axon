@@ -40,7 +40,7 @@ export default class BooleanProperty extends Property<boolean> {
     super( value, options );
   }
 
-  toggle() {
+  toggle(): void {
     this.value = !this.value;
   }
 }

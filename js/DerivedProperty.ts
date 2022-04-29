@@ -204,7 +204,7 @@ export default class DerivedProperty<T, Parameters extends any[]> extends Proper
    * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
    */
-  override setDeferred( isDeferred: boolean ) {
+  override setDeferred( isDeferred: boolean ): ( () => void ) | null {
     if ( this.isDeferred && !isDeferred ) {
       this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }

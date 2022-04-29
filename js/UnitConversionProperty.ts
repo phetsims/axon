@@ -108,7 +108,7 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
     }
   }
 
-  override dispose() {
+  override dispose(): void {
     if ( ( this._property as NumberProperty ).rangeProperty ) {
       ( this._property as NumberProperty ).rangeProperty.unlink( this._rangeListener! );
     }

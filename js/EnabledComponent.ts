@@ -67,7 +67,7 @@ export default class EnabledComponent {
     };
   }
 
-  setEnabled( enabled: boolean ) { this.enabledProperty.value = enabled; }
+  setEnabled( enabled: boolean ): void { this.enabledProperty.value = enabled; }
 
   set enabled( value: boolean ) { this.setEnabled( value ); }
 
@@ -75,7 +75,7 @@ export default class EnabledComponent {
 
   get enabled(): boolean { return this.isEnabled(); }
 
-  dispose() {
+  dispose(): void {
     this.disposeEnabledComponent();
   }
 }

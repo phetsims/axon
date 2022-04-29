@@ -220,7 +220,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    * @param oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
    * @param innerProperty
    */
-  private onPropertyPropertyChange( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) {
+  private onPropertyPropertyChange( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ): void {
 
     // If the value of the inner Property is already the inverse of our value, we will never attempt to update our
     // own value in an attempt to limit "ping-ponging" cases mainly due to numerical error. Otherwise it would be
@@ -247,7 +247,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    *                                              We additionally handle the initial link() case where this is
    *                                              undefined.
    */
-  private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) {
+  private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ): void {
     if ( oldPropertyValue ) {
       this.derive( oldPropertyValue ).unlink( this.propertyPropertyListener );
     }
@@ -263,7 +263,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Listener added to ourself when we are bidirectional
    */
-  private onSelfChange( value: ThisValueType ) {
+  private onSelfChange( value: ThisValueType ): void {
     assert && assert( this.bidirectional );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -282,7 +282,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Disposes this Property
    */
-  override dispose() {
+  override dispose(): void {
     this.valuePropertyProperty.unlink( this.propertyListener );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -295,7 +295,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Resets the current property (if it's a Property instead of a TinyProperty)
    */
-  override reset() {
+  override reset(): void {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
     if ( this.valuePropertyProperty.value !== null ) {
@@ -308,7 +308,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Prevent getting this Property manually if it is not marked as bidirectional.
    */
-  override getInitialValue() {
+  override getInitialValue(): ThisValueType | null {
     assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
 
     return super.getInitialValue();
@@ -317,7 +317,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Prevent setting this Property manually if it is not marked as bidirectional.
    */
-  override set( value: ThisValueType ) {
+  override set( value: ThisValueType ): void {
     assert && assert( this.bidirectional,
       `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}` );
 

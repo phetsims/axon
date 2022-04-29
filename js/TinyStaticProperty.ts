@@ -38,7 +38,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Don't set the value of a TinyStaticProperty!
    */
-  override set( value: T ) {
+  override set( value: T ): void {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
   }
 
@@ -52,7 +52,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Directly notifies listeners of changes.
    */
-  override notifyListeners( oldValue: T | null ) {
+  override notifyListeners( oldValue: T | null ): void {
 
     // We use this.get() to ensure value is up to date with onAccessAttempt().
     this.emit( this.get(), oldValue, this );
@@ -62,7 +62,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    */
-  override link( listener: PropertyLinkListener<T> ) {
+  override link( listener: PropertyLinkListener<T> ): void {
     this.addListener( listener );
 
     // listener called with this.get() to ensure value is up to date with onAccessAttempt().

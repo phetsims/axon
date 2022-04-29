@@ -26,6 +26,12 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ] as const;
 type NumberType = typeof VALID_NUMBER_TYPES[number];
 
+type NumberPropertyState = {
+  numberType: string;
+  range: null | Range;
+  rangePhetioID: string | null;
+};
+
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
@@ -225,7 +231,7 @@ export default class NumberProperty extends Property<number> {
   /**
    * Get parent state and append NumberProperty-specific metadata to it.
    */
-  toStateObject() {
+  toStateObject(): NumberPropertyState {
     const parentStateObject = PropertyIOImpl.toStateObject( this );
 
     parentStateObject.numberType = StringIO.toStateObject( this.numberType );
