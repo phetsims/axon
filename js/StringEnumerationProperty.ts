@@ -11,7 +11,7 @@ type StringEnumerationPropertyOptions<T> = Omit<PropertyOptions<T>, 'validValues
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-class StringEnumerationProperty<T> extends Property<T> {
+class StringEnumerationProperty<T extends string> extends Property<T> {
   constructor( values: readonly T[], value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, {}, PropertyOptions<T>>()( {
