@@ -100,7 +100,7 @@ class PropertyStateHandler {
    */
   validatePropertyPhasePair( property, phase ) {
     this.validateInstrumentedProperty( property );
-    assert && assert( PropertyStatePhase.includes( phase ), `unexpected phase: ${phase}` );
+    assert && assert( phase instanceof PropertyStatePhase, `unexpected phase: ${phase}` );
   }
 
   /**
