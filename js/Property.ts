@@ -50,6 +50,10 @@ type SelfOptions = {
   reentrant?: boolean;
 };
 
+function isNonNull<T>( value: T | null ): asserts value is T {
+  assert && assert( value !== null, 'value should not be null' );
+}
+
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
@@ -64,7 +68,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   // Initial value
   protected _initialValue: T | null;
 
-  validValues: T[] | undefined;
+  validValues: readonly T[] | undefined;
 
   // emit is called when the value changes (or on link)
   tinyProperty: TinyProperty<T>;
@@ -141,11 +145,9 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
 
     this._initialValue = value;
 
-    // @ts-ignore
     this.validValues = options.validValues;
 
-    // @ts-ignore
-    this.tinyProperty = new TinyProperty( value, options.onBeforeNotify );
+    this.tinyProperty = new TinyProperty( value );
 
     // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.
     // @ts-ignore
@@ -336,8 +338,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    * Resets the value to the initial value.
    */
   reset(): void {
-
-    // @ts-ignore
+    isNonNull( this._initialValue );
     this.set( this._initialValue );
   }
 
@@ -363,7 +364,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
       if ( dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
-        // @ts-ignore
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
       }
     }
