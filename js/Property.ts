@@ -50,10 +50,6 @@ type SelfOptions = {
   reentrant?: boolean;
 };
 
-function isNonNull<T>( value: T | null ): asserts value is T {
-  assert && assert( value !== null, 'value should not be null' );
-}
-
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
@@ -338,7 +334,8 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    * Resets the value to the initial value.
    */
   reset(): void {
-    isNonNull( this._initialValue );
+
+    // @ts-ignore
     this.set( this._initialValue );
   }
 
