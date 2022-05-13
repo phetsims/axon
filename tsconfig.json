@@ -1,25 +1,9 @@
-/**
-* Axon and Tandem reference each other and hence cannot be built separately.  Therefore we combine them and build them
-* together.  They also pull in files from another few repos, see the "include" for details.
-*
-* Please see https://github.com/phetsims/chipper/issues/1055 and https://github.com/phetsims/chipper/issues/1052
-*
-* @author Sam Reid (PhET Interactive Simulations)
-*/
 {
   "extends": "../chipper/tsconfig-core.json",
-  "references": [
-    {
-      "path": "../joist/tsconfig-module.json"
-    }
-  ],
   "include": [
-    "../tandem/js/**/*test*",
-    "../tandem/js/**/*Test*",
-    "../axon/js/**/*test*",
-    "../axon/js/**/*Test*",
-    "../chipper/phet-types.d.ts",
-    "../chipper/node_modules/@types/lodash/index.d.ts",
-    "../chipper/node_modules/@types/qunit/index.d.ts"
+    "js/**/*",
+    "images/**/*",
+    "mipmaps/**/*",
+    "sounds/**/*"
   ]
 }
