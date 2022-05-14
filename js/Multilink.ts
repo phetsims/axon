@@ -17,23 +17,52 @@
  */
 
 import axon from './axon.js';
-import { MappedProperties } from './DerivedProperty.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
-// constants
-const GET_PROPERTY_VALUE = <T>( property: IReadOnlyProperty<T> ): T => property.get();
+// Shorthand to make the type definitions more legible
+type ROP<T> = IReadOnlyProperty<T>;
 
-const valuesOfProperties = <Parameters extends any[]>( dependencies: MappedProperties<Parameters> ): Parameters => {
-  // Typescript can't figure out that the map gets us back to the Parameters type
-  return dependencies.map( GET_PROPERTY_VALUE ) as Parameters;
-};
+// Exported for the convenience usage sites in Property.multilink
+export type RP1<T1> = Readonly<[ ROP<T1> ]>;
+export type RP2<T1, T2> = Readonly<[ ROP<T1>, ROP<T2> ]>;
+export type RP3<T1, T2, T3> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3> ]>;
+export type RP4<T1, T2, T3, T4> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4> ]>;
+export type RP5<T1, T2, T3, T4, T5> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5> ]>;
+export type RP6<T1, T2, T3, T4, T5, T6> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6> ]>;
+export type RP7<T1, T2, T3, T4, T5, T6, T7> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7> ]>;
+export type RP8<T1, T2, T3, T4, T5, T6, T7, T8> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8> ]>;
+export type RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9> ]>;
+export type RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10> ]>;
+export type RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11> ]>;
+export type RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12> ]>;
+export type RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12>, ROP<T13> ]>;
+export type RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12>, ROP<T13>, ROP<T14> ]>;
+export type RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12>, ROP<T13>, ROP<T14>, ROP<T15> ]>;
 
-// Type of a derivation function, that takes the typed parameters (as a tuple type)
-type Callback<Parameters extends any[]> = ( ...params: Parameters ) => void;
+export type Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> =
+  RP1<T1> |
+  RP2<T1, T2> |
+  RP3<T1, T2, T3> |
+  RP4<T1, T2, T3, T4> |
+  RP5<T1, T2, T3, T4, T5> |
+  RP6<T1, T2, T3, T4, T5, T6> |
+  RP7<T1, T2, T3, T4, T5, T6, T7> |
+  RP8<T1, T2, T3, T4, T5, T6, T7, T8> |
+  RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9> |
+  RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> |
+  RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> |
+  RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> |
+  RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> |
+  RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> |
+  RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>;
 
-export default class Multilink<Parameters extends any[]> {
+// Marker-like interface for use with Property.unmultilink.  This provides type safety to make sure unmultilink is called
+// with a type-safe argument.
+export type UnknownMultilink = Multilink<unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown>;
 
-  private dependencies: MappedProperties<Parameters> | null;
+export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
+
+  private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private dependencyListeners: Map<IReadOnlyProperty<any>, () => void>;
 
   private isDisposed?: boolean;
@@ -43,7 +72,23 @@ export default class Multilink<Parameters extends any[]> {
    * @param callback function that expects args in the same order as dependencies
    * @param [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
    */
-  constructor( dependencies: MappedProperties<Parameters>, callback: Callback<Parameters>, lazy?: boolean ) {
+  constructor( dependencies: RP1<T1>, callback: ( ...params: [ T1 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP2<T1, T2>, callback: ( ...params: [ T1, T2 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP3<T1, T2, T3>, callback: ( ...params: [ T1, T2, T3 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP4<T1, T2, T3, T4>, callback: ( ...params: [ T1, T2, T3, T4 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP5<T1, T2, T3, T4, T5>, callback: ( ...params: [ T1, T2, T3, T4, T5 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP6<T1, T2, T3, T4, T5, T6>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) ;
+  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean );
+  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) {
 
     this.dependencies = dependencies;
 
@@ -59,7 +104,9 @@ export default class Multilink<Parameters extends any[]> {
 
         // don't call listener if this Multilink has been disposed, see https://github.com/phetsims/axon/issues/192
         if ( !this.isDisposed ) {
-          callback( ...valuesOfProperties( dependencies ) );
+
+          const values = dependencies.map( dependency => dependency.get() ) as [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ];
+          callback( ...values );
         }
       };
       this.dependencyListeners.set( dependency, listener );
@@ -74,7 +121,9 @@ export default class Multilink<Parameters extends any[]> {
 
     // Send initial call back but only if we are non-lazy
     if ( !lazy ) {
-      callback( ...valuesOfProperties( dependencies ) );
+
+      const values = dependencies.map( dependency => dependency.get() ) as [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ];
+      callback( ...values );
     }
 
     // @private - whether the Multilink has been disposed
@@ -84,7 +133,7 @@ export default class Multilink<Parameters extends any[]> {
   /**
    * Returns dependencies that are guaranteed to be defined internally.
    */
-  private get definedDependencies(): MappedProperties<Parameters> {
+  private get definedDependencies(): Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
     assert && assert( this.dependencies !== null, 'Dependencies should be defined, has this Property been disposed?' );
     return this.dependencies!;
   }
