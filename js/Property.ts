@@ -631,7 +631,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
           implementation: function( this: Property<any>, value: any ) {
             return this.getValidationError( value );
           },
-          documentation: 'Gets any potential validation that the provided value fails. Returns null if value is valid.'
+          documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
         },
 
         setValue: {
