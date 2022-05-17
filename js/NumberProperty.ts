@@ -46,7 +46,7 @@ type SelfOptions = {
 
 export type NumberPropertyOptions = SelfOptions & Omit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
 
-// Minimal types for ranged Properties
+// Minimal types for ranged Properties - Generally use `new NumberPropery( ... ).asRanged()`
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
 
 // User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
