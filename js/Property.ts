@@ -15,14 +15,13 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import Multilink, { Dependencies, RP1, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9, RP10, RP11, RP12, RP13, RP14, RP15, UnknownMultilink } from './Multilink.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
 import IProperty from './IProperty.js';
-import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 
@@ -496,67 +495,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
     return this.tinyProperty.hasListeners();
-  }
-
-  /**
-   * Registers a listener with multiple properties, then notifies the listener immediately.
-   * @param dependencies
-   * @param callback function that takes values from the properties and returns nothing
-   */
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP1<T1>, callback: ( ...params: [ T1 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP2<T1, T2>, callback: ( ...params: [ T1, T2 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP3<T1, T2, T3>, callback: ( ...params: [ T1, T2, T3 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP4<T1, T2, T3, T4>, callback: ( ...params: [ T1, T2, T3, T4 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP5<T1, T2, T3, T4, T5>, callback: ( ...params: [ T1, T2, T3, T4, T5 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP6<T1, T2, T3, T4, T5, T6>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line
-    return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, false );
-  }
-
-  static multilinkAny( dependencies: Readonly<IReadOnlyProperty<any>[]>, callback: () => void ): UnknownMultilink {
-
-    // @ts-ignore
-    return new Multilink( dependencies, callback );
-  }
-
-  /**
-   * Registers a listener with multiple properties *without* an immediate callback with current values.
-   * @param dependencies
-   * @param callback function that takes values from the properties and returns nothing
-   */
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP1<T1>, callback: ( ...params: [ T1 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP2<T1, T2>, callback: ( ...params: [ T1, T2 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP3<T1, T2, T3>, callback: ( ...params: [ T1, T2, T3 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP4<T1, T2, T3, T4>, callback: ( ...params: [ T1, T2, T3, T4 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP5<T1, T2, T3, T4, T5>, callback: ( ...params: [ T1, T2, T3, T4, T5 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP6<T1, T2, T3, T4, T5, T6>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line
-    return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, true );
-  }
-
-  /**
-   * Unlinks an listener that was added with multilink or lazyMultilink.
-   */
-  static unmultilink( multilink: UnknownMultilink ): void {
-    multilink.dispose();
   }
 }
 

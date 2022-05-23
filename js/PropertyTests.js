@@ -10,6 +10,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
+import Multilink from './Multilink.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
@@ -31,11 +32,11 @@ QUnit.test( 'Test unlink', assert => {
   assert.equal( p.getListenerCount(), 2 + startingPListenerCount, 'should have removed an item' );
 } );
 
-QUnit.test( 'Test Property.multilink', assert => {
+QUnit.test( 'Test Multilink.multilink', assert => {
   const a = new Property( 1 );
   const b = new Property( 2 );
   let callbacks = 0;
-  Property.multilink( [ a, b ], ( a, b ) => {
+  Multilink.multilink( [ a, b ], ( a, b ) => {
     callbacks++;
     assert.equal( a, 1, 'first value should pass through' );
     assert.equal( b, 2, 'second value should pass through' );
@@ -43,11 +44,11 @@ QUnit.test( 'Test Property.multilink', assert => {
   assert.equal( callbacks, 1, 'should have called back to a multilink' );
 } );
 
-QUnit.test( 'Test Property.lazyMultilink', assert => {
+QUnit.test( 'Test Multilink.lazyMultilink', assert => {
   const a = new Property( 1 );
   const b = new Property( 2 );
   let callbacks = 0;
-  Property.lazyMultilink( [ a, b ], ( a, b ) => {
+  Multilink.lazyMultilink( [ a, b ], ( a, b ) => {
     callbacks++;
     assert.equal( a, 1 );
     assert.equal( b, 2 );
