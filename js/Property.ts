@@ -315,6 +315,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
       if ( this.hasDeferredValue ) {
         this.setPropertyValue( this.deferredValue! );
         this.hasDeferredValue = false;
+        this.deferredValue = null;
       }
 
       // If the value has changed, prepare to send out notifications (after all other Properties in this transaction
