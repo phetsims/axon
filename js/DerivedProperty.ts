@@ -194,6 +194,14 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 
   /**
+   * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
+   * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
+   */
+  override get value(): T {
+    return super.get();
+  }
+
+  /**
    * Override the mutators to provide an error message.  These should not be called directly,
    * the value should only be modified when the dependencies change.
    */
@@ -218,14 +226,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }
     return super.setDeferred( isDeferred );
-  }
-
-  /**
-   * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
-   * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
-   */
-  override get value(): T {
-    return super.get();
   }
 
   /**

@@ -58,6 +58,14 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   }
 
   /**
+   * Sets the value.
+   */
+  set value( newValue: T ) {
+    this.set( newValue );
+  }
+
+
+  /**
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
@@ -70,13 +78,6 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
 
       this.notifyListeners( oldValue );
     }
-  }
-
-  /**
-   * Sets the value.
-   */
-  set value( newValue: T ) {
-    this.set( newValue );
   }
 
   /**
