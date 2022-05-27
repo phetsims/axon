@@ -21,7 +21,7 @@ QUnit.test( 'Emitter Constructing and options', assert => {
   e1.emit( 1 );
 
   // emitting with an object as parameter
-  const e2: Emitter<[ Emitter, Object, () => void ]> = new Emitter( {
+  const e2: Emitter<[ Emitter, Record<string, unknown>, () => void ]> = new Emitter( {
     parameters: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
   } );
 

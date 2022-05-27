@@ -12,11 +12,12 @@ import axon from './axon.js';
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
-type EmitContext = {
-  index: number;
-  listenerArray?: Function[];
-};
 type Listener<T extends any[]> = ( ...args: T ) => void;
+
+type EmitContext<T extends any[]> = {
+  index: number;
+  listenerArray?: Listener<T>[];
+};
 
 export default class TinyEmitter<T extends any[] = []> {
 
@@ -34,7 +35,7 @@ export default class TinyEmitter<T extends any[] = []> {
   private listeners: Set<Listener<T>>;
 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
-  private emitContexts: EmitContext[];
+  private emitContexts: EmitContext<T>[];
 
   constructor( onBeforeNotify?: Listener<T> | null ) {
 
@@ -83,7 +84,7 @@ export default class TinyEmitter<T extends any[] = []> {
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
-      const emitContext: EmitContext = {
+      const emitContext: EmitContext<T> = {
         index: 0
         // listenerArray: [] // {Array.<function>|undefined} assigned if a mutation is made during emit
       };
