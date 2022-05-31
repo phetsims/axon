@@ -11,6 +11,7 @@ import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
+import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
 
 type SelfOptions<T extends EnumerationValue> = {
 
@@ -19,7 +20,7 @@ type SelfOptions<T extends EnumerationValue> = {
   enumeration?: Enumeration<T>;
 };
 
-export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & Omit<PropertyOptions<T>, 'phetioType'>;
+export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & OmitStrict<PropertyOptions<T>, 'phetioType'>;
 
 export default class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
