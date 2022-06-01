@@ -7,7 +7,7 @@
  */
 
 import Range from '../../dot/js/Range.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
@@ -45,7 +45,7 @@ type SelfOptions = {
 
 };
 
-export type NumberPropertyOptions = SelfOptions & OmitStrict<PropertyOptions<number>, 'phetioType' | 'valueType'>;
+export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
 
 // Minimal types for ranged Properties - Generally use `new NumberPropery( ... ).asRanged()`
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };

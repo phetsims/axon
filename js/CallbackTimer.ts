@@ -8,7 +8,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import stepTimer from './stepTimer.js';
 import { TimerListener } from './Timer.js';
@@ -50,7 +50,7 @@ export default class CallbackTimer {
 
   constructor( providedOptions?: CallbackTimerOptions ) {
 
-    const options = optionize<CallbackTimerOptions, OmitStrict<SelfOptions, 'callback'>>()( {
+    const options = optionize<CallbackTimerOptions, StrictOmit<SelfOptions, 'callback'>>()( {
       delay: 400,
       interval: 100
     }, providedOptions );

@@ -11,9 +11,9 @@ import Property, { PropertyOptions } from './Property.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import optionize from '../../phet-core/js/optionize.js';
 import PickRequired from '../../phet-core/js/types/PickRequired.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
-type StringEnumerationPropertyOptions<T> = OmitStrict<PropertyOptions<T>, 'phetioType'> &
+type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioType'> &
   PickRequired<PropertyOptions<T>, 'validValues'>;
 
 class StringEnumerationProperty<T extends string> extends Property<T> {

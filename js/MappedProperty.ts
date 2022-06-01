@@ -18,7 +18,7 @@
  */
 
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
 import DynamicProperty, { DynamicPropertyOptions } from './DynamicProperty.js';
@@ -35,7 +35,7 @@ type SelfOptions<ThisValueType, InputValueType> = {
   inverseMap?: ( ( thisValue: ThisValueType ) => InputValueType ) | KeysMatching<ThisValueType, InputValueType>;
 };
 
-type SuperOptions<ThisValueType, InputValueType> = OmitStrict<DynamicPropertyOptions<ThisValueType, InputValueType, IProperty<InputValueType>>, 'defaultValue' | 'derive'>;
+type SuperOptions<ThisValueType, InputValueType> = StrictOmit<DynamicPropertyOptions<ThisValueType, InputValueType, IProperty<InputValueType>>, 'defaultValue' | 'derive'>;
 
 export type MappedPropertyOptions<ThisValueType, InputValueType> = SelfOptions<ThisValueType, InputValueType> & SuperOptions<ThisValueType, InputValueType>;
 

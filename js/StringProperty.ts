@@ -8,7 +8,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
@@ -18,7 +18,7 @@ const StringPropertyIO = Property.PropertyIO( StringIO );
 
 type SelfOptions = {};
 
-export type StringPropertyOptions = SelfOptions & OmitStrict<PropertyOptions<string>, 'valueType' | 'phetioType'>;
+export type StringPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<string>, 'valueType' | 'phetioType'>;
 
 export default class StringProperty extends Property<string> {
 

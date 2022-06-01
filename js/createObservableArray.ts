@@ -8,7 +8,7 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
@@ -77,7 +77,7 @@ type PrivateObservableArray<T> = {
   observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
 } & ObservableArray<T>;
 
-type SpecifiedObservableArrayOptions<T> = OmitStrict<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
+type SpecifiedObservableArrayOptions<T> = StrictOmit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
 
 const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> ): ObservableArray<T> => {
 
