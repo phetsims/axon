@@ -54,8 +54,6 @@ export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOption
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.
  */
-// TODO https://github.com/phetsims/axon/issues/342 rename Property.ts => AbstractProperty.ts then introduce Property.ts as a new minimal file
-// TODO: Make sure the history tracks. https://github.com/phetsims/axon/issues/342.  Can be afterwards
 export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
 
   // Unique identifier for this Property.
@@ -234,9 +232,8 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
 
   /**
    * NOTE: a few sims are calling this even though they shouldn't
-   * TODO: https://github.com/phetsims/axon/issues/342 can this be private?
    */
-  protected _notifyListeners( oldValue: T | null ): void {
+  private _notifyListeners( oldValue: T | null ): void {
     const newValue = this.get();
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
@@ -501,9 +498,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
 
       // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend AbstractProperty
       // However, we also want the AbstractProperty constructor to be protected, so we must ignore this type error
-      // TODO: Use isValidValue, see https://github.com/phetsims/axon/issues/342
-      // @ts-ignore
-      valueType: AbstractProperty,
+      isValidValue: v => v instanceof AbstractProperty,
       documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
                      'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
@@ -532,7 +527,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
       applyState: ( property: AbstractProperty<any>, stateObject: any ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
 
-        // @ts-ignore see https://github.com/phetsims/axon/issues/342
+        // @ts-ignore TODO: see https://github.com/phetsims/axon/issues/342
         property.set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
