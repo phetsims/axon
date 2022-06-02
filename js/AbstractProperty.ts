@@ -20,7 +20,6 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
-import IProperty from './IProperty.js';
 import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
@@ -242,7 +241,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
-    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( Property.CHANGED_EVENT_NAME, {
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( AbstractProperty.CHANGED_EVENT_NAME, {
       getData: () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
@@ -335,7 +334,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  addPhetioStateDependencies( dependencies: Array<Property<any> | TinyProperty<any>> ): void {
+  addPhetioStateDependencies( dependencies: Array<AbstractProperty<any> | TinyProperty<any>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -470,7 +469,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Invokes a callback once for each listener
    * @param callback - takes the listener as an argument
    */
-  forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | Property<T> ] ) => void ) => void ): void {
+  forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | AbstractProperty<T> ] ) => void ) => void ): void {
     this.tinyProperty.forEachListener( callback );
   }
 
@@ -486,68 +485,6 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
 // static attributes
 AbstractProperty.CHANGED_EVENT_NAME = 'changed';
 
-/**
- * Adds initial value and reset, and a mutable interface.
- */
-export default class Property<T> extends AbstractProperty<T> implements IProperty<T> {
-
-  protected _initialValue: T;
-
-  constructor( value: T, providedOptions?: PropertyOptions<T> ) {
-    super( value, providedOptions );
-
-    // Initial value
-    this._initialValue = value;
-  }
-
-  /**
-   * Returns the initial value of this Property.
-   */
-  getInitialValue(): T {
-    return this._initialValue;
-  }
-
-  get initialValue(): T {
-    return this.getInitialValue();
-  }
-
-  /**
-   * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
-   * typically only in situations where the initial value is unknowable at instantiation.
-   */
-  setInitialValue( initialValue: T ): void {
-    this._initialValue = initialValue;
-  }
-
-  /**
-   * Overridden to make public
-   */
-  override get value(): T {
-    return super.value;
-  }
-
-  /**
-   * Overridden to make public
-   */
-  override set value( newValue: T ) {
-    this.set( newValue );
-  }
-
-  /**
-   * Overridden to make public
-   */
-  override reset(): void {
-    super.reset();
-  }
-
-  /**
-   * Overridden to make public
-   */
-  override set( value: T ): void {
-    super.set( value );
-  }
-}
-
 // {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
 // the parameter type, so that it is only created once
 const cache = new Map();
@@ -556,7 +493,7 @@ const cache = new Map();
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-Property.PropertyIO = ( parameterType: IOType ) => {
+AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
@@ -573,7 +510,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject: ( property: Property<any> ) => {
+      toStateObject: ( property: AbstractProperty<any> ) => {
         assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
         const stateObject: any = {
           value: parameterType.toStateObject( property.value )
@@ -592,8 +529,10 @@ Property.PropertyIO = ( parameterType: IOType ) => {
         stateObject.units = NullableIO( StringIO ).toStateObject( property.units );
         return stateObject;
       },
-      applyState: ( property: Property<any>, stateObject: any ) => {
+      applyState: ( property: AbstractProperty<any>, stateObject: any ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+
+        // @ts-ignore see https://github.com/phetsims/axon/issues/342
         property.set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
@@ -609,7 +548,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
         getValue: {
           returnType: parameterType,
           parameterTypes: [],
-          implementation: function( this: Property<any> ) {
+          implementation: function( this: AbstractProperty<any> ) {
             return this.get();
           },
           documentation: 'Gets the current value.'
@@ -617,7 +556,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
         getValidationError: {
           returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
-          implementation: function( this: Property<any>, value: any ) {
+          implementation: function( this: AbstractProperty<any>, value: any ) {
             return this.getValidationError( value );
           },
           documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
@@ -626,7 +565,7 @@ Property.PropertyIO = ( parameterType: IOType ) => {
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
-          implementation: function( this: Property<any>, value: any ) {
+          implementation: function( this: AbstractProperty<any>, value: any ) {
             this.set( value );
           },
           documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
@@ -674,4 +613,4 @@ Property.PropertyIO = ( parameterType: IOType ) => {
   return cache.get( parameterType );
 };
 
-axon.register( 'Property', Property );
+axon.register( 'AbstractProperty', AbstractProperty );
