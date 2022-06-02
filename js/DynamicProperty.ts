@@ -154,8 +154,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
-  private _initialValue: ThisValueType | null;
-
   /**
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
    * @param [providedOptions] - options
@@ -195,15 +193,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
     this.bidirectional = options.bidirectional;
     this.valuePropertyProperty = valuePropertyProperty;
     this.isExternallyChanging = false;
-
-    // If we can't reset(), then we won't store the initial value.
-    // See https://github.com/phetsims/axon/issues/193.
-    if ( !this.bidirectional ) {
-      this._initialValue = null;
-    }
-    else {
-      this._initialValue = initialValue;
-    }
 
     this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
     this.propertyListener = this.onPropertyChange.bind( this );
@@ -310,15 +299,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
       assert && assert( property instanceof Property );
       ( property as Property<InnerValueType> ).reset();
     }
-  }
-
-  /**
-   * Prevent getting this Property manually if it is not marked as bidirectional.
-   */
-  getInitialValue(): ThisValueType | null {
-    assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
-
-    return this._initialValue;
   }
 
   /**
