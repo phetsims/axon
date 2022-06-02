@@ -74,7 +74,7 @@ type PrivateObservableArray<T> = {
   // Make it possible to use the targetArray in the overridden methods.
   targetArray: T[];
 
-  observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
+  _observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
 } & ObservableArray<T>;
 
 type SpecifiedObservableArrayOptions<T> = StrictOmit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
@@ -155,8 +155,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
      * @param {Object[]} array - the targetArray
      * @param {string} key
      * @param {Object} receiver
-     * @returns {*} - the requested value
-     * @private
+     * @returns - the requested value
      */
     get: function( array: T[], key: string | symbol, receiver ): any {
       assert && assert( array === targetArray, 'array should match the targetArray' );
@@ -212,10 +211,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
     /**
      * This is the trap for the delete operator.
-     * @param array - the targetArray
-     * @param key
-     * @returns success
-     * @private
      */
     deleteProperty: function( array: T[], key: string | symbol ): boolean {
       assert && assert( array === targetArray, 'array should match the targetArray' );
@@ -266,9 +261,9 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
     observableArray.phetioElementType = options.phetioType!.parameterTypes[ 0 ];
 
-    // @private - for managing state in phet-io
+    // for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
-    observableArray.observableArrayPhetioObject = new ObservableArrayPhetioObject( observableArray, options );
+    observableArray._observableArrayPhetioObject = new ObservableArrayPhetioObject( observableArray, options );
   }
 
   return observableArray;
@@ -277,7 +272,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 /**
  * Manages state save/load. This implementation uses Proxy and hence cannot be instrumented as a PhetioObject.  This type
  * provides that functionality.
- * @private
  */
 class ObservableArrayPhetioObject<T> extends PhetioObject {
 
@@ -435,7 +429,7 @@ const methods = {
     thisArray.elementAddedEmitter.dispose();
     thisArray.elementRemovedEmitter.dispose();
     thisArray.lengthProperty.dispose();
-    thisArray.observableArrayPhetioObject && thisArray.observableArrayPhetioObject.dispose();
+    thisArray._observableArrayPhetioObject && thisArray._observableArrayPhetioObject.dispose();
   },
 
   /******************************************
