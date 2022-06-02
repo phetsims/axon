@@ -24,10 +24,6 @@ export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions
 
 export default class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
-  /**
-   * @param value
-   * @param providedOptions
-   */
   constructor( value: T, providedOptions?: EnumerationPropertyOptions<T> ) {
 
     const firstOptions = optionize<EnumerationPropertyOptions<T>, SelfOptions<T>, PropertyOptions<T>>()( {

@@ -152,9 +152,9 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
     /**
      * Trap for getting a property or method.
-     * @param {Object[]} array - the targetArray
-     * @param {string} key
-     * @param {Object} receiver
+     * @param array - the targetArray
+     * @param key
+     * @param receiver
      * @returns - the requested value
      */
     get: function( array: T[], key: string | symbol, receiver ): any {
@@ -172,7 +172,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
      * Trap for setting a property value.
      * @param array - the targetArray
      * @param key
-     * @param {*} newValue
+     * @param newValue
      * @returns - success
      */
     set: function( array: T[], key: string | symbol, newValue: any ): boolean {

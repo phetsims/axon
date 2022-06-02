@@ -31,8 +31,8 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   protected useDeepEquality?: boolean;
 
   /**
-   * @param {*} value - The initial value of the property
-   * @param {function()} [onBeforeNotify]
+   * @param value - The initial value of the property
+   * @param [onBeforeNotify]
    */
   constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
     super( onBeforeNotify );
