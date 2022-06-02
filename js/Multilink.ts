@@ -63,8 +63,11 @@ export type UnknownMultilink = Multilink<unknown, unknown, unknown, unknown, unk
 export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
 
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
+
+  // Keep track of listeners so they can be detached
   private dependencyListeners: Map<IReadOnlyProperty<any>, () => void>;
 
+  // whether the Multilink has been disposed
   private isDisposed?: boolean;
 
   /**
@@ -95,7 +98,6 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    // @private {Map.<Property,function>} Keep track of listeners so they can be detached
     this.dependencyListeners = new Map();
 
     // When a dependency value changes, update the list of dependencies and call back to the callback
@@ -126,7 +128,6 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
       callback( ...values );
     }
 
-    // @private - whether the Multilink has been disposed
     this.isDisposed = false;
   }
 
