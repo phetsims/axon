@@ -293,7 +293,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   override reset(): void {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
-    // TODO: It appears that initialValue is not needed for reset in DynamicProperty, see https://github.com/phetsims/axon/issues/342
     if ( this.valuePropertyProperty.value !== null ) {
       const property = this.derive( this.valuePropertyProperty.value );
       assert && assert( property instanceof Property );
