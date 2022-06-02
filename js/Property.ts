@@ -21,7 +21,7 @@ import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
 import IProperty from './IProperty.js';
-import { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 
@@ -51,16 +51,19 @@ type SelfOptions = {
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
-export default class Property<T> extends PhetioObject implements IProperty<T> {
+/**
+ * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
+ * interface.  Initial value and resetting is not defined here.
+ */
+// TODO https://github.com/phetsims/axon/issues/342 rename Property.ts => AbstractProperty.ts then introduce Property.ts as a new minimal file
+// TODO: Make sure the history tracks. https://github.com/phetsims/axon/issues/342.  Can be afterwards
+export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;
 
   // (phet-io) Units, if any.  See units.js for valid values
   units: string | null;
-
-  // Initial value
-  protected _initialValue: T | null;
 
   validValues: readonly T[] | undefined;
 
@@ -90,10 +93,11 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   protected readonly valueValidator: Validator<T>;
 
   /**
+   * This is protected to indicate to clients that subclasses should be used instead.
    * @param value - the initial value of the property
    * @param [providedOptions]
    */
-  constructor( value: T, providedOptions?: PropertyOptions<T> ) {
+  protected constructor( value: T, providedOptions?: PropertyOptions<T> ) {
     const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions>()( {
 
       useDeepEquality: false,
@@ -136,8 +140,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
                       options.tandem.name.endsWith( 'Property' ) ||
                       options.tandem.name === 'property',
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
-
-    this._initialValue = value;
 
     this.validValues = options.validValues;
 
@@ -195,7 +197,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    */
-  set( value: T ): void {
+  protected set( value: T ): void {
     if ( !this.isDisposed ) {
       if ( this.isDeferred ) {
         this.deferredValue = value;
@@ -218,14 +220,6 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   /**
-   * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
-   * typically only in situations where the initial value is unknowable at instantiation.
-   */
-  setInitialValue( initialValue: T ): void {
-    this._initialValue = initialValue;
-  }
-
-  /**
    * Returns true if and only if the specified value equals the value of this property
    */
   protected equalsValue( value: T ): boolean {
@@ -240,20 +234,10 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   }
 
   /**
-   * Returns the initial value of this Property.
+   * NOTE: a few sims are calling this even though they shouldn't
+   * TODO: https://github.com/phetsims/axon/issues/342 can this be private?
    */
-  getInitialValue(): T | null {
-    return this._initialValue;
-  }
-
-  get initialValue(): T | null {
-    return this.getInitialValue();
-  }
-
-  /**
-   * @private - but note that a few sims are calling this even though they shouldn't
-   */
-  private _notifyListeners( oldValue: T | null ): void {
+  protected _notifyListeners( oldValue: T | null ): void {
     const newValue = this.get();
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
@@ -332,7 +316,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
   /**
    * Resets the value to the initial value.
    */
-  reset(): void {
+  protected reset(): void {
 
     // @ts-ignore
     this.set( this._initialValue );
@@ -342,7 +326,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
     return this.get();
   }
 
-  set value( newValue: T ) {
+  protected set value( newValue: T ) {
     this.set( newValue );
   }
 
@@ -357,7 +341,7 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
       const dependency = dependencies[ i ];
 
       // only if running in PhET-iO brand and both Properties are instrumenting
-      if ( dependency instanceof Property && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+      if ( dependency instanceof AbstractProperty && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
@@ -500,8 +484,69 @@ export default class Property<T> extends PhetioObject implements IProperty<T> {
 }
 
 // static attributes
-Property.CHANGED_EVENT_NAME = 'changed';
+AbstractProperty.CHANGED_EVENT_NAME = 'changed';
 
+/**
+ * Adds initial value and reset, and a mutable interface.
+ */
+export default class Property<T> extends AbstractProperty<T> implements IProperty<T> {
+
+  protected _initialValue: T;
+
+  constructor( value: T, providedOptions?: PropertyOptions<T> ) {
+    super( value, providedOptions );
+
+    // Initial value
+    this._initialValue = value;
+  }
+
+  /**
+   * Returns the initial value of this Property.
+   */
+  getInitialValue(): T {
+    return this._initialValue;
+  }
+
+  get initialValue(): T {
+    return this.getInitialValue();
+  }
+
+  /**
+   * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
+   * typically only in situations where the initial value is unknowable at instantiation.
+   */
+  setInitialValue( initialValue: T ): void {
+    this._initialValue = initialValue;
+  }
+
+  /**
+   * Overridden to make public
+   */
+  override get value(): T {
+    return super.value;
+  }
+
+  /**
+   * Overridden to make public
+   */
+  override set value( newValue: T ) {
+    this.set( newValue );
+  }
+
+  /**
+   * Overridden to make public
+   */
+  override reset(): void {
+    super.reset();
+  }
+
+  /**
+   * Overridden to make public
+   */
+  override set( value: T ): void {
+    super.set( value );
+  }
+}
 
 // {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
 // the parameter type, so that it is only created once
@@ -516,7 +561,12 @@ Property.PropertyIO = ( parameterType: IOType ) => {
 
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `PropertyIO<${parameterType.typeName}>`, {
-      valueType: Property,
+
+      // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend AbstractProperty
+      // However, we also want the AbstractProperty constructor to be protected, so we must ignore this type error
+      // TODO: Use isValidValue, see https://github.com/phetsims/axon/issues/342
+      // @ts-ignore
+      valueType: AbstractProperty,
       documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
                      'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',

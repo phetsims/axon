@@ -99,7 +99,7 @@
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
-import Property, { PropertyOptions } from './Property.js';
+import Property, { AbstractProperty, PropertyOptions } from './Property.js';
 import TinyProperty from './TinyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
@@ -139,7 +139,8 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // } );
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
-export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = IProperty<InnerValueType>> extends Property<ThisValueType> {
+// TODO: https://github.com/phetsims/axon/issues/342 Can OuterValueType default to IProperty?
+export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = Property<InnerValueType>> extends AbstractProperty<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   isExternallyChanging: boolean;
@@ -153,9 +154,11 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
+  private _initialValue: ThisValueType | null;
+
   /**
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
-   * @param [options] - options
+   * @param [providedOptions] - options
    */
   constructor( valuePropertyProperty: INullableProperty<OuterValueType> | IReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
@@ -167,8 +170,8 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
       inverseMap: _.identity
     }, providedOptions );
 
-    assert && assert( valuePropertyProperty instanceof Property || valuePropertyProperty instanceof TinyProperty,
-      'valuePropertyProperty should be a Property or TinyProperty' );
+    assert && assert( valuePropertyProperty instanceof AbstractProperty || valuePropertyProperty instanceof TinyProperty,
+      'valuePropertyProperty should be an AbstractProperty or TinyProperty' );
 
     const optionsDerive = options.derive;
     const optionsMap = options.map;
@@ -197,6 +200,9 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
     // See https://github.com/phetsims/axon/issues/193.
     if ( !this.bidirectional ) {
       this._initialValue = null;
+    }
+    else {
+      this._initialValue = initialValue;
     }
 
     this.propertyPropertyListener = this.onPropertyPropertyChange.bind( this );
@@ -298,6 +304,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   override reset(): void {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
+    // TODO: It appears that initialValue is not needed for reset in DynamicProperty, see https://github.com/phetsims/axon/issues/342
     if ( this.valuePropertyProperty.value !== null ) {
       const property = this.derive( this.valuePropertyProperty.value );
       assert && assert( property instanceof Property );
@@ -308,10 +315,10 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Prevent getting this Property manually if it is not marked as bidirectional.
    */
-  override getInitialValue(): ThisValueType | null {
+  getInitialValue(): ThisValueType | null {
     assert && assert( this.bidirectional, 'Cannot get the initial value of a non-bidirectional DynamicProperty' );
 
-    return super.getInitialValue();
+    return this._initialValue;
   }
 
   /**

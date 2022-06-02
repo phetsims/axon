@@ -17,7 +17,7 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
-import Property, { PropertyOptions } from './Property.js';
+import Property, { AbstractProperty, PropertyOptions } from './Property.js';
 import validate from './validate.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
@@ -52,7 +52,7 @@ export type RangedProperty = Property<number> & { range: Range; readonly rangePr
 
 // User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
 // to the range
-export const isRangedProperty = ( property: Property<number> ): property is RangedProperty => {
+export const isRangedProperty = ( property: IReadOnlyProperty<number> ): property is RangedProperty => {
   return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
 };
 
@@ -102,11 +102,11 @@ export default class NumberProperty extends Property<number> {
     options.valueType = 'number';
     options.phetioType = NumberProperty.NumberPropertyIO;
 
-    const rangePropertyProvided = options.range && options.range instanceof Property;
+    const rangePropertyProvided = options.range && options.range instanceof AbstractProperty;
     const ownsRangeProperty = !rangePropertyProvided;
 
     let rangeProperty: Property<Range | null>;
-    if ( options.range instanceof Property ) {
+    if ( options.range instanceof AbstractProperty ) {
       rangeProperty = options.range;
     }
     else {

@@ -13,13 +13,13 @@
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import IProperty from './IProperty.js';
-import { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import IReadOnlyProperty, { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import Tandem from '../../tandem/js/Tandem.js';
 
 type ComparableObject = {
   equals: ( a: any ) => boolean;
 };
-export type TinyPropertyEmitterParameters<T> = [ T, T | null, IProperty<T> ];
+export type TinyPropertyEmitterParameters<T> = [ T, T | null, IReadOnlyProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
 export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {

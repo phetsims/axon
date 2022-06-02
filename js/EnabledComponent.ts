@@ -15,6 +15,7 @@ import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -27,7 +28,8 @@ const DEFAULT_OPTIONS = {
 
 export type EnabledComponentOptions = {
   // if not provided, a Property will be created
-  enabledProperty?: IProperty<boolean> | null;
+  // TODO: https://github.com/phetsims/axon/issues/342 improve this type
+  enabledProperty?: IReadOnlyProperty<boolean> | IProperty<boolean> | null;
 
   // initial value of enabledProperty if we create it, ignored if enabledProperty is provided
   enabled?: boolean;
@@ -45,7 +47,8 @@ export type EnabledComponentOptions = {
 
 export default class EnabledComponent {
 
-  enabledProperty: IProperty<boolean>;
+  // TODO: See https://github.com/phetsims/axon/issues/342
+  enabledProperty: IProperty<boolean> | IReadOnlyProperty<boolean>;
 
   private disposeEnabledComponent: () => void;
 
@@ -67,7 +70,17 @@ export default class EnabledComponent {
     };
   }
 
-  setEnabled( enabled: boolean ): void { this.enabledProperty.value = enabled; }
+  // @ts-ignore TODO see https://github.com/phetsims/axon/issues/342
+  setEnabled( enabled: boolean ): void {
+    if ( this.enabledProperty.isSettable() ) {
+
+      // @ts-ignore
+      this.enabledProperty.value = enabled;
+    }
+    else {
+      assert && assert( false, 'cannot set enabledProperty' );
+    }
+  }
 
   set enabled( value: boolean ) { this.setEnabled( value ); }
 

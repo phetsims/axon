@@ -20,7 +20,7 @@
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
-import IProperty from './IProperty.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 import DynamicProperty, { DynamicPropertyOptions } from './DynamicProperty.js';
 import TinyProperty from './TinyProperty.js';
 
@@ -35,12 +35,13 @@ type SelfOptions<ThisValueType, InputValueType> = {
   inverseMap?: ( ( thisValue: ThisValueType ) => InputValueType ) | KeysMatching<ThisValueType, InputValueType>;
 };
 
-type SuperOptions<ThisValueType, InputValueType> = StrictOmit<DynamicPropertyOptions<ThisValueType, InputValueType, IProperty<InputValueType>>, 'defaultValue' | 'derive'>;
+type SuperOptions<ThisValueType, InputValueType> = StrictOmit<DynamicPropertyOptions<ThisValueType, InputValueType, IReadOnlyProperty<InputValueType>>, 'defaultValue' | 'derive'>;
 
 export type MappedPropertyOptions<ThisValueType, InputValueType> = SelfOptions<ThisValueType, InputValueType> & SuperOptions<ThisValueType, InputValueType>;
 
-export default class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, IProperty<InputValueType>> {
-  constructor( property: IProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
+// TODO https://github.com/phetsims/axon/issues/342 this file could use review by @jonathanolson
+export default class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, IReadOnlyProperty<InputValueType>> {
+  constructor( property: IReadOnlyProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
     super( new TinyProperty( property ), providedOptions );
   }
 }

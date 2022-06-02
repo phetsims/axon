@@ -12,7 +12,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import Property, { PropertyOptions } from './Property.js';
+import Property, { AbstractProperty, PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
@@ -41,7 +41,7 @@ export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unk
  * T = type of the derived value
  * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
  */
-export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends Property<T> implements IReadOnlyProperty<T> {
+export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends AbstractProperty<T> implements IReadOnlyProperty<T> {
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: any;
   private readonly derivedPropertyListener: () => void;
@@ -93,11 +93,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     }
 
     this.dependencies = dependencies;
-
-    // We can't reset the DerivedProperty, so we don't store the initial value to help prevent memory issues.
-    // See https://github.com/phetsims/axon/issues/193
-    this._initialValue = null;
-
     this.derivation = derivation;
     this.derivedPropertyListener = this.getDerivedPropertyListener.bind( this );
 
@@ -105,7 +100,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
       dependency.lazyLink( this.derivedPropertyListener );
 
-      if ( dependency instanceof Property && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
+      if ( dependency instanceof AbstractProperty && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
 
         // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure
         // to have the right value.
@@ -177,47 +172,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 
   /**
-   * Override the mutators to provide an error message.  These should not be called directly,
-   * the value should only be modified when the dependencies change.
-   */
-  override set( value: T ): void {
-    throw new Error( `Cannot set values directly to a DerivedProperty, tried to set: ${value}` );
-  }
-
-  /**
-   * Override the mutators to provide an error message.  These should not be called directly, the value should only be modified
-   * when the dependencies change. Keep the newValue output in the string so the argument won't be stripped by minifier
-   * (which would cause crashes like https://github.com/phetsims/axon/issues/15)
-   */
-  override set value( newValue ) {
-    throw new Error( `Cannot es5-set values directly to a DerivedProperty, tried to set: ${newValue}` );
-  }
-
-  /**
-   * Override the getter for value as well, since we need the getter/setter pair to override the getter/setter pair in Property
-   * (instead of a setter with no getter overriding). See https://github.com/phetsims/axon/issues/171 for more details
-   */
-  override get value(): T {
-    return super.get();
-  }
-
-  /**
-   * Override the mutators to provide an error message.  These should not be called directly,
-   * the value should only be modified when the dependencies change.
-   */
-  override reset(): void {
-    throw new Error( 'Cannot reset a DerivedProperty directly' );
-  }
-
-  /**
-   * Prevent the retrieval of the initial value, since we don't store it.
-   * See https://github.com/phetsims/axon/issues/193
-   */
-  override getInitialValue(): T {
-    throw new Error( 'Cannot get the initial value of a DerivedProperty' );
-  }
-
-  /**
    * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
    */
@@ -268,12 +222,11 @@ const equalsFunction = ( a: any, b: any ): boolean => {
   return a === b;
 };
 
-const andFunction = ( value: any, property: Property<any> ) => {
-  assert && assert( typeof property.value === 'boolean', 'boolean value required' );
+const andFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
   return value && property.value;
 };
 
-const orFunction = ( value: any, property: Property<any> ) => {
+const orFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
   assert && assert( typeof property.value === 'boolean', 'boolean value required' );
   return value || property.value;
 };
