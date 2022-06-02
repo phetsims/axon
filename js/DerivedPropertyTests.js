@@ -91,15 +91,6 @@ QUnit.test( 'DerivedProperty and/or', assert => {
   const propA = new Property( false );
   const propB = new Property( false );
   const propC = new Property( false );
-  const propD = new Property( 0 ); // dependency with an invalid (non-boolean) type
-
-  // fail: 'and' with non-boolean Property
-  window.assert && assert.throws( () => DerivedProperty.and( [ propA, propD ] ),
-    'DerivedProperty.and requires booleans Property values' );
-
-  // fail: 'or' with non-boolean Property
-  window.assert && assert.throws( () => DerivedProperty.or( [ propA, propD ] ),
-    'DerivedProperty.or requires booleans Property values' );
 
   // correct usages of 'and' and 'or'
   const and = DerivedProperty.and( [ propA, propB, propC ] );
