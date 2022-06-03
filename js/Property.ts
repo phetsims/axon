@@ -1,4 +1,4 @@
-// Copyright 2013-2022, University of Colorado Boulder
+// Copyright 2022, University of Colorado Boulder
 
 import IProperty from './IProperty.js';
 import { AbstractProperty, PropertyOptions } from './AbstractProperty.js';
