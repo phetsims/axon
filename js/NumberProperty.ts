@@ -65,11 +65,11 @@ export default class NumberProperty extends Property<number> {
   // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
   private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
 
-  readonly rangeProperty: Property<Range | null>;
+  public readonly rangeProperty: Property<Range | null>;
   private readonly disposeNumberProperty: () => void;
   private readonly resetNumberProperty: () => void;
 
-  constructor( value: number, providedOptions?: NumberPropertyOptions ) {
+  public constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
     let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>>()( {
       numberType: 'FloatingPoint',
@@ -163,7 +163,7 @@ export default class NumberProperty extends Property<number> {
     };
   }
 
-  get range(): Range | null {
+  public get range(): Range | null {
     return this.rangeProperty.value;
   }
 
@@ -172,11 +172,11 @@ export default class NumberProperty extends Property<number> {
    * immediately, and if the value is outside of this new Range an error will occur. See this.setValueAndRange() for
    *  way to set both at once without assertion errors.
    */
-  set range( range: Range | null ) {
+  public set range( range: Range | null ) {
     this.rangeProperty.value = range;
   }
 
-  override reset(): void {
+  public override reset(): void {
     super.reset();
 
     // Do subclass-specific reset after the value has been reset, because this reset may change the range
@@ -184,7 +184,7 @@ export default class NumberProperty extends Property<number> {
     this.resetNumberProperty();
   }
 
-  override dispose(): void {
+  public override dispose(): void {
     this.disposeNumberProperty();
     super.dispose();
   }
@@ -193,7 +193,7 @@ export default class NumberProperty extends Property<number> {
    * An atomic setting function that will set a range and a value at the same time, to make sure that validation does
    * not fail after one but has been set not the other.
    */
-  setValueAndRange( value: number, range: Range ): void {
+  public setValueAndRange( value: number, range: Range ): void {
     assert && assert( range.contains( value ), `value ${value} is not in range [${range.min},${range.max}]` );
 
     // defer notification of listeners
@@ -215,12 +215,12 @@ export default class NumberProperty extends Property<number> {
    * Resets the value and range atomically.
    * If you use setValueAndRange, you'll likely need to use this instead of reset.
    */
-  resetValueAndRange(): void {
+  public resetValueAndRange(): void {
     this.setValueAndRange( this.initialValue!, this.rangeProperty.initialValue! );
   }
 
   // Returns a casted version with a guaranteed non-null range
-  asRanged(): RangedProperty {
+  public asRanged(): RangedProperty {
     if ( isRangedProperty( this ) ) {
       return this;
     }
@@ -232,7 +232,7 @@ export default class NumberProperty extends Property<number> {
   /**
    * Get parent state and append NumberProperty-specific metadata to it.
    */
-  toStateObject(): NumberPropertyState {
+  public toStateObject(): NumberPropertyState {
     const parentStateObject = PropertyIOImpl.toStateObject( this );
 
     parentStateObject.numberType = StringIO.toStateObject( this.numberType );
@@ -244,7 +244,7 @@ export default class NumberProperty extends Property<number> {
     return parentStateObject;
   }
 
-  static NumberPropertyIO = new IOType( 'NumberPropertyIO', {
+  public static NumberPropertyIO = new IOType( 'NumberPropertyIO', {
     valueType: NumberProperty,
     supertype: PropertyIOImpl,
     parameterTypes: [ NumberIO ],

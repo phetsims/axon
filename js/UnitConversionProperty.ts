@@ -45,12 +45,12 @@ export type UnitConversionPropertyOptions = UnitConversionPropertySelfOptions & 
 
 export default class UnitConversionProperty extends MappedProperty<number, number> {
 
-  readonly rangeProperty: IProperty<Range | null>;
+  private readonly rangeProperty: IProperty<Range | null>;
 
   private _property: Property<number>;
   private _rangeListener?: ( range: Range | null ) => void;
 
-  constructor( property: Property<number>, providedOptions: UnitConversionPropertyOptions ) {
+  public constructor( property: Property<number>, providedOptions: UnitConversionPropertyOptions ) {
 
     let options = merge( {
       // Bidirectional by default, since we'll have a map and inverseMap guaranteed
@@ -89,17 +89,17 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
     }
   }
 
-  get range(): Range | null {
+  public get range(): Range | null {
     return this.rangeProperty.value;
   }
 
   // NOTE: NOT bidirectional yet!
-  set range( value: Range | null ) {
+  public set range( value: Range | null ) {
     this.rangeProperty.value = value;
   }
 
   // Returns a casted version with a guaranteed non-null range
-  asRanged(): RangedProperty {
+  public asRanged(): RangedProperty {
     if ( isRangedProperty( this ) ) {
       return this;
     }
@@ -108,7 +108,7 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
     }
   }
 
-  override dispose(): void {
+  public override dispose(): void {
     if ( ( this._property as NumberProperty ).rangeProperty ) {
       ( this._property as NumberProperty ).rangeProperty.unlink( this._rangeListener! );
     }

@@ -23,10 +23,10 @@ export default class TinyEmitter<T extends any[] = []> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
   // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.
-  changeCount?: ( count: number ) => void;
+  public changeCount?: ( count: number ) => void;
 
   // Only defined when assertions are enabled - to keep track if it has been disposed or not
-  isDisposed?: boolean;
+  public isDisposed?: boolean;
 
   // If specified, this will be called before listeners are notified.
   private readonly onBeforeNotify?: Listener<T> | null;
@@ -37,7 +37,7 @@ export default class TinyEmitter<T extends any[] = []> {
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
   private emitContexts: EmitContext<T>[];
 
-  constructor( onBeforeNotify?: Listener<T> | null ) {
+  public constructor( onBeforeNotify?: Listener<T> | null ) {
 
     if ( onBeforeNotify ) {
       assert && assert( typeof onBeforeNotify === 'function', 'onBeforeNotify should be a function' );
@@ -58,7 +58,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Disposes an Emitter. All listeners are removed.
    */
-  dispose(): void {
+  public dispose(): void {
     this.removeAllListeners();
 
     if ( assert ) {
@@ -69,7 +69,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Notify listeners
    */
-  emit( ...args: T ): void {
+  public emit( ...args: T ): void {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // optional callback, before notifying listeners
@@ -115,7 +115,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Adds a listener which will be called during emit.
    */
-  addListener( listener: Listener<T> ): void {
+  public addListener( listener: Listener<T> ): void {
     assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
     assert && assert( !this.hasListener( listener ), 'Cannot add the same listener twice' );
 
@@ -131,7 +131,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Removes a listener
    */
-  removeListener( listener: Listener<T> ): void {
+  public removeListener( listener: Listener<T> ): void {
 
     // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
     // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
@@ -147,7 +147,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Removes all the listeners
    */
-  removeAllListeners(): void {
+  public removeAllListeners(): void {
 
     const size = this.listeners.size;
 
@@ -181,7 +181,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  hasListener( listener: Listener<T> ): boolean {
+  public hasListener( listener: Listener<T> ): boolean {
     assert && assert( arguments.length === 1, 'Emitter.hasListener should be called with 1 argument' );
     return this.listeners.has( listener );
   }
@@ -189,7 +189,7 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Returns true if there are any listeners.
    */
-  hasListeners(): boolean {
+  public hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Emitter.hasListeners should be called without arguments' );
     return this.listeners.size > 0;
   }
@@ -197,14 +197,14 @@ export default class TinyEmitter<T extends any[] = []> {
   /**
    * Returns the number of listeners.
    */
-  getListenerCount(): number {
+  public getListenerCount(): number {
     return this.listeners.size;
   }
 
   /**
    * Invokes a callback once for each listener - meant for Property's use
    */
-  forEachListener( callback: ( listener: Listener<T> ) => void ): void {
+  public forEachListener( callback: ( listener: Listener<T> ) => void ): void {
     this.listeners.forEach( callback );
   }
 }

@@ -20,7 +20,7 @@ export default class Timer extends TinyEmitter<[number]> {
    * @param timeout in milliseconds
    * @returns an internally-wrapped listener which can be removed with clearTimeout
    */
-  setTimeout( listener: () => void, timeout: number ): TimerListener { // eslint-disable-line bad-sim-text
+  public setTimeout( listener: () => void, timeout: number ): TimerListener { // eslint-disable-line bad-sim-text
     let elapsed = 0;
     const callback = ( dt: number ) => {
       elapsed += dt;
@@ -44,7 +44,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Clear a scheduled timeout. If there was no timeout, nothing is done.
    */
-  clearTimeout( listener: TimerListener ): void {
+  public clearTimeout( listener: TimerListener ): void {
     if ( this.hasListener( listener ) ) {
       this.removeListener( listener );
     }
@@ -56,7 +56,7 @@ export default class Timer extends TinyEmitter<[number]> {
    * @param interval - in milliseconds
    * @returns an internally-wrapped listener which can be removed with clearInterval
    */
-  setInterval( listener: () => void, interval: number ): TimerListener { // eslint-disable-line bad-sim-text
+  public setInterval( listener: () => void, interval: number ): TimerListener { // eslint-disable-line bad-sim-text
     let elapsed = 0;
     const callback = ( dt: number ) => {
       elapsed += dt;
@@ -76,7 +76,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Clear a scheduled interval. If there was no interval, nothing is done.
    */
-  clearInterval( listener: TimerListener ): void {
+  public clearInterval( listener: TimerListener ): void {
     if ( this.hasListener( listener ) ) {
       this.removeListener( listener );
     }
@@ -85,7 +85,7 @@ export default class Timer extends TinyEmitter<[number]> {
   /**
    * Run a callback on the next frame. This method is largely for clarity.
    */
-  runOnNextTick( listener: () => void ): void {
+  public runOnNextTick( listener: () => void ): void {
     this.setTimeout( listener, 0 );
   }
 }

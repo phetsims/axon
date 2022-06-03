@@ -17,7 +17,7 @@ type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'pheti
   PickRequired<PropertyOptions<T>, 'validValues'>;
 
 class StringEnumerationProperty<T extends string> extends Property<T> {
-  constructor( value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
+  public constructor( value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, {}, PropertyOptions<T>>()( {
       phetioType: Property.PropertyIO( StringIO )

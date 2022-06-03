@@ -18,7 +18,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   // When set, it will be called whenever there is an attempt to read the value of this TinyStaticProperty.
   private readonly onAccessAttempt: () => void;
 
-  constructor( value: T, onAccessAttempt: () => void ) {
+  public constructor( value: T, onAccessAttempt: () => void ) {
     super( value );
 
     assert && assert( typeof onAccessAttempt === 'function' );
@@ -29,7 +29,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Returns the value. Overridden to support onAccessAttempt.
    */
-  override get(): T {
+  public override get(): T {
     this.onAccessAttempt();
 
     return super.get();
@@ -38,21 +38,21 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   /**
    * Don't set the value of a TinyStaticProperty!
    */
-  override set( value: T ): void {
+  public override set( value: T ): void {
     throw new Error( 'Cannot set a TinyStaticProperty value' );
   }
 
   /**
    * Returns true if the value can be set externally. Static Property values should only be mutated, not set.
    */
-  override isSettable(): boolean {
+  public override isSettable(): boolean {
     return false;
   }
 
   /**
    * Directly notifies listeners of changes.
    */
-  override notifyListeners( oldValue: T | null ): void {
+  public override notifyListeners( oldValue: T | null ): void {
 
     // We use this.get() to ensure value is up to date with onAccessAttempt().
     this.emit( this.get(), oldValue, this );
@@ -62,7 +62,7 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    */
-  override link( listener: PropertyLinkListener<T> ): void {
+  public override link( listener: PropertyLinkListener<T> ): void {
     this.addListener( listener );
 
     // listener called with this.get() to ensure value is up to date with onAccessAttempt().

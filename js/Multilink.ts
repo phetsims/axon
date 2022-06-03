@@ -75,23 +75,23 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
    * @param callback function that expects args in the same order as dependencies
    * @param [lazy] Optional parameter that can be set to true if this should be a lazy multilink (no immediate callback)
    */
-  constructor( dependencies: RP1<T1>, callback: ( ...params: [ T1 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP2<T1, T2>, callback: ( ...params: [ T1, T2 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP3<T1, T2, T3>, callback: ( ...params: [ T1, T2, T3 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP4<T1, T2, T3, T4>, callback: ( ...params: [ T1, T2, T3, T4 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP5<T1, T2, T3, T4, T5>, callback: ( ...params: [ T1, T2, T3, T4, T5 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP6<T1, T2, T3, T4, T5, T6>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) ;
-  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean );
-  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) {
+  public constructor( dependencies: RP1<T1>, callback: ( ...params: [ T1 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP2<T1, T2>, callback: ( ...params: [ T1, T2 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP3<T1, T2, T3>, callback: ( ...params: [ T1, T2, T3 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP4<T1, T2, T3, T4>, callback: ( ...params: [ T1, T2, T3, T4 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP5<T1, T2, T3, T4, T5>, callback: ( ...params: [ T1, T2, T3, T4, T5 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP6<T1, T2, T3, T4, T5, T6>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) ;
+  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean );
+  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) {
 
     this.dependencies = dependencies;
 
@@ -139,7 +139,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     return this.dependencies!;
   }
 
-  dispose(): void {
+  public dispose(): void {
     assert && assert( this.dependencies, 'A Multilink cannot be disposed twice.' );
 
     const dependencies = this.definedDependencies;
@@ -184,7 +184,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, false );
   }
 
-  static multilinkAny( dependencies: Readonly<IReadOnlyProperty<any>[]>, callback: () => void ): UnknownMultilink {
+  public static multilinkAny( dependencies: Readonly<IReadOnlyProperty<any>[]>, callback: () => void ): UnknownMultilink {
 
     // @ts-ignore
     return new Multilink( dependencies, callback );
@@ -217,7 +217,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   /**
    * Unlinks an listener that was added with multilink or lazyMultilink.
    */
-  static unmultilink( multilink: UnknownMultilink ): void {
+  public static unmultilink( multilink: UnknownMultilink ): void {
     multilink.dispose();
   }
 }

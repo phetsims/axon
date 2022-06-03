@@ -20,7 +20,7 @@ type SelfOptions = {
 export type EnabledPropertyOptions = SelfOptions & BooleanPropertyOptions;
 
 export default class EnabledProperty extends BooleanProperty {
-  constructor( initialEnabled: boolean, providedOptions?: EnabledPropertyOptions ) {
+  public constructor( initialEnabled: boolean, providedOptions?: EnabledPropertyOptions ) {
 
     const options = optionize<EnabledPropertyOptions, SelfOptions, BooleanPropertyOptions>()( {
       phetioDocumentation: 'Determines whether the element is enabled (true) or disabled (false).',
@@ -40,7 +40,7 @@ export default class EnabledProperty extends BooleanProperty {
     super( initialEnabled, options );
   }
 
-  static get TANDEM_NAME(): string { return TANDEM_NAME; }
+  public static get TANDEM_NAME(): string { return TANDEM_NAME; }
 }
 
 axon.register( 'EnabledProperty', EnabledProperty );

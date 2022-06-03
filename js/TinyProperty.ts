@@ -24,7 +24,7 @@ export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParame
 
 export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {
 
-  _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
+  public _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
 
   // Forces use of the deep equality checks. Keeps some compatibility with the Property interface to have the equality
   // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
@@ -34,7 +34,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * @param value - The initial value of the property
    * @param [onBeforeNotify]
    */
-  constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
+  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
     super( onBeforeNotify );
 
     this._value = value;
@@ -46,31 +46,30 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.
    */
-  get(): T {
+  public get(): T {
     return this._value;
   }
 
   /**
    * Returns the value.
    */
-  get value(): T {
+  public get value(): T {
     return this.get();
   }
 
   /**
    * Sets the value.
    */
-  set value( newValue: T ) {
+  public set value( newValue: T ) {
     this.set( newValue );
   }
-
 
   /**
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    */
-  set( value: T ): void {
+  public set( value: T ): void {
     if ( !this.equalsValue( value ) ) {
       const oldValue = this._value;
 
@@ -84,7 +83,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Sets the value without notifying any listeners. This is a place to override if a subtype performs additional work
    * when setting the value.
    */
-  setPropertyValue( value: T ): void {
+  public setPropertyValue( value: T ): void {
     this._value = value;
   }
 
@@ -106,7 +105,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Alternatively different implementation can be provided by subclasses or instances to change the equals
    * definition. See #10 and #73 and #115
    */
-  areValuesEqual( a: T, b: T ): boolean {
+  public areValuesEqual( a: T, b: T ): boolean {
     if ( this.useDeepEquality ) {
       const aObject = a as unknown as ComparableObject;
       const bObject = b as unknown as ComparableObject;
@@ -126,7 +125,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   /**
    * Directly notifies listeners of changes.
    */
-  notifyListeners( oldValue: T ): void {
+  public notifyListeners( oldValue: T ): void {
     // We use this._value here for performance, AND to avoid calling onAccessAttempt unnecessarily.
     this.emit( this._value, oldValue, this );
   }
@@ -135,7 +134,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Adds listener and calls it immediately. If listener is already registered, this is a no-op. The initial
    * notification provides the current value for newValue and null for oldValue.
    */
-  link( listener: PropertyLinkListener<T> ): void {
+  public link( listener: PropertyLinkListener<T> ): void {
     this.addListener( listener );
 
     listener( this._value, null, this ); // null should be used when an object is expected but unavailable
@@ -145,21 +144,21 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Add an listener to the TinyProperty, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
-  lazyLink( listener: PropertyLazyLinkListener<T> ): void {
+  public lazyLink( listener: PropertyLazyLinkListener<T> ): void {
     this.addListener( listener as PropertyLinkListener<T> ); // Because it's a lazy link, it will never be called with null
   }
 
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    */
-  unlink( listener: PropertyListener<T> ): void {
+  public unlink( listener: PropertyListener<T> ): void {
     this.removeListener( listener as PropertyLinkListener<T> );
   }
 
   /**
    * Removes all listeners. If no listeners are registered, this is a no-op.
    */
-  unlinkAll(): void {
+  public unlinkAll(): void {
     this.removeAllListeners();
   }
 
@@ -170,7 +169,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    *
    * NOTE: Duplicated with Property.linkAttribute
    */
-  linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ) { // eslint-disable-line
+  public linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ) { // eslint-disable-line
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
@@ -180,42 +179,42 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
    * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
    */
-  unlinkAttribute( listener: PropertyLinkListener<T> ): void {
+  public unlinkAttribute( listener: PropertyLinkListener<T> ): void {
     this.unlink( listener );
   }
 
   /**
    * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
    */
-  isPhetioInstrumented(): boolean {
+  public isPhetioInstrumented(): boolean {
     return false;
   }
 
   /**
    * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
    */
-  get phetioFeatured(): boolean {
+  public get phetioFeatured(): boolean {
     return false;
   }
 
   /**
    * Returns true if the value can be set externally, using .value= or set()
    */
-  isSettable(): boolean {
+  public isSettable(): boolean {
     return true;
   }
 
   /**
    * To match the Property-like interface for usages that take Property | TinyProperty
    */
-  get tandem(): Tandem {
+  public get tandem(): Tandem {
     return Tandem.OPT_OUT;
   }
 
   /**
    * Releases references.
    */
-  override dispose(): void {
+  public override dispose(): void {
     // Remove any listeners that are still attached (note that the emitter dispose would do this also, but without the
     // potentially-needed extra logic of changeCount, etc.)
     this.unlinkAll();

@@ -60,12 +60,12 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   private readonly id: number;
 
   // (phet-io) Units, if any.  See units.js for valid values
-  units: string | null;
+  public units: string | null;
 
-  validValues: readonly T[] | undefined;
+  public validValues: readonly T[] | undefined;
 
   // emit is called when the value changes (or on link)
-  tinyProperty: TinyProperty<T>;
+  private tinyProperty: TinyProperty<T>;
 
   // whether we are in the process of notifying listeners; changed in some Property test files with @ts-ignore
   private notifying: boolean;
@@ -84,8 +84,8 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   // whether a deferred value has been set
   protected hasDeferredValue: boolean;
 
-  static CHANGED_EVENT_NAME: string;
-  static PropertyIO: ( parameterType: IOType ) => IOType;
+  public static CHANGED_EVENT_NAME: string;
+  public static PropertyIO: ( parameterType: IOType ) => IOType;
 
   protected readonly valueValidator: Validator<T>;
 
@@ -176,7 +176,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   /**
    * Returns true if the value can be set externally, using .value= or set()
    */
-  isSettable(): boolean {
+  public isSettable(): boolean {
     return true;
   }
 
@@ -185,7 +185,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * You can also use the es5 getter (property.value) but this means is provided for inner loops
    * or internal code that must be fast.
    */
-  get(): T {
+  public get(): T {
     return this.tinyProperty.get();
   }
 
@@ -226,7 +226,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   /**
    * See TinyProperty.areValuesEqual
    */
-  areValuesEqual( a: T, b: T ): boolean {
+  public areValuesEqual( a: T, b: T ): boolean {
     return this.tinyProperty.areValuesEqual( a, b );
   }
 
@@ -265,7 +265,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Only provides the new reference as a callback (no oldvalue)
    * See https://github.com/phetsims/axon/issues/6
    */
-  notifyListenersStatic(): void {
+  public notifyListenersStatic(): void {
     this._notifyListeners( null );
   }
 
@@ -278,7 +278,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * @returns - function to notify listeners after calling setDeferred(false),
    *          - null if isDeferred is true, or if the value is unchanged since calling setDeferred(true)
    */
-  setDeferred( isDeferred: boolean ): ( () => void ) | null {
+  public setDeferred( isDeferred: boolean ): ( () => void ) | null {
     assert && assert( !this.isDisposed, 'cannot defer Property if already disposed.' );
     assert && assert( typeof isDeferred === 'boolean', 'bad value for isDeferred' );
     if ( isDeferred ) {
@@ -318,7 +318,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
     this.set( this._initialValue );
   }
 
-  get value(): T {
+  public get value(): T {
     return this.get();
   }
 
@@ -331,7 +331,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  addPhetioStateDependencies( dependencies: Array<AbstractProperty<any> | TinyProperty<any>> ): void {
+  public addPhetioStateDependencies( dependencies: Array<AbstractProperty<any> | TinyProperty<any>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -352,7 +352,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * @param listener - a function that takes a new value, old value, and this Property as arguments
    * @param [options]
    */
-  link( listener: PropertyLinkListener<T>, options?: any ): void {
+  public link( listener: PropertyLinkListener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -365,7 +365,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
-  lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void {
+  public lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -375,14 +375,14 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   /**
    * Removes a listener. If listener is not registered, this is a no-op.
    */
-  unlink( listener: PropertyListener<T> ): void {
+  public unlink( listener: PropertyListener<T> ): void {
     this.tinyProperty.unlink( listener );
   }
 
   /**
    * Removes all listeners. If no listeners are registered, this is a no-op.
    */
-  unlinkAll(): void {
+  public unlinkAll(): void {
     this.tinyProperty.unlinkAll();
   }
 
@@ -392,7 +392,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    *
    * NOTE: Duplicated with TinyProperty.linkAttribute
    */
-  linkAttribute( object: any, attributeName: string ): ( value: T ) => void {
+  public linkAttribute( object: any, attributeName: string ): ( value: T ) => void {
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
@@ -402,18 +402,18 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
    * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
    */
-  unlinkAttribute( listener: PropertyLinkListener<T> ): void {
+  public unlinkAttribute( listener: PropertyLinkListener<T> ): void {
     this.unlink( listener );
   }
 
   /**
    * Provide toString for console debugging, see http://stackoverflow.com/questions/2485632/valueof-vs-tostring-in-javascript
    */
-  override toString(): string {
+  public override toString(): string {
     return `Property#${this.id}{${this.get()}}`;
   }
 
-  override valueOf(): string {
+  public override valueOf(): string {
     return this.toString();
   }
 
@@ -422,22 +422,22 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * @param name - debug name to be printed on the console
    * @returns - the handle to the linked listener in case it needs to be removed later
    */
-  debug( name: string ): ( value: T ) => void {
+  public debug( name: string ): ( value: T ) => void {
     const listener = ( value: T ) => console.log( name, value );
     this.link( listener );
     return listener;
   }
 
-  isValueValid( value: T ): boolean {
+  public isValueValid( value: T ): boolean {
     return this.getValidationError( value ) === null;
   }
 
-  getValidationError( value: T ): string | null {
+  public getValidationError( value: T ): string | null {
     return Validation.getValidationError( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
   }
 
   // Ensures that the Property is eligible for GC
-  override dispose(): void {
+  public override dispose(): void {
 
     // unregister any order dependencies for this Property for PhET-iO state
     if ( this.isPhetioInstrumented() ) {
@@ -451,14 +451,14 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
   /**
    * Checks whether a listener is registered with this Property
    */
-  hasListener( listener: PropertyLinkListener<T> ): boolean {
+  public hasListener( listener: PropertyLinkListener<T> ): boolean {
     return this.tinyProperty.hasListener( listener );
   }
 
   /**
    * Returns the number of listeners.
    */
-  getListenerCount(): number {
+  private getListenerCount(): number {
     return this.tinyProperty.getListenerCount();
   }
 
@@ -466,14 +466,14 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Invokes a callback once for each listener
    * @param callback - takes the listener as an argument
    */
-  forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | AbstractProperty<T> ] ) => void ) => void ): void {
+  public forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | AbstractProperty<T> ] ) => void ) => void ): void {
     this.tinyProperty.forEachListener( callback );
   }
 
   /**
    * Returns true if there are any listeners.
    */
-  hasListeners(): boolean {
+  public hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
     return this.tinyProperty.hasListeners();
   }

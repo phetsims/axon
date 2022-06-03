@@ -45,30 +45,30 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: any;
   private readonly derivedPropertyListener: () => void;
-  static DerivedPropertyIO: ( parameterType: any ) => any;
+  public static DerivedPropertyIO: ( parameterType: any ) => any;
 
   /**
    * @param dependencies - Properties that this Property's value is derived from
    * @param derivation - function that derives this Property's value, expects args in the same order as dependencies
    * @param [providedOptions] - see Property
    */
-  constructor( dependencies: RP1<T1>, derivation: ( ...params: [ T1 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP2<T1, T2>, derivation: ( ...params: [ T1, T2 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP3<T1, T2, T3>, derivation: ( ...params: [ T1, T2, T3 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP4<T1, T2, T3, T4>, derivation: ( ...params: [ T1, T2, T3, T4 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP5<T1, T2, T3, T4, T5>, derivation: ( ...params: [ T1, T2, T3, T4, T5 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP6<T1, T2, T3, T4, T5, T6>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> );
-  constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
+  public constructor( dependencies: RP1<T1>, derivation: ( ...params: [ T1 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP2<T1, T2>, derivation: ( ...params: [ T1, T2 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP3<T1, T2, T3>, derivation: ( ...params: [ T1, T2, T3 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP4<T1, T2, T3, T4>, derivation: ( ...params: [ T1, T2, T3, T4 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP5<T1, T2, T3, T4, T5>, derivation: ( ...params: [ T1, T2, T3, T4, T5 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP6<T1, T2, T3, T4, T5, T6>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP7<T1, T2, T3, T4, T5, T6, T7>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP8<T1, T2, T3, T4, T5, T6, T7, T8>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
+  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> );
+  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
 
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       tandem: Tandem.OPTIONAL,
@@ -115,7 +115,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Determines whether this DerivedProperty has a specific dependency.
    */
-  hasDependency( dependency: IReadOnlyProperty<IntentionalAny> ): boolean {
+  public hasDependency( dependency: IReadOnlyProperty<IntentionalAny> ): boolean {
     return this.definedDependencies.includes( dependency );
   }
 
@@ -130,7 +130,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * DerivedProperty cannot have their value set externally, so this returns false.
    */
-  override isSettable(): boolean {
+  public override isSettable(): boolean {
     return false;
   }
 
@@ -151,11 +151,11 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Allows forcing a recomputation (as a possible workaround to listener order).
    */
-  recomputeDerivation(): void {
+  public recomputeDerivation(): void {
     this.getDerivedPropertyListener();
   }
 
-  override dispose(): void {
+  public override dispose(): void {
 
     const dependencies = this.definedDependencies;
 
@@ -175,7 +175,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * Support deferred DerivedProperty by only calculating the derivation once when it is time to undefer it and fire
    * notifications. This way we don't have intermediate derivation calls during PhET-iO state setting.
    */
-  override setDeferred( isDeferred: boolean ): ( () => void ) | null {
+  public override setDeferred( isDeferred: boolean ): ( () => void ) | null {
     if ( this.isDeferred && !isDeferred ) {
       this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
     }
@@ -186,14 +186,14 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
    */
-  static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): IReadOnlyProperty<boolean> {
+  private static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): IReadOnlyProperty<boolean> {
     return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
   }
 
   /**
    * Creates a derived boolean Property whose value is true iff every input Property value is true.
    */
-  static and( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static and( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -203,7 +203,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Creates a derived boolean Property whose value is true iff any input Property value is true.
    */
-  static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -213,7 +213,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
    */
-  static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
 }

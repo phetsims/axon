@@ -19,7 +19,7 @@ export type BooleanPropertyOptions = PropertyOptions<boolean>;
 
 export default class BooleanProperty extends Property<boolean> {
 
-  constructor( value: boolean, options?: BooleanPropertyOptions ) {
+  public constructor( value: boolean, options?: BooleanPropertyOptions ) {
 
     if ( options ) {
 
@@ -40,7 +40,7 @@ export default class BooleanProperty extends Property<boolean> {
     super( value, options );
   }
 
-  toggle(): void {
+  public toggle(): void {
     this.value = !this.value;
   }
 }

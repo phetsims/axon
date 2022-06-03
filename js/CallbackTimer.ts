@@ -48,7 +48,7 @@ export default class CallbackTimer {
   // has the timer fired since it was started?
   private fired: boolean;
 
-  constructor( providedOptions?: CallbackTimerOptions ) {
+  public constructor( providedOptions?: CallbackTimerOptions ) {
 
     const options = optionize<CallbackTimerOptions, StrictOmit<SelfOptions, 'callback'>>()( {
       delay: 400,

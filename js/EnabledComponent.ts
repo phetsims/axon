@@ -48,11 +48,11 @@ export type EnabledComponentOptions = {
 export default class EnabledComponent {
 
   // TODO: See https://github.com/phetsims/axon/issues/342
-  enabledProperty: IProperty<boolean> | IReadOnlyProperty<boolean>;
+  public enabledProperty: IProperty<boolean> | IReadOnlyProperty<boolean>;
 
   private disposeEnabledComponent: () => void;
 
-  constructor( providedOptions?: EnabledComponentOptions ) {
+  public constructor( providedOptions?: EnabledComponentOptions ) {
 
     const options = optionize3<EnabledComponentOptions, EnabledComponentOptions>()( {}, DEFAULT_OPTIONS, providedOptions );
 
@@ -71,7 +71,7 @@ export default class EnabledComponent {
   }
 
   // @ts-ignore TODO see https://github.com/phetsims/axon/issues/342
-  setEnabled( enabled: boolean ): void {
+  private setEnabled( enabled: boolean ): void {
     if ( this.enabledProperty.isSettable() ) {
 
       // @ts-ignore
@@ -82,15 +82,13 @@ export default class EnabledComponent {
     }
   }
 
-  set enabled( value: boolean ) { this.setEnabled( value ); }
+  public set enabled( value: boolean ) { this.setEnabled( value ); }
 
-  get enabled(): boolean { return this.isEnabled(); }
+  public get enabled(): boolean { return this.isEnabled(); }
 
+  public isEnabled(): boolean { return this.enabledProperty.value; }
 
-  isEnabled(): boolean { return this.enabledProperty.value; }
-
-
-  dispose(): void {
+  public dispose(): void {
     this.disposeEnabledComponent();
   }
 }

@@ -13,7 +13,7 @@ export default class Property<T> extends AbstractProperty<T> implements IPropert
 
   protected _initialValue: T;
 
-  constructor( value: T, providedOptions?: PropertyOptions<T> ) {
+  public constructor( value: T, providedOptions?: PropertyOptions<T> ) {
     super( value, providedOptions );
 
     // Initial value
@@ -23,11 +23,11 @@ export default class Property<T> extends AbstractProperty<T> implements IPropert
   /**
    * Returns the initial value of this Property.
    */
-  getInitialValue(): T {
+  public getInitialValue(): T {
     return this._initialValue;
   }
 
-  get initialValue(): T {
+  public get initialValue(): T {
     return this.getInitialValue();
   }
 
@@ -35,35 +35,35 @@ export default class Property<T> extends AbstractProperty<T> implements IPropert
    * Stores the specified value as the initial value, which will be taken on reset. Sims should use this sparingly,
    * typically only in situations where the initial value is unknowable at instantiation.
    */
-  setInitialValue( initialValue: T ): void {
+  public setInitialValue( initialValue: T ): void {
     this._initialValue = initialValue;
   }
 
   /**
    * Overridden to make public
    */
-  override get value(): T {
+  public override get value(): T {
     return super.value;
   }
 
   /**
    * Overridden to make public
    */
-  override set value( newValue: T ) {
+  public override set value( newValue: T ) {
     this.set( newValue );
   }
 
   /**
    * Overridden to make public
    */
-  override reset(): void {
+  public override reset(): void {
     super.reset();
   }
 
   /**
    * Overridden to make public
    */
-  override set( value: T ): void {
+  public override set( value: T ): void {
     super.set( value );
   }
 }

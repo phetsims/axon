@@ -37,9 +37,9 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;
 
-  static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
+  public static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
 
-  constructor( providedOptions?: EmitterOptions ) {
+  public constructor( providedOptions?: EmitterOptions ) {
 
     const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions>()( {
       phetioOuterType: Emitter.EmitterIO,
@@ -53,7 +53,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Emit to notify listeners
    */
-  emit( ...args: T ): void {
+  public emit( ...args: T ): void {
     assert && assert( this.tinyEmitter instanceof TinyEmitter, 'Emitter should not emit until constructor complete' );
     assert && this.validateArguments( ...args );
 
@@ -71,7 +71,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Disposes an Emitter. All listeners are removed.
    */
-  override dispose(): void {
+  public override dispose(): void {
     this.tinyEmitter.dispose();
     super.dispose();
   }
@@ -79,42 +79,42 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Adds a listener which will be called during emit.
    */
-  addListener( listener: Listener<T> ): void {
+  public addListener( listener: Listener<T> ): void {
     this.tinyEmitter.addListener( listener );
   }
 
   /**
    * Removes a listener
    */
-  removeListener( listener: Listener<T> ): void {
+  public removeListener( listener: Listener<T> ): void {
     this.tinyEmitter.removeListener( listener );
   }
 
   /**
    * Removes all the listeners
    */
-  removeAllListeners(): void {
+  public removeAllListeners(): void {
     this.tinyEmitter.removeAllListeners();
   }
 
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  hasListener( listener: Listener<T> ): boolean {
+  public hasListener( listener: Listener<T> ): boolean {
     return this.tinyEmitter.hasListener( listener );
   }
 
   /**
    * Returns true if there are any listeners.
    */
-  hasListeners(): boolean {
+  public hasListeners(): boolean {
     return this.tinyEmitter.hasListeners();
   }
 
   /**
    * Returns the number of listeners.
    */
-  getListenerCount(): number {
+  public getListenerCount(): number {
     return this.tinyEmitter.getListenerCount();
   }
 }

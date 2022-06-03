@@ -41,7 +41,7 @@ export type MappedPropertyOptions<ThisValueType, InputValueType> = SelfOptions<T
 
 // TODO https://github.com/phetsims/axon/issues/342 this file could use review by @jonathanolson
 export default class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, IReadOnlyProperty<InputValueType>> {
-  constructor( property: IReadOnlyProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
+  public constructor( property: IReadOnlyProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
     super( new TinyProperty( property ), providedOptions );
   }
 }

@@ -109,7 +109,7 @@ export default class Validation {
   /**
    * @returns an error string if incorrect, otherwise null if valid
    */
-  static getValidatorValidationError( validator: Validator ): string | null {
+  public static getValidatorValidationError( validator: Validator ): string | null {
 
     if ( !( validator instanceof Object ) ) {
 
@@ -229,7 +229,7 @@ export default class Validation {
     return null;
   }
 
-  static validateValidator( validator: Validator ): void {
+  public static validateValidator( validator: Validator ): void {
     if ( assert ) {
       const error = Validation.getValidatorValidationError( validator );
       error && assert( false, error );
@@ -239,7 +239,7 @@ export default class Validation {
   /**
    * @param validator - object which may or may not contain validation keys
    */
-  static containsValidatorKey( validator: IntentionalAny ): boolean {
+  public static containsValidatorKey( validator: IntentionalAny ): boolean {
     if ( !( validator instanceof Object ) ) {
       return false;
     }
@@ -258,7 +258,7 @@ export default class Validation {
     return genericMessage;
   }
 
-  static isValueValid( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): boolean {
+  public static isValueValid( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): boolean {
     return this.getValidationError( value, validator, providedOptions ) === null;
   }
 
@@ -266,7 +266,7 @@ export default class Validation {
    * Determines whether a value is valid (returning a boolean value), returning the problem as a string if invalid,
    * otherwise returning null when valid.
    */
-  static getValidationError( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): string | null {
+  public static getValidationError( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): string | null {
 
     const options = optionize<IsValidValueOptions>()( {
       validateValidator: true
@@ -410,12 +410,12 @@ export default class Validation {
   }
 
 
-  static readonly VALIDATOR_KEYS = VALIDATOR_KEYS;
+  public static readonly VALIDATOR_KEYS = VALIDATOR_KEYS;
 
   /**
    * General validator for validating that a string doesn't have template variables in it.
    */
-  static readonly STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR: Validator = {
+  public static readonly STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR: Validator = {
     valueType: 'string',
     isValidValue: v => !/\{\{\w*\}\}/.test( v )
   };

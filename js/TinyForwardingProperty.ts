@@ -24,7 +24,7 @@ type NodeLike = {
 export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
   // Set in setTargetProperty() - public for read-only NodeTests
-  targetProperty?: IProperty<T> | null;
+  private targetProperty?: IProperty<T> | null;
 
   // Set lazily in setTargetProperty()
   protected forwardingListener?: PropertyLazyLinkListener<T>;
@@ -32,7 +32,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   // TinyProperty is not instrumented for PhET-iO, so when a Node is instrumented, by default, an instrumented
   // `Property` can be forwarded to. This field stores the default instrumented Property when
   // targetPropertyInstrumented is true. - Public for NodeTests
-  ownedPhetioProperty?: IProperty<T>;
+  private ownedPhetioProperty?: IProperty<T>;
 
   // when true, automatically set up a PhET-iO instrumented forwarded Property for this TinyProperty, see
   // this.initializePhetioObject() for usage.
@@ -41,7 +41,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   // Guard against double initialization
   private phetioInitialized?: boolean;
 
-  constructor( value: T, targetPropertyInstrumented: boolean, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
+  public constructor( value: T, targetPropertyInstrumented: boolean, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
     super( value, onBeforeNotify );
 
     if ( targetPropertyInstrumented ) {
@@ -61,7 +61,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
-  setTargetProperty<NodeType extends NodeLike>( node: NodeType, tandemName: string | null, newTargetProperty: IProperty<T> | null ): NodeType {
+  public setTargetProperty<NodeType extends NodeLike>( node: NodeType, tandemName: string | null, newTargetProperty: IProperty<T> | null ): NodeType {
     assert && node && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
@@ -129,7 +129,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    */
-  override set( value: T ): this {
+  public override set( value: T ): this {
     if ( this.targetProperty ) {
       assert && assert( this.targetProperty.isSettable(), 'targetProperty must be settable' );
       this.targetProperty.set( value );
@@ -143,7 +143,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   /**
    * Use this to automatically create a forwarded, PhET-iO instrumented Property owned by this TinyForwardingProperty.
    */
-  setTargetPropertyInstrumented<NodeType extends NodeLike>( targetPropertyInstrumented: boolean, node: NodeType ): NodeType {
+  public setTargetPropertyInstrumented<NodeType extends NodeLike>( targetPropertyInstrumented: boolean, node: NodeType ): NodeType {
     assert && assert( typeof targetPropertyInstrumented === 'boolean' );
 
     // See Node.initializePhetioObject for more details on this assertion
@@ -154,7 +154,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
     return node;
   }
 
-  getTargetPropertyInstrumented(): boolean {
+  public getTargetPropertyInstrumented(): boolean {
     return this.targetPropertyInstrumented || false;
   }
 
@@ -163,7 +163,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param tandemName
    * @param createProperty - creates an "owned" Property
    */
-  initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ): void {
+  public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ): void {
     assert && assert( typeof tandemName === 'string' );
     assert && assert( typeof createProperty === 'function' );
     assert && assert( !this.phetioInitialized, 'already initialized' );
@@ -198,7 +198,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
     }
   }
 
-  override dispose(): void {
+  public override dispose(): void {
     this.targetProperty && this.forwardingListener && this.targetProperty.unlink( this.forwardingListener );
     this.disposeOwnedPhetioProperty();
     super.dispose();

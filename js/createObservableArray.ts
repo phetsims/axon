@@ -276,13 +276,13 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 class ObservableArrayPhetioObject<T> extends PhetioObject {
 
   // internal, don't use
-  observableArray: ObservableArray<T>;
+  public observableArray: ObservableArray<T>;
 
   /**
    * @param observableArray
    * @param [options] - same as the options to the parent ObservableArrayDef
    */
-  constructor( observableArray: ObservableArray<T>, options?: ObservableArrayOptions<T> ) {
+  public constructor( observableArray: ObservableArray<T>, options?: ObservableArrayOptions<T> ) {
 
     options = merge( {
       phetioType: ObservableArrayIO

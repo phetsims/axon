@@ -22,7 +22,7 @@ export type StringPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<str
 
 export default class StringProperty extends Property<string> {
 
-  constructor( value: string, providedOptions?: StringPropertyOptions ) {
+  public constructor( value: string, providedOptions?: StringPropertyOptions ) {
 
     // client cannot specify superclass options that are controlled by StringProperty
     if ( providedOptions ) {
