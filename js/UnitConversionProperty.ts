@@ -31,7 +31,7 @@ import Property from './Property.js';
 import merge from '../../phet-core/js/merge.js';
 import NumberProperty, { isRangedProperty, RangedProperty } from './NumberProperty.js';
 
-type UnitConversionPropertySelfOptions = {
+type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.
   // this.value === factor * property.value
   // This will be used to provide defaults for map/inverseMap if provided
@@ -41,7 +41,7 @@ type UnitConversionPropertySelfOptions = {
   map?: ( input: number ) => number;
   inverseMap?: ( output: number ) => number;
 };
-export type UnitConversionPropertyOptions = UnitConversionPropertySelfOptions & MappedPropertyOptions<number, number>;
+export type UnitConversionPropertyOptions = SelfOptions & MappedPropertyOptions<number, number>;
 
 export default class UnitConversionProperty extends MappedProperty<number, number> {
 
