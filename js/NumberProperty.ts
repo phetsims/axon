@@ -74,7 +74,7 @@ export default class NumberProperty extends Property<number> {
 
   public constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
-    let options = optionize<NumberPropertyOptions, StrictOmit<SelfOptions, 'rangePropertyOptions'>, PropertyOptions<number>>()( {
+    const options = optionize<NumberPropertyOptions, StrictOmit<SelfOptions, 'rangePropertyOptions'>, PropertyOptions<number>>()( {
 
       // NumberPropertyOptions
       numberType: 'FloatingPoint',
