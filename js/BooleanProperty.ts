@@ -7,7 +7,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
@@ -15,7 +15,8 @@ import Property, { PropertyOptions } from './Property.js';
 // constants
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
-export type BooleanPropertyOptions = PropertyOptions<boolean>;
+type SelfOptions = {};
+export type BooleanPropertyOptions = SelfOptions & PropertyOptions<boolean>;
 
 export default class BooleanProperty extends Property<boolean> {
 
@@ -32,7 +33,7 @@ export default class BooleanProperty extends Property<boolean> {
     }
 
     // Fill in superclass options that are controlled by BooleanProperty.
-    options = merge( {
+    options = optionize<BooleanPropertyOptions, SelfOptions, PropertyOptions<boolean>>()( {
       valueType: 'boolean',
       phetioType: BooleanPropertyIO
     }, options );
