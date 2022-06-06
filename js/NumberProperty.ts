@@ -1,4 +1,5 @@
 // Copyright 2016-2022, University of Colorado Boulder
+
 /**
  * Property whose value must be a number.
  *
@@ -8,7 +9,6 @@
 
 import Range from '../../dot/js/Range.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -27,6 +27,9 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ] as const;
 type NumberType = typeof VALID_NUMBER_TYPES[number];
 
+// standardized tandem name for rangeProperty
+const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
+
 type NumberPropertyState = {
   numberType: string;
   range: null | Range;
@@ -40,7 +43,7 @@ type SelfOptions = {
   numberType?: NumberType;
   range?: Range | Property<Range | null> | null;
 
-  // To be passed to the rangeProperty if NumberProperty creates it (as rangeProperty can also be passed via options.range)
+  // Passed to this.rangeProperty if NumberProperty creates it. Ignored if a Property is provided via options.range.
   rangePropertyOptions?: Partial<PropertyOptions<Range>>;
 
 };
@@ -71,32 +74,27 @@ export default class NumberProperty extends Property<number> {
 
   public constructor( value: number, providedOptions?: NumberPropertyOptions ) {
 
-    let options = optionize<NumberPropertyOptions, SelfOptions, PropertyOptions<number>>()( {
+    let options = optionize<NumberPropertyOptions, StrictOmit<SelfOptions, 'rangePropertyOptions'>, PropertyOptions<number>>()( {
+
+      // NumberPropertyOptions
       numberType: 'FloatingPoint',
       range: null,
 
-      // By default, this is not PhET-iO instrumented, if desired, pass a tandem through these options with name "rangeProperty"
-      rangePropertyOptions: {
-        phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
-        phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
-        phetioReadOnly: true
-      },
-
+      // PropertyOptions
       validators: [],
-
-      // {Tandem}
       tandem: Tandem.OPTIONAL
     }, providedOptions );
 
-    // options that depend on other options
-    options = merge( {
-      rangePropertyOptions: {
-        tandem: options.tandem.createTandem( 'rangeProperty' ) // must be 'rangeProperty', see assertion below
-      }
-    }, options );
+    // Defaults for rangePropertyOptions, since it depends on options.tandem
+    options.rangePropertyOptions = optionize<PropertyOptions<Range>, {}, PropertyOptions<Range>>()( {
+      phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
+      phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
+      phetioReadOnly: true,
+      tandem: options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME )
+    }, options.rangePropertyOptions );
 
-    assert && assert( options.rangePropertyOptions.tandem === Tandem.OPTIONAL || options.rangePropertyOptions.tandem!.name === 'rangeProperty',
-      'if instrumenting default rangeProperty, the tandem name should be "rangeProperty".' );
+    assert && assert( options.rangePropertyOptions.tandem!.name === RANGE_PROPERTY_TANDEM_NAME,
+      `the tandem name must be ${RANGE_PROPERTY_TANDEM_NAME}` );
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
