@@ -117,6 +117,17 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   public getListenerCount(): number {
     return this.tinyEmitter.getListenerCount();
   }
+
+  /**
+   * Convenience function for debugging a Property's value. It prints the new value on registration and when changed.
+   * @param name - debug name to be printed on the console
+   * @returns - the handle to the listener added in case it needs to be removed later
+   */
+  public debug( name: string ): Listener<T> {
+    const listener = ( ...args: T ) => console.log( name, ...args );
+    this.addListener( listener );
+    return listener;
+  }
 }
 
 const getTypeName = ( ioType: IOType ) => ioType.typeName;
