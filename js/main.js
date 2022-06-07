@@ -23,7 +23,6 @@ import './Property.js';
 import './PropertyStateHandler.js';
 import './propertyStateHandlerSingleton.js';
 import './PropertyStatePhase.js';
-import './RangedMappedProperty.js';
 import './stepTimer.js';
 import './StringProperty.js';
 import './Timer.js';
