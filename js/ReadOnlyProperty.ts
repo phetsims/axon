@@ -54,7 +54,7 @@ export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOption
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.
  */
-export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
+export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;
@@ -238,7 +238,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
-    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( AbstractProperty.CHANGED_EVENT_NAME, {
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( ReadOnlyProperty.CHANGED_EVENT_NAME, {
       getData: () => {
         const parameterType = this.phetioType.parameterTypes[ 0 ];
         return {
@@ -331,13 +331,13 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  public addPhetioStateDependencies( dependencies: Array<AbstractProperty<any> | TinyProperty<any>> ): void {
+  public addPhetioStateDependencies( dependencies: Array<ReadOnlyProperty<any> | TinyProperty<any>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
 
       // only if running in PhET-iO brand and both Properties are instrumenting
-      if ( dependency instanceof AbstractProperty && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+      if ( dependency instanceof ReadOnlyProperty && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
         propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
@@ -466,7 +466,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
    * Invokes a callback once for each listener
    * @param callback - takes the listener as an argument
    */
-  public forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | AbstractProperty<T> ] ) => void ) => void ): void {
+  public forEachListener( callback: ( value: ( ...args: [ T, T | null, TinyProperty<T> | ReadOnlyProperty<T> ] ) => void ) => void ): void {
     this.tinyProperty.forEachListener( callback );
   }
 
@@ -480,7 +480,7 @@ export class AbstractProperty<T> extends PhetioObject implements IReadOnlyProper
 }
 
 // static attributes
-AbstractProperty.CHANGED_EVENT_NAME = 'changed';
+ReadOnlyProperty.CHANGED_EVENT_NAME = 'changed';
 
 // {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
 // the parameter type, so that it is only created once
@@ -490,22 +490,22 @@ const cache = new Map();
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
+ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `PropertyIO<${parameterType.typeName}>`, {
 
-      // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend AbstractProperty
-      // However, we also want the AbstractProperty constructor to be protected, so we must ignore this type error
-      isValidValue: v => v instanceof AbstractProperty,
+      // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
+      // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
+      isValidValue: v => v instanceof ReadOnlyProperty,
       documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
                      'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                      'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject: ( property: AbstractProperty<any> ) => {
+      toStateObject: ( property: ReadOnlyProperty<any> ) => {
         assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
         const stateObject: any = {
           value: parameterType.toStateObject( property.value )
@@ -524,7 +524,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
         stateObject.units = NullableIO( StringIO ).toStateObject( property.units );
         return stateObject;
       },
-      applyState: ( property: AbstractProperty<any>, stateObject: any ) => {
+      applyState: ( property: ReadOnlyProperty<any>, stateObject: any ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
 
         // @ts-ignore TODO: see https://github.com/phetsims/axon/issues/342
@@ -543,7 +543,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
         getValue: {
           returnType: parameterType,
           parameterTypes: [],
-          implementation: function( this: AbstractProperty<any> ) {
+          implementation: function( this: ReadOnlyProperty<any> ) {
             return this.get();
           },
           documentation: 'Gets the current value.'
@@ -551,7 +551,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
         getValidationError: {
           returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
-          implementation: function( this: AbstractProperty<any>, value: any ) {
+          implementation: function( this: ReadOnlyProperty<any>, value: any ) {
             return this.getValidationError( value );
           },
           documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
@@ -560,7 +560,7 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
-          implementation: function( this: AbstractProperty<any>, value: any ) {
+          implementation: function( this: ReadOnlyProperty<any>, value: any ) {
             this.set( value );
           },
           documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
@@ -608,4 +608,4 @@ AbstractProperty.PropertyIO = ( parameterType: IOType ) => {
   return cache.get( parameterType );
 };
 
-axon.register( 'AbstractProperty', AbstractProperty );
+axon.register( 'ReadOnlyProperty', ReadOnlyProperty );

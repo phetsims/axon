@@ -99,7 +99,7 @@
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
-import Property, { AbstractProperty, PropertyOptions } from './Property.js';
+import Property, { ReadOnlyProperty, PropertyOptions } from './Property.js';
 import TinyProperty from './TinyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
@@ -140,7 +140,7 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
 // TODO: https://github.com/phetsims/axon/issues/342 Can OuterValueType default to IProperty?
-export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = Property<InnerValueType>> extends AbstractProperty<ThisValueType> {
+export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = Property<InnerValueType>> extends ReadOnlyProperty<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   private isExternallyChanging: boolean;
@@ -168,8 +168,8 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
       inverseMap: _.identity
     }, providedOptions );
 
-    assert && assert( valuePropertyProperty instanceof AbstractProperty || valuePropertyProperty instanceof TinyProperty,
-      'valuePropertyProperty should be an AbstractProperty or TinyProperty' );
+    assert && assert( valuePropertyProperty instanceof ReadOnlyProperty || valuePropertyProperty instanceof TinyProperty,
+      'valuePropertyProperty should be an ReadOnlyProperty or TinyProperty' );
 
     const optionsDerive = options.derive;
     const optionsMap = options.map;

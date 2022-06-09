@@ -12,7 +12,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import Property, { AbstractProperty, PropertyOptions } from './Property.js';
+import Property, { ReadOnlyProperty, PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
@@ -41,7 +41,7 @@ export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unk
  * T = type of the derived value
  * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
  */
-export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends AbstractProperty<T> implements IReadOnlyProperty<T> {
+export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends ReadOnlyProperty<T> implements IReadOnlyProperty<T> {
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: any;
   private readonly derivedPropertyListener: () => void;
@@ -100,7 +100,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
       dependency.lazyLink( this.derivedPropertyListener );
 
-      if ( dependency instanceof AbstractProperty && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
+      if ( dependency instanceof ReadOnlyProperty && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
 
         // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure
         // to have the right value.

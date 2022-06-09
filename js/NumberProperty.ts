@@ -17,7 +17,7 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
-import Property, { AbstractProperty, PropertyOptions } from './Property.js';
+import Property, { ReadOnlyProperty, PropertyOptions } from './Property.js';
 import validate from './validate.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
@@ -100,11 +100,11 @@ export default class NumberProperty extends Property<number> {
     options.valueType = 'number';
     options.phetioType = NumberProperty.NumberPropertyIO;
 
-    const rangePropertyProvided = options.range && options.range instanceof AbstractProperty;
+    const rangePropertyProvided = options.range && options.range instanceof ReadOnlyProperty;
     const ownsRangeProperty = !rangePropertyProvided;
 
     let rangeProperty: Property<Range | null>;
-    if ( options.range instanceof AbstractProperty ) {
+    if ( options.range instanceof ReadOnlyProperty ) {
       rangeProperty = options.range;
     }
     else {

@@ -11,7 +11,7 @@
 
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import { AbstractProperty } from './Property.js';
+import { ReadOnlyProperty } from './Property.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
 class PropertyStateHandler {
@@ -58,7 +58,7 @@ class PropertyStateHandler {
       // withhold AXON/Property notifications until all values have been set to avoid inconsistent intermediate states,
       // see https://github.com/phetsims/phet-io-wrappers/issues/229
       // only do this if the PhetioObject is already not deferred
-      if ( phetioObject instanceof AbstractProperty && !phetioObject.isDeferred ) {
+      if ( phetioObject instanceof ReadOnlyProperty && !phetioObject.isDeferred ) {
         phetioObject.setDeferred( true );
         const phetioID = phetioObject.tandem.phetioID;
 
@@ -87,10 +87,10 @@ class PropertyStateHandler {
 
   /**
    * @private
-   * @param {AbstractProperty} property
+   * @param {ReadOnlyProperty} property
    */
   validateInstrumentedProperty( property ) {
-    assert && Tandem.VALIDATION && assert( property instanceof AbstractProperty && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
+    assert && Tandem.VALIDATION && assert( property instanceof ReadOnlyProperty && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
   }
 
   /**
@@ -123,9 +123,9 @@ class PropertyStateHandler {
    * two different Properties.
    * @public
    *
-   * @param {AbstractProperty} beforeProperty - the Property that needs to be set before the second; must be instrumented for PhET-iO
+   * @param {ReadOnlyProperty} beforeProperty - the Property that needs to be set before the second; must be instrumented for PhET-iO
    * @param {PropertyStatePhase} beforePhase
-   * @param {AbstractProperty} afterProperty - must be instrumented for PhET-iO
+   * @param {ReadOnlyProperty} afterProperty - must be instrumented for PhET-iO
    * @param {PropertyStatePhase} afterPhase
    */
   registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
@@ -153,7 +153,7 @@ class PropertyStateHandler {
 
   /**
    * Unregisters all order dependencies for the given Property
-   * @param {AbstractProperty} property - must be instrumented for PhET-iO
+   * @param {ReadOnlyProperty} property - must be instrumented for PhET-iO
    * @public
    */
   unregisterOrderDependenciesForProperty( property ) {

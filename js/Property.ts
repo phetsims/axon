@@ -1,7 +1,7 @@
 // Copyright 2022, University of Colorado Boulder
 
 import IProperty from './IProperty.js';
-import { AbstractProperty, PropertyOptions } from './AbstractProperty.js';
+import { ReadOnlyProperty, PropertyOptions } from './ReadOnlyProperty.js';
 import axon from './axon.js';
 
 /**
@@ -9,7 +9,7 @@ import axon from './axon.js';
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-export default class Property<T> extends AbstractProperty<T> implements IProperty<T> {
+export default class Property<T> extends ReadOnlyProperty<T> implements IProperty<T> {
 
   protected _initialValue: T;
 
@@ -68,8 +68,8 @@ export default class Property<T> extends AbstractProperty<T> implements IPropert
   }
 }
 
-// TODO https://github.com/phetsims/axon/issues/342 Move this to AbstractProperty
-export { AbstractProperty };
+// TODO https://github.com/phetsims/axon/issues/342 Move this to ReadOnlyProperty
+export { ReadOnlyProperty };
 export type { PropertyOptions };
 
 axon.register( 'Property', Property );
