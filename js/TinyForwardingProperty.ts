@@ -11,7 +11,7 @@
  */
 
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { ReadOnlyProperty } from './Property.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import IProperty from './IProperty.js';
 import { PropertyLazyLinkListener } from './IReadOnlyProperty.js';
@@ -70,8 +70,8 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
     }
 
     const currentForwardingPropertyInstrumented = this.targetProperty &&
-                                                  this.targetProperty.isPhetioInstrumented();
-    assert && currentForwardingPropertyInstrumented && assert( newTargetProperty && newTargetProperty.isPhetioInstrumented(),
+                                                  this.targetProperty instanceof ReadOnlyProperty && this.targetProperty.isPhetioInstrumented();
+    assert && currentForwardingPropertyInstrumented && assert( newTargetProperty && newTargetProperty instanceof ReadOnlyProperty && newTargetProperty.isPhetioInstrumented(),
       'Cannot set swap out a PhET-iO instrumented targetProperty for an uninstrumented one' );
 
     // We need this information eagerly for later on in the function
@@ -173,11 +173,11 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
       this.ownedPhetioProperty = createProperty();
       assert && assert( this.ownedPhetioProperty instanceof Property, 'The owned property should be an AXON/Property' );
-      assert && assert( this.ownedPhetioProperty.isPhetioInstrumented(), 'The owned property should be PhET-iO instrumented' );
+      assert && assert( this.ownedPhetioProperty instanceof ReadOnlyProperty && this.ownedPhetioProperty.isPhetioInstrumented(), 'The owned property should be PhET-iO instrumented' );
 
       this.setTargetProperty( node, tandemName, this.ownedPhetioProperty );
     }
-    else if ( this.targetProperty && this.targetProperty.isPhetioInstrumented() ) {
+    else if ( this.targetProperty && this.targetProperty instanceof ReadOnlyProperty && this.targetProperty.isPhetioInstrumented() ) {
 
       // If the Property was already set, now that it is instrumented, add a LinkedElement for it.
       node.updateLinkedElementForProperty( tandemName, null, this.targetProperty );

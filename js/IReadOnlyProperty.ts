@@ -6,8 +6,6 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import Tandem from '../../tandem/js/Tandem.js';
-
 export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: IReadOnlyProperty<T> ) => void;
 export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: IReadOnlyProperty<T> ) => void;
 export type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
@@ -24,9 +22,6 @@ export default interface IReadOnlyProperty<T> {
   unlinkAll(): void;
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
   hasListener( listener: PropertyLinkListener<T> ): boolean;
-  isPhetioInstrumented(): boolean;
-  get phetioFeatured(): boolean;
-  get tandem(): Tandem;
   isSettable(): boolean;
   dispose(): void;
 

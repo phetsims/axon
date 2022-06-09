@@ -14,7 +14,6 @@ import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import IProperty from './IProperty.js';
 import IReadOnlyProperty, { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
-import Tandem from '../../tandem/js/Tandem.js';
 
 type ComparableObject = {
   equals: ( a: any ) => boolean;
@@ -184,31 +183,10 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   }
 
   /**
-   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
-   */
-  public isPhetioInstrumented(): boolean {
-    return false;
-  }
-
-  /**
-   * This is to build out the "Property-like" interface for usages that can take a TinyProperty or Property interchangeably
-   */
-  public get phetioFeatured(): boolean {
-    return false;
-  }
-
-  /**
    * Returns true if the value can be set externally, using .value= or set()
    */
   public isSettable(): boolean {
     return true;
-  }
-
-  /**
-   * To match the Property-like interface for usages that take Property | TinyProperty
-   */
-  public get tandem(): Tandem {
-    return Tandem.OPT_OUT;
   }
 
   /**
