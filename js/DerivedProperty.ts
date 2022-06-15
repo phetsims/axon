@@ -18,12 +18,13 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
-type SelfOptions = {};
+type SelfOptions = EmptyObjectType;
 
 export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 

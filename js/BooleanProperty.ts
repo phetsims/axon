@@ -8,6 +8,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
@@ -15,7 +16,7 @@ import Property, { PropertyOptions } from './Property.js';
 // constants
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
-type SelfOptions = {};
+type SelfOptions = EmptyObjectType;
 export type BooleanPropertyOptions = SelfOptions & PropertyOptions<boolean>;
 
 export default class BooleanProperty extends Property<boolean> {

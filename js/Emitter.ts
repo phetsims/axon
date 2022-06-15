@@ -10,6 +10,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
@@ -29,7 +30,7 @@ type EmitterParameter = Exclude<IntentionalAny, undefined | never>;
 
 type Listener<T extends EmitterParameter[]> = ( ...args: T ) => void;
 
-type SelfOptions = {};
+type SelfOptions = EmptyObjectType;
 type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDataHandler<T> {
