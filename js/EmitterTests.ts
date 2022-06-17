@@ -25,7 +25,7 @@ QUnit.test( 'Emitter Constructing and options', assert => {
     parameters: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
   } );
 
-  e2.emit( new Emitter(), {}, () => {} );
+  e2.emit( new Emitter(), {}, _.noop );
 
   const e3 = new Emitter<[ number, string | null ]>( {
     parameters: [ { valueType: 'number' }, { valueType: [ 'string', null ] } ]
@@ -50,7 +50,7 @@ QUnit.test( 'Test emit timing Emitter', assert => {
   assert.ok( x === 5, 'fired all listeners' );
 
   const e1 = new Emitter();
-  e1.addListener( () => {} );
+  e1.addListener( _.noop );
 
   const testEmitter = ( emitter: Emitter, numberOfLoopings: number ) => {
 

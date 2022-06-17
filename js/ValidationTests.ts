@@ -112,10 +112,10 @@ QUnit.test( 'Test valueType: {Array.<number|null|string|function|EnumerationDepr
   window.assert && assert.throws( () => validate( true, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate boolean' );
   window.assert && assert.throws( () => validate( null, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate null' );
   window.assert && assert.throws( () => validate( undefined, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
-  window.assert && assert.throws( () => validate( () => {}, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
+  window.assert && assert.throws( () => validate( _.noop, { valueType: [ 'number', 'string' ] } ), 'number and string do not validate undefined' );
 
   const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-  window.assert && assert.throws( () => validate( () => {}, { valueType: [ Birds, 'string' ] } ), 'number and string do not validate undefined' );
+  window.assert && assert.throws( () => validate( _.noop, { valueType: [ Birds, 'string' ] } ), 'number and string do not validate undefined' );
 } );
 
 QUnit.test( 'Test valueType: {EnumerationDeprecated}', assert => {
