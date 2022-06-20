@@ -1,4 +1,6 @@
 // Copyright 2021-2022, University of Colorado Boulder
+import { LinkOptions } from './ReadOnlyProperty.js';
+
 /**
  * A simple read-only Property/TinyProperty-like interface
  *
@@ -15,8 +17,8 @@ export default interface IReadOnlyProperty<T> {
   get() : T;
   get value() : T;
   areValuesEqual( a: T, b: T ): boolean;
-  link( listener: PropertyLinkListener<T>, options?: any ): void;
-  lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void;
+  link( listener: PropertyLinkListener<T>, options?: LinkOptions ): void;
+  lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void;
   linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ): any; // eslint-disable-line
   unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;

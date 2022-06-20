@@ -14,7 +14,7 @@ import Validation, { IsValidValueOptions, Validator } from './Validation.js';
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.
  */
-const validate = ( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): void => {
+const validate = <T>( value: IntentionalAny, validator: Validator<T>, providedOptions?: IsValidValueOptions ): void => {
 
   if ( assert ) {
 

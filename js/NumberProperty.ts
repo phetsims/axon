@@ -45,7 +45,7 @@ type SelfOptions = {
   range?: Range | Property<Range | null> | null;
 
   // Passed to this.rangeProperty if NumberProperty creates it. Ignored if a Property is provided via options.range.
-  rangePropertyOptions?: Partial<PropertyOptions<Range>>;
+  rangePropertyOptions?: Partial<PropertyOptions<Range | null>>;
 
 };
 
@@ -67,7 +67,7 @@ export default class NumberProperty extends Property<number> {
   private readonly numberType: NumberType;
 
   // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
-  private readonly validateNumberAndRangeProperty: ( ( value: any ) => void ) | undefined;
+  private readonly validateNumberAndRangeProperty: ( ( value: number ) => void ) | undefined;
 
   public readonly rangeProperty: Property<Range | null>;
   private readonly disposeNumberProperty: () => void;
@@ -87,7 +87,7 @@ export default class NumberProperty extends Property<number> {
     }, providedOptions );
 
     // Defaults for rangePropertyOptions, since it depends on options.tandem
-    options.rangePropertyOptions = optionize<PropertyOptions<Range>, EmptyObjectType, PropertyOptions<Range>>()( {
+    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptyObjectType, PropertyOptions<Range>>()( {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
       phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
       phetioReadOnly: true,
@@ -109,7 +109,7 @@ export default class NumberProperty extends Property<number> {
       rangeProperty = options.range;
     }
     else {
-      rangeProperty = new Property( options.range, options.rangePropertyOptions );
+      rangeProperty = new Property<Range | null>( options.range, options.rangePropertyOptions );
     }
 
     if ( options.numberType === 'Integer' ) {
@@ -243,7 +243,7 @@ export default class NumberProperty extends Property<number> {
     return parentStateObject;
   }
 
-  public static NumberPropertyIO = new IOType( 'NumberPropertyIO', {
+  public static NumberPropertyIO = new IOType<NumberProperty, NumberPropertyState>( 'NumberPropertyIO', {
     valueType: NumberProperty,
     supertype: PropertyIOImpl,
     parameterTypes: [ NumberIO ],
@@ -252,7 +252,7 @@ export default class NumberProperty extends Property<number> {
     toStateObject: ( numberProperty: NumberProperty ) => {
       return numberProperty.toStateObject();
     },
-    applyState: ( numberProperty: NumberProperty, stateObject: any ) => {
+    applyState: ( numberProperty: NumberProperty, stateObject: NumberPropertyState ) => {
       // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
       PropertyIOImpl.applyState( numberProperty, stateObject );

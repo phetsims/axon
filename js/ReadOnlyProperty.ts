@@ -50,6 +50,10 @@ type SelfOptions = {
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
+export type LinkOptions = {
+  phetioDependencies?: Array<IReadOnlyProperty<any>>;
+};
+
 /**
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.
@@ -331,7 +335,7 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  public addPhetioStateDependencies( dependencies: Array<ReadOnlyProperty<any> | TinyProperty<any>> ): void {
+  public addPhetioStateDependencies( dependencies: Array<IReadOnlyProperty<any>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -352,7 +356,7 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    * @param listener - a function that takes a new value, old value, and this Property as arguments
    * @param [options]
    */
-  public link( listener: PropertyLinkListener<T>, options?: any ): void {
+  public link( listener: PropertyLinkListener<T>, options?: LinkOptions ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
@@ -365,7 +369,7 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    * Add an listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
-  public lazyLink( listener: PropertyLazyLinkListener<T>, options?: any ): void {
+  public lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }

@@ -50,7 +50,7 @@ export type IsValidValueOptions = {
 };
 
 type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
-export type Validator<T = any> = {
+export type Validator<T = unknown> = {
 
   // Type of the value.
   // If {function}, the function must be a constructor.
@@ -74,7 +74,7 @@ export type Validator<T = any> = {
   // Function that validates the value. Single argument is the value, returns boolean. Unused if null.
   // Example:
   // isValidValue: function( value ) { return Number.isInteger( value ) && value >= 0; }
-  isValidValue?: ( v?: any ) => boolean;
+  isValidValue?: ( v: T ) => boolean;
 
   // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
   // elements of an array. For this option to valid, `valueType` must either be omitted, or be `Array`. It is assumed that
@@ -109,7 +109,7 @@ export default class Validation {
   /**
    * @returns an error string if incorrect, otherwise null if valid
    */
-  public static getValidatorValidationError( validator: Validator ): string | null {
+  public static getValidatorValidationError<T>( validator: Validator<T> ): string | null {
 
     if ( !( validator instanceof Object ) ) {
 
@@ -229,7 +229,7 @@ export default class Validation {
     return null;
   }
 
-  public static validateValidator( validator: Validator ): void {
+  public static validateValidator<T>( validator: Validator<T> ): void {
     if ( assert ) {
       const error = Validation.getValidatorValidationError( validator );
       error && assert( false, error );
@@ -258,7 +258,7 @@ export default class Validation {
     return genericMessage;
   }
 
-  public static isValueValid( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): boolean {
+  public static isValueValid<T>( value: T, validator: Validator<T>, providedOptions?: IsValidValueOptions ): boolean {
     return this.getValidationError( value, validator, providedOptions ) === null;
   }
 
@@ -266,7 +266,7 @@ export default class Validation {
    * Determines whether a value is valid (returning a boolean value), returning the problem as a string if invalid,
    * otherwise returning null when valid.
    */
-  public static getValidationError( value: IntentionalAny, validator: Validator, providedOptions?: IsValidValueOptions ): string | null {
+  public static getValidationError<T>( value: IntentionalAny, validator: Validator<T>, providedOptions?: IsValidValueOptions ): string | null {
 
     const options = optionize<IsValidValueOptions>()( {
       validateValidator: true
@@ -415,7 +415,7 @@ export default class Validation {
   /**
    * General validator for validating that a string doesn't have template variables in it.
    */
-  public static readonly STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR: Validator = {
+  public static readonly STRING_WITHOUT_TEMPLATE_VARS_VALIDATOR: Validator<string> = {
     valueType: 'string',
     isValidValue: v => !/\{\{\w*\}\}/.test( v )
   };

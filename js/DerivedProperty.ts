@@ -31,12 +31,14 @@ export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 /**
  * Compute the derived value given a derivation and an array of dependencies
  */
-function getDerivedValue<T>( derivation: ( ...x: any[] ) => T, dependencies: any ): T {
+function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
-  return derivation( ...dependencies.map( ( property: any ) => property.get() ) );
+  // @ts-ignore
+  return derivation( ...dependencies.map( property => property.get() ) );
 }
 
 export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown>;
+export type ReadOnlyDerivedProperty<T> = ReadOnlyProperty<T> & Pick<UnknownDerivedProperty<T>, 'hasDependency'>;
 
 /**
  * T = type of the derived value
@@ -44,9 +46,9 @@ export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unk
  */
 export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends ReadOnlyProperty<T> implements IReadOnlyProperty<T> {
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
-  private readonly derivation: any;
+  private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
-  public static DerivedPropertyIO: ( parameterType: any ) => any;
+  public static DerivedPropertyIO: ( parameterType: IOType ) => IOType;
 
   /**
    * @param dependencies - Properties that this Property's value is derived from
@@ -187,8 +189,8 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
    */
-  private static valueEquals<U, V>( firstProperty: IReadOnlyProperty<U>, secondProperty: IReadOnlyProperty<V>, options?: any ): IReadOnlyProperty<boolean> {
-    return new DerivedProperty( [ firstProperty, secondProperty ], equalsFunction, options );
+  private static valueEquals( firstProperty: IReadOnlyProperty<unknown>, secondProperty: IReadOnlyProperty<unknown>, options?: DerivedPropertyOptions<boolean> ): IReadOnlyProperty<boolean> {
+    return new DerivedProperty( [ firstProperty, secondProperty ], ( u: unknown, v: unknown ) => u === v, options );
   }
 
   /**
@@ -214,14 +216,10 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
    */
-  public static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): DerivedProperty<boolean, boolean, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
     return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
 }
-
-const equalsFunction = ( a: any, b: any ): boolean => {
-  return a === b;
-};
 
 const andFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
   return value && property.value;
@@ -272,7 +270,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
     } ) );
   }
 
-  return cache.get( parameterType );
+  return cache.get( parameterType )!;
 };
 
 

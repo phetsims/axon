@@ -30,9 +30,9 @@ QUnit.test( 'Test validate and Validation.isValidValue', assert => {
   assert.ok( Validation.isValueValid( 3, { validValues: [ 1, 2, 3 ] } ) );
   assert.ok( Validation.isValueValid( [], { valueType: Array } ) );
 
-  assert.ok( Validation.isValueValid( 7, { valueType: 'number', isValidValue: v => v > 5 } ) );
-  assert.ok( !Validation.isValueValid( 7, { valueType: 'number', isValidValue: v => v > 7 } ) );
-  assert.ok( !Validation.isValueValid( 7, { valueType: 'number', isValidValue: v => v < 3 } ) );
+  assert.ok( Validation.isValueValid( 7, { valueType: 'number', isValidValue: ( v: number ) => v > 5 } ) );
+  assert.ok( !Validation.isValueValid( 7, { valueType: 'number', isValidValue: ( v: number ) => v > 7 } ) );
+  assert.ok( !Validation.isValueValid( 7, { valueType: 'number', isValidValue: ( v: number ) => v < 3 } ) );
 
 } );
 
@@ -217,7 +217,7 @@ QUnit.test( 'Test arrayElementType', assert => {
 
 QUnit.test( 'validationMessage is presented for all validation errors', assert => {
 
-  const testContainsErrorMessage = ( value: any, validator: Validator, message = validator.validationMessage ) => {
+  const testContainsErrorMessage = ( value: number | boolean | string | number[] | Array<number | boolean | string>, validator: Validator, message = validator.validationMessage ) => {
     assert.ok( message, 'should have a message' );
     const validationError = Validation.getValidationError( value, validator );
     assert.ok( validationError && validationError.includes( message! ), message );
