@@ -19,16 +19,6 @@
     "supportsOutputJS": true
   },
   "eslintConfig": {
-    "extends": "../chipper/eslint/sim_eslintrc.js",
-    "overrides": [
-      {
-        "files": [
-          "**/*.ts"
-        ],
-        "rules": {
-          "@typescript-eslint/explicit-member-accessibility": "error"
-        }
-      }
-    ]
+    "extends": "../chipper/eslint/sim_eslintrc.js"
   }
 }
