@@ -284,7 +284,6 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    */
   public setDeferred( isDeferred: boolean ): ( () => void ) | null {
     assert && assert( !this.isDisposed, 'cannot defer Property if already disposed.' );
-    assert && assert( typeof isDeferred === 'boolean', 'bad value for isDeferred' );
     if ( isDeferred ) {
       assert && assert( !this.isDeferred, 'Property already deferred' );
       this.isDeferred = true;

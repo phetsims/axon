@@ -21,8 +21,6 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
   public constructor( value: T, onAccessAttempt: () => void ) {
     super( value );
 
-    assert && assert( typeof onAccessAttempt === 'function' );
-
     this.onAccessAttempt = onAccessAttempt;
   }
 

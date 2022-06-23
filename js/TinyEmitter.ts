@@ -40,8 +40,6 @@ export default class TinyEmitter<T extends any[] = []> {
   public constructor( onBeforeNotify?: Listener<T> | null ) {
 
     if ( onBeforeNotify ) {
-      assert && assert( typeof onBeforeNotify === 'function', 'onBeforeNotify should be a function' );
-
       this.onBeforeNotify = onBeforeNotify;
     }
 

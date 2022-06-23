@@ -99,8 +99,7 @@
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
-import Property, { ReadOnlyProperty, PropertyOptions } from './Property.js';
-import TinyProperty from './TinyProperty.js';
+import Property, { PropertyOptions, ReadOnlyProperty } from './Property.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
@@ -167,9 +166,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
       map: _.identity,
       inverseMap: _.identity
     }, providedOptions );
-
-    assert && assert( valuePropertyProperty instanceof ReadOnlyProperty || valuePropertyProperty instanceof TinyProperty,
-      'valuePropertyProperty should be an ReadOnlyProperty or TinyProperty' );
 
     const optionsDerive = options.derive;
     const optionsMap = options.map;
@@ -295,7 +291,6 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
 
     if ( this.valuePropertyProperty.value !== null ) {
       const property = this.derive( this.valuePropertyProperty.value );
-      assert && assert( property instanceof Property );
       ( property as Property<InnerValueType> ).reset();
     }
   }

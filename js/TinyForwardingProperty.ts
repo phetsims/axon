@@ -144,7 +144,6 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * Use this to automatically create a forwarded, PhET-iO instrumented Property owned by this TinyForwardingProperty.
    */
   public setTargetPropertyInstrumented<NodeType extends NodeLike>( targetPropertyInstrumented: boolean, node: NodeType ): NodeType {
-    assert && assert( typeof targetPropertyInstrumented === 'boolean' );
 
     // See Node.initializePhetioObject for more details on this assertion
     assert && assert( !node.isPhetioInstrumented(), 'this option only works if it is passed in before this Node is instrumented' );
@@ -164,8 +163,6 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param createProperty - creates an "owned" Property
    */
   public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ): void {
-    assert && assert( typeof tandemName === 'string' );
-    assert && assert( typeof createProperty === 'function' );
     assert && assert( !this.phetioInitialized, 'already initialized' );
     assert && assert( !this.ownedPhetioProperty, 'Already created the ownedPhetioProperty' );
 
