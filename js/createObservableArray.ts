@@ -23,6 +23,7 @@ import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import Validation from './Validation.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -283,13 +284,13 @@ class ObservableArrayPhetioObject<T> extends PhetioObject {
 
   /**
    * @param observableArray
-   * @param [options] - same as the options to the parent ObservableArrayDef
+   * @param [providedOptions] - same as the options to the parent ObservableArrayDef
    */
-  public constructor( observableArray: ObservableArray<T>, options?: ObservableArrayOptions<T> ) {
+  public constructor( observableArray: ObservableArray<T>, providedOptions?: ObservableArrayOptions<T> ) {
 
-    options = merge( {
+    const options = optionize<ObservableArrayOptions<T>, EmptyObjectType, EmptyObjectType>()( {
       phetioType: ObservableArrayIO
-    }, options );
+    }, providedOptions );
 
     super( options );
 
