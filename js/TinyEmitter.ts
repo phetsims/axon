@@ -7,19 +7,20 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
-type Listener<T extends any[]> = ( ...args: T ) => void;
+type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
 
-type EmitContext<T extends any[]> = {
+type EmitContext<T extends IntentionalAny[]> = {
   index: number;
   listenerArray?: Listener<T>[];
 };
 
-export default class TinyEmitter<T extends any[] = []> {
+export default class TinyEmitter<T extends IntentionalAny[] = []> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
   // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.

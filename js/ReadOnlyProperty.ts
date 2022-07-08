@@ -23,6 +23,7 @@ import validate from './validate.js';
 import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -51,7 +52,7 @@ type SelfOptions = {
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
 export type LinkOptions = {
-  phetioDependencies?: Array<IReadOnlyProperty<any>>;
+  phetioDependencies?: Array<IReadOnlyProperty<unknown>>;
 };
 
 /**
@@ -334,7 +335,7 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  public addPhetioStateDependencies( dependencies: Array<IReadOnlyProperty<any>> ): void {
+  public addPhetioStateDependencies( dependencies: Array<IReadOnlyProperty<IntentionalAny>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];
@@ -395,7 +396,7 @@ export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProper
    *
    * NOTE: Duplicated with TinyProperty.linkAttribute
    */
-  public linkAttribute( object: any, attributeName: string ): ( value: T ) => void {
+  public linkAttribute( object: IntentionalAny, attributeName: string ): ( value: T ) => void {
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
@@ -489,15 +490,24 @@ ReadOnlyProperty.CHANGED_EVENT_NAME = 'changed';
 // the parameter type, so that it is only created once
 const cache = new Map();
 
+type ReadOnlyPropertyState<T> = {
+  value: T;
+
+  // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
+  validValues: T[] | null;
+
+  units: string | null;
+};
+
 /**
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
+ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `PropertyIO<${parameterType.typeName}>`, {
+    cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<T>>( `PropertyIO<${parameterType.typeName}>`, {
 
       // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
       // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
@@ -508,33 +518,28 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject: ( property: ReadOnlyProperty<any> ) => {
+      toStateObject: ( property: ReadOnlyProperty<T> ) => {
         assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-        const stateObject: any = {
-          value: parameterType.toStateObject( property.value )
+        const stateObject = {
+          value: parameterType.toStateObject( property.value ),
+
+          // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
+          validValues: property.validValues ? property.validValues.map( v => {
+            return parameterType.toStateObject( v );
+          } ) : null,
+          units: NullableIO( StringIO ).toStateObject( property.units )
         };
 
-        // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-        if ( property.validValues ) {
-          stateObject.validValues = property.validValues.map( v => {
-            return parameterType.toStateObject( v );
-          } );
-        }
-        else {
-          stateObject.validValues = null;
-        }
-
-        stateObject.units = NullableIO( StringIO ).toStateObject( property.units );
         return stateObject;
       },
-      applyState: ( property: ReadOnlyProperty<any>, stateObject: any ) => {
+      applyState: ( property: ReadOnlyProperty<T>, stateObject: ReadOnlyPropertyState<T> ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
 
         // @ts-ignore TODO: see https://github.com/phetsims/axon/issues/342
         property.set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
-          property.validValues = stateObject.validValues.map( ( valueStateObject: any ) => parameterType.fromStateObject( valueStateObject ) );
+          property.validValues = stateObject.validValues.map( ( validValue: T ) => parameterType.fromStateObject( validValue ) );
         }
       },
       stateSchema: {
@@ -546,7 +551,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
         getValue: {
           returnType: parameterType,
           parameterTypes: [],
-          implementation: function( this: ReadOnlyProperty<any> ) {
+          implementation: function( this: ReadOnlyProperty<T> ) {
             return this.get();
           },
           documentation: 'Gets the current value.'
@@ -554,7 +559,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
         getValidationError: {
           returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
-          implementation: function( this: ReadOnlyProperty<any>, value: any ) {
+          implementation: function( this: ReadOnlyProperty<T>, value: T ) {
             return this.getValidationError( value );
           },
           documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
@@ -563,7 +568,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
-          implementation: function( this: ReadOnlyProperty<any>, value: any ) {
+          implementation: function( this: ReadOnlyProperty<T>, value: T ) {
             this.set( value );
           },
           documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
@@ -576,7 +581,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( this: any, listener: any ) {
+          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
             this.link( listener );
           },
           documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
@@ -589,7 +594,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( this: any, listener: any ) {
+          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
             this.lazyLink( listener );
           },
           documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
@@ -599,7 +604,7 @@ ReadOnlyProperty.PropertyIO = ( parameterType: IOType ) => {
         unlink: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-          implementation: function( this: any, listener: any ) {
+          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
             this.unlink( listener );
           },
           documentation: 'Removes a listener.'
