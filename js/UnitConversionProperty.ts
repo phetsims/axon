@@ -28,20 +28,17 @@ import IProperty from './IProperty.js';
 import MappedProperty, { MappedPropertyOptions } from './MappedProperty.js';
 import TinyProperty from './TinyProperty.js';
 import Property from './Property.js';
-import merge from '../../phet-core/js/merge.js';
 import NumberProperty, { isRangedProperty, RangedProperty } from './NumberProperty.js';
+import optionize from '../../phet-core/js/optionize.js';
 
 type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.
   // this.value === factor * property.value
   // This will be used to provide defaults for map/inverseMap if provided
-  factor?: number;
-
-  // Only support the numeric map/inverseMap
-  map?: ( input: number ) => number;
-  inverseMap?: ( output: number ) => number;
+  factor: number;
 };
-export type UnitConversionPropertyOptions = SelfOptions & MappedPropertyOptions<number, number>;
+type ParentOptions = MappedPropertyOptions<number, number>;
+export type UnitConversionPropertyOptions = SelfOptions & ParentOptions;
 
 export default class UnitConversionProperty extends MappedProperty<number, number> {
 
@@ -52,20 +49,18 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
 
   public constructor( property: Property<number>, providedOptions: UnitConversionPropertyOptions ) {
 
-    let options = merge( {
+    const map = ( input: number ) => input * providedOptions.factor;
+    const inverseMap = ( output: number ) => output / providedOptions.factor;
+    const options = optionize<UnitConversionPropertyOptions, SelfOptions, ParentOptions>()( {
+
       // Bidirectional by default, since we'll have a map and inverseMap guaranteed
-      bidirectional: true
+      bidirectional: true,
+
+      map: map,
+      inverseMap: inverseMap
     }, providedOptions );
 
-    const factor = options.factor;
-    if ( factor ) {
-      options = merge( {
-        map: ( input: number ) => input * factor,
-        inverseMap: ( output: number ) => output / factor
-      }, options );
-    }
-    const map = options.map as ( input: number ) => number;
-
+    // @ts-ignore
     super( property, options );
 
     this._property = property;
