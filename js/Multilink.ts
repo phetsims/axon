@@ -65,7 +65,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
 
   // Keep track of listeners so they can be detached
-  private dependencyListeners: Map<IReadOnlyProperty<any>, () => void>;
+  private dependencyListeners: Map<IReadOnlyProperty<unknown>, () => void>;
 
   // whether the Multilink has been disposed
   private isDisposed?: boolean;
@@ -184,7 +184,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, false );
   }
 
-  public static multilinkAny( dependencies: Readonly<IReadOnlyProperty<any>[]>, callback: () => void ): UnknownMultilink {
+  public static multilinkAny( dependencies: Readonly<IReadOnlyProperty<unknown>[]>, callback: () => void ): UnknownMultilink {
 
     // @ts-ignore
     return new Multilink( dependencies, callback );
