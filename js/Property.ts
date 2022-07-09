@@ -1,7 +1,8 @@
 // Copyright 2022, University of Colorado Boulder
 
 import IProperty from './IProperty.js';
-import { ReadOnlyProperty, PropertyOptions } from './ReadOnlyProperty.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
+import { PropertyOptions } from './ReadOnlyProperty.js';
 import axon from './axon.js';
 
 /**
@@ -68,8 +69,6 @@ export default class Property<T> extends ReadOnlyProperty<T> implements IPropert
   }
 }
 
-// TODO https://github.com/phetsims/axon/issues/342 Move this to ReadOnlyProperty
-export { ReadOnlyProperty };
 export type { PropertyOptions };
 
 axon.register( 'Property', Property );

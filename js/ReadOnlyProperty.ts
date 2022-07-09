@@ -59,7 +59,7 @@ export type LinkOptions = {
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.
  */
-export class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
+export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;

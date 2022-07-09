@@ -11,7 +11,8 @@
  */
 
 import axon from './axon.js';
-import Property, { ReadOnlyProperty } from './Property.js';
+import Property from './Property.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import IProperty from './IProperty.js';
 import { PropertyLazyLinkListener } from './IReadOnlyProperty.js';

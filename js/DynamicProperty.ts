@@ -99,7 +99,8 @@
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
-import Property, { PropertyOptions, ReadOnlyProperty } from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 

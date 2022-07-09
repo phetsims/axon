@@ -12,7 +12,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import Property, { ReadOnlyProperty, PropertyOptions } from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
@@ -20,6 +20,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 
 // constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
