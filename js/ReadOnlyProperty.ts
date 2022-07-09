@@ -24,6 +24,7 @@ import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, Prop
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Property from './Property.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -535,8 +536,8 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
       applyState: ( property: ReadOnlyProperty<T>, stateObject: ReadOnlyPropertyState<T> ) => {
         property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
 
-        // @ts-ignore TODO: see https://github.com/phetsims/axon/issues/342
-        property.set( parameterType.fromStateObject( stateObject.value ) );
+        assert && assert( property.isSettable(), 'Property should be settable' );
+        ( property as Property<T> ).set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
           property.validValues = stateObject.validValues.map( ( validValue: T ) => parameterType.fromStateObject( validValue ) );
