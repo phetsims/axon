@@ -68,11 +68,10 @@ export default class EnabledComponent {
     };
   }
 
-  // @ts-ignore TODO see https://github.com/phetsims/axon/issues/342
   private setEnabled( enabled: boolean ): void {
     if ( this.enabledProperty.isSettable() ) {
 
-      // @ts-ignore
+      // @ts-ignore TODO see https://github.com/phetsims/axon/issues/342
       this.enabledProperty.value = enabled;
     }
     else {
