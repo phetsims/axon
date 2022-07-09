@@ -46,8 +46,7 @@ type SelfOptions = {
   range?: Range | Property<Range | null> | null;
 
   // Passed to this.rangeProperty if NumberProperty creates it. Ignored if a Property is provided via options.range.
-  rangePropertyOptions?: Partial<PropertyOptions<Range | null>>;
-
+  rangePropertyOptions?: PropertyOptions<Range | null>;
 };
 
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
