@@ -15,6 +15,7 @@ import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
+import IProperty from './IProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -69,14 +70,8 @@ export default class EnabledComponent {
   }
 
   private setEnabled( enabled: boolean ): void {
-    if ( this.enabledProperty.isSettable() ) {
-
-      // @ts-ignore TODO see https://github.com/phetsims/axon/issues/342
-      this.enabledProperty.value = enabled;
-    }
-    else {
-      assert && assert( false, 'cannot set enabledProperty' );
-    }
+    assert && assert( this.enabledProperty.isSettable(), 'cannot set enabledProperty' );
+    ( this.enabledProperty as IProperty<boolean> ).value = enabled;
   }
 
   public set enabled( value: boolean ) { this.setEnabled( value ); }
