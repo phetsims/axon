@@ -91,7 +91,7 @@ export type Validator<T = unknown> = {
 
   // A list of Validator objects, each of which must pass to be a valid value
   validators?: Validator<T>[];
-}
+};
 
 // Key names are verbose so this can be mixed into other contexts like AXON/Property. `undefined` and `null` have the
 // same semantics so that we can use this feature without having extend and allocate new objects at every validation.
