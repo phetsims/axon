@@ -20,8 +20,11 @@ QUnit.test( 'Emitter Constructing and options', assert => {
 
   e1.emit( 1 );
 
+  // Workaround for a lint rule
+  type VoidFunc = () => void;
+
   // emitting with an object as parameter
-  const e2: Emitter<[ Emitter, Record<string, unknown>, () => void ]> = new Emitter( {
+  const e2 = new Emitter<[ Emitter, Record<string, unknown>, VoidFunc ]>( {
     parameters: [ { valueType: Emitter }, { valueType: Object }, { valueType: 'function' } ]
   } );
 
