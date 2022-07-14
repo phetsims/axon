@@ -7,7 +7,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Range from '../../dot/js/Range.js';
+import Range, { RangeStateObject } from '../../dot/js/Range.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import optionize from '../../phet-core/js/optionize.js';
@@ -34,7 +34,7 @@ const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
 type NumberPropertyState = {
   numberType: string;
-  range: null | Range;
+  range: null | RangeStateObject;
   rangePhetioID: string | null;
 };
 
@@ -246,6 +246,8 @@ export default class NumberProperty extends Property<number> {
   public static NumberPropertyIO = new IOType<NumberProperty, NumberPropertyState>( 'NumberPropertyIO', {
     valueType: NumberProperty,
     supertype: PropertyIOImpl,
+
+    // @ts-ignore
     parameterTypes: [ NumberIO ],
     documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
       VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,

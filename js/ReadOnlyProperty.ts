@@ -136,7 +136,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
         `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
       // This assertion helps in instrumenting code that has the tandem but not type
-      assert && assert( options.phetioType.parameterTypes[ 0 ],
+      assert && assert( options.phetioType.parameterTypes![ 0 ],
         `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||
@@ -164,10 +164,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
 
       // Validate the value type's phetioType of the Property, not the PropertyIO itself.
       // For example, for PropertyIO( BooleanIO ), assign this valueValidator's phetioType to be BooleanIO's validator.
-      assert && assert( !!this.valueValidator.phetioType.parameterTypes[ 0 ], 'unexpected number of parameters for Property' );
+      assert && assert( !!this.valueValidator.phetioType.parameterTypes![ 0 ], 'unexpected number of parameters for Property' );
 
       // This is the validator for the value, not for the Property itself
-      this.valueValidator.phetioType = this.valueValidator.phetioType.parameterTypes[ 0 ];
+      this.valueValidator.phetioType = this.valueValidator.phetioType.parameterTypes![ 0 ];
     }
 
     // Assertions regarding value validation
@@ -246,7 +246,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
     // called so many times that it is worth the optimization for PhET brand.
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( ReadOnlyProperty.CHANGED_EVENT_NAME, {
       getData: () => {
-        const parameterType = this.phetioType.parameterTypes[ 0 ];
+        const parameterType = this.phetioType.parameterTypes![ 0 ];
         return {
           oldValue: NullableIO( parameterType ).toStateObject( oldValue ),
           newValue: parameterType.toStateObject( newValue )

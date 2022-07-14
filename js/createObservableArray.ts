@@ -100,7 +100,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   if ( options.phetioType ) {
 
     assert && assert( options.phetioType.typeName.startsWith( 'ObservableArrayIO' ) );
-    emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes[ 0 ] };
+    emitterParameterOptions = { name: 'value', phetioType: options.phetioType.parameterTypes![ 0 ] };
   }
   // NOTE: Improve with Validation
   else if ( !Validation.getValidatorValidationError( options ) ) {
@@ -263,7 +263,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   if ( options.tandem.supplied ) {
     assert && assert( options.phetioType );
 
-    observableArray.phetioElementType = options.phetioType!.parameterTypes[ 0 ];
+    observableArray.phetioElementType = options.phetioType!.parameterTypes![ 0 ];
 
     // for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
