@@ -552,26 +552,22 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
         getValue: {
           returnType: parameterType,
           parameterTypes: [],
-          implementation: function( this: ReadOnlyProperty<T> ) {
-            return this.get();
-          },
+          implementation: ReadOnlyProperty.prototype.get,
           documentation: 'Gets the current value.'
         },
         getValidationError: {
           returnType: NullableIO( StringIO ),
           parameterTypes: [ parameterType ],
-          implementation: function( this: ReadOnlyProperty<T>, value: T ) {
-            return this.getValidationError( value );
-          },
+          implementation: ReadOnlyProperty.prototype.getValidationError,
           documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
         },
 
         setValue: {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
-          implementation: function( this: ReadOnlyProperty<T>, value: T ) {
-            this.set( value );
-          },
+
+          // @ts-ignore
+          implementation: ReadOnlyProperty.prototype.set,
           documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
                          'notified with the new value.',
           invocableForReadOnlyElements: false
@@ -582,9 +578,7 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
-            this.link( listener );
-          },
+          implementation: ReadOnlyProperty.prototype.link,
           documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
                          'also called with the current value. The listener takes two arguments, the new value and the ' +
                          'previous value.'
@@ -595,9 +589,7 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
 
           // oldValue will start as "null" the first time called
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
-            this.lazyLink( listener );
-          },
+          implementation: ReadOnlyProperty.prototype.lazyLink,
           documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
                          'without the current-value callback on registration. The listener takes two arguments, the new ' +
                          'value and the previous value.'
@@ -605,9 +597,7 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
         unlink: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-          implementation: function( this: ReadOnlyProperty<T>, listener: PropertyLinkListener<T> ) {
-            this.unlink( listener );
-          },
+          implementation: ReadOnlyProperty.prototype.unlink,
           documentation: 'Removes a listener.'
         }
       }

@@ -171,17 +171,13 @@ Emitter.EmitterIO = parameterTypes => {
         addListener: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: function( this: Emitter, listener: Listener<[]> ) {
-            this.addListener( listener );
-          },
+          implementation: Emitter.prototype.addListener,
           documentation: 'Adds a listener which will be called when the emitter emits.'
         },
         removeListener: {
           returnType: VoidIO,
           parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: function( this: Emitter, listener: Listener<[]> ) {
-            this.removeListener( listener );
-          },
+          implementation: Emitter.prototype.removeListener,
           documentation: 'Remove a listener.'
         },
         emit: {
@@ -189,11 +185,7 @@ Emitter.EmitterIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Emitter.emit`'s dynamic number of arguments
-          implementation: function( this: Emitter, ...args: unknown[] ) {
-
-            // @ts-ignore
-            this.emit( ...args );
-          },
+          implementation: Emitter.prototype.emit,
           documentation: 'Emits a single event to all listeners.',
           invocableForReadOnlyElements: false
         }

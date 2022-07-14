@@ -259,11 +259,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
           parameterTypes: [ parameterType ],
 
           // @ts-ignore
-          implementation: function( value ) {
-
-            // @ts-ignore
-            return this.set( value );
-          },
+          implementation: DerivedProperty.prototype.set,
           documentation: 'Errors out when you try to set a derived property.',
           invocableForReadOnlyElements: false
         }
