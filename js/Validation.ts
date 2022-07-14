@@ -181,7 +181,7 @@ export default class Validation {
         return this.combineErrorMessages( 'falsey phetioType provided', validator.validationMessage );
       }
       if ( !validator.phetioType.validator ) {
-        return this.combineErrorMessages( `validator needed for phetioType: ${validator.phetioType!.typeName}`,
+        return this.combineErrorMessages( `validator needed for phetioType: ${validator.phetioType.typeName}`,
           validator.validationMessage );
       }
 

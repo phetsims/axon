@@ -136,7 +136,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
         `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
       // This assertion helps in instrumenting code that has the tandem but not type
-      assert && assert( options.phetioType!.parameterTypes[ 0 ],
+      assert && assert( options.phetioType.parameterTypes[ 0 ],
         `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||

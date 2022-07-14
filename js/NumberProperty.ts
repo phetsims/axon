@@ -215,7 +215,7 @@ export default class NumberProperty extends Property<number> {
    * If you use setValueAndRange, you'll likely need to use this instead of reset.
    */
   public resetValueAndRange(): void {
-    this.setValueAndRange( this.initialValue!, this.rangeProperty.initialValue! );
+    this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue! );
   }
 
   // Returns a casted version with a guaranteed non-null range

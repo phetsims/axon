@@ -28,7 +28,7 @@ export default class EnumerationProperty<T extends EnumerationValue> extends Pro
   public constructor( value: T, providedOptions?: EnumerationPropertyOptions<T> ) {
 
     const firstOptions = optionize<EnumerationPropertyOptions<T>, SelfOptions<T>, PropertyOptions<T>>()( {
-      enumeration: value.enumeration!
+      enumeration: value.enumeration
     }, providedOptions );
 
     const options = optionize<EnumerationPropertyOptions<T>, EmptyObjectType, PropertyOptions<T>>()( {
