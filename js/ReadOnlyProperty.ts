@@ -491,7 +491,7 @@ ReadOnlyProperty.CHANGED_EVENT_NAME = 'changed';
 // the parameter type, so that it is only created once
 const cache = new Map();
 
-type ReadOnlyPropertyState<T> = {
+export type ReadOnlyPropertyState<T> = {
   value: T;
 
   // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
