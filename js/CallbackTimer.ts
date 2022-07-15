@@ -108,7 +108,7 @@ export default class CallbackTimer {
   }
 
   public addCallback( callback: CallbackTimerCallback ): void {
-    if ( this.callbacks.indexOf( callback ) === -1 ) {
+    if ( !this.callbacks.includes( callback ) ) {
       this.callbacks.push( callback );
     }
   }

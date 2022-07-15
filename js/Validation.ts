@@ -335,7 +335,7 @@ export default class Validation {
       }
     }
 
-    if ( validator.hasOwnProperty( 'validValues' ) && validator.validValues!.indexOf( value ) === -1 ) {
+    if ( validator.hasOwnProperty( 'validValues' ) && !validator.validValues!.includes( value ) ) {
       return this.combineErrorMessages( `value not in validValues: ${value}`, validator.validationMessage );
     }
     if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue!( value ) ) {
