@@ -9,6 +9,7 @@
 
 import optionize from '../../phet-core/js/optionize.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
@@ -17,27 +18,19 @@ import Property, { PropertyOptions } from './Property.js';
 const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
 
 type SelfOptions = EmptyObjectType;
-export type BooleanPropertyOptions = SelfOptions & PropertyOptions<boolean>;
+
+// client cannot specify superclass options that are controlled by BooleanProperty
+export type BooleanPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<boolean>, 'isValidValue' | 'valueType' | 'phetioType'>;
 
 export default class BooleanProperty extends Property<boolean> {
 
-  public constructor( value: boolean, options?: BooleanPropertyOptions ) {
-
-    if ( options ) {
-
-      // client cannot specify superclass options that are not supported by BooleanProperty
-      assert && assert( !options.hasOwnProperty( 'isValidValue' ), 'BooleanProperty does not support isValidValue' );
-
-      // client cannot specify superclass options that are controlled by BooleanProperty
-      assert && assert( !options.hasOwnProperty( 'valueType' ), 'BooleanProperty sets valueType' );
-      assert && assert( !options.hasOwnProperty( 'phetioType' ), 'BooleanProperty sets phetioType' );
-    }
+  public constructor( value: boolean, providedOptions?: BooleanPropertyOptions ) {
 
     // Fill in superclass options that are controlled by BooleanProperty.
-    options = optionize<BooleanPropertyOptions, SelfOptions, PropertyOptions<boolean>>()( {
+    const options = optionize<BooleanPropertyOptions, SelfOptions, PropertyOptions<boolean>>()( {
       valueType: 'boolean',
       phetioType: BooleanPropertyIO
-    }, options );
+    }, providedOptions );
 
     super( value, options );
   }
