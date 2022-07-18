@@ -409,10 +409,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
     return `Property#${this.id}{${this.get()}}`;
   }
 
-  public override valueOf(): string {
-    return this.toString();
-  }
-
   /**
    * Convenience function for debugging a Property's value. It prints the new value on registration and when changed.
    * @param name - debug name to be printed on the console
