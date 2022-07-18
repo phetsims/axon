@@ -287,7 +287,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   /**
    * Resets the current property (if it's a Property instead of a TinyProperty)
    */
-  public override reset(): void {
+  public reset(): void {
     assert && assert( this.bidirectional, 'Cannot reset a non-bidirectional DynamicProperty' );
 
     if ( this.valuePropertyProperty.value !== null ) {

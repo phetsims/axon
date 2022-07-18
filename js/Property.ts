@@ -54,11 +54,8 @@ export default class Property<T> extends ReadOnlyProperty<T> implements IPropert
     this.set( newValue );
   }
 
-  /**
-   * Overridden to make public
-   */
-  public override reset(): void {
-    super.reset();
+  public reset(): void {
+    this.set( this._initialValue );
   }
 
   /**

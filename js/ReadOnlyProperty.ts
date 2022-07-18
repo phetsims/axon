@@ -314,15 +314,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
     return null;
   }
 
-  /**
-   * Resets the value to the initial value.
-   */
-  protected reset(): void {
-
-    // @ts-ignore
-    this.set( this._initialValue );
-  }
-
   public get value(): T {
     return this.get();
   }
