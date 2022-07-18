@@ -66,9 +66,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
   private readonly id: number;
 
   // (phet-io) Units, if any.  See units.js for valid values
-  public units: string | null;
+  public readonly units: string | null;
 
-  public validValues: readonly T[] | undefined;
+  public validValues?: readonly T[];
 
   // emit is called when the value changes (or on link)
   private tinyProperty: TinyProperty<T>;
@@ -534,8 +534,8 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
         return stateObject;
       },
       applyState: ( property: ReadOnlyProperty<T>, stateObject: ReadOnlyPropertyState<T> ) => {
-        property.units = NullableIO( StringIO ).fromStateObject( stateObject.units );
-
+        const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+        assert && assert( property.units === units, 'Property units do not match' );
         assert && assert( property.isSettable(), 'Property should be settable' );
         ( property as Property<T> ).set( parameterType.fromStateObject( stateObject.value ) );
 
