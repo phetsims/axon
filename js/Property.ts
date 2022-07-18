@@ -17,7 +17,6 @@ export default class Property<T> extends ReadOnlyProperty<T> implements IPropert
   public constructor( value: T, providedOptions?: PropertyOptions<T> ) {
     super( value, providedOptions );
 
-    // Initial value
     this._initialValue = value;
   }
 
@@ -49,9 +48,11 @@ export default class Property<T> extends ReadOnlyProperty<T> implements IPropert
 
   /**
    * Overridden to make public
+   * We ran performance tests on Chrome, and determined that calling super.value = newValue is statistically significantly
+   * slower at the p = 0.10 level( looping over 10,000 value calls). Therefore, we prefer this optimization.
    */
   public override set value( newValue: T ) {
-    this.set( newValue );
+    super.set( newValue );
   }
 
   /**
