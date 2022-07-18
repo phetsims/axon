@@ -247,7 +247,6 @@ export default class NumberProperty extends Property<number> {
     valueType: NumberProperty,
     supertype: PropertyIOImpl,
 
-    // @ts-ignore
     parameterTypes: [ NumberIO ],
     documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
       VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
