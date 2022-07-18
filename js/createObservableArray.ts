@@ -41,9 +41,7 @@ export type ObservableArrayOptions<T> = {
   phetioDocumentation?: string;
 };
 type ObservableArray<T> = {
-  // NOTE: Do we want to return T to avoid checks?
-  get: ( index: number ) => T | undefined;
-
+  get: ( index: number ) => T;
   addItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
   removeItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
   addItemRemovedListener: ( listener: ObservableArrayListener<T> ) => void;
