@@ -13,13 +13,13 @@ export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty:
 export type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
 
 // See comments in Property.ts / TinyProperty.ts
-export default interface IReadOnlyProperty<T> {
-  get() : T;
-  get value() : T;
+type IReadOnlyProperty<T> = {
+  get: () => T;
+  get value(): T;
   areValuesEqual( a: T, b: T ): boolean;
   link( listener: PropertyLinkListener<T>, options?: LinkOptions ): void;
   lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void;
-  linkAttribute<Attr extends string>( object: { [ key in Attr ]: T }, attributeName: Attr ): any; // eslint-disable-line
+  linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): any; // eslint-disable-line
   unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;
   unlinkAttribute( listener: PropertyLinkListener<T> ): void;
@@ -28,4 +28,5 @@ export default interface IReadOnlyProperty<T> {
   dispose(): void;
 
   isDisposed?: boolean;
-} // eslint-disable-line
+};
+export default IReadOnlyProperty;

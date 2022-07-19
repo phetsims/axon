@@ -10,7 +10,8 @@ import IReadOnlyProperty from './IReadOnlyProperty.js';
  */
 
 // See comments in Property.ts / TinyProperty.ts
-export default interface IProperty<T> extends IReadOnlyProperty<T> {
+type IProperty<T> = IReadOnlyProperty<T> & {
   set( value: T ): void;
   set value( value: T );
-} // eslint-disable-line
+};
+export default IProperty;
