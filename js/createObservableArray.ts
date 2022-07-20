@@ -287,7 +287,7 @@ class ObservableArrayPhetioObject<T> extends PhetioObject {
    */
   public constructor( observableArray: ObservableArray<T>, providedOptions?: ObservableArrayOptions<T> ) {
 
-    const options = optionize<ObservableArrayOptions<T>, EmptyObjectType, EmptyObjectType>()( {
+    const options = optionize<ObservableArrayOptions<T>, EmptyObjectType>()( {
       phetioType: ObservableArrayIO
     }, providedOptions );
 
