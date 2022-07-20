@@ -12,7 +12,6 @@
 import optionize from '../../phet-core/js/optionize.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -20,23 +19,18 @@ import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/Phe
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import IEmitter, { IEmitterListener, IEmitterParameter } from './IEmitter.js';
 
-// By default, Emitters are not stateful
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
-
-// undefined and never are not allowed as parameters to Emitter
-type EmitterParameter = Exclude<IntentionalAny, undefined | never>;
-
-type Listener<T extends EmitterParameter[]> = ( ...args: T ) => void;
 
 type SelfOptions = EmptyObjectType;
 type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
-export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDataHandler<T> {
+export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioDataHandler<T> implements IEmitter<T> {
 
   // provide Emitter functionality via composition
-  private readonly tinyEmitter: TinyEmitter<T>;
+  private readonly tinyEmitter: IEmitter<T>;
 
   public static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
 
@@ -80,14 +74,14 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Adds a listener which will be called during emit.
    */
-  public addListener( listener: Listener<T> ): void {
+  public addListener( listener: IEmitterListener<T> ): void {
     this.tinyEmitter.addListener( listener );
   }
 
   /**
    * Removes a listener
    */
-  public removeListener( listener: Listener<T> ): void {
+  public removeListener( listener: IEmitterListener<T> ): void {
     this.tinyEmitter.removeListener( listener );
   }
 
@@ -101,7 +95,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  public hasListener( listener: Listener<T> ): boolean {
+  public hasListener( listener: IEmitterListener<T> ): boolean {
     return this.tinyEmitter.hasListener( listener );
   }
 
@@ -124,7 +118,7 @@ export default class Emitter<T extends EmitterParameter[] = []> extends PhetioDa
    * @param name - debug name to be printed on the console
    * @returns - the handle to the listener added in case it needs to be removed later
    */
-  public debug( name: string ): Listener<T> {
+  public debug( name: string ): IEmitterListener<T> {
     const listener = ( ...args: T ) => console.log( name, ...args );
     this.addListener( listener );
     return listener;

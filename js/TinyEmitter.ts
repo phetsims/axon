@@ -9,18 +9,17 @@
 
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
+import IEmitter, { IEmitterListener, IEmitterParameter } from './IEmitter.js';
 
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
 
-type Listener<T extends IntentionalAny[]> = ( ...args: T ) => void;
-
 type EmitContext<T extends IntentionalAny[]> = {
   index: number;
-  listenerArray?: Listener<T>[];
+  listenerArray?: IEmitterListener<T>[];
 };
 
-export default class TinyEmitter<T extends IntentionalAny[] = []> {
+export default class TinyEmitter<T extends IEmitterParameter[] = []> implements IEmitter<T> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
   // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.
@@ -30,15 +29,15 @@ export default class TinyEmitter<T extends IntentionalAny[] = []> {
   public isDisposed?: boolean;
 
   // If specified, this will be called before listeners are notified.
-  private readonly onBeforeNotify?: Listener<T> | null;
+  private readonly onBeforeNotify?: IEmitterListener<T> | null;
 
   // The listeners that will be called on emit
-  private listeners: Set<Listener<T>>;
+  private listeners: Set<IEmitterListener<T>>;
 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
   private emitContexts: EmitContext<T>[];
 
-  public constructor( onBeforeNotify?: Listener<T> | null ) {
+  public constructor( onBeforeNotify?: IEmitterListener<T> | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;
@@ -114,7 +113,7 @@ export default class TinyEmitter<T extends IntentionalAny[] = []> {
   /**
    * Adds a listener which will be called during emit.
    */
-  public addListener( listener: Listener<T> ): void {
+  public addListener( listener: IEmitterListener<T> ): void {
     assert && assert( !this.isDisposed, 'Cannot add a listener to a disposed TinyEmitter' );
     assert && assert( !this.hasListener( listener ), 'Cannot add the same listener twice' );
 
@@ -130,7 +129,7 @@ export default class TinyEmitter<T extends IntentionalAny[] = []> {
   /**
    * Removes a listener
    */
-  public removeListener( listener: Listener<T> ): void {
+  public removeListener( listener: IEmitterListener<T> ): void {
 
     // Throw an error when removing a non-listener (except when the Emitter has already been disposed, see
     // https://github.com/phetsims/sun/issues/394#issuecomment-419998231
@@ -180,7 +179,7 @@ export default class TinyEmitter<T extends IntentionalAny[] = []> {
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  public hasListener( listener: Listener<T> ): boolean {
+  public hasListener( listener: IEmitterListener<T> ): boolean {
     assert && assert( arguments.length === 1, 'Emitter.hasListener should be called with 1 argument' );
     return this.listeners.has( listener );
   }
@@ -203,7 +202,7 @@ export default class TinyEmitter<T extends IntentionalAny[] = []> {
   /**
    * Invokes a callback once for each listener - meant for Property's use
    */
-  public forEachListener( callback: ( listener: Listener<T> ) => void ): void {
+  public forEachListener( callback: ( listener: IEmitterListener<T> ) => void ): void {
     this.listeners.forEach( callback );
   }
 }

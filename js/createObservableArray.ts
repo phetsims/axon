@@ -24,6 +24,7 @@ import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import Validation from './Validation.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import IEmitter from './IEmitter.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -60,8 +61,8 @@ type ObservableArray<T> = {
   applyState: ( state: ObservableArrayStateObject<T> ) => void;
 
   // listen only please
-  elementAddedEmitter: Emitter<[ T ]>;
-  elementRemovedEmitter: Emitter<[ T ]>;
+  elementAddedEmitter: IEmitter<[ T ]>;
+  elementRemovedEmitter: IEmitter<[ T ]>;
   lengthProperty: NumberProperty;
 
   //TODO https://github.com/phetsims/axon/issues/334 Move to "prototype" above or drop support
