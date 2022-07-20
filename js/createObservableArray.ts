@@ -14,7 +14,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
-import optionize from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -23,7 +23,6 @@ import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import Validation from './Validation.js';
-import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IEmitter from './IEmitter.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.

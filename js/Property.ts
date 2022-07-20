@@ -1,8 +1,7 @@
 // Copyright 2022, University of Colorado Boulder
 
 import IProperty from './IProperty.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
-import { PropertyOptions } from './ReadOnlyProperty.js';
+import ReadOnlyProperty, { PropertyOptions } from './ReadOnlyProperty.js';
 import axon from './axon.js';
 
 /**

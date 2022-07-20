@@ -9,10 +9,9 @@
 import Property, { PropertyOptions } from './Property.js';
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
-import optionize from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 
 type SelfOptions<T extends EnumerationValue> = {
 

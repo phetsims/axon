@@ -6,10 +6,10 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
+import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
-import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
+import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import axon from './axon.js';
 import Property from './Property.js';
 

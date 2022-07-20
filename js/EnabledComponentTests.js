@@ -7,8 +7,8 @@
  */
 
 import BooleanProperty from './BooleanProperty.js';
-import Property from './Property.js';
 import EnabledComponent from './EnabledComponent.js';
+import Property from './Property.js';
 
 QUnit.module( 'EnabledComponent' );
 

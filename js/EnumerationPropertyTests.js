@@ -6,8 +6,8 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import EnumerationProperty from './EnumerationProperty.js';
 

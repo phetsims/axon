@@ -13,7 +13,7 @@
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import IProperty from './IProperty.js';
-import IReadOnlyProperty, { PropertyLinkListener, PropertyLazyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
 
 type ComparableObject = {
   equals: ( a: unknown ) => boolean;

@@ -11,8 +11,8 @@
 
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 
 class PropertyStateHandler {
 

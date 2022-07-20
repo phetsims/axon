@@ -9,8 +9,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import optionize from '../../phet-core/js/optionize.js';
-import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';

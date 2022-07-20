@@ -7,8 +7,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import optionize from '../../phet-core/js/optionize.js';
-import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
