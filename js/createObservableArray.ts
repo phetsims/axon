@@ -23,7 +23,7 @@ import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
 import Validation from './Validation.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IEmitter from './IEmitter.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
@@ -287,7 +287,7 @@ class ObservableArrayPhetioObject<T> extends PhetioObject {
    */
   public constructor( observableArray: ObservableArray<T>, providedOptions?: ObservableArrayOptions<T> ) {
 
-    const options = optionize<ObservableArrayOptions<T>, EmptyObjectType>()( {
+    const options = optionize<ObservableArrayOptions<T>, EmptySelfOptions>()( {
       phetioType: ObservableArrayIO
     }, providedOptions );
 

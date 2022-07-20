@@ -9,7 +9,7 @@
 
 import Range, { RangeStateObject } from '../../dot/js/Range.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -87,7 +87,7 @@ export default class NumberProperty extends Property<number> {
     }, providedOptions );
 
     // Defaults for rangePropertyOptions, since it depends on options.tandem
-    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptyObjectType, PropertyOptions<Range>>()( {
+    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
       phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
       phetioReadOnly: true,

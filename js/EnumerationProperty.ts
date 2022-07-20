@@ -12,7 +12,7 @@ import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 
 type SelfOptions<T extends EnumerationValue> = {
 
@@ -31,7 +31,7 @@ export default class EnumerationProperty<T extends EnumerationValue> extends Pro
       enumeration: value.enumeration
     }, providedOptions );
 
-    const options = optionize<EnumerationPropertyOptions<T>, EmptyObjectType, PropertyOptions<T>>()( {
+    const options = optionize<EnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
       validValues: firstOptions.enumeration.values,
       phetioType: Property.PropertyIO( EnumerationIO<T>( {
         enumeration: firstOptions.enumeration

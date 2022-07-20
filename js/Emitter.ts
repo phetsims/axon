@@ -10,7 +10,7 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -24,7 +24,7 @@ import IEmitter, { IEmitterListener, IEmitterParameter } from './IEmitter.js';
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
-type SelfOptions = EmptyObjectType;
+type SelfOptions = EmptySelfOptions;
 type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioDataHandler<T> implements IEmitter<T> {
