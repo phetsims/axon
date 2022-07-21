@@ -25,7 +25,6 @@ type IEmitter<T extends IEmitterParameter[] = []> = {
   removeAllListeners: () => void;
   hasListener: ( listener: IEmitterListener<T> ) => boolean;
   hasListeners: () => boolean;
-  getListenerCount: () => number;
 };
 
 export default IEmitter;

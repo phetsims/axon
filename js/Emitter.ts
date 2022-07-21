@@ -29,7 +29,7 @@ type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetio
 export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioDataHandler<T> implements IEmitter<T> {
 
   // provide Emitter functionality via composition
-  private readonly tinyEmitter: IEmitter<T>;
+  private readonly tinyEmitter: TinyEmitter<T>;
 
   public static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
 
