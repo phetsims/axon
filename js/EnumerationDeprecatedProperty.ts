@@ -9,21 +9,18 @@
 import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 
 /**
  * @deprecated
  */
-class EnumerationDeprecatedProperty extends Property {
+class EnumerationDeprecatedProperty extends Property<EnumerationDeprecated> {
+  public readonly enumeration: EnumerationDeprecated;
 
-  /**
-   * @param {EnumerationDeprecated} enumeration
-   * @param {*} initialValue - one of the values from enumeration
-   * @param {Object} [options]
-   */
-  constructor( enumeration, initialValue, options ) {
+  public constructor( enumeration: EnumerationDeprecated, initialValue: IntentionalAny, options: PropertyOptions<EnumerationDeprecated> ) {
     deprecationWarning( 'Use EnumerationProperty. EnumerationDeprecated should be exchanged for classes that extend EnumerationValue, see WilderEnumerationPatterns for examples.' );
 
     assert && assert( enumeration instanceof EnumerationDeprecated, 'likely you are using the new and improved Enumeration, better use EnumerationProperty too.' );
@@ -47,7 +44,6 @@ class EnumerationDeprecatedProperty extends Property {
 
     super( initialValue, options );
 
-    // @public (read-only)
     this.enumeration = enumeration;
   }
 }

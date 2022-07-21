@@ -16,22 +16,36 @@ QUnit.test( 'TinyEmitter can emit anything', assert => {
 
   assert.ok( true, 'Token test, because each test must have at least one assert.' );
 
-  const e1 = new TinyEmitter();
+  const e1 = new TinyEmitter<[]>();
+  // @ts-ignore
   e1.emit( 1 );
+  // @ts-ignore
   e1.emit( 2, 2 );
+  // @ts-ignore
   e1.emit( true );
+  // @ts-ignore
   e1.emit( '2, 2' );
+  // @ts-ignore
   e1.emit( undefined );
+  // @ts-ignore
   e1.emit( null );
 
   const e2 = new TinyEmitter();
-  e2.emit( new TinyEmitter(), {}, () => {} );
+  // @ts-ignore
+  e2.emit( new TinyEmitter(), {}, () => { /* empty */ } );
+  // @ts-ignore
   e2.emit( 2, 2 );
+  // @ts-ignore
   e2.emit( true );
+  // @ts-ignore
   e2.emit( '2, 2' );
+  // @ts-ignore
   e2.emit( undefined );
+  // @ts-ignore
   e2.emit( null );
-  e2.emit( new TinyEmitter(), 7, () => {} );
+  // @ts-ignore
+  e2.emit( new TinyEmitter(), 7, () => { /* empty */ } );
+  // @ts-ignore
   e2.emit( new TinyEmitter() );
 } );
 
@@ -50,7 +64,7 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
   assert.ok( x === 5, 'fired all listeners' );
 
   const e1 = new TinyEmitter();
-  e1.addListener( () => {} );
+  e1.addListener( () => { /* empty */ } );
 
   // const testEmitter = ( emitter, numberOfLoopings ) => {
   //
@@ -70,7 +84,7 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
 } );
 
 QUnit.test( 'TinyEmitter Basics', assert => {
-  const stack = [];
+  const stack: string[] = [];
   const emitter = new TinyEmitter(); // eslint-disable-line no-undef
   const a = () => {
     stack.push( 'a' );
@@ -90,22 +104,22 @@ QUnit.test( 'TinyEmitter Basics', assert => {
   assert.equal( emitter.hasListener( b ), false, 'b should have been removed' );
 
   emitter.dispose();
-  window.assert && assert.throws( () => emitter.addListener( () => {} ), 'should throw error when adding a listener to disposed' );
+  window.assert && assert.throws( () => emitter.addListener( () => { /* empty */ } ), 'should throw error when adding a listener to disposed' );
 } );
 
 QUnit.test( 'TinyEmitter Tricks', assert => {
-  const entries = [];
+  const entries: { listener: string; arg: string }[] = [];
 
-  const emitter = new TinyEmitter();
+  const emitter = new TinyEmitter<[ string ]>();
 
-  const a = arg => {
+  const a = ( arg: string ) => {
     entries.push( { listener: 'a', arg: arg } );
 
     if ( arg === 'first' ) {
       emitter.emit( 'second' );
     }
   };
-  const b = arg => {
+  const b = ( arg: string ) => {
     entries.push( { listener: 'b', arg: arg } );
 
     if ( arg === 'second' ) {
@@ -113,7 +127,7 @@ QUnit.test( 'TinyEmitter Tricks', assert => {
       emitter.emit( 'third' );
     }
   };
-  const c = arg => {
+  const c = ( arg: string ) => {
     entries.push( { listener: 'c', arg: arg } );
   };
 

@@ -13,9 +13,10 @@ import BooleanProperty from './BooleanProperty.js';
 QUnit.module( 'BooleanProperty' );
 QUnit.test( 'BooleanProperty', assert => {
 
-  let p = null;
+  let p: BooleanProperty | null = null;
 
   window.assert && assert.throws( () => {
+    // @ts-ignore
     p = new BooleanProperty( 'hello' );
   }, 'invalid initial value' );
 
@@ -24,10 +25,13 @@ QUnit.test( 'BooleanProperty', assert => {
   p.set( false );
   p.set( true );
   window.assert && assert.throws( () => {
+    // @ts-ignore
     p.set( 123 );
   }, 'invalid set value' );
 
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     p = new BooleanProperty( true, { phetioType: BooleanIO } );
   }, 'EnumerationDeprecatedProperty sets phetioType' );
 

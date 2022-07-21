@@ -15,39 +15,49 @@ QUnit.module( 'EnumerationProperty' );
 QUnit.test( 'EnumerationProperty', assert => {
 
   class Bird extends EnumerationValue {
-    static ROBIN = new Bird();
-    static JAY = new Bird();
-    static WREN = new Bird();
+    public static ROBIN = new Bird();
+    public static JAY = new Bird();
+    public static WREN = new Bird();
 
-    static enumeration = new Enumeration( Bird );
+    public static enumeration = new Enumeration( Bird );
   }
 
-  let birdProperty = null;
+  let birdProperty: EnumerationProperty<Bird> | null = null;
 
   // constructor value
   assert.ok( () => {
     birdProperty = new EnumerationProperty( Bird.ROBIN );
   }, 'good constructor value' );
   window.assert && assert.throws( () => {
+
+    //  @ts-ignore
     birdProperty = new EnumerationProperty( true );
   }, 'invalid constructor value' );
 
   // set value
   assert.ok( () => {
-    birdProperty.set( Bird.JAY );
+    birdProperty!.set( Bird.JAY );
   }, 'good set value' );
   window.assert && assert.throws( () => {
-    birdProperty.set( 5 );
+
+    // @ts-ignore
+    birdProperty!.set( 5 );
   }, 'bad set value' );
 
 
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     birdProperty = new EnumerationProperty( Bird.ROBIN, { phetioType: EnumerationIO } );
   }, 'EnumerationProperty sets phetioType' );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     birdProperty = new EnumerationProperty( Bird, { phetioType: EnumerationIO } );
   }, 'Not the Enumeration, but a value as first arg' );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     birdProperty = new EnumerationProperty( {} );
   }, 'That is not an enumeration' );
 } );
@@ -55,17 +65,17 @@ QUnit.test( 'EnumerationProperty', assert => {
 QUnit.test( 'EnumerationIO validation', assert => {
 
     class Bird1 extends EnumerationValue {
-      static ROBIN = new Bird1();
-      static JAY = new Bird1();
-      static WREN = new Bird1();
-      static enumeration = new Enumeration( Bird1 );
+      public static ROBIN = new Bird1();
+      public static JAY = new Bird1();
+      public static WREN = new Bird1();
+      public static enumeration = new Enumeration( Bird1 );
     }
 
     class Bird2 extends EnumerationValue {
-      static ROBIN = new Bird2();
-      static JAY = new Bird2();
-      static WREN = new Bird2();
-      static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
+      public static ROBIN = new Bird2();
+      public static JAY = new Bird2();
+      public static WREN = new Bird2();
+      public static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
     }
 
     assert.ok( Bird1 !== Bird2, 'different Enumerations' );
@@ -92,17 +102,17 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 
 
   class Bird1 extends EnumerationValue {
-    static ROBIN = new Bird1();
-    static JAY = new Bird1();
-    static WREN = new Bird1();
-    static enumeration = new Enumeration( Bird1 );
+    public static ROBIN = new Bird1();
+    public static JAY = new Bird1();
+    public static WREN = new Bird1();
+    public static enumeration = new Enumeration( Bird1 );
   }
 
   class Bird2 extends EnumerationValue {
-    static ROBIN = new Bird2();
-    static JAY = new Bird2();
-    static WREN = new Bird2();
-    static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
+    public static ROBIN = new Bird2();
+    public static JAY = new Bird2();
+    public static WREN = new Bird2();
+    public static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
   }
 
   assert.ok( Bird1 !== Bird2, 'different Enumerations' );
@@ -128,16 +138,16 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 QUnit.test( 'Subtyping EnumerationValues', assert => {
 
   class Raptor extends EnumerationValue {
-    static HAWK = new Raptor();
-    static EAGLE = new Raptor();
-    static enumeration = new Enumeration( Raptor, { phetioDocumentation: 'the second one' } );
+    public static HAWK = new Raptor();
+    public static EAGLE = new Raptor();
+    public static enumeration = new Enumeration( Raptor, { phetioDocumentation: 'the second one' } );
   }
 
   class Bird extends Raptor {
-    static ROBIN = new Bird();
-    static JAY = new Bird();
-    static WREN = new Bird();
-    static enumeration = new Enumeration( Bird, {
+    public static ROBIN = new Bird();
+    public static JAY = new Bird();
+    public static WREN = new Bird();
+    public static override enumeration = new Enumeration( Bird, {
       instanceType: Raptor
     } );
   }

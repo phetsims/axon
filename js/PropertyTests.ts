@@ -7,28 +7,36 @@
  */
 
 import Tandem from '../../tandem/js/Tandem.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import Multilink from './Multilink.js';
-import NumberProperty from './NumberProperty.js';
+import NumberProperty, { NumberPropertyState } from './NumberProperty.js';
 import Property from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 QUnit.module( 'Property' );
 
 QUnit.test( 'Test unlink', assert => {
   const p = new Property( 1 );
+
+  // @ts-ignore
   const startingPListenerCount = p.getListenerCount();
-  const a = function( a ) {};
-  const b = function( b ) {};
-  const c = function( c ) {};
+  const a = function( a: IntentionalAny ) { /* empty */ };
+  const b = function( b: IntentionalAny ) { /* empty */ };
+  const c = function( c: IntentionalAny ) { /* empty */ };
   p.link( a );
   p.link( b );
   p.link( c );
+
+  // @ts-ignore
   assert.equal( p.getListenerCount(), 3 + startingPListenerCount, 'should have 3 observers now' );
   p.unlink( b );
   assert.ok( p.hasListener( a ), 'should have removed b' );
   assert.ok( p.hasListener( c ), 'should have removed b' );
+
+  // @ts-ignore
   assert.equal( p.getListenerCount(), 2 + startingPListenerCount, 'should have removed an item' );
 } );
 
@@ -69,20 +77,23 @@ QUnit.test( 'Test defer', assert => {
   property.value = 2;
   assert.equal( property.value, 0, 'should have original value' );
   const update = property.setDeferred( false );
+  assert.ok( update, 'should have an update function returned' );
   assert.equal( callbacks, 0, 'should not call back while deferred' );
   assert.equal( property.value, 2, 'should have new value' );
-  update();
+  update!();
   assert.equal( callbacks, 1, 'should have been called back after update' );
   assert.equal( property.value, 2, 'should take final value' );
 } );
 
 QUnit.test( 'Property ID checks', assert => {
+
+  // @ts-ignore, access of private member from tests seems better to ts-ignore
   assert.ok( new Property( 1 ).id !== new Property( 1 ).id, 'Properties should have unique IDs' ); // eslint-disable-line no-self-compare
 } );
 
 QUnit.test( 'Property link parameters', assert => {
   const p = new Property( 1 );
-  const calls = [];
+  const calls: { newValue: number; oldValue: number | null; property: IReadOnlyProperty<number> }[] = [];
   p.link( ( newValue, oldValue, property ) => {
     calls.push( {
       newValue: newValue,
@@ -121,9 +132,9 @@ QUnit.test( 'Property.linkAttribute', assert => {
 QUnit.test( 'Property value validation', assert => {
 
   // Type that is specific to valueType tests
-  function TestType() {}
+  class TestType {}
 
-  let property = null;
+  let property: Property<string | TestType | number> | null = null;
   let options = {};
 
   // valueType is a primitive type (typeof validation)
@@ -136,9 +147,11 @@ QUnit.test( 'Property value validation', assert => {
   window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.valueType typeof validation' );
-  property = new Property( 'horizontal', options );
+  property = new Property<string | TestType | number>( 'horizontal', options );
   property.set( 'vertical' );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     property.set( 0 );
   }, 'invalid set value with options.valueType typeof validation' );
 
@@ -152,6 +165,8 @@ QUnit.test( 'Property value validation', assert => {
   property = new Property( new TestType(), options );
   property.set( new TestType() );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     property.set( 0 );
   }, 'invalid set value with options.valueType instanceof validation' );
 
@@ -160,32 +175,41 @@ QUnit.test( 'Property value validation', assert => {
     validValues: [ 1, 2, 3 ]
   };
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     new Property( 0, { validValues: 0 } ); // eslint-disable-line
   }, 'options.validValues is invalid' );
   window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.validValues' );
-  property = new Property( 1, options );
+  property = new Property<string | TestType | number>( 1, options );
   property.set( 3 );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     property.set( 4 );
   }, 'invalid set value with options.validValues' );
 
   // isValidValues
   options = {
+
+    // @ts-ignore
     isValidValue: function( value ) {
       return ( value > 0 && value < 4 );
     }
   };
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     new Property( 0, { isValidValue: 0 } ); // eslint-disable-line
   }, 'options.isValidValue is invalid' );
   window.assert && assert.throws( () => {
     new Property( 0, options ); // eslint-disable-line
   }, 'invalid initial value with options.isValidValue' );
-  property = new Property( 1, options );
+  property = new Property<string | TestType | number>( 1, options );
   property.set( 3 );
   window.assert && assert.throws( () => {
+    // @ts-ignore
     property.set( 4 );
   }, 'invalid set value with options.isValidValue' );
 
@@ -193,15 +217,18 @@ QUnit.test( 'Property value validation', assert => {
   options = {
     valueType: 'string',
     validValues: [ 'bob', 'joe', 'sam' ],
+    // @ts-ignore
     isValidValue: function( value ) {
       return value.length === 3;
     }
   };
-  property = new Property( 'bob', options );
+  property = new Property<string | TestType | number>( 'bob', options );
   window.assert && assert.throws( () => {
+    // @ts-ignore
     property.set( 0 );
   }, 'invalid set value with compatible combination of validation options' );
   window.assert && assert.throws( () => {
+    // @ts-ignore
     property.set( 'ted' );
   }, 'invalid set value with compatible combination of validation options' );
 
@@ -210,18 +237,19 @@ QUnit.test( 'Property value validation', assert => {
   options = {
     valueType: 'number',
     validValues: [ 'bob', 'joe', 'sam' ],
+    // @ts-ignore
     isValidValue: function( value ) {
       return value.length === 4;
     }
   };
   window.assert && assert.throws( () => {
-    property = new Property( 0, options );
+    property = new Property<string | TestType | number>( 0, options );
   }, 'invalid initial value with incompatible combination of validation options' );
   window.assert && assert.throws( () => {
-    property = new Property( 'bob', options );
+    property = new Property<string | TestType | number>( 'bob', options );
   }, 'invalid initial value with incompatible combination of validation options' );
   window.assert && assert.throws( () => {
-    property = new Property( 'fred', options );
+    property = new Property<string | TestType | number>( 'fred', options );
   }, 'invalid initial value with incompatible combination of validation options' );
 
   assert.ok( true, 'so we have at least 1 test in this set' );
@@ -235,6 +263,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const phetioType = NumberProperty.NumberPropertyIO;
     const propertyValue = 123;
     const validValues = [ 0, 1, 2, 3, propertyValue ];
+
+    // @ts-ignore
     tandem.addPhetioObject = function( instance, options ) {
 
       // PhET-iO operates under the assumption that nothing will access a PhetioObject until the next animation frame
@@ -243,7 +273,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       setTimeout( () => { // eslint-disable-line bad-sim-text
 
         // Run in the next frame after the object finished getting constructed
-        const stateObject = phetioType.toStateObject( instance );
+        const stateObject = phetioType.toStateObject( instance ) as NumberPropertyState;
         assert.equal( stateObject.value, propertyValue, 'toStateObject should match' );
         assert.deepEqual( stateObject.validValues, validValues, 'toStateObject should match' );
         done();

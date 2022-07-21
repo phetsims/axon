@@ -15,40 +15,53 @@ QUnit.module( 'EmitterIO' );
 
 QUnit.test( 'test EmitterIO', assert => {
 
-  let emitter = null;
+  let emitter: Emitter | null = null;
 
   if ( window.assert ) {
 
     assert.throws( () => {
       emitter = new Emitter( {
+
+        // @ts-ignore
         phetioType: Emitter.EmitterIO( [] )
       } );
     }, 'cannot supply default EmitterIO type' );
 
     assert.throws( () => {
       emitter = new Emitter( {
+        // @ts-ignore
         phetioType: IOType.ObjectIO
       } );
+      console.log( emitter );
     }, 'cannot supply any phetioType' );
   }
 
-  emitter = new Emitter( {
+  let emitter2 = new Emitter<[ number ]>( {
     parameters: [
       { phetioType: NumberIO, name: 'myNumber' }
     ]
   } );
-  emitter.emit( 4 );
-  emitter.emit( 10 );
-  window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string' );
-  window.assert && assert.throws( () => emitter.emit( null ), 'cannot emit string' );
+  emitter2.emit( 4 );
+  emitter2.emit( 10 );
+  // @ts-ignore
+  window.assert && assert.throws( () => emitter2.emit( 'string' ), 'cannot emit string' );
+  // @ts-ignore
+  window.assert && assert.throws( () => emitter2.emit( null ), 'cannot emit string' );
 
-  const validator = { isValidValue: v => v < 3 };
-  emitter = new Emitter( {
+  const validator = { isValidValue: ( v: number ) => v < 3 };
+  emitter2 = new Emitter<[ number ]>( {
+
+    // @ts-ignore
     parameters: [ merge( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]
   } );
-  assert.ok( emitter.parameters[ 0 ].isValidValue === validator.isValidValue, 'should use specified validator instead of NumberIO\'s' );
-  emitter.emit( 2 );
-  window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string with validator' );
-  window.assert && assert.throws( () => emitter.emit( 'a' ), 'cannot emit string with  that validator' );
-  window.assert && assert.throws( () => emitter.emit( 4 ), 'cannot emit incorrect number' );
+
+  // @ts-ignore
+  assert.ok( emitter2!.parameters[ 0 ].isValidValue === validator.isValidValue, 'should use specified validator instead of NumberIO\'s' );
+  emitter2!.emit( 2 );
+
+  // @ts-ignore
+  window.assert && assert.throws( () => emitter2!.emit( 'string' ), 'cannot emit string with validator' );
+  // @ts-ignore
+  window.assert && assert.throws( () => emitter2!.emit( 'a' ), 'cannot emit string with  that validator' );
+  window.assert && assert.throws( () => emitter2!.emit( 4 ), 'cannot emit incorrect number' );
 } );

@@ -17,7 +17,7 @@ import ReadOnlyProperty from './ReadOnlyProperty.js';
 class PropertyStateHandler {
 
   /**
-   * @param {PhetioStateEngine|undefined} phetioStateEngine - not provided for tests
+   * @param {PhetioStateEngine|undefined} [phetioStateEngine] - not provided for tests
    */
   constructor( phetioStateEngine ) {
 

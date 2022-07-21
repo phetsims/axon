@@ -10,7 +10,7 @@
 import Range from '../../dot/js/Range.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import BooleanProperty from './BooleanProperty.js';
-import NumberProperty from './NumberProperty.js';
+import NumberProperty, { NumberPropertyState } from './NumberProperty.js';
 import Property from './Property.js';
 import PropertyStateHandler from './PropertyStateHandler.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
@@ -89,7 +89,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
   QUnit.test( 'Order dependency between NumberProperty and its Range', assert => {
     assert.ok( true, 'always pass' );
-    const rangeProperty = new Property( new Range( 0, 1 ), {
+    const rangeProperty = new Property<Range | null>( new Range( 0, 1 ), {
       tandem: Tandem.ROOT_TEST.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
       phetioType: Property.PropertyIO( Range.RangeIO )
@@ -112,9 +112,10 @@ if ( Tandem.PHET_IO_ENABLED ) {
       numberProperty, PropertyStatePhase.UNDEFER
     );
 
-    const serializedValue = NumberProperty.NumberPropertyIO.toStateObject( numberProperty );
-    serializedValue.range.min = 4;
-    serializedValue.range.max = 8;
+    const serializedValue = NumberProperty.NumberPropertyIO.toStateObject( numberProperty ) as NumberPropertyState;
+    assert.ok( serializedValue.range, 'gotta have a range' );
+    serializedValue.range!.min = 4;
+    serializedValue.range!.max = 8;
     serializedValue.value = 7;
 
     phet.phetio.phetioEngine.phetioStateEngine.setState( {

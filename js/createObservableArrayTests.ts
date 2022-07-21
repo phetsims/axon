@@ -8,7 +8,8 @@
 
 import Random from '../../dot/js/Random.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import createObservableArray from './createObservableArray.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import createObservableArray, { ObservableArray } from './createObservableArray.js';
 
 QUnit.module( 'createObservableArray' );
 
@@ -16,7 +17,7 @@ QUnit.test( 'Hello', assert => {
 
   assert.ok( 'first test' );
 
-  const run = ( name, command ) => {
+  const run = ( name: string, command: () => IntentionalAny ): IntentionalAny => {
     console.log( `START: ${name}` );
     const result = command();
     console.log( `END: ${name}\n\n` );
@@ -43,9 +44,9 @@ QUnit.test( 'Hello', assert => {
 } );
 
 // Creates an array that is tested with the given modifiers against the expected results.
-const testArrayEmitters = ( assert, modifier, expected ) => {
+const testArrayEmitters = ( assert: Assert, modifier: ( array: ObservableArray<IntentionalAny> ) => void, expected: IntentionalAny ): void => {
   const array = createObservableArray();
-  const deltas = [];
+  const deltas: Array<{ type: string; value: IntentionalAny }> = [];
   array.elementAddedEmitter.addListener( e => deltas.push( { type: 'added', value: e } ) );
   array.elementRemovedEmitter.addListener( e => deltas.push( { type: 'removed', value: e } ) );
   modifier( array );
@@ -85,7 +86,10 @@ QUnit.test( 'Test delete', assert => {
     array.push( 'test' );
     delete array[ 0 ];
 
+    // @ts-ignore
     array.hello = 'there';
+
+    // @ts-ignore
     delete array.hello;
 
     array[ -7 ] = 'time';
@@ -245,7 +249,7 @@ QUnit.test( 'Test createObservableArray.unshift', assert => {
 QUnit.test( 'Test createObservableArray.copyWithin', assert => {
   testArrayEmitters( assert, array => {
     array.push( 1, 2, 3, 4, 5 );
-    array.copyWithin( -2 ); // [1, 2, 3, 1, 2]
+    array.copyWithin( -2, 0 ); // [1, 2, 3, 1, 2]
   }, [
     { type: 'added', value: 1 },
     { type: 'added', value: 2 },
@@ -449,8 +453,10 @@ QUnit.test( 'Test constructor arguments', assert => {
 
 } );
 
+type TestFunction = () => void;
+
 QUnit.test( 'Test function values', assert => {
-  const array = createObservableArray();
+  const array = createObservableArray<TestFunction>();
   let number = 7;
   array.push( () => {
     number++;

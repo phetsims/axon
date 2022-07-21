@@ -12,7 +12,12 @@
 
 import axon from './axon.js';
 
-const units = {
+type Units = {
+  isValidUnits: ( unit: string ) => boolean;
+  values: string[];
+};
+
+const units: Units = {
   values: [
     '%', // percent
     'A', // amperes
