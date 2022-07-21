@@ -14,8 +14,8 @@ import merge from '../../phet-core/js/merge.js';
 import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
 import IProperty from './IProperty.js';
+import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -47,7 +47,7 @@ export type EnabledComponentOptions = {
 
 export default class EnabledComponent {
 
-  public enabledProperty: IReadOnlyProperty<boolean>;
+  public enabledProperty: IProperty<boolean>;
 
   private disposeEnabledComponent: () => void;
 
@@ -60,6 +60,8 @@ export default class EnabledComponent {
     assert && options.enabledPropertyOptions && assert( !( !options.phetioEnabledPropertyInstrumented && options.enabledPropertyOptions.tandem ),
       'incompatible options. Cannot specify phetioEnabledPropertyInstrumented opt out and a Tandem via enabledPropertyOptions.' );
 
+    // @ts-ignore There is no way without a plethora of parameterized types to convey if this enabledProperty is
+    // settable, so accept unsettable, and typecast to settable.
     this.enabledProperty = options.enabledProperty || new EnabledProperty( options.enabled, merge( {
       tandem: options.phetioEnabledPropertyInstrumented ? options.tandem.createTandem( EnabledProperty.TANDEM_NAME ) : Tandem.OPT_OUT
     }, options.enabledPropertyOptions ) );
@@ -71,7 +73,7 @@ export default class EnabledComponent {
 
   private setEnabled( enabled: boolean ): void {
     assert && assert( this.enabledProperty.isSettable(), 'cannot set enabledProperty' );
-    ( this.enabledProperty as IProperty<boolean> ).value = enabled;
+    this.enabledProperty.value = enabled;
   }
 
   public set enabled( value: boolean ) { this.setEnabled( value ); }
