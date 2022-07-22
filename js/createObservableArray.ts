@@ -22,9 +22,8 @@ import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
-import Validation, { Validator } from './Validation.js';
+import Validation from './Validation.js';
 import IEmitter from './IEmitter.js';
-import { Parameter } from '../../tandem/js/PhetioDataHandler.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -40,7 +39,7 @@ export type ObservableArrayOptions<T> = {
   phetioType?: IOType;
   phetioState?: boolean;
   phetioDocumentation?: string;
-} & Validator<T>;
+};
 type ObservableArray<T> = {
   get: ( index: number ) => T;
   addItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
@@ -80,7 +79,7 @@ type PrivateObservableArray<T> = {
   _observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
 } & ObservableArray<T>;
 
-type SpecifiedObservableArrayOptions<T> = StrictOmit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation' | keyof Validator>;
+type SpecifiedObservableArrayOptions<T> = StrictOmit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
 
 const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> ): ObservableArray<T> => {
 
@@ -95,7 +94,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     tandem: Tandem.OPTIONAL
   }, providedOptions );
 
-  let emitterParameterOptions: Parameter | null = null;
+  let emitterParameterOptions = null;
   if ( options.phetioType ) {
 
     assert && assert( options.phetioType.typeName.startsWith( 'ObservableArrayIO' ) );
@@ -103,9 +102,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   }
   // NOTE: Improve with Validation
   else if ( !Validation.getValidatorValidationError( options ) ) {
-    const validator = _.pick( options, Validation.VALIDATOR_KEYS ) as Validator<T>;
-
-    // @ts-ignore, MK Doesn't know how unknown has gotten in here.
+    const validator = _.pick( options, Validation.VALIDATOR_KEYS );
     emitterParameterOptions = merge( { name: 'value' }, validator );
   }
   else {
@@ -115,13 +112,13 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // notifies when an element has been added
   const elementAddedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
-    parameters: [ emitterParameterOptions! ]
+    parameters: [ emitterParameterOptions ]
   } );
 
   // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
-    parameters: [ emitterParameterOptions! ]
+    parameters: [ emitterParameterOptions ]
   } );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)

@@ -25,44 +25,33 @@ QUnit.test( 'Test stale values in DerivedProperty', assert => {
 QUnit.test( 'Test DerivedProperty.unlink', assert => {
 
   const widthProperty = new Property( 2 );
-  // @ts-ignore
   const startingWidthListenerCount = widthProperty.getListenerCount();
   const heightProperty = new Property( 3 );
-  // @ts-ignore
   const startingHeightListenerCount = heightProperty.getListenerCount();
   const areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
     ( ( width, height ) => width * height ) );
-  const listener = function( area: number ) { /*console.log( 'area = ' + area );*/ };
+  const listener = function( area ) { /*console.log( 'area = ' + area );*/ };
   areaProperty.link( listener );
 
-  // @ts-ignore
   assert.equal( widthProperty.getListenerCount(), 1 + startingWidthListenerCount );
-  // @ts-ignore
   assert.equal( heightProperty.getListenerCount(), 1 + startingHeightListenerCount );
-  // @ts-ignore
-  assert.equal( areaProperty!.dependencies.length, 2 );
+  assert.equal( areaProperty.dependencies.length, 2 );
 
   // Unlink the listener
   areaProperty.unlink( listener );
   areaProperty.dispose();
 
-  // @ts-ignore
   assert.equal( widthProperty.getListenerCount(), startingWidthListenerCount );
-  // @ts-ignore
   assert.equal( heightProperty.getListenerCount(), startingHeightListenerCount );
 
-  // @ts-ignore
   assert.equal( areaProperty.dependencies, null );
-  // @ts-ignore
   assert.equal( areaProperty.dependencyListeners, null );
-  // @ts-ignore
   assert.equal( areaProperty.dependencyValues, null );
 } );
 
 QUnit.test( 'DerivedProperty.valueEquals', assert => {
   const propA = new Property( 'a' );
   const propB = new Property( 'b' );
-  // @ts-ignore
   const prop = DerivedProperty.valueEquals( propA, propB );
   assert.equal( prop.value, false );
   propA.value = 'b';
@@ -81,10 +70,9 @@ QUnit.test( 'Test defer', assert => {
   property1.value = 2;
   assert.ok( derivedProperty.value === 2, 'same value even when set to new' );
   const update = property1.setDeferred( false );
-  assert.ok( update, 'should have a function here' );
   assert.ok( property1.value === 2, 'property has new value now' );
   assert.ok( derivedProperty.value === 2, 'but the derivedProperty doesnt' );
-  update!();
+  update();
   assert.ok( derivedProperty.value === 4, 'now derivedProperty was updated' );
 
   // test the DerivedProperty being deferred
@@ -93,9 +81,8 @@ QUnit.test( 'Test defer', assert => {
   property1.value = 4;
   assert.ok( derivedProperty.value === 4, 'still 4 after update' );
   const updateAgain = derivedProperty.setDeferred( false );
-  assert.ok( updateAgain, 'should have a function here again' );
   assert.ok( derivedProperty.value === 6, 'now has the correct value' );
-  updateAgain!();
+  updateAgain();
   assert.ok( derivedProperty.value === 6, 'nothing changed' );
 } );
 
@@ -125,7 +112,6 @@ QUnit.test( 'DerivedProperty and/or', assert => {
   assert.equal( or.value, true );
 
   // fail: setting a dependency to a non-boolean value
-  // @ts-ignore
   window.assert && assert.throws( () => { propA.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );

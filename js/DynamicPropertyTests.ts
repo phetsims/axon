@@ -88,14 +88,12 @@ QUnit.test( 'Bidirectional', assert => {
   const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
   const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } ); // eslint-disable-line no-undef
 
-  // @ts-ignore
   dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
   assert.equal( firstProperty.value, 2 );
 
   numberPropertyProperty.value = secondProperty; // change which property is active
   assert.equal( dynamicProperty.value, 10 );
 
-  // @ts-ignore
   dynamicProperty.value = 0;
   assert.equal( secondProperty.value, 0 );
   assert.equal( firstProperty.value, 2 );
@@ -118,14 +116,12 @@ QUnit.test( 'Mapping (with bidirectional)', assert => {
   assert.equal( typeof dynamicProperty.value, 'string' );
   assert.equal( dynamicProperty.value, '5' );
 
-  // @ts-ignore
   dynamicProperty.value = '2';
   assert.equal( firstProperty.value, 2 );
 
   numberPropertyProperty.value = secondProperty; // change which property is active
   assert.equal( dynamicProperty.value, '10' );
 
-  // @ts-ignore
   dynamicProperty.value = '0';
   assert.equal( secondProperty.value, 0 );
   assert.equal( firstProperty.value, 2 );
@@ -137,7 +133,6 @@ QUnit.test( 'Attempted setters to nonbidrectional', assert => {
   const dynamicProperty = new DynamicProperty( propertyProperty );
 
   window.assert && assert.throws( () => {
-    // @ts-ignore
     dynamicProperty.value = 10;
   }, /bidirectional/, 'Should not be able to set a non-bidrectional DynamicProperty' );
 
@@ -162,7 +157,6 @@ QUnit.test( 'Bidirectional prevention of pingponging', assert => {
   const dynamicProperty = new DynamicProperty( wrapperProperty, {
     bidirectional: true,
     // NOT a true inverse
-    // @ts-ignore
     map: n => n + 2,
     inverseMap: n => n - 1
   } );
@@ -174,7 +168,6 @@ QUnit.test( 'Bidirectional prevention of pingponging', assert => {
   assert.equal( sourceProperty.value, 0 );
   assert.equal( dynamicProperty.value, 2 );
 
-  // @ts-ignore
   dynamicProperty.value = 3;
   assert.equal( sourceProperty.value, 2 );
   assert.equal( dynamicProperty.value, 3 );
@@ -183,7 +176,6 @@ QUnit.test( 'Bidirectional prevention of pingponging', assert => {
   assert.equal( sourceProperty.value, 5 );
   assert.equal( dynamicProperty.value, 7 );
 
-  // @ts-ignore
   dynamicProperty.value = -10;
   assert.equal( sourceProperty.value, -11 );
   assert.equal( dynamicProperty.value, -10 );

@@ -7,7 +7,7 @@
  */
 
 import BooleanProperty from './BooleanProperty.js';
-import EnabledComponent, { EnabledComponentOptions } from './EnabledComponent.js';
+import EnabledComponent from './EnabledComponent.js';
 import Property from './Property.js';
 
 QUnit.module( 'EnabledComponent' );
@@ -15,7 +15,7 @@ QUnit.module( 'EnabledComponent' );
 QUnit.test( 'EnabledComponent into Object', assert => {
 
   class EnabledObject extends EnabledComponent {
-    public constructor( options?: EnabledComponentOptions ) {
+    constructor( options ) {
       super( options );
     }
   }
@@ -23,7 +23,6 @@ QUnit.test( 'EnabledComponent into Object', assert => {
   const object = new EnabledObject();
   testEnabledComponent( assert, object, 'default enabledProperty created' );
 
-  // @ts-ignore
   object.disposeEnabledComponent();
   assert.ok( object.enabledProperty.isDisposed, 'enabledProperty should be disposed because it was not passed in' );
 
@@ -33,15 +32,17 @@ QUnit.test( 'EnabledComponent into Object', assert => {
   } );
   testEnabledComponent( assert, object, 'passed in enabledProperty' );
   assert.ok( myEnabledProperty === passedInEnabledPropertyObject.enabledProperty, 'passed in should be the same' );
-  // @ts-ignore
   passedInEnabledPropertyObject.disposeEnabledComponent();
   assert.ok( !myEnabledProperty.isDisposed, 'do not dispose my enabledProperty!' );
 } );
 
 /**
  * Test basic functionality for an object that uses EnabledComponent
+ * @param {Object} assert - from QUnit
+ * @param {Object} enabledObject - subtype of EnabledComponent
+ * @param {string} message - to tack onto assert messages
  */
-function testEnabledComponent( assert: Assert, enabledObject: EnabledComponent, message: string ) {
+function testEnabledComponent( assert, enabledObject, message ) {
   assert.ok( enabledObject.enabledProperty instanceof Property, `${message}: enabledProperty should exist` );
   assert.ok( enabledObject.enabledProperty.value === enabledObject.enabled, `${message}: test getter` );
 

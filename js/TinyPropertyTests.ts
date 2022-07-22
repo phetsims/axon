@@ -24,14 +24,10 @@ QUnit.test( 'TinyProperty Basics', assert => {
 QUnit.test( 'TinyProperty onBeforeNotify', assert => {
 
   class MyObservedObject {
-    public hasFun: boolean | string | number;
-    public hadFun: boolean | string | number | null;
-    public hasFunProperty: TinyProperty<boolean | string | number>;
-
-    public constructor() {
+    constructor() {
       this.hasFun = false;
       this.hadFun = false;
-      this.hasFunProperty = new TinyProperty<boolean | string | number>( false, ( newValue, oldValue ) => {
+      this.hasFunProperty = new TinyProperty( false, ( newValue, oldValue ) => {
         this.hasFun = newValue;
         this.hadFun = oldValue;
       } );

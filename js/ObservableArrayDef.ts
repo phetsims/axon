@@ -7,7 +7,6 @@
  */
 
 import axon from './axon.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // TODO https://github.com/phetsims/axon/issues/331 WebStorm is having problems with {ObservableArrayDef} vs {Array} params
 /**
@@ -21,10 +20,12 @@ const ObservableArrayDef = {
 
   /**
    * Returns true if the argument has the properties that an ObservableArrayDef should have.
+   * @public
+   *
+   * @returns {boolean}
    */
-  isObservableArray( observableArray: IntentionalAny ): boolean {
+  isObservableArray( observableArray ) {
 
-    // @ts-ignore
     return Array.isArray( observableArray ) && observableArray.elementAddedEmitter && observableArray.elementRemovedEmitter && observableArray.lengthProperty;
   }
 };
