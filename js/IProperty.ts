@@ -1,5 +1,6 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IReadOnlyProperty from './IReadOnlyProperty.js';
 
 /**
@@ -10,8 +11,9 @@ import IReadOnlyProperty from './IReadOnlyProperty.js';
  */
 
 // See comments in Property.ts / TinyProperty.ts
-type IProperty<T> = IReadOnlyProperty<T> & {
+type IProperty<T> = StrictOmit<IReadOnlyProperty<T>, 'value'> & {
   set( value: T ): void;
   set value( value: T );
+  get value(): T;
 };
 export default IProperty;
