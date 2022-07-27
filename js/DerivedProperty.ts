@@ -219,6 +219,15 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): DerivedProperty<boolean, boolean, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
     return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
+
+  /**
+   * Create a DerivedProperty from any number of dependencies.  This is parallel to Multilink.multilinkAny
+   */
+  public static deriveAny<T>( dependencies: Array<IReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
+
+    // @ts-ignore
+    return new DerivedProperty( dependencies, providedOptions );
+  }
 }
 
 const andFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
