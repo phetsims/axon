@@ -249,10 +249,10 @@ export default class NumberProperty extends Property<number> {
     parameterTypes: [ NumberIO ],
     documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
       VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
-    toStateObject: ( numberProperty: NumberProperty ) => {
+    toStateObject: numberProperty => {
       return numberProperty.toStateObject();
     },
-    applyState: ( numberProperty: NumberProperty, stateObject: NumberPropertyState ) => {
+    applyState: ( numberProperty, stateObject ) => {
       // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
 
       PropertyIOImpl.applyState( numberProperty, stateObject );

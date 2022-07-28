@@ -478,11 +478,11 @@ ReadOnlyProperty.CHANGED_EVENT_NAME = 'changed';
 // the parameter type, so that it is only created once
 const cache = new Map();
 
-export type ReadOnlyPropertyState<T> = {
-  value: T;
+export type ReadOnlyPropertyState<StateType> = {
+  value: StateType;
 
   // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-  validValues: T[] | null;
+  validValues: StateType[] | null;
 
   units: string | null;
 };
@@ -491,11 +491,11 @@ export type ReadOnlyPropertyState<T> = {
  * An observable Property that triggers notifications when the value changes.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
+ReadOnlyProperty.PropertyIO = <T, StateType>( parameterType: IOType<T, StateType> ) => {
   assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<T>>( `PropertyIO<${parameterType.typeName}>`, {
+    cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<StateType>>( `PropertyIO<${parameterType.typeName}>`, {
 
       // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
       // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
@@ -506,9 +506,9 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
       methodOrder: [ 'link', 'lazyLink' ],
       events: [ 'changed' ],
       parameterTypes: [ parameterType ],
-      toStateObject: ( property: ReadOnlyProperty<T> ) => {
+      toStateObject: property => {
         assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-        const stateObject = {
+        const stateObject: ReadOnlyPropertyState<StateType> = {
           value: parameterType.toStateObject( property.value ),
 
           // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
@@ -520,14 +520,14 @@ ReadOnlyProperty.PropertyIO = <T>( parameterType: IOType ) => {
 
         return stateObject;
       },
-      applyState: ( property: ReadOnlyProperty<T>, stateObject: ReadOnlyPropertyState<T> ) => {
+      applyState: ( property, stateObject ) => {
         const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
         assert && assert( property.units === units, 'Property units do not match' );
         assert && assert( property.isSettable(), 'Property should be settable' );
         ( property as Property<T> ).set( parameterType.fromStateObject( stateObject.value ) );
 
         if ( stateObject.validValues ) {
-          property.validValues = stateObject.validValues.map( ( validValue: T ) => parameterType.fromStateObject( validValue ) );
+          property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
         }
       },
       stateSchema: {
