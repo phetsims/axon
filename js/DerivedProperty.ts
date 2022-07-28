@@ -224,9 +224,11 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * Create a DerivedProperty from any number of dependencies.  This is parallel to Multilink.multilinkAny
    */
   public static deriveAny<T>( dependencies: Array<IReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
+    return new DerivedProperty(
+      // @ts-ignore
+      dependencies,
 
-    // @ts-ignore
-    return new DerivedProperty( dependencies, providedOptions );
+      derivation, providedOptions );
   }
 }
 
