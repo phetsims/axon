@@ -19,6 +19,8 @@ type EmitContext<T extends IntentionalAny[]> = {
   listenerArray?: IEmitterListener<T>[];
 };
 
+let maxListenerCount = 0;
+
 export default class TinyEmitter<T extends IEmitterParameter[] = []> implements IEmitter<T> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
@@ -124,6 +126,15 @@ export default class TinyEmitter<T extends IEmitterParameter[] = []> implements 
     this.listeners.add( listener );
 
     this.changeCount && this.changeCount( 1 );
+
+    if ( assert && window.phet?.chipper && isFinite( phet.chipper.queryParameters.listenerLimit ) ) {
+      if ( maxListenerCount < this.listeners.size ) {
+        maxListenerCount = this.listeners.size;
+        console.log( maxListenerCount );
+        assert( maxListenerCount <= phet.chipper.queryParameters.listenerLimit,
+          `listener count of ${maxListenerCount} above ?listenerLimit=${phet.chipper.queryParameters.listenerLimit}` );
+      }
+    }
   }
 
   /**
