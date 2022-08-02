@@ -19,12 +19,14 @@ type IEmitter<T extends IEmitterParameter[] = []> = {
 
   // For all the methods, please see documentation in Emitter.ts
   emit: ( ...args: T ) => void;
+
   addListener: ( listener: IEmitterListener<T> ) => void;
-  removeListener: ( listener: IEmitterListener<T> ) => void;
-  dispose: () => void;
-  removeAllListeners: () => void;
   hasListener: ( listener: IEmitterListener<T> ) => boolean;
-  hasListeners: () => boolean;
+
+  removeListener: ( listener: IEmitterListener<T> ) => void;
+  removeAllListeners: () => void;
+
+  dispose: () => void;
 };
 
 export default IEmitter;
