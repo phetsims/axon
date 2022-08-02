@@ -93,8 +93,8 @@ export default class NumberProperty extends Property<number> {
       tandem: options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME )
     }, options.rangePropertyOptions );
 
-    assert && assert( options.rangePropertyOptions.tandem!.name === RANGE_PROPERTY_TANDEM_NAME,
-      `the tandem name must be ${RANGE_PROPERTY_TANDEM_NAME}` );
+    assert && assert( !options.rangePropertyOptions.tandem!.supplied || options.rangePropertyOptions.tandem!.name === RANGE_PROPERTY_TANDEM_NAME,
+      `rangePropertyOptions.tandem.name must be ${RANGE_PROPERTY_TANDEM_NAME}: ${options.rangePropertyOptions.tandem!.name}` );
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
@@ -127,8 +127,9 @@ export default class NumberProperty extends Property<number> {
     this.numberType = options.numberType;
     this.rangeProperty = rangeProperty;
 
-    assert && Tandem.VALIDATION && this.isPhetioInstrumented() && assert( this.rangeProperty.isPhetioInstrumented(),
-      'rangeProperty must be instrument if NumberProperty is instrumented' );
+    if ( assert && Tandem.VALIDATION && this.rangeProperty.isPhetioInstrumented() ) {
+      assert && assert( this.isPhetioInstrumented(), 'NumberProperty must be phet-io instrumented if the range is' );
+    }
 
     const rangePropertyObserver = () => {
       validate( this.value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
