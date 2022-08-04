@@ -19,6 +19,7 @@ type EmitContext<T extends IntentionalAny[]> = {
   listenerArray?: IEmitterListener<T>[];
 };
 
+// Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
 let maxListenerCount = 0;
 
 export default class TinyEmitter<T extends IEmitterParameter[] = []> implements IEmitter<T> {
