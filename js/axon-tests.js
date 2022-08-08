@@ -24,5 +24,6 @@ import './TinyEmitterTests.js';
 import './TinyForwardingPropertyTests.js';
 import './TinyPropertyTests.js';
 import './ValidationTests.js';
+import './VarianceNumberPropertyTests.js';
 
 qunitStart();
