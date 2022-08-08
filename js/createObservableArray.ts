@@ -477,7 +477,7 @@ const cache = new Map();
  * ObservableArrayIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
  * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
-const ObservableArrayIO = ( parameterType: IOType ) => {
+const ObservableArrayIO = ( parameterType: IOType ): IOType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
       valueType: ObservableArrayPhetioObject,
