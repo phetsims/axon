@@ -102,9 +102,9 @@ import IProperty from './IProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
-export type INullableProperty<T> = IReadOnlyProperty<T | null> | IReadOnlyProperty<T>;
+export type INullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
 
 type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be
@@ -151,14 +151,14 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   protected inverseMap: ( t: ThisValueType ) => InnerValueType;
   protected bidirectional: boolean;
   private valuePropertyProperty: INullableProperty<OuterValueType>;
-  private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ) => void;
+  private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
   /**
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
    * @param [providedOptions] - options
    */
-  public constructor( valuePropertyProperty: INullableProperty<OuterValueType> | IReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
+  public constructor( valuePropertyProperty: INullableProperty<OuterValueType> | TReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
     const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>()( {
       bidirectional: false,
@@ -212,7 +212,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    * @param oldValue - Ignored for our purposes, but is the 2nd parameter for Property listeners.
    * @param innerProperty
    */
-  private onPropertyPropertyChange( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: IReadOnlyProperty<InnerValueType> | null ): void {
+  private onPropertyPropertyChange( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ): void {
 
     // If the value of the inner Property is already the inverse of our value, we will never attempt to update our
     // own value in an attempt to limit "ping-ponging" cases mainly due to numerical error. Otherwise it would be

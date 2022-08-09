@@ -15,7 +15,7 @@ import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import IProperty from './IProperty.js';
-import { PropertyLazyLinkListener } from './IReadOnlyProperty.js';
+import { PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {
   updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: IProperty<T> | null, newProperty?: IProperty<T> | null ) => void;

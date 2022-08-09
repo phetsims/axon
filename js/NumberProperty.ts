@@ -16,7 +16,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
@@ -51,11 +51,11 @@ type SelfOptions = {
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
 
 // Minimal types for ranged Properties - Generally use `new NumberPropery( ... ).asRanged()`
-export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: IReadOnlyProperty<Range> };
+export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
 
 // User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
 // to the range
-export const isRangedProperty = ( property: IReadOnlyProperty<number> ): property is RangedProperty => {
+export const isRangedProperty = ( property: TReadOnlyProperty<number> ): property is RangedProperty => {
   return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
 };
 

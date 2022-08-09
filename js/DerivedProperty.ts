@@ -15,7 +15,7 @@ import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
@@ -44,7 +44,7 @@ export type ReadOnlyDerivedProperty<T> = ReadOnlyProperty<T> & Pick<UnknownDeriv
  * T = type of the derived value
  * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
  */
-export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends ReadOnlyProperty<T> implements IReadOnlyProperty<T> {
+export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends ReadOnlyProperty<T> implements TReadOnlyProperty<T> {
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
@@ -118,7 +118,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Determines whether this DerivedProperty has a specific dependency.
    */
-  public hasDependency( dependency: IReadOnlyProperty<IntentionalAny> ): boolean {
+  public hasDependency( dependency: TReadOnlyProperty<IntentionalAny> ): boolean {
     return this.definedDependencies.includes( dependency );
   }
 
@@ -189,14 +189,14 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to secondProperty's
    * value.
    */
-  private static valueEquals( firstProperty: IReadOnlyProperty<unknown>, secondProperty: IReadOnlyProperty<unknown>, options?: DerivedPropertyOptions<boolean> ): IReadOnlyProperty<boolean> {
+  private static valueEquals( firstProperty: TReadOnlyProperty<unknown>, secondProperty: TReadOnlyProperty<unknown>, options?: DerivedPropertyOptions<boolean> ): TReadOnlyProperty<boolean> {
     return new DerivedProperty( [ firstProperty, secondProperty ], ( u: unknown, v: unknown ) => u === v, options );
   }
 
   /**
    * Creates a derived boolean Property whose value is true iff every input Property value is true.
    */
-  public static and( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static and( properties: TReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -206,7 +206,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Creates a derived boolean Property whose value is true iff any input Property value is true.
    */
-  public static or( properties: IReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
+  public static or( properties: TReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
     // @ts-ignore
@@ -216,14 +216,14 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
    */
-  public static not( propertyToInvert: IReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): DerivedProperty<boolean, boolean, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
+  public static not( propertyToInvert: TReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): DerivedProperty<boolean, boolean, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
     return new DerivedProperty( [ propertyToInvert ], ( x: boolean ) => !x, options );
   }
 
   /**
    * Create a DerivedProperty from any number of dependencies.  This is parallel to Multilink.multilinkAny
    */
-  public static deriveAny<T>( dependencies: Array<IReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
+  public static deriveAny<T>( dependencies: Array<TReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
     return new DerivedProperty(
       // @ts-ignore
       dependencies,
@@ -232,11 +232,11 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 }
 
-const andFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
+const andFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
   return value && property.value;
 };
 
-const orFunction = ( value: boolean, property: IReadOnlyProperty<boolean> ) => {
+const orFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
   assert && assert( typeof property.value === 'boolean', 'boolean value required' );
   return value || property.value;
 };

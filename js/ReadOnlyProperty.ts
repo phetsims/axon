@@ -20,7 +20,7 @@ import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
 import units from './units.js';
 import validate from './validate.js';
-import IReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './IReadOnlyProperty.js';
+import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
@@ -53,14 +53,14 @@ type SelfOptions = {
 export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
 
 export type LinkOptions = {
-  phetioDependencies?: Array<IReadOnlyProperty<unknown>>;
+  phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
 
 /**
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.
  */
-export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOnlyProperty<T> {
+export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOnlyProperty<T> {
 
   // Unique identifier for this Property.
   private readonly id: number;
@@ -327,7 +327,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements IReadOn
    * setting PhET-iO state, each dependency must take its final value before this Property fires its notifications.
    * See propertyStateHandlerSingleton.registerPhetioOrderDependency and https://github.com/phetsims/axon/issues/276 for more info.
    */
-  public addPhetioStateDependencies( dependencies: Array<IReadOnlyProperty<IntentionalAny>> ): void {
+  public addPhetioStateDependencies( dependencies: Array<TReadOnlyProperty<IntentionalAny>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
       const dependency = dependencies[ i ];

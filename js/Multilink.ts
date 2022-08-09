@@ -17,10 +17,10 @@
  */
 
 import axon from './axon.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 // Shorthand to make the type definitions more legible
-type ROP<T> = IReadOnlyProperty<T>;
+type ROP<T> = TReadOnlyProperty<T>;
 
 // Exported for the convenience usage sites in Multilink.multilink
 export type RP1<T1> = Readonly<[ ROP<T1> ]>;
@@ -65,7 +65,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
 
   // Keep track of listeners so they can be detached
-  private dependencyListeners: Map<IReadOnlyProperty<unknown>, () => void>;
+  private dependencyListeners: Map<TReadOnlyProperty<unknown>, () => void>;
 
   // whether the Multilink has been disposed
   private isDisposed?: boolean;
@@ -184,7 +184,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, false );
   }
 
-  public static multilinkAny( dependencies: Readonly<IReadOnlyProperty<unknown>[]>, callback: () => void ): UnknownMultilink {
+  public static multilinkAny( dependencies: Readonly<TReadOnlyProperty<unknown>[]>, callback: () => void ): UnknownMultilink {
 
     // @ts-ignore
     return new Multilink( dependencies, callback );

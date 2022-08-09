@@ -15,7 +15,7 @@ import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import IProperty from './IProperty.js';
-import IReadOnlyProperty from './IReadOnlyProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -29,7 +29,7 @@ const DEFAULT_OPTIONS = {
 export type EnabledComponentOptions = {
 
   // if not provided, a Property will be created
-  enabledProperty?: IReadOnlyProperty<boolean> | null;
+  enabledProperty?: TReadOnlyProperty<boolean> | null;
 
   // initial value of enabledProperty if we create it, ignored if enabledProperty is provided
   enabled?: boolean;

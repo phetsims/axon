@@ -8,12 +8,12 @@ import { LinkOptions } from './ReadOnlyProperty.js';
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: IReadOnlyProperty<T> ) => void;
-export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: IReadOnlyProperty<T> ) => void;
+export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: TReadOnlyProperty<T> ) => void;
+export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: TReadOnlyProperty<T> ) => void;
 export type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
 
 // See comments in Property.ts / TinyProperty.ts
-type IReadOnlyProperty<T> = {
+type TReadOnlyProperty<T> = {
   get: () => T;
   get value(): T;
   areValuesEqual( a: T, b: T ): boolean;
@@ -29,4 +29,4 @@ type IReadOnlyProperty<T> = {
 
   isDisposed?: boolean;
 };
-export default IReadOnlyProperty;
+export default TReadOnlyProperty;
