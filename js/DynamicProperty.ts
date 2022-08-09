@@ -104,7 +104,7 @@ import ReadOnlyProperty from './ReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 
-export type INullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
+export type TNullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
 
 type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be
@@ -150,7 +150,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   protected map: ( v: InnerValueType ) => ThisValueType;
   protected inverseMap: ( t: ThisValueType ) => InnerValueType;
   protected bidirectional: boolean;
-  private valuePropertyProperty: INullableProperty<OuterValueType>;
+  private valuePropertyProperty: TNullableProperty<OuterValueType>;
   private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
@@ -158,7 +158,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
    * @param [providedOptions] - options
    */
-  public constructor( valuePropertyProperty: INullableProperty<OuterValueType> | TReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
+  public constructor( valuePropertyProperty: TNullableProperty<OuterValueType> | TReadOnlyProperty<OuterValueType>, providedOptions?: DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType> ) {
 
     const options = optionize<DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType>, SelfOptions<ThisValueType, InnerValueType, OuterValueType>, PropertyOptions<ThisValueType>>()( {
       bidirectional: false,
