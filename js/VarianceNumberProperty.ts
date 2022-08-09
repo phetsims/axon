@@ -32,7 +32,7 @@ export default class VarianceNumberProperty extends NumberProperty {
   }
 
   public override get(): number {
-    return this.computeVariance ? this.computeVariance!( super.get() ) : super.get();
+    return this.computeVariance ? this.computeVariance( super.get() ) : super.get();
   }
 }
 
