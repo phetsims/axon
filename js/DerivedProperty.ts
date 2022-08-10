@@ -75,11 +75,9 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       tandem: Tandem.OPTIONAL,
-      phetioReadOnly: true // derived properties can be read but not set by PhET-iO
+      phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
+      phetioOuterType: DerivedProperty.DerivedPropertyIO
     }, providedOptions );
-
-    assert && options.tandem.supplied && assert( options.phetioType && options.phetioType.typeName.startsWith( DERIVED_PROPERTY_IO_PREFIX ),
-      `phetioType must be provided and start with ${DERIVED_PROPERTY_IO_PREFIX}` );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
@@ -92,7 +90,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // The phetioType should be a concrete (instantiated) DerivedPropertyIO, hence we must check its outer type
-      assert && assert( options.phetioType.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
+      assert && assert( this.phetioType.typeName.startsWith( 'DerivedPropertyIO' ), 'phetioType should be DerivedPropertyIO' );
     }
 
     this.dependencies = dependencies;

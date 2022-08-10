@@ -20,7 +20,7 @@ type SelfOptions<T extends EnumerationValue> = {
   enumeration?: Enumeration<T>;
 };
 
-export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & StrictOmit<PropertyOptions<T>, 'phetioType'>;
+export type EnumerationPropertyOptions<T extends EnumerationValue> = SelfOptions<T> & StrictOmit<PropertyOptions<T>, 'phetioValueType'>;
 
 export default class EnumerationProperty<T extends EnumerationValue> extends Property<T> {
 
@@ -32,9 +32,9 @@ export default class EnumerationProperty<T extends EnumerationValue> extends Pro
 
     const options = optionize<EnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
       validValues: firstOptions.enumeration.values,
-      phetioType: Property.PropertyIO( EnumerationIO<T>( {
+      phetioValueType: EnumerationIO<T>( {
         enumeration: firstOptions.enumeration
-      } ) )
+      } )
     }, firstOptions );
 
     super( value, options );

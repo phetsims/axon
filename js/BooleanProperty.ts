@@ -13,13 +13,10 @@ import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
 
-// constants
-const BooleanPropertyIO = Property.PropertyIO( BooleanIO );
-
 type SelfOptions = EmptySelfOptions;
 
 // client cannot specify superclass options that are controlled by BooleanProperty
-export type BooleanPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<boolean>, 'isValidValue' | 'valueType' | 'phetioType'>;
+export type BooleanPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<boolean>, 'isValidValue' | 'valueType' | 'phetioValueType'>;
 
 export default class BooleanProperty extends Property<boolean> {
 
@@ -28,7 +25,7 @@ export default class BooleanProperty extends Property<boolean> {
     // Fill in superclass options that are controlled by BooleanProperty.
     const options = optionize<BooleanPropertyOptions, SelfOptions, PropertyOptions<boolean>>()( {
       valueType: 'boolean',
-      phetioType: BooleanPropertyIO
+      phetioValueType: BooleanIO
     }, providedOptions );
 
     super( value, options );

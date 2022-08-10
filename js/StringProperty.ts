@@ -13,12 +13,9 @@ import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
 
-// constants
-const StringPropertyIO = Property.PropertyIO( StringIO );
-
 type SelfOptions = EmptySelfOptions;
 
-export type StringPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<string>, 'valueType' | 'phetioType'>;
+export type StringPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<string>, 'valueType' | 'phetioValueType'>;
 
 export default class StringProperty extends Property<string> {
 
@@ -33,7 +30,7 @@ export default class StringProperty extends Property<string> {
     // Fill in superclass options that are controlled by StringProperty.
     const options = optionize<StringPropertyOptions, SelfOptions, PropertyOptions<string>>()( {
       valueType: 'string',
-      phetioType: StringPropertyIO
+      phetioValueType: StringIO
     }, providedOptions );
 
     super( value, options );

@@ -13,14 +13,16 @@ import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
-type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioType'> &
+type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioValueType'> &
   PickRequired<PropertyOptions<T>, 'validValues'>;
 
 class StringEnumerationProperty<T extends string> extends Property<T> {
   public constructor( value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
-      phetioType: Property.PropertyIO( StringIO )
+
+      // @ts-ignore - OK to narrow values
+      phetioValueType: StringIO
     }, providedOptions );
 
     super( value, options );

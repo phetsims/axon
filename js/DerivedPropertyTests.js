@@ -126,20 +126,20 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
     const secondProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'secondProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
     const thirdProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'thirdProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
 
     const derivedProperty = new DerivedProperty( [ firstProperty, secondProperty, thirdProperty ], () => 3, {
       tandem: parentTandem.createTandem( 'derivedProperty' ),
-      phetioType: DerivedProperty.DerivedPropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
     assert.ok( getOrderDependencyLength() === 3, 'derivedProperty adds order dependency for each dependency' );
 

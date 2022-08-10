@@ -41,7 +41,7 @@ class EnumerationDeprecatedProperty extends Property {
 
     options = merge( {
       valueType: enumeration,
-      phetioType: Property.PropertyIO( EnumerationIO( enumeration ) ),
+      phetioValueType: EnumerationIO( enumeration ),
       validValues: enumeration.VALUES // for PhET-iO documentation and support
     }, options );
 

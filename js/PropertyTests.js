@@ -263,11 +263,11 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const firstProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'firstProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
     const secondProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'secondProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
 
     propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
@@ -277,7 +277,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     const thirdProperty = new Property( 1, {
       tandem: parentTandem.createTandem( 'thirdProperty' ),
-      phetioType: Property.PropertyIO( NumberIO )
+      phetioValueType: NumberIO
     } );
     secondProperty.link( () => { thirdProperty.value = 2;}, {
       phetioDependencies: [ thirdProperty ]

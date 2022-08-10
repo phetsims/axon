@@ -92,7 +92,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const rangeProperty = new Property( new Range( 0, 1 ), {
       tandem: Tandem.ROOT_TEST.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
-      phetioType: Property.PropertyIO( Range.RangeIO )
+      phetioValueType: Range.RangeIO
     } );
     const numberProperty = new NumberProperty( 0, {
       tandem: Tandem.ROOT_TEST.createTandem( 'numberProperty' ),

@@ -25,6 +25,7 @@ import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Property from './Property.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -47,10 +48,14 @@ type SelfOptions = {
   // faulty logic, etc. This may be of particular interest for PhET-iO instrumentation, where such
   // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
   reentrant?: boolean;
+
+  // At this level, it doesn't matter what the state type is, so it defaults to IntentionalAny
+  phetioValueType?: IOType;
+  phetioOuterType?: ( parameterType: IOType ) => IOType;
 };
 
 // Options that can be passed in
-export type PropertyOptions<T> = SelfOptions & Validator<T> & PhetioObjectOptions;
+export type PropertyOptions<T> = SelfOptions & StrictOmit<Validator<T> & PhetioObjectOptions, 'phetioType'>;
 
 export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
@@ -108,7 +113,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       reentrant: false,
 
       // phet-io
-      tandem: Tandem.OPTIONAL
+      tandem: Tandem.OPTIONAL,
+      phetioOuterType: ReadOnlyProperty.PropertyIO,
+      phetioValueType: IOType.ObjectIO
     }, providedOptions );
 
     // Support non-validated Property
@@ -124,6 +131,16 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       options.phetioEventMetadata.units = options.units;
     }
 
+    if ( assert && providedOptions ) {
+
+      // @ts-ignore -- for checking JS code
+      assert && assert( !providedOptions.phetioType, 'cannot set phetiotype' );
+    }
+
+    // Construct the IO Type
+    if ( options.phetioOuterType && options.phetioValueType ) {
+      options.phetioType = options.phetioOuterType( options.phetioValueType );
+    }
     super( options );
     this.id = globalId++;
     this.units = options.units;
@@ -132,12 +149,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
 
       // This assertion helps in instrumenting code that has the tandem but not type
-      assert && assert( !!options.phetioType,
-        `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
+      assert && assert( this.phetioType, `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
-      // This assertion helps in instrumenting code that has the tandem but not type
-      assert && assert( options.phetioType.parameterTypes![ 0 ],
-        `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
+      assert && assert( options.phetioType.parameterTypes![ 0 ], `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||
                       options.tandem.name.endsWith( 'Property' ) ||
@@ -172,6 +186,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     // Assertions regarding value validation
     if ( assert ) {
+
       Validation.validateValidator( this.valueValidator );
 
       // validate the initial value as well as any changes in the future

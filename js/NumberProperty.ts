@@ -48,7 +48,7 @@ type SelfOptions = {
   rangePropertyOptions?: PropertyOptions<Range | null>;
 };
 
-export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioType' | 'valueType'>;
+export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioValueType' | 'valueType'>;
 
 // Minimal types for ranged Properties - Generally use `new NumberPropery( ... ).asRanged()`
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
@@ -88,7 +88,7 @@ export default class NumberProperty extends Property<number> {
     // Defaults for rangePropertyOptions, since it depends on options.tandem
     options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
-      phetioType: Property.PropertyIO( NullableIO( Range.RangeIO ) ),
+      phetioValueType: NullableIO( Range.RangeIO ),
       phetioReadOnly: true,
       tandem: options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME )
     }, options.rangePropertyOptions );
@@ -98,7 +98,7 @@ export default class NumberProperty extends Property<number> {
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
-    options.phetioType = NumberProperty.NumberPropertyIO;
+    options.phetioValueType = NumberIO;
 
     const rangePropertyProvided = options.range && options.range instanceof ReadOnlyProperty;
     const ownsRangeProperty = !rangePropertyProvided;

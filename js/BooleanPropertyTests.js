@@ -29,7 +29,7 @@ QUnit.test( 'BooleanProperty', assert => {
 
   window.assert && assert.throws( () => {
     p = new BooleanProperty( true, { phetioType: BooleanIO } );
-  }, 'EnumerationDeprecatedProperty sets phetioType' );
+  }, 'BooleanProperty' );
 
   assert.ok( true, 'so we have at least 1 test in this set' );
 } );
