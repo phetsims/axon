@@ -24,7 +24,7 @@ type NodeLike = {
 
 export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
-  // Set in setTargetProperty() - public for read-only NodeTests
+  // Set in setTargetProperty()
   private targetProperty?: IProperty<T> | null;
 
   // Set lazily in setTargetProperty()
