@@ -238,7 +238,6 @@ QUnit.test( 'validationMessage is presented for all validation errors', assert =
   const ioType = new IOType( 'TestIO', { valueType: 'boolean' } );
   const ioTypeValidationMessage = 'should be a boolean from this IOType in tests';
 
-  // @ts-ignore, should be fixed once IOType is in typescript, but we still may not be able to mutate it.
   ioType.validator.validationMessage = ioTypeValidationMessage;
   testContainsErrorMessage( 'hi', { phetioType: ioType }, ioTypeValidationMessage );
 } );

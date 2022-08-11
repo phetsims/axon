@@ -174,8 +174,7 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
       notifyPListeners && notifyPListeners();
     }, 'rangeProperty is not yet undeferred and so has the wrong value' );
 
-    // @ts-ignore
-    p.notifying = false; // since the above threw an error, reset
+    p[ 'notifying' ] = false; // since the above threw an error, reset
   }
   const notifyRangeListeners = p.rangeProperty.setDeferred( false );
   notifyPListeners && notifyPListeners();
