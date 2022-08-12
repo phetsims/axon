@@ -9,7 +9,7 @@
 
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
-import IEmitter, { IEmitterListener, IEmitterParameter } from './IEmitter.js';
+import TEmitter, { IEmitterListener, IEmitterParameter } from './TEmitter.js';
 
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
@@ -22,7 +22,7 @@ type EmitContext<T extends IntentionalAny[]> = {
 // Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
 let maxListenerCount = 0;
 
-export default class TinyEmitter<T extends IEmitterParameter[] = []> implements IEmitter<T> {
+export default class TinyEmitter<T extends IEmitterParameter[] = []> implements TEmitter<T> {
 
   // Not defined usually because of memory usage. If defined, this will be called when the listener count changes,
   // e.g. changeCount( {number} listenersAddedQuantity ), with the number being negative for listeners removed.

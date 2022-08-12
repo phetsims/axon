@@ -15,7 +15,7 @@ export type IEmitterParameter = Exclude<IntentionalAny, undefined | never>;
 
 export type IEmitterListener<T extends IEmitterParameter[]> = ( ...args: T ) => void;
 
-type IEmitter<T extends IEmitterParameter[] = []> = {
+type TEmitter<T extends IEmitterParameter[] = []> = {
 
   // For all the methods, please see documentation in Emitter.ts
   emit: ( ...args: T ) => void;
@@ -29,4 +29,4 @@ type IEmitter<T extends IEmitterParameter[] = []> = {
   dispose: () => void;
 };
 
-export default IEmitter;
+export default TEmitter;

@@ -18,7 +18,7 @@ import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/Phe
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import IEmitter, { IEmitterListener, IEmitterParameter } from './IEmitter.js';
+import TEmitter, { IEmitterListener, IEmitterParameter } from './TEmitter.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
@@ -26,7 +26,7 @@ const PHET_IO_STATE_DEFAULT = false;
 type SelfOptions = EmptySelfOptions;
 type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
-export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioDataHandler<T> implements IEmitter<T> {
+export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioDataHandler<T> implements TEmitter<T> {
 
   // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;

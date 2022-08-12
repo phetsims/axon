@@ -8,7 +8,7 @@
  */
 
 import Emitter from './Emitter.js';
-import IEmitter from './IEmitter.js';
+import TEmitter from './TEmitter.js';
 
 QUnit.module( 'Emitter' );
 
@@ -56,7 +56,7 @@ QUnit.test( 'Test emit timing Emitter', assert => {
   const e1 = new Emitter();
   e1.addListener( _.noop );
 
-  const testEmitter = ( emitter: IEmitter, numberOfLoopings: number ) => {
+  const testEmitter = ( emitter: TEmitter, numberOfLoopings: number ) => {
 
     const start = Date.now();
 
