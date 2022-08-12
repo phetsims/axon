@@ -164,57 +164,6 @@ QUnit.test( 'Test phetioType', assert => {
   assert.ok( Validation.isValueValid( new Emitter(), { phetioType: Emitter.EmitterIO( [] ) } ), 'emitter is valid' );
 } );
 
-QUnit.test( 'Test arrayElementType', assert => {
-
-  window.assert && assert.throws( () => Validation.validateValidator( {
-    valueType: 'not array',
-    arrayElementType: null
-  } ), 'arrayElementType expected should not have valueType or for it to be "Array"' );
-
-  assert.ok( !Validation.getValidatorValidationError( { arrayElementType: 'number' } ), 'good valueType' );
-  assert.ok( !Validation.getValidatorValidationError( { valueType: Array, arrayElementType: 'number' } ), 'does not matter if valueType: Array is provided' );
-  // @ts-ignore
-  assert.ok( Validation.getValidatorValidationError( { arrayElementTypes: 'number' } ), 'no validator keys supplied' );
-  // @ts-ignore
-  assert.ok( Validation.getValidatorValidationError( { arrayElementTypes: 4 } ), 'no validator keys supplied' );
-  assert.ok( Validation.getValidatorValidationError( { arrayElementType: 'blaradysharady' } ), 'invalid valueType string' );
-
-  assert.ok( !Validation.getValidatorValidationError( { arrayElementType: null } ), 'null is valid' );
-  assert.ok( !Validation.getValidatorValidationError( { arrayElementType: [ 'number', null ] } ), 'array of null and number is valid' );
-  assert.ok( !Validation.getValidatorValidationError( { arrayElementType: [ 'number', null, Node ] } ), 'array of null and number is valid' );
-  assert.ok( Validation.getValidatorValidationError( { arrayElementType: [ 'numberf', null, Node ] } ), 'numberf is not a valid arrayElementType' );
-  assert.ok( Validation.isValueValid( [ 1, 2, 3, 4, 5 ], { arrayElementType: [ 'number' ] } ), 'number array ok' );
-  assert.ok( !Validation.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number' ] } ), 'number array bad with null' );
-  assert.ok( Validation.isValueValid( [ 1, 2, 3, 4, 5, null ], { arrayElementType: [ 'number', null ] } ), 'number array ok with null' );
-  assert.ok( Validation.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'number', 'string', null ] } ), 'number and string array ok with null' );
-  assert.ok( !Validation.isValueValid( [ 1, 'fdsaf', 3, 4, 5, null ], { arrayElementType: [ 'string', null ] } ), 'number and string array ok with null' );
-  assert.ok( Validation.isValueValid( [ [], [], [], [] ], { arrayElementType: [ Array ] } ), 'array array' );
-  assert.ok( Validation.isValueValid( [ [ 4 ], [ 'other' ], null, [] ], { arrayElementType: [ Array, null ] } ), 'array {array|null}' );
-  assert.ok( Validation.isValueValid( [ [ 4 ], [ 'other' ], null, 432, [] ], { arrayElementType: [ Array, null, 'number' ] } ), 'array {array|null|number}' );
-
-  assert.ok( Validation.isValueValid( undefined, { arrayElementType: [ 'number', 'string' ] } ) !== null, ' undefined as a value for array!' );
-
-  // @ts-ignore
-  assert.ok( Validation.isValueValid( undefined, { arrayElementType: [ 7 ] } ) !== null, '7 is not a valid arrayElementType' );
-
-  // @ts-ignore
-  assert.ok( Validation.isValueValid( undefined, { arrayElementType: [ 'number', {} ] } ) !== null, 'Object literal  is not a valid arrayElementType' );
-
-  assert.ok( Validation.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] } ) !== null );
-
-  assert.ok( Validation.isValueValid( [ 'sting here, what up' ], { arrayElementType: [ 'number' ] } ) !== null );
-
-  assert.ok( Validation.isValueValid( [ 5 ], { arrayElementType: [ 'string' ] } ) !== null );
-
-  assert.ok( Validation.isValueValid( [ null, 3, 4, 5, undefined ], { arrayElementType: [ 'number', null ] } ) !== null );
-
-  // @ts-ignore
-  assert.ok( Validation.isValueValid( undefined, { arrayElementType: [ 7 ] } ) !== null, '7 is not a valid arrayElementType' );
-
-  // @ts-ignore
-  assert.ok( Validation.isValueValid( undefined, { arrayElementType: [ 'number', {} ] } ) !== null, 'Object literal  is not a valid arrayElementType' );
-} );
-
 QUnit.test( 'validationMessage is presented for all validation errors', assert => {
 
   const testContainsErrorMessage = ( value: number | boolean | string | number[] | Array<number | boolean | string>, validator: Validator, message = validator.validationMessage ) => {
@@ -229,9 +178,6 @@ QUnit.test( 'validationMessage is presented for all validation errors', assert =
   testContainsErrorMessage( true, { valueType: [ null, 'number' ], validationMessage: 'valueType null,number value boolean' } );
   testContainsErrorMessage( false, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:false' } );
   testContainsErrorMessage( 5, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:5' } );
-  testContainsErrorMessage( true, { arrayElementType: 'boolean', validationMessage: 'arrayElementType with value:true' } );
-  testContainsErrorMessage( [ 4 ], { arrayElementType: 'boolean', validationMessage: 'arrayElementType with value:4' } );
-  testContainsErrorMessage( [ 4, true, 'hi' ], { arrayElementType: [ 'boolean', 'number' ], validationMessage: 'arrayElementType with value:[hi]' } );
   testContainsErrorMessage( 4, { isValidValue: v => v === 3, validationMessage: 'isValidValue 3, value 4' } );
   testContainsErrorMessage( 'oh hello', { phetioType: Property.PropertyIO( BooleanIO ), validationMessage: 'isValidValue 3, value string' } );
 

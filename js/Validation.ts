@@ -39,7 +39,6 @@ import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
-const ARRAY_VALIDATOR = { valueType: Array, validationMessage: 'Should be an Array' };
 
 export type IsValidValueOptions = {
 
@@ -76,11 +75,6 @@ export type Validator<T = unknown> = {
   // isValidValue: function( value ) { return Number.isInteger( value ) && value >= 0; }
   isValidValue?: ( v: T ) => boolean;
 
-  // This option takes the same types as are supported with `valueType`. This option is to specify the type of the
-  // elements of an array. For this option to valid, `valueType` must either be omitted, or be `Array`. It is assumed that
-  // valueType is `Array`.
-  arrayElementType?: ValueType;
-
   // A IOType used to specify the public typing for PhET-iO. Each IOType must have a
   // `validator` key specified that can be used for validation. See IOType for an example.
   phetioType?: IOType;
@@ -99,7 +93,6 @@ const VALIDATOR_KEYS: Array<keyof Validator> = [
   'valueType',
   'validValues',
   'isValidValue',
-  'arrayElementType',
   'phetioType',
   'validators'
 ];
@@ -118,7 +111,6 @@ export default class Validation {
     }
     if ( !( validator.hasOwnProperty( 'isValidValue' ) ||
             validator.hasOwnProperty( 'valueType' ) ||
-            validator.hasOwnProperty( 'arrayElementType' ) ||
             validator.hasOwnProperty( 'validValues' ) ||
             validator.hasOwnProperty( 'phetioType' ) ||
             validator.hasOwnProperty( 'validators' ) ) ) {
@@ -130,19 +122,6 @@ export default class Validation {
       if ( valueTypeValidationError ) {
         return this.combineErrorMessages(
           `Invalid valueType: ${validator.valueType}, error: ${valueTypeValidationError}`,
-          validator.validationMessage );
-      }
-    }
-
-    if ( validator.hasOwnProperty( 'arrayElementType' ) ) {
-      if ( validator.hasOwnProperty( 'valueType' ) && validator.valueType !== Array ) {
-        return this.combineErrorMessages( 'valueType must be "Array" when specified with arrayElementType.',
-          validator.validationMessage );
-
-      }
-      const arrayElementTypeError = Validation.getValueOrElementTypeValidationError( validator.arrayElementType! );
-      if ( arrayElementTypeError ) {
-        return this.combineErrorMessages( `Invalid arrayElementType: ${arrayElementTypeError}`,
           validator.validationMessage );
       }
     }
@@ -298,39 +277,6 @@ export default class Validation {
 
           // getValueTypeValidationError will add the validationMessage for us
           return valueTypeValidationError;
-        }
-      }
-    }
-
-    if ( validator.hasOwnProperty( 'arrayElementType' ) ) {
-      const arrayElementType = validator.arrayElementType;
-
-      // If using arrayElementType, then the value should be an array.
-      const arrayValidationError = Validation.getValidationError( value, ARRAY_VALIDATOR, options );
-      if ( arrayValidationError ) {
-        return this.combineErrorMessages( arrayValidationError, validator.validationMessage );
-      }
-
-      for ( let i = 0; i < value.length; i++ ) {
-        const arrayElement = value[ i ];
-
-        // if the type is an array, then handle it like we did for valueType, with _.some
-        if ( Array.isArray( arrayElementType ) ) {
-
-          // If none of the elements return null, then the value type is invalid
-          if ( !_.some( arrayElementType.map( typeInArray => !Validation.getValueTypeValidationError( arrayElement, typeInArray ) ) ) ) {
-            return this.combineErrorMessages( `array element not valid for any arrayElementType in ${arrayElementType}, value: ${arrayElement}`, validator.validationMessage );
-          }
-        }
-        else {
-
-          // if not an array, then just check the array element
-          const arrayElementValidationError = Validation.getValueTypeValidationError( arrayElement, validator.arrayElementType!, validator.validationMessage );
-          if ( arrayElementValidationError ) {
-
-            // getValueTypeValidationError will add the validationMessage for us
-            return arrayElementValidationError;
-          }
         }
       }
     }
