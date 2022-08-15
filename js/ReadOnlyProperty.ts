@@ -99,6 +99,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   public static PropertyIO: ( parameterType: IOType ) => IOType;
 
   protected readonly valueValidator: Validator<T>;
+  public static readonly TANDEM_NAME_SUFFIX: string = 'Property';
 
   /**
    * This is protected to indicate to clients that subclasses should be used instead.
@@ -154,7 +155,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       assert && assert( options.phetioType.parameterTypes![ 0 ], `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
     }
     assert && assert( !this.isPhetioInstrumented() ||
-                      options.tandem.name.endsWith( 'Property' ) ||
+                      options.tandem.name.endsWith( ReadOnlyProperty.TANDEM_NAME_SUFFIX ) ||
                       options.tandem.name === 'property',
       `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
 
