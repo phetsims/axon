@@ -18,7 +18,7 @@ import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/Phe
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import TEmitter, { IEmitterListener, IEmitterParameter } from './TEmitter.js';
+import TEmitter, { TEmitterListener, IEmitterParameter } from './TEmitter.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
@@ -73,14 +73,14 @@ export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioD
   /**
    * Adds a listener which will be called during emit.
    */
-  public addListener( listener: IEmitterListener<T> ): void {
+  public addListener( listener: TEmitterListener<T> ): void {
     this.tinyEmitter.addListener( listener );
   }
 
   /**
    * Removes a listener
    */
-  public removeListener( listener: IEmitterListener<T> ): void {
+  public removeListener( listener: TEmitterListener<T> ): void {
     this.tinyEmitter.removeListener( listener );
   }
 
@@ -94,7 +94,7 @@ export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioD
   /**
    * Checks whether a listener is registered with this Emitter
    */
-  public hasListener( listener: IEmitterListener<T> ): boolean {
+  public hasListener( listener: TEmitterListener<T> ): boolean {
     return this.tinyEmitter.hasListener( listener );
   }
 
@@ -117,7 +117,7 @@ export default class Emitter<T extends IEmitterParameter[] = []> extends PhetioD
    * @param name - debug name to be printed on the console
    * @returns - the handle to the listener added in case it needs to be removed later
    */
-  public debug( name: string ): IEmitterListener<T> {
+  public debug( name: string ): TEmitterListener<T> {
     const listener = ( ...args: T ) => console.log( name, ...args );
     this.addListener( listener );
     return listener;

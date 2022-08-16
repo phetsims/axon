@@ -13,17 +13,17 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 // undefined and never are not allowed as parameters to Emitter
 export type IEmitterParameter = Exclude<IntentionalAny, undefined | never>;
 
-export type IEmitterListener<T extends IEmitterParameter[]> = ( ...args: T ) => void;
+export type TEmitterListener<T extends IEmitterParameter[]> = ( ...args: T ) => void;
 
 type TEmitter<T extends IEmitterParameter[] = []> = {
 
   // For all the methods, please see documentation in Emitter.ts
   emit: ( ...args: T ) => void;
 
-  addListener: ( listener: IEmitterListener<T> ) => void;
-  hasListener: ( listener: IEmitterListener<T> ) => boolean;
+  addListener: ( listener: TEmitterListener<T> ) => void;
+  hasListener: ( listener: TEmitterListener<T> ) => boolean;
 
-  removeListener: ( listener: IEmitterListener<T> ) => void;
+  removeListener: ( listener: TEmitterListener<T> ) => void;
   removeAllListeners: () => void;
 
   dispose: () => void;
