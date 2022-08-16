@@ -1,6 +1,6 @@
 // Copyright 2022, University of Colorado Boulder
 
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import ReadOnlyProperty, { PropertyOptions } from './ReadOnlyProperty.js';
 import axon from './axon.js';
 
@@ -9,7 +9,7 @@ import axon from './axon.js';
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-export default class Property<T> extends ReadOnlyProperty<T> implements IProperty<T> {
+export default class Property<T> extends ReadOnlyProperty<T> implements TProperty<T> {
 
   protected _initialValue: T;
 

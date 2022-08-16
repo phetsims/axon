@@ -14,7 +14,7 @@ import merge from '../../phet-core/js/merge.js';
 import { optionize3 } from '../../phet-core/js/optionize.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 // constants
@@ -47,7 +47,7 @@ export type EnabledComponentOptions = {
 
 export default class EnabledComponent {
 
-  public enabledProperty: IProperty<boolean>;
+  public enabledProperty: TProperty<boolean>;
 
   private disposeEnabledComponent: () => void;
 

@@ -98,7 +98,7 @@
 
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
@@ -118,7 +118,7 @@ type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
 
   // Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
-  derive?: ( ( outerValue: OuterValueType ) => IProperty<InnerValueType> ) | KeysMatching<OuterValueType, IProperty<InnerValueType>>;
+  derive?: ( ( outerValue: OuterValueType ) => TProperty<InnerValueType> ) | KeysMatching<OuterValueType, TProperty<InnerValueType>>;
 
   // Maps our input Property value to/from this Property's value. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
@@ -139,14 +139,14 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // } );
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
-// TODO: https://github.com/phetsims/axon/issues/342 Can OuterValueType default to IProperty?
+// TODO: https://github.com/phetsims/axon/issues/342 Can OuterValueType default to TProperty?
 export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = Property<InnerValueType>> extends ReadOnlyProperty<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   private isExternallyChanging: boolean;
 
   private defaultValue: InnerValueType;
-  protected derive: ( u: OuterValueType ) => IProperty<InnerValueType>;
+  protected derive: ( u: OuterValueType ) => TProperty<InnerValueType>;
   protected map: ( v: InnerValueType ) => ThisValueType;
   protected inverseMap: ( t: ThisValueType ) => InnerValueType;
   protected bidirectional: boolean;
@@ -172,7 +172,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
     const optionsMap = options.map;
     const optionsInverseMap = options.inverseMap;
 
-    const derive: ( ( u: OuterValueType ) => IProperty<InnerValueType> ) = typeof optionsDerive === 'function' ? optionsDerive : ( ( u: OuterValueType ) => u[ optionsDerive ] as unknown as IProperty<InnerValueType> );
+    const derive: ( ( u: OuterValueType ) => TProperty<InnerValueType> ) = typeof optionsDerive === 'function' ? optionsDerive : ( ( u: OuterValueType ) => u[ optionsDerive ] as unknown as TProperty<InnerValueType> );
     const map: ( ( v: InnerValueType ) => ThisValueType ) = typeof optionsMap === 'function' ? optionsMap : ( ( v: InnerValueType ) => v[ optionsMap ] as unknown as ThisValueType );
     const inverseMap: ( ( t: ThisValueType ) => InnerValueType ) = typeof optionsInverseMap === 'function' ? optionsInverseMap : ( ( t: ThisValueType ) => t[ optionsInverseMap ] as unknown as InnerValueType );
 

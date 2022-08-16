@@ -11,9 +11,9 @@ import TReadOnlyProperty from './TReadOnlyProperty.js';
  */
 
 // See comments in Property.ts / TinyProperty.ts
-type IProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {
+type TProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {
   set( value: T ): void;
   set value( value: T );
   get value(): T;
 };
-export default IProperty;
+export default TProperty;

@@ -14,18 +14,18 @@ import axon from './axon.js';
 import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import { PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {
-  updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: IProperty<T> | null, newProperty?: IProperty<T> | null ) => void;
+  updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: TProperty<T> | null, newProperty?: TProperty<T> | null ) => void;
   isPhetioInstrumented: () => boolean;
 };
 
 export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
   // Set in setTargetProperty()
-  private targetProperty?: IProperty<T> | null;
+  private targetProperty?: TProperty<T> | null;
 
   // Set lazily in setTargetProperty()
   protected forwardingListener?: PropertyLazyLinkListener<T>;
@@ -33,7 +33,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   // TinyProperty is not instrumented for PhET-iO, so when a Node is instrumented, by default, an instrumented
   // `Property` can be forwarded to. This field stores the default instrumented Property when
   // targetPropertyInstrumented is true. - Public for NodeTests
-  private ownedPhetioProperty?: IProperty<T>;
+  private ownedPhetioProperty?: TProperty<T>;
 
   // when true, automatically set up a PhET-iO instrumented forwarded Property for this TinyProperty, see
   // this.initializePhetioObject() for usage.
@@ -62,7 +62,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
-  public setTargetProperty<NodeType extends NodeLike>( node: NodeType, tandemName: string | null, newTargetProperty: IProperty<T> | null ): NodeType {
+  public setTargetProperty<NodeType extends NodeLike>( node: NodeType, tandemName: string | null, newTargetProperty: TProperty<T> | null ): NodeType {
     assert && node && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
@@ -163,7 +163,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param tandemName
    * @param createProperty - creates an "owned" Property
    */
-  public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => IProperty<T> ): void {
+  public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => TProperty<T> ): void {
     assert && assert( !this.phetioInitialized, 'already initialized' );
     assert && assert( !this.ownedPhetioProperty, 'Already created the ownedPhetioProperty' );
 

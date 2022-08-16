@@ -24,7 +24,7 @@
 
 import axon from './axon.js';
 import Range from '../../dot/js/Range.js';
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import MappedProperty, { MappedPropertyOptions } from './MappedProperty.js';
 import TinyProperty from './TinyProperty.js';
 import Property from './Property.js';
@@ -42,7 +42,7 @@ export type UnitConversionPropertyOptions = SelfOptions & ParentOptions;
 
 export default class UnitConversionProperty extends MappedProperty<number, number> {
 
-  private readonly rangeProperty: IProperty<Range | null>;
+  private readonly rangeProperty: TProperty<Range | null>;
 
   private _property: Property<number>;
   private _rangeListener?: ( range: Range | null ) => void;

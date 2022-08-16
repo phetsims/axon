@@ -12,7 +12,7 @@
 
 import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
-import IProperty from './IProperty.js';
+import TProperty from './TProperty.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 
 type ComparableObject = {
@@ -21,7 +21,7 @@ type ComparableObject = {
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
-export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements IProperty<T> {
+export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements TProperty<T> {
 
   public _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
 
