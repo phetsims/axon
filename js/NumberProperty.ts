@@ -31,11 +31,11 @@ type NumberType = typeof VALID_NUMBER_TYPES[number];
 // standardized tandem name for rangeProperty
 const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
-type NumberPropertyState = {
+export type NumberPropertyState = {
   numberType: string;
   range: null | RangeStateObject;
   rangePhetioID: string | null;
-};
+} & ReadOnlyProperty<number>;
 
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
