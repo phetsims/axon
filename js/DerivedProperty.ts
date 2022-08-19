@@ -20,8 +20,8 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
+import PhetioObject from '../../tandem/js/PhetioObject.js';
 
-// constants
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
 type SelfOptions = EmptySelfOptions;
@@ -101,14 +101,21 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
       dependency.lazyLink( this.derivedPropertyListener );
 
-      if ( dependency instanceof ReadOnlyProperty && this.isPhetioInstrumented() && dependency.isPhetioInstrumented() ) {
+      if ( this.isPhetioInstrumented() && dependency instanceof PhetioObject && dependency.isPhetioInstrumented() ) {
+        if ( dependency instanceof ReadOnlyProperty ) {
 
-        // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure
-        // to have the right value.
-        // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
-        // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-        // @ts-ignore
-        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
+          // Dependencies should have taken their correct values before this DerivedProperty undefers, so it will be sure
+          // to have the right value.
+          // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
+          // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
+          // @ts-ignore
+          propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
+        }
+
+        const dependenciesTandem = options.tandem.createTandem( 'dependencies' );
+        this.addLinkedElement( dependency, {
+          tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID )
+        } );
       }
     } );
   }
