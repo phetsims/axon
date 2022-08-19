@@ -22,6 +22,7 @@ import './PropertyTests.js';
 import './StringPropertyTests.js';
 import './TinyEmitterTests.js';
 import './TinyForwardingPropertyTests.js';
+import './TinyOverridePropertyTests.js';
 import './TinyPropertyTests.js';
 import './ValidationTests.js';
 import './VarianceNumberPropertyTests.js';

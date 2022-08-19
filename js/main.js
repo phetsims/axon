@@ -28,6 +28,7 @@ import './StringProperty.js';
 import './Timer.js';
 import './TinyEmitter.js';
 import './TinyForwardingProperty.js';
+import './TinyOverrideProperty.js';
 import './TinyProperty.js';
 import './TinyStaticProperty.js';
 import './UnitConversionProperty.js';
