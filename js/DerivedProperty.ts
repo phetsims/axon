@@ -17,14 +17,18 @@ import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+
+  // When true, if this DerivedProperty is PhET-iO instrument, add a LinkedElement for each PhET-iO instrumented dependency.
+  phetioLinkDependencies?: boolean;
+};
 
 export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 
@@ -76,7 +80,8 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
-      phetioOuterType: DerivedProperty.DerivedPropertyIO
+      phetioOuterType: DerivedProperty.DerivedPropertyIO,
+      phetioLinkDependencies: true
     }, providedOptions );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
@@ -112,10 +117,12 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
           propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
         }
 
-        const dependenciesTandem = options.tandem.createTandem( 'dependencies' );
-        this.addLinkedElement( dependency, {
-          tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID )
-        } );
+        if ( options.phetioLinkDependencies ) {
+          const dependenciesTandem = options.tandem.createTandem( 'dependencies' );
+          this.addLinkedElement( dependency, {
+            tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID )
+          } );
+        }
       }
     } );
   }
