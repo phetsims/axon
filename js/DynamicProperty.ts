@@ -310,6 +310,22 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   }
 
   /**
+   * Overridden to make public
+   */
+  public override get value(): ThisValueType {
+    return super.value;
+  }
+
+  /**
+   * Overridden to make public
+   * We ran performance tests on Chrome, and determined that calling super.value = newValue is statistically significantly
+   * slower at the p = 0.10 level( looping over 10,000 value calls). Therefore, we prefer this optimization.
+   */
+  public override set value( value: ThisValueType ) {
+    this.set( value );
+  }
+
+  /**
    * Returns true if this Property value can be set externally, by set() or .value =
    */
   public override isSettable(): boolean {
