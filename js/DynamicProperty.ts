@@ -329,7 +329,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
    * Returns true if this Property value can be set externally, by set() or .value =
    */
   public override isSettable(): boolean {
-    return super.isSettable() && this.bidirectional;
+    return super.isSettable() || this.bidirectional;
   }
 }
 

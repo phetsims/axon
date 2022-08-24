@@ -64,6 +64,10 @@ export default class Property<T> extends ReadOnlyProperty<T> implements TPropert
   public override set( value: T ): void {
     super.set( value );
   }
+
+  public override isSettable(): boolean {
+    return true;
+  }
 }
 
 export type { PropertyOptions };

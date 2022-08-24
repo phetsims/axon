@@ -142,13 +142,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     return this.dependencies!;
   }
 
-  /**
-   * DerivedProperty cannot have their value set externally, so this returns false.
-   */
-  public override isSettable(): boolean {
-    return false;
-  }
-
   // for bind
   private getDerivedPropertyListener(): void {
 

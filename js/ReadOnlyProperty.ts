@@ -199,7 +199,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * Returns true if the value can be set externally, using .value= or set()
    */
   public isSettable(): boolean {
-    return true;
+    return false;
   }
 
   /**
