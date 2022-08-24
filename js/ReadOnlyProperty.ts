@@ -14,7 +14,6 @@ import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
-import axon from './axon.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
@@ -24,14 +23,28 @@ import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, Prop
 import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import Property from './Property.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import axon from './axon.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // variables
 let globalId = 0; // auto-incremented for unique IDs
+
+
+// {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
+// the parameter type, so that it is only created once
+const cache = new Map();
+
+export type ReadOnlyPropertyState<StateType> = {
+  value: StateType;
+
+  // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
+  validValues: StateType[] | null;
+
+  units: string | null;
+};
 
 // Options defined by Property
 type SelfOptions = {
@@ -94,9 +107,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
   // whether a deferred value has been set
   protected hasDeferredValue: boolean;
-
-  public static CHANGED_EVENT_NAME: string;
-  public static PropertyIO: ( parameterType: IOType ) => IOType;
 
   protected readonly valueValidator: Validator<T>;
   public static readonly TANDEM_NAME_SUFFIX: string = 'Property';
@@ -214,9 +224,21 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   /**
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
-   * hasn't changed, this is a no-op.
+   * hasn't changed, this is a no-op.  For PhET-iO instrumented Properties that are phetioState: true, the value is only
+   * set by the state and cannot be modified by other code while isSettingPhetioStateProperty === true
    */
   protected set( value: T ): void {
+
+    // state is managed by the state engine
+    const setManagedByPhetioState = window.phet && phet?.joist?.sim?.isSettingPhetioStateProperty.value
+                                    && this.isPhetioInstrumented() && this.phetioState;
+    !setManagedByPhetioState && this.unguardedSet( value );
+  }
+
+  /**
+   * For usage by the IO Type during PhET-iO state setting.
+   */
+  private unguardedSet( value: T ): void {
     if ( !this.isDisposed ) {
       if ( this.isDeferred ) {
         this.deferredValue = value;
@@ -485,129 +507,116 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
     return this.tinyProperty.hasListeners();
   }
-}
 
-// static attributes
-ReadOnlyProperty.CHANGED_EVENT_NAME = 'changed';
 
-// {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
-// the parameter type, so that it is only created once
-const cache = new Map();
+  /**
+   * An observable Property that triggers notifications when the value changes.
+   * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+   */
+  public static PropertyIO<T, StateType>( parameterType: IOType<T, StateType> ): IOType {
+    assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
-export type ReadOnlyPropertyState<StateType> = {
-  value: StateType;
+    if ( !cache.has( parameterType ) ) {
+      cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<StateType>>( `PropertyIO<${parameterType.typeName}>`, {
 
-  // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-  validValues: StateType[] | null;
+        // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
+        // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
+        isValidValue: v => v instanceof ReadOnlyProperty,
+        documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
+                       'traditional listener pattern in that added listeners also receive a callback with the current value ' +
+                       'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
+        methodOrder: [ 'link', 'lazyLink' ],
+        events: [ ReadOnlyProperty.CHANGED_EVENT_NAME ],
+        parameterTypes: [ parameterType ],
+        toStateObject: property => {
+          assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
+          const stateObject: ReadOnlyPropertyState<StateType> = {
+            value: parameterType.toStateObject( property.value ),
 
-  units: string | null;
-};
+            // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
+            validValues: property.validValues ? property.validValues.map( v => {
+              return parameterType.toStateObject( v );
+            } ) : null,
+            units: NullableIO( StringIO ).toStateObject( property.units )
+          };
 
-/**
- * An observable Property that triggers notifications when the value changes.
- * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- */
-ReadOnlyProperty.PropertyIO = <T, StateType>( parameterType: IOType<T, StateType> ) => {
-  assert && assert( parameterType, 'PropertyIO needs parameterType' );
+          return stateObject;
+        },
+        applyState: ( property, stateObject ) => {
+          const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+          assert && assert( property.units === units, 'Property units do not match' );
+          assert && assert( property.isSettable(), 'Property should be settable' );
+          ( property ).unguardedSet( parameterType.fromStateObject( stateObject.value ) );
 
-  if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<StateType>>( `PropertyIO<${parameterType.typeName}>`, {
+          if ( stateObject.validValues ) {
+            property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
+          }
+        },
+        stateSchema: {
+          value: parameterType,
+          validValues: NullableIO( ArrayIO( parameterType ) ),
+          units: NullableIO( StringIO )
+        },
+        methods: {
+          getValue: {
+            returnType: parameterType,
+            parameterTypes: [],
+            implementation: ReadOnlyProperty.prototype.get,
+            documentation: 'Gets the current value.'
+          },
+          getValidationError: {
+            returnType: NullableIO( StringIO ),
+            parameterTypes: [ parameterType ],
+            implementation: ReadOnlyProperty.prototype.getValidationError,
+            documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
+          },
 
-      // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
-      // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
-      isValidValue: v => v instanceof ReadOnlyProperty,
-      documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
-                     'traditional listener pattern in that added listeners also receive a callback with the current value ' +
-                     'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',
-      methodOrder: [ 'link', 'lazyLink' ],
-      events: [ 'changed' ],
-      parameterTypes: [ parameterType ],
-      toStateObject: property => {
-        assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-        const stateObject: ReadOnlyPropertyState<StateType> = {
-          value: parameterType.toStateObject( property.value ),
+          setValue: {
+            returnType: VoidIO,
+            parameterTypes: [ parameterType ],
 
-          // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-          validValues: property.validValues ? property.validValues.map( v => {
-            return parameterType.toStateObject( v );
-          } ) : null,
-          units: NullableIO( StringIO ).toStateObject( property.units )
-        };
+            // @ts-ignore
+            implementation: ReadOnlyProperty.prototype.set,
+            documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
+                           'notified with the new value.',
+            invocableForReadOnlyElements: false
+          },
 
-        return stateObject;
-      },
-      applyState: ( property, stateObject ) => {
-        const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
-        assert && assert( property.units === units, 'Property units do not match' );
-        assert && assert( property.isSettable(), 'Property should be settable' );
-        ( property as Property<T> ).set( parameterType.fromStateObject( stateObject.value ) );
+          link: {
+            returnType: VoidIO,
 
-        if ( stateObject.validValues ) {
-          property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
+            // oldValue will start as "null" the first time called
+            parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
+            implementation: ReadOnlyProperty.prototype.link,
+            documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
+                           'also called with the current value. The listener takes two arguments, the new value and the ' +
+                           'previous value.'
+          },
+
+          lazyLink: {
+            returnType: VoidIO,
+
+            // oldValue will start as "null" the first time called
+            parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
+            implementation: ReadOnlyProperty.prototype.lazyLink,
+            documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
+                           'without the current-value callback on registration. The listener takes two arguments, the new ' +
+                           'value and the previous value.'
+          },
+          unlink: {
+            returnType: VoidIO,
+            parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
+            implementation: ReadOnlyProperty.prototype.unlink,
+            documentation: 'Removes a listener.'
+          }
         }
-      },
-      stateSchema: {
-        value: parameterType,
-        validValues: NullableIO( ArrayIO( parameterType ) ),
-        units: NullableIO( StringIO )
-      },
-      methods: {
-        getValue: {
-          returnType: parameterType,
-          parameterTypes: [],
-          implementation: ReadOnlyProperty.prototype.get,
-          documentation: 'Gets the current value.'
-        },
-        getValidationError: {
-          returnType: NullableIO( StringIO ),
-          parameterTypes: [ parameterType ],
-          implementation: ReadOnlyProperty.prototype.getValidationError,
-          documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
-        },
+      } ) );
+    }
 
-        setValue: {
-          returnType: VoidIO,
-          parameterTypes: [ parameterType ],
-
-          // @ts-ignore
-          implementation: ReadOnlyProperty.prototype.set,
-          documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
-                         'notified with the new value.',
-          invocableForReadOnlyElements: false
-        },
-
-        link: {
-          returnType: VoidIO,
-
-          // oldValue will start as "null" the first time called
-          parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: ReadOnlyProperty.prototype.link,
-          documentation: 'Adds a listener which will be called when the value changes. On registration, the listener is ' +
-                         'also called with the current value. The listener takes two arguments, the new value and the ' +
-                         'previous value.'
-        },
-
-        lazyLink: {
-          returnType: VoidIO,
-
-          // oldValue will start as "null" the first time called
-          parameterTypes: [ FunctionIO( VoidIO, [ parameterType, NullableIO( parameterType ) ] ) ],
-          implementation: ReadOnlyProperty.prototype.lazyLink,
-          documentation: 'Adds a listener which will be called when the value changes. This method is like "link", but ' +
-                         'without the current-value callback on registration. The listener takes two arguments, the new ' +
-                         'value and the previous value.'
-        },
-        unlink: {
-          returnType: VoidIO,
-          parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-          implementation: ReadOnlyProperty.prototype.unlink,
-          documentation: 'Removes a listener.'
-        }
-      }
-    } ) );
+    return cache.get( parameterType );
   }
 
-  return cache.get( parameterType );
-};
+  public static CHANGED_EVENT_NAME = 'changed';
+}
 
 axon.register( 'ReadOnlyProperty', ReadOnlyProperty );
