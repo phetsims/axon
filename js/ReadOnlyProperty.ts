@@ -32,10 +32,8 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // auto-incremented for unique IDs
 
-
-// {Map.<IOType, IOType>} - Cache each parameterized PropertyIO based on
-// the parameter type, so that it is only created once
-const cache = new Map();
+// Cache each parameterized PropertyIO based on the parameter type, so that it is only created once
+const cache = new Map<IOType, IOType>();
 
 export type ReadOnlyPropertyState<StateType> = {
   value: StateType;
@@ -229,10 +227,13 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   protected set( value: T ): void {
 
-    // state is managed by the state engine
+    // state is managed by the PhetioStateEngine
     const setManagedByPhetioState = window.phet && phet?.joist?.sim?.isSettingPhetioStateProperty.value
                                     && this.isPhetioInstrumented() && this.phetioState;
-    !setManagedByPhetioState && this.unguardedSet( value );
+
+    if ( !setManagedByPhetioState ) {
+      this.unguardedSet( value );
+    }
   }
 
   /**
@@ -546,7 +547,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
           const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
           assert && assert( property.units === units, 'Property units do not match' );
           assert && assert( property.isSettable(), 'Property should be settable' );
-          ( property ).unguardedSet( parameterType.fromStateObject( stateObject.value ) );
+          property.unguardedSet( parameterType.fromStateObject( stateObject.value ) );
 
           if ( stateObject.validValues ) {
             property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
@@ -613,7 +614,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       } ) );
     }
 
-    return cache.get( parameterType );
+    return cache.get( parameterType )!;
   }
 
   public static CHANGED_EVENT_NAME = 'changed';
