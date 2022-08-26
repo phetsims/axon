@@ -228,8 +228,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected set( value: T ): void {
 
     // state is managed by the PhetioStateEngine
-    const setManagedByPhetioState = window.phet && phet?.joist?.sim?.isSettingPhetioStateProperty.value
-                                    && this.isPhetioInstrumented() && this.phetioState
+    const setManagedByPhetioState = _.hasIn( window, 'phet.joist.sim.isSettingPhetioStateProperty' ) &&
+                                    phet.joist.sim.isSettingPhetioStateProperty.value &&
+                                    this.isPhetioInstrumented() && this.phetioState
 
                                     // However, DerivedProperty should be able to update during PhET-iO state set
                                     && this.isSettable();
