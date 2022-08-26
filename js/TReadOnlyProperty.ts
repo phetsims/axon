@@ -19,10 +19,9 @@ type TReadOnlyProperty<T> = {
   areValuesEqual( a: T, b: T ): boolean;
   link( listener: PropertyLinkListener<T>, options?: LinkOptions ): void;
   lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void;
-  linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): any; // eslint-disable-line
+  linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): void;
   unlink( listener: PropertyListener<T> ): void;
   unlinkAll(): void;
-  unlinkAttribute( listener: PropertyLinkListener<T> ): void;
   hasListener( listener: PropertyLinkListener<T> ): boolean;
   isSettable(): boolean;
   dispose(): void;

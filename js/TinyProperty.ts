@@ -168,18 +168,9 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    *
    * NOTE: Duplicated with Property.linkAttribute
    */
-  public linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): ( value: T ) => void {
+  public linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): void {
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
-    return handle;
-  }
-
-  /**
-   * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-   * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-   */
-  public unlinkAttribute( listener: PropertyLinkListener<T> ): void {
-    this.unlink( listener );
   }
 
   /**

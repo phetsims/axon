@@ -109,11 +109,14 @@ QUnit.test( 'Property link parameters', assert => {
 QUnit.test( 'Property.linkAttribute', assert => {
   const property = new Property( 7 );
   const state = { age: 99 };
-  const listener = property.linkAttribute( state, 'age' );
+  const listener = age => {
+    state.age = age;
+  };
+  property.link( listener );
   assert.equal( state.age, 7, 'link should synchronize values' );
   property.value = 8;
   assert.equal( state.age, 8, 'link should update values' );
-  property.unlinkAttribute( listener );
+  property.unlink( listener );
   property.value = 9;
   assert.equal( state.age, 8, 'state should not have changed after unlink' );
 } );

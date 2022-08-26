@@ -431,18 +431,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    *
    * NOTE: Duplicated with TinyProperty.linkAttribute
    */
-  public linkAttribute( object: IntentionalAny, attributeName: string ): ( value: T ) => void {
+  public linkAttribute( object: IntentionalAny, attributeName: string ): void {
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
-    return handle;
-  }
-
-  /**
-   * Unlink an listener added with linkAttribute.  Note: the args of linkAttribute do not match the args of
-   * unlinkAttribute: here, you must pass the listener handle returned by linkAttribute rather than object and attributeName
-   */
-  public unlinkAttribute( listener: PropertyLinkListener<T> ): void {
-    this.unlink( listener );
   }
 
   /**
