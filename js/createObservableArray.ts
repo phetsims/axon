@@ -112,13 +112,15 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // notifies when an element has been added
   const elementAddedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
-    parameters: [ emitterParameterOptions ]
+    parameters: [ emitterParameterOptions ],
+    phetioReadOnly: true
   } );
 
   // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
-    parameters: [ emitterParameterOptions ]
+    parameters: [ emitterParameterOptions ],
+    phetioReadOnly: true
   } );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
