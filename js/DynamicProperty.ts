@@ -119,7 +119,7 @@ type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
 
   // Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
-  derive?: ( ( outerValue: OuterValueType ) => TProperty<InnerValueType> ) | KeysMatching<OuterValueType, TProperty<InnerValueType>>;
+  derive?: ( ( outerValue: OuterValueType ) => TReadOnlyProperty<InnerValueType> ) | KeysMatching<OuterValueType, TProperty<InnerValueType>>;
 
   // Maps our input Property value to/from this Property's value. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
@@ -147,7 +147,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
   private isExternallyChanging: boolean;
 
   private defaultValue: InnerValueType;
-  protected derive: ( u: OuterValueType ) => TProperty<InnerValueType>;
+  protected derive: ( u: OuterValueType ) => TReadOnlyProperty<InnerValueType>;
   protected map: ( v: InnerValueType ) => ThisValueType;
   protected inverseMap: ( t: ThisValueType ) => InnerValueType;
   protected bidirectional: boolean;
@@ -173,7 +173,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
     const optionsMap = options.map;
     const optionsInverseMap = options.inverseMap;
 
-    const derive: ( ( u: OuterValueType ) => TProperty<InnerValueType> ) = typeof optionsDerive === 'function' ? optionsDerive : ( ( u: OuterValueType ) => u[ optionsDerive ] as unknown as TProperty<InnerValueType> );
+    const derive: ( ( u: OuterValueType ) => TReadOnlyProperty<InnerValueType> ) = typeof optionsDerive === 'function' ? optionsDerive : ( ( u: OuterValueType ) => u[ optionsDerive ] as unknown as TProperty<InnerValueType> );
     const map: ( ( v: InnerValueType ) => ThisValueType ) = typeof optionsMap === 'function' ? optionsMap : ( ( v: InnerValueType ) => v[ optionsMap ] as unknown as ThisValueType );
     const inverseMap: ( ( t: ThisValueType ) => InnerValueType ) = typeof optionsInverseMap === 'function' ? optionsInverseMap : ( ( t: ThisValueType ) => t[ optionsInverseMap ] as unknown as InnerValueType );
 
@@ -267,7 +267,9 @@ export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueTy
       // to floating-point issues).
       // See https://github.com/phetsims/axon/issues/197 for more details.
       if ( !this.areValuesEqual( value, this.map( innerProperty.value ) ) ) {
-        innerProperty.value = this.inverseMap( value );
+        // We'll fail at runtime if needed, this cast is needed since sometimes we can do non-bidirectional work on
+        // things like a DerivedProperty
+        ( innerProperty as TProperty<InnerValueType> ).value = this.inverseMap( value );
       }
     }
   }
