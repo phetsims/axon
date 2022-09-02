@@ -17,6 +17,7 @@ import './EnabledComponentTests.js';
 import './EnumerationPropertyDeprecatedTests.js';
 import './EnumerationPropertyTests.js';
 import './NumberPropertyTests.js';
+import './PatternStringPropertyTests.js';
 import './PropertyStateHandlerTests.js';
 import './PropertyTests.js';
 import './StringPropertyTests.js';
