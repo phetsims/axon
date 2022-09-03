@@ -19,7 +19,7 @@ import './EnumerationDeprecatedProperty.js';
 import './MappedProperty.js';
 import './Multilink.js';
 import './NumberProperty.js';
-import './PatterStringProperty.js';
+import './PatternStringProperty.js';
 import './Property.js';
 import './PropertyStateHandler.js';
 import './propertyStateHandlerSingleton.js';
