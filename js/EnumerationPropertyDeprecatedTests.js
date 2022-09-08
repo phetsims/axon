@@ -54,8 +54,8 @@ QUnit.test( 'EnumerationDeprecatedProperty', assert => {
 
 QUnit.test( 'EnumerationIO validation', assert => {
 
-    const Birds1 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-    const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
+    const Birds1 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN', 'OTHER' ] );
+    const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN', 'OTHER1' ], { phetioDocumentation: 'the second one' } );
     assert.ok( Birds1 !== Birds2, 'different Enumerations' );
     assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
     let birdProperty = new EnumerationDeprecatedProperty( Birds1, Birds1.ROBIN );
@@ -79,7 +79,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
 QUnit.test( 'validValues as a subset of EnumerationDeprecated values', assert => {
 
   const Birds1 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
-  const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ], { phetioDocumentation: 'the second one' } );
+  const Birds2 = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN', 'OTHER2' ], { phetioDocumentation: 'the second one' } );
   assert.ok( Birds1 !== Birds2, 'different Enumerations' );
   assert.ok( Birds1.ROBIN !== Birds2.ROBIN, 'different Enumerations' );
 

@@ -58,6 +58,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
       static ROBIN = new Bird1();
       static JAY = new Bird1();
       static WREN = new Bird1();
+      static GOAT = new Bird1();
       static enumeration = new Enumeration( Bird1 );
     }
 
@@ -65,6 +66,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
       static ROBIN = new Bird2();
       static JAY = new Bird2();
       static WREN = new Bird2();
+      static OTHER_WREN = new Bird2();
       static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
     }
 
@@ -95,6 +97,7 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
     static ROBIN = new Bird1();
     static JAY = new Bird1();
     static WREN = new Bird1();
+    static WREN_2 = new Bird1();
     static enumeration = new Enumeration( Bird1 );
   }
 
@@ -102,6 +105,7 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
     static ROBIN = new Bird2();
     static JAY = new Bird2();
     static WREN = new Bird2();
+    static WREN_3 = new Bird2();
     static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
   }
 
