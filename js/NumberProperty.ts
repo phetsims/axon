@@ -98,7 +98,7 @@ export default class NumberProperty extends Property<number> {
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
-    options.phetioValueType = NumberIO;
+    options.phetioOuterType = () => NumberProperty.NumberPropertyIO;
 
     const rangePropertyProvided = options.range && options.range instanceof ReadOnlyProperty;
     const ownsRangeProperty = !rangePropertyProvided;
