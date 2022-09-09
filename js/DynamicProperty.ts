@@ -140,8 +140,7 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // } );
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
-// TODO: https://github.com/phetsims/axon/issues/415 Can OuterValueType default to TProperty?
-export default class DynamicProperty<ThisValueType, InnerValueType = ThisValueType, OuterValueType = Property<InnerValueType>> extends ReadOnlyProperty<ThisValueType> implements LinkableProperty<ThisValueType> {
+export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueType> extends ReadOnlyProperty<ThisValueType> implements LinkableProperty<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   private isExternallyChanging: boolean;
