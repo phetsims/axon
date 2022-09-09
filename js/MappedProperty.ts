@@ -39,7 +39,6 @@ type SuperOptions<ThisValueType, InputValueType> = StrictOmit<DynamicPropertyOpt
 
 export type MappedPropertyOptions<ThisValueType, InputValueType> = SelfOptions<ThisValueType, InputValueType> & SuperOptions<ThisValueType, InputValueType>;
 
-// TODO https://github.com/phetsims/axon/issues/416 this file could use review by @jonathanolson
 export default class MappedProperty<ThisValueType, InputValueType> extends DynamicProperty<ThisValueType, InputValueType, TReadOnlyProperty<InputValueType>> {
   public constructor( property: TReadOnlyProperty<InputValueType>, providedOptions?: MappedPropertyOptions<ThisValueType, InputValueType> ) {
     super( new TinyProperty( property ), providedOptions );
