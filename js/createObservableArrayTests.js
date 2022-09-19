@@ -101,7 +101,7 @@ QUnit.test( 'Test same value', assert => {
   testArrayEmitters( assert, array => {
 
     array.push( 'test' );
-    array.shuffle( new Random() );// eslint-disable-line
+    array.shuffle( new Random() );// eslint-disable-line bad-sim-text
   }, [
     { type: 'added', value: 'test' }
   ] );

@@ -134,10 +134,10 @@ QUnit.test( 'Property value validation', assert => {
     valueType: 'string'
   };
   window.assert && assert.throws( () => {
-    new Property( 0, { valueType: 'foo' } ); // eslint-disable-line
+    new Property( 0, { valueType: 'foo' } ); // eslint-disable-line no-new
   }, 'options.valueType is invalid, expected a primitive data type' );
   window.assert && assert.throws( () => {
-    new Property( 0, options ); // eslint-disable-line
+    new Property( 0, options ); // eslint-disable-line no-new
   }, 'invalid initial value with options.valueType typeof validation' );
   property = new Property( 'horizontal', options );
   property.set( 'vertical' );
@@ -150,7 +150,7 @@ QUnit.test( 'Property value validation', assert => {
     valueType: TestType
   };
   window.assert && assert.throws( () => {
-    new Property( 0, options ); // eslint-disable-line
+    new Property( 0, options ); // eslint-disable-line no-new
   }, 'invalid initial value for options.valueType instanceof validation' );
   property = new Property( new TestType(), options );
   property.set( new TestType() );
@@ -163,10 +163,10 @@ QUnit.test( 'Property value validation', assert => {
     validValues: [ 1, 2, 3 ]
   };
   window.assert && assert.throws( () => {
-    new Property( 0, { validValues: 0 } ); // eslint-disable-line
+    new Property( 0, { validValues: 0 } ); // eslint-disable-line no-new
   }, 'options.validValues is invalid' );
   window.assert && assert.throws( () => {
-    new Property( 0, options ); // eslint-disable-line
+    new Property( 0, options ); // eslint-disable-line no-new
   }, 'invalid initial value with options.validValues' );
   property = new Property( 1, options );
   property.set( 3 );
@@ -181,10 +181,10 @@ QUnit.test( 'Property value validation', assert => {
     }
   };
   window.assert && assert.throws( () => {
-    new Property( 0, { isValidValue: 0 } ); // eslint-disable-line
+    new Property( 0, { isValidValue: 0 } ); // eslint-disable-line no-new
   }, 'options.isValidValue is invalid' );
   window.assert && assert.throws( () => {
-    new Property( 0, options ); // eslint-disable-line
+    new Property( 0, options ); // eslint-disable-line no-new
   }, 'invalid initial value with options.isValidValue' );
   property = new Property( 1, options );
   property.set( 3 );
@@ -252,7 +252,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
         done();
       }, 0 );
     };
-    new NumberProperty( propertyValue, { // eslint-disable-line
+    new NumberProperty( propertyValue, { // eslint-disable-line no-new
       tandem: tandem,
       validValues: validValues
     } );
