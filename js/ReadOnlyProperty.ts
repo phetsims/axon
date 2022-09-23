@@ -243,7 +243,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   /**
    * For usage by the IO Type during PhET-iO state setting.
    */
-  private unguardedSet( value: T ): void {
+  protected unguardedSet( value: T ): void {
     if ( !this.isDisposed ) {
       if ( this.isDeferred ) {
         this.deferredValue = value;
