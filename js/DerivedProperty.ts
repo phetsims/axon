@@ -41,7 +41,9 @@ function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T
   return derivation( ...dependencies.map( property => property.get() ) );
 }
 
+// Convenience type for a Derived property that has a known return type but unknown dependency types.
 export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown>;
+
 export type ReadOnlyDerivedProperty<T> = ReadOnlyProperty<T> & Pick<UnknownDerivedProperty<T>, 'hasDependency'>;
 
 /**
