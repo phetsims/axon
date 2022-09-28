@@ -516,8 +516,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<StateType>>( `PropertyIO<${parameterType.typeName}>`, {
 
         // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
-        // However, we also want the ReadOnlyProperty constructor to be protected, so we must ignore this type error
-        isValidValue: v => v instanceof ReadOnlyProperty,
+        valueType: ReadOnlyProperty,
         documentation: 'Observable values that send out notifications when the value changes. This differs from the ' +
                        'traditional listener pattern in that added listeners also receive a callback with the current value ' +
                        'when the listeners are registered. This is a widely-used pattern in PhET-iO simulations.',

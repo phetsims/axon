@@ -32,7 +32,6 @@
  */
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import Constructor from '../../phet-core/js/types/Constructor.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -48,7 +47,15 @@ export type IsValidValueOptions = {
   validateValidator?: boolean;
 };
 
-type ValueType = string | Constructor | EnumerationDeprecated | null | ValueType[];
+type ValueType =
+  string |
+  EnumerationDeprecated |
+  null |
+  ValueType[] |
+
+  // allow Function here since it is the appropriate level of abstraction for checking instanceof
+  Function; // eslint-disable-line @typescript-eslint/ban-types
+
 export type Validator<T = unknown> = {
 
   // Type of the value.
