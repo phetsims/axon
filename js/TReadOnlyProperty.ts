@@ -27,5 +27,6 @@ type TReadOnlyProperty<T> = {
   dispose(): void;
 
   isDisposed?: boolean;
+  toString(): string;
 };
 export default TReadOnlyProperty;
