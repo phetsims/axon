@@ -143,7 +143,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     if ( assert && providedOptions ) {
 
       // @ts-ignore -- for checking JS code
-      assert && assert( !providedOptions.phetioType, 'cannot set phetiotype' );
+      assert && assert( !providedOptions.phetioType, 'Set phetioType via phetioValueType' );
     }
 
     // Construct the IO Type
