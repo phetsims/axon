@@ -62,6 +62,9 @@ type SelfOptions = {
 
   // At this level, it doesn't matter what the state type is, so it defaults to IntentionalAny
   phetioValueType?: IOType;
+
+  // The IOType function that returns a parameterized IOType based on the valueType. There is a general default, but
+  // subtypes can implement their own, more specific IOType.
   phetioOuterType?: ( parameterType: IOType ) => IOType;
 };
 
