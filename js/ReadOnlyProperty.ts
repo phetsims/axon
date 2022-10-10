@@ -25,7 +25,6 @@ import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
-import phetioAPIValidation from '../../tandem/js/phetioAPIValidation.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -205,7 +204,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       // validate the initial value as well as any changes in the future
       this.link( ( value: T ) => validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE ) );
 
-      if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioState && phetioAPIValidation.enabled ) {
+      if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioState && Tandem.VALIDATION ) {
         assert && assert( options.phetioValueType !== IOType.ObjectIO, 'Stateful PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
       }
     }
