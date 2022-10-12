@@ -380,13 +380,13 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   public addPhetioStateDependencies( dependencies: Array<TReadOnlyProperty<IntentionalAny>> ): void {
     assert && assert( Array.isArray( dependencies ), 'Array expected' );
     for ( let i = 0; i < dependencies.length; i++ ) {
-      const dependency = dependencies[ i ];
+      const dependencyProperty = dependencies[ i ];
 
       // only if running in PhET-iO brand and both Properties are instrumenting
-      if ( dependency instanceof ReadOnlyProperty && dependency.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
+      if ( dependencyProperty instanceof ReadOnlyProperty && dependencyProperty.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
-        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
+        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependencyProperty, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
       }
     }
   }

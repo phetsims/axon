@@ -15,9 +15,9 @@ QUnit.test( 'Test VarianceNumberProperty', assert => {
 
   const computeFunction = ( v: number ) => v + 1;
 
-  const v = new VarianceNumberProperty( 0, computeFunction );
+  const property = new VarianceNumberProperty( 0, computeFunction );
 
-  assert.ok( v.getRandomizedValue() === 1, 'initial value' );
+  assert.ok( property.getRandomizedValue() === 1, 'initial value' );
   // assert.ok( v.value === 1, 'value getter' );
 
   const mean = 6;
@@ -39,19 +39,19 @@ QUnit.test( 'Test VarianceNumberProperty', assert => {
     );
   };
 
-  const v2 = new VarianceNumberProperty( mean, computeFunction2 );
+  const property2 = new VarianceNumberProperty( mean, computeFunction2 );
 
-  assert.ok( v2.getRandomizedValue() !== v2.getRandomizedValue(), 'randomly assigned' ); // eslint-disable-line no-self-compare
+  assert.ok( property2.getRandomizedValue() !== property2.getRandomizedValue(), 'randomly assigned' ); // eslint-disable-line no-self-compare
 
   // See the standard deviation in action!
   console.log( 'Variance number property tests:' );
   console.log( 'Mean: ' + mean );
   console.log( 'Standard deviation: ' + stardardDeviation );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
-  console.log( v2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
+  console.log( property2.getRandomizedValue() );
 } );

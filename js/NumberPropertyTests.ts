@@ -17,88 +17,88 @@ QUnit.module( 'NumberProperty' );
 QUnit.test( 'Test NumberProperty', assert => {
   assert.ok( true, 'one test needed when running without assertions' );
 
-  let p = new NumberProperty( 42 ); // highly random, do not change
+  let property = new NumberProperty( 42 ); // highly random, do not change
 
   // valueType
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p = new NumberProperty( 'foo' );
+    property = new NumberProperty( 'foo' );
   }, 'initial value has invalid valueType' );
-  p = new NumberProperty( 0 );
-  p.value = 1;
+  property = new NumberProperty( 0 );
+  property.value = 1;
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p.value = 'foo';
+    property.value = 'foo';
   }, 'set value has invalid valueType' );
 
   // numberType
-  p = new NumberProperty( 0, { numberType: 'FloatingPoint' } );
-  p.value = 1;
-  p.value = 1.2;
+  property = new NumberProperty( 0, { numberType: 'FloatingPoint' } );
+  property.value = 1;
+  property.value = 1.2;
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 1.2, { numberType: 'Integer' } );
+    property = new NumberProperty( 1.2, { numberType: 'Integer' } );
   }, 'initial value has invalid numberType' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, {
+    property = new NumberProperty( 0, {
       numberType: 'Integer',
       validValues: [ 0, 1, 1.2, 2 ]
     } );
   }, 'member of validValues has invalid numberType' );
-  p = new NumberProperty( 0, { numberType: 'Integer' } );
-  p.value = 1;
+  property = new NumberProperty( 0, { numberType: 'Integer' } );
+  property.value = 1;
   window.assert && assert.throws( () => {
-    p.value = 1.2;
+    property.value = 1.2;
   }, 'set value has invalid numberType' );
 
   // range
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p = new NumberProperty( 0, { range: [ 0, 10 ] } );
+    property = new NumberProperty( 0, { range: [ 0, 10 ] } );
   }, 'bad range' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 11, { range: new Range( 0, 10 ) } );
+    property = new NumberProperty( 11, { range: new Range( 0, 10 ) } );
   }, 'initial value is greater than range.max' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( -1, { range: new Range( 0, 10 ) } );
+    property = new NumberProperty( -1, { range: new Range( 0, 10 ) } );
   }, 'initial value is less than range.min' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, {
+    property = new NumberProperty( 0, {
       range: new Range( 0, 10 ),
       validValues: [ 0, 1, 2, 11 ]
     } );
   }, 'member of validValues is greater than range.max' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, {
+    property = new NumberProperty( 0, {
       range: new Range( 0, 10 ),
       validValues: [ -1, 0, 1, 2 ]
     } );
   }, 'member of validValues is less than range.min' );
-  p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
-  p.value = 5;
+  property = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
+  property.value = 5;
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p.value = 11;
+    property.value = 11;
   }, 'set value is greater than range.max' );
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p.value = -1;
+    property.value = -1;
   }, 'set value is less than range.min' );
 
   // units
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, { units: 'elephants' } );
+    property = new NumberProperty( 0, { units: 'elephants' } );
   }, 'bad units' );
 
   ///////////////////////////////
-  p = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
-  p.rangeProperty.value = new Range( 0, 100 );
-  p.value = 99;
-  p.rangeProperty.value = new Range( 90, 100 );
+  property = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
+  property.rangeProperty.value = new Range( 0, 100 );
+  property.value = 99;
+  property.rangeProperty.value = new Range( 90, 100 );
 
   // This should not fail, but will until we support nested deferral for PhET-iO support, see https://github.com/phetsims/axon/issues/282
   // p.reset();
@@ -108,65 +108,65 @@ QUnit.test( 'Test NumberProperty', assert => {
 QUnit.test( 'Test NumberProperty range option as Property', assert => {
 
   let rangeProperty = new Property( new Range( 0, 1 ) );
-  let p = new NumberProperty( 4 );
+  let property = new NumberProperty( 4 );
 
   // valueType
   window.assert && assert.throws( () => {
 
     // @ts-ignore
-    p = new NumberProperty( 0, { range: 'hi' } );
+    property = new NumberProperty( 0, { range: 'hi' } );
   }, 'incorrect range type' );
 
   // @ts-ignore
-  p = new NumberProperty( 0, { range: rangeProperty } );
-  assert.ok( p.rangeProperty === rangeProperty, 'rangeProperty should be set' );
-  assert.ok( p.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
-  p.value = 1;
-  p.value = 0;
-  p.value = 0.5;
+  property = new NumberProperty( 0, { range: rangeProperty } );
+  assert.ok( property.rangeProperty === rangeProperty, 'rangeProperty should be set' );
+  assert.ok( property.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
+  property.value = 1;
+  property.value = 0;
+  property.value = 0.5;
   window.assert && assert.throws( () => {
-    p.value = 2;
+    property.value = 2;
   }, 'larger than range' );
   window.assert && assert.throws( () => {
-    p.value = -2;
+    property.value = -2;
   }, 'smaller than range' );
   window.assert && assert.throws( () => {
     rangeProperty.value = new Range( 5, 10 );
   }, 'current value outside of range' );
 
   // reset from previous test setting to [5,10]
-  p.dispose();
+  property.dispose();
   rangeProperty.dispose();
   rangeProperty = new Property( new Range( 0, 1 ) );
 
   // @ts-ignore
-  p = new NumberProperty( 0, { range: rangeProperty } );
+  property = new NumberProperty( 0, { range: rangeProperty } );
   rangeProperty.value = new Range( 0, 10 );
-  p.value = 2;
+  property.value = 2;
 
-  p.setValueAndRange( 100, new Range( 99, 101 ) );
+  property.setValueAndRange( 100, new Range( 99, 101 ) );
 
   const myRange = new Range( 5, 10 );
-  p.setValueAndRange( 6, myRange );
+  property.setValueAndRange( 6, myRange );
 
-  assert.ok( myRange === p.rangeProperty.value, 'reference should be kept' );
+  assert.ok( myRange === property.rangeProperty.value, 'reference should be kept' );
 
-  p = new NumberProperty( 0, { range: new Range( 0, 1 ) } );
-  assert.ok( p.rangeProperty instanceof Property, 'created a rangeProperty from a range' );
+  property = new NumberProperty( 0, { range: new Range( 0, 1 ) } );
+  assert.ok( property.rangeProperty instanceof Property, 'created a rangeProperty from a range' );
 
   // deferring ordering dependencies
   ///////////////////////////////////////////////////////
   let pCalled = 0;
   let pRangeCalled = 0;
-  p.lazyLink( () => pCalled++ );
-  p.rangeProperty.lazyLink( () => pRangeCalled++ );
-  p.setDeferred( true );
-  p.rangeProperty.setDeferred( true );
-  p.set( 3 );
+  property.lazyLink( () => pCalled++ );
+  property.rangeProperty.lazyLink( () => pRangeCalled++ );
+  property.setDeferred( true );
+  property.rangeProperty.setDeferred( true );
+  property.set( 3 );
   assert.ok( pCalled === 0, 'p is still deferred, should not call listeners' );
-  p.rangeProperty.set( new Range( 2, 3 ) );
+  property.rangeProperty.set( new Range( 2, 3 ) );
   assert.ok( pRangeCalled === 0, 'p.rangeProperty is still deferred, should not call listeners' );
-  const notifyPListeners = p.setDeferred( false );
+  const notifyPListeners = property.setDeferred( false );
 
 
   if ( window.assert ) {
@@ -174,43 +174,43 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
       notifyPListeners && notifyPListeners();
     }, 'rangeProperty is not yet undeferred and so has the wrong value' );
 
-    p[ 'notifying' ] = false; // since the above threw an error, reset
+    property[ 'notifying' ] = false; // since the above threw an error, reset
   }
-  const notifyRangeListeners = p.rangeProperty.setDeferred( false );
+  const notifyRangeListeners = property.rangeProperty.setDeferred( false );
   notifyPListeners && notifyPListeners();
   assert.ok( pCalled === 1, 'p listeners should have been called' );
   notifyRangeListeners && notifyRangeListeners();
   assert.ok( pRangeCalled === 1, 'p.rangeProperty is still deferred, should not call listeners' );
 
-  p.setValueAndRange( -100, new Range( -101, -99 ) );
+  property.setValueAndRange( -100, new Range( -101, -99 ) );
   assert.ok( pCalled === 2, 'p listeners should have been called again' );
   assert.ok( pRangeCalled === 2, 'p.rangeProperty is still deferred, should not call listeners again' );
 
-  p = new NumberProperty( 0 );
-  p.value = 4;
-  assert.ok( p.rangeProperty.value === null, 'rangeProperty should have been created' );
-  p.rangeProperty.value = new Range( 0, 4 );
+  property = new NumberProperty( 0 );
+  property.value = 4;
+  assert.ok( property.rangeProperty.value === null, 'rangeProperty should have been created' );
+  property.rangeProperty.value = new Range( 0, 4 );
   window.assert && assert.throws( () => {
-    p.value = 5;
+    property.value = 5;
   }, 'current value outside of range' );
 } );
 QUnit.test( 'Test NumberProperty phet-io options', assert => {
 
   const tandem = Tandem.ROOT_TEST;
-  let p = new NumberProperty( 0, {
+  let property = new NumberProperty( 0, {
     range: new Range( 0, 20 ),
     tandem: tandem.createTandem( 'numberProperty' ),
     rangePropertyOptions: { tandem: tandem.createTandem( 'rangeProperty' ) }
   } );
 
-  assert.ok( p.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
-  assert.ok( p.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
+  assert.ok( property.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
+  assert.ok( property.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
   window.assert && assert.throws( () => {
-    p = new NumberProperty( 0, {
+    property = new NumberProperty( 0, {
       range: new Range( 0, 20 ),
       tandem: tandem.createTandem( 'numberProperty2' ),
       rangePropertyOptions: { tandem: tandem.createTandem( 'rangePropertyfdsa' ) }
     } );
   }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
-  p.dispose();
+  property.dispose();
 } );
