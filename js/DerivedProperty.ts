@@ -252,7 +252,7 @@ const orFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
 const cache = new Map<IOType, IOType>();
 
 /**
- * Parametric IO Type constructor.  Given an parameter type, this function returns an appropriate DerivedProperty
+ * Parametric IO Type constructor.  Given a parameter type, this function returns an appropriate DerivedProperty
  * IO Type. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
