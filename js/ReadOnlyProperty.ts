@@ -408,7 +408,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   }
 
   /**
-   * Add an listener to the Property, without calling it back right away. This is used when you need to register a
+   * Add a listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
   public lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void {

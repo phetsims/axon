@@ -218,7 +218,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   }
 
   /**
-   * Unlinks an listener that was added with multilink or lazyMultilink.
+   * Unlinks a listener that was added with multilink or lazyMultilink.
    */
   public static unmultilink( multilink: UnknownMultilink ): void {
     multilink.dispose();
