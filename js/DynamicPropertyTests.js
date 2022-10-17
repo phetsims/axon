@@ -88,7 +88,7 @@ QUnit.test( 'Bidirectional', assert => {
   const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
   const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } ); // eslint-disable-line no-undef
 
-  dynamicProperty.value = 2; // allowed now that it is bidrectional, otherwise prohibited
+  dynamicProperty.value = 2; // allowed now that it is bidirectional, otherwise prohibited
   assert.equal( firstProperty.value, 2 );
 
   numberPropertyProperty.value = secondProperty; // change which property is active
@@ -127,18 +127,18 @@ QUnit.test( 'Mapping (with bidirectional)', assert => {
   assert.equal( firstProperty.value, 2 );
 } );
 
-QUnit.test( 'Attempted setters to nonbidrectional', assert => {
+QUnit.test( 'Attempted setters to nonbidirectional', assert => {
   const property = new Property( 5 );
   const propertyProperty = new Property( property );
   const dynamicProperty = new DynamicProperty( propertyProperty );
 
   window.assert && assert.throws( () => {
     dynamicProperty.value = 10;
-  }, /bidirectional/, 'Should not be able to set a non-bidrectional DynamicProperty' );
+  }, /bidirectional/, 'Should not be able to set a non-bidirectional DynamicProperty' );
 
   window.assert && assert.throws( () => {
     dynamicProperty.reset();
-  }, /bidirectional/, 'Should not be able to reset a non-bidrectional DynamicProperty' );
+  }, /bidirectional/, 'Should not be able to reset a non-bidirectional DynamicProperty' );
 
   assert.expect( window.assert ? 2 : 0 );
 } );
