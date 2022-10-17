@@ -21,7 +21,7 @@ QUnit.test( 'Test VarianceNumberProperty', assert => {
   // assert.ok( v.value === 1, 'value getter' );
 
   const mean = 6;
-  const stardardDeviation = 2;
+  const standardDeviation = 2;
   const computeFunction2 = ( mean: number ): number => {
     let u = 0;
     let v = 0;
@@ -33,7 +33,7 @@ QUnit.test( 'Test VarianceNumberProperty', assert => {
     }
     return (
       mean +
-      stardardDeviation *
+      standardDeviation *
       Math.sqrt( -2.0 * Math.log( u ) ) *
       Math.cos( 2.0 * Math.PI * v )
     );
@@ -46,7 +46,7 @@ QUnit.test( 'Test VarianceNumberProperty', assert => {
   // See the standard deviation in action!
   console.log( 'Variance number property tests:' );
   console.log( 'Mean: ' + mean );
-  console.log( 'Standard deviation: ' + stardardDeviation );
+  console.log( 'Standard deviation: ' + standardDeviation );
   console.log( secondProperty.getRandomizedValue() );
   console.log( secondProperty.getRandomizedValue() );
   console.log( secondProperty.getRandomizedValue() );
