@@ -58,7 +58,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * Sets (or unsets if `null` is provided) the Property that we use for forwarding changes.
    *
    * @param node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
-   * @param tandemName - null if the Property doesn't not support PhET-iO instrumentation
+   * @param tandemName - null if the Property does not support PhET-iO instrumentation
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
