@@ -71,7 +71,7 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
 
 QUnit.test( 'TinyEmitter Basics', assert => {
   const stack = [];
-  const emitter = new TinyEmitter(); // eslint-disable-line no-undef
+  const emitter = new TinyEmitter();
   const a = () => {
     stack.push( 'a' );
     emitter.removeListener( b );

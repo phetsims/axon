@@ -12,10 +12,10 @@ import Property from './Property.js';
 QUnit.module( 'DynamicProperty' );
 
 QUnit.test( 'Basics', assert => {
-  const aProperty = new Property( 5 ); // eslint-disable-line no-undef
-  const bProperty = new Property( 2 ); // eslint-disable-line no-undef
-  const propertyProperty = new Property( aProperty ); // eslint-disable-line no-undef
-  const dynamicProperty = new DynamicProperty( propertyProperty ); // eslint-disable-line no-undef
+  const aProperty = new Property( 5 );
+  const bProperty = new Property( 2 );
+  const propertyProperty = new Property( aProperty );
+  const dynamicProperty = new DynamicProperty( propertyProperty );
 
   assert.equal( dynamicProperty.value, aProperty.value );
 
@@ -32,13 +32,13 @@ QUnit.test( 'Basics', assert => {
 
 QUnit.test( 'Derive (string)', assert => {
   const a = {
-    property: new Property( 5 ) // eslint-disable-line no-undef
+    property: new Property( 5 )
   };
   const b = {
-    property: new Property( 2 ) // eslint-disable-line no-undef
+    property: new Property( 2 )
   };
-  const mainProperty = new Property( a ); // eslint-disable-line no-undef
-  const dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
+  const mainProperty = new Property( a );
+  const dynamicProperty = new DynamicProperty( mainProperty, {
     derive: 'property'
   } );
 
@@ -57,13 +57,13 @@ QUnit.test( 'Derive (string)', assert => {
 
 QUnit.test( 'Derive (function)', assert => {
   const a = {
-    property: new Property( 5 ) // eslint-disable-line no-undef
+    property: new Property( 5 )
   };
   const b = {
-    property: new Property( 2 ) // eslint-disable-line no-undef
+    property: new Property( 2 )
   };
-  const mainProperty = new Property( a ); // eslint-disable-line no-undef
-  const dynamicProperty = new DynamicProperty( mainProperty, { // eslint-disable-line no-undef
+  const mainProperty = new Property( a );
+  const dynamicProperty = new DynamicProperty( mainProperty, {
     derive: function( ob ) {
       return ob.property;
     }
@@ -83,10 +83,10 @@ QUnit.test( 'Derive (function)', assert => {
 } );
 
 QUnit.test( 'Bidirectional', assert => {
-  const firstProperty = new Property( 5 ); // eslint-disable-line no-undef
-  const secondProperty = new Property( 10 ); // eslint-disable-line no-undef
-  const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
-  const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } ); // eslint-disable-line no-undef
+  const firstProperty = new Property( 5 );
+  const secondProperty = new Property( 10 );
+  const numberPropertyProperty = new Property( firstProperty );
+  const dynamicProperty = new DynamicProperty( numberPropertyProperty, { bidirectional: true } );
 
   dynamicProperty.value = 2; // allowed now that it is bidirectional, otherwise prohibited
   assert.equal( firstProperty.value, 2 );
@@ -100,10 +100,10 @@ QUnit.test( 'Bidirectional', assert => {
 } );
 
 QUnit.test( 'Mapping (with bidirectional)', assert => {
-  const firstProperty = new Property( 5 ); // eslint-disable-line no-undef
-  const secondProperty = new Property( 10 ); // eslint-disable-line no-undef
-  const numberPropertyProperty = new Property( firstProperty ); // eslint-disable-line no-undef
-  const dynamicProperty = new DynamicProperty( numberPropertyProperty, { // eslint-disable-line no-undef
+  const firstProperty = new Property( 5 );
+  const secondProperty = new Property( 10 );
+  const numberPropertyProperty = new Property( firstProperty );
+  const dynamicProperty = new DynamicProperty( numberPropertyProperty, {
     bidirectional: true,
     map: function( number ) {
       return `${number}`;

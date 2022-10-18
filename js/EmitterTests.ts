@@ -75,7 +75,7 @@ QUnit.test( 'Test emit timing Emitter', assert => {
 
 QUnit.test( 'Emitter Basics', assert => {
   const stack: string[] = [];
-  const emitter = new Emitter(); // eslint-disable-line no-undef
+  const emitter = new Emitter();
   const a = () => {
     stack.push( 'a' );
     emitter.removeListener( b );
