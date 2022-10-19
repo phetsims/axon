@@ -50,7 +50,7 @@ type SelfOptions = {
 
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioValueType' | 'valueType'>;
 
-// Minimal types for ranged Properties - Generally use `new NumberPropery( ... ).asRanged()`
+// Minimal types for ranged Properties - Generally use `new NumberProperty( ... ).asRanged()`
 export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
 
 // User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
