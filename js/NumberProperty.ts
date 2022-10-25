@@ -235,11 +235,11 @@ export default class NumberProperty extends Property<number> {
   public toStateObject(): NumberPropertyState {
     const parentStateObject = PropertyIOImpl.toStateObject( this );
 
-    parentStateObject.numberType = StringIO.toStateObject( this.numberType );
+    parentStateObject.numberType = this.numberType;
     parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( this.rangeProperty.value );
 
     const hasRangePhetioID = this.rangeProperty && this.rangeProperty.isPhetioInstrumented();
-    parentStateObject.rangePhetioID = hasRangePhetioID ? StringIO.toStateObject( this.rangeProperty.tandem.phetioID ) : null;
+    parentStateObject.rangePhetioID = hasRangePhetioID ? this.rangeProperty.tandem.phetioID : null;
 
     return parentStateObject;
   }
