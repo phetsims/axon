@@ -118,21 +118,22 @@ type OptionalSelfOptions<Values extends ValuesType> = {
   decimalPlaces?: number | null | Record<keyof Values, number | null>;
 };
 
-type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> & ( KeysNotMatching<Values, StringNumberOrProperty> extends never ? {
-  // Maps the input string/numeric values (depending on the Property type) to a string or number. Decimal places will be
-  // applied after this step (if it returns a number).
-  //
-  // For example:
-  // | const stringProperty = new TinyProperty( '{{grams}} grams' );
-  // | const kilogramsProperty = new TinyProperty( 5.12 );
-  // | new PatternStringProperty( stringProperty, { preposition: kilogramsProperty }, {
-  // |   maps: { preposition: kilograms => kilograms / 1000 }
-  // | } );
-  maps?: MapsType<Values>;
-} : {
-  // Make this required if someone's passing in something that is of a non-string/number type
-  maps: MapsType<Values>;
-} );
+type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> &
+  ( KeysNotMatching<Values, StringNumberOrProperty> extends never ? {
+    // Maps the input string/numeric values (depending on the Property type) to a string or number. Decimal places will be
+    // applied after this step (if it returns a number).
+    //
+    // For example:
+    // | const stringProperty = new TinyProperty( '{{grams}} grams' );
+    // | const kilogramsProperty = new TinyProperty( 5.12 );
+    // | new PatternStringProperty( stringProperty, { preposition: kilogramsProperty }, {
+    // |   maps: { preposition: kilograms => kilograms / 1000 }
+    // | } );
+    maps?: MapsType<Values>;
+  } : {
+      // Make this required if someone's passing in something that is of a non-string/number type
+      maps: MapsType<Values>;
+    } );
 
 type SuperOptions = DerivedPropertyOptions<string>;
 export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & SuperOptions;
@@ -140,8 +141,7 @@ export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOption
 // Shared here, since it will always be the same function
 const stringify = ( value: string | number ): string => `${value}`;
 
-export default class PatternStringProperty<Values extends ValuesType> extends DerivedProperty<
-  string,
+export default class PatternStringProperty<Values extends ValuesType> extends DerivedProperty<string,
   unknown,
   unknown,
   unknown,
@@ -156,8 +156,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
   unknown,
   unknown,
   unknown,
-  unknown
-  > {
+  unknown> {
   public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions?: PatternStringPropertyOptions<Values> ) {
 
     const options = optionize<PatternStringPropertyOptions<Values>, OptionalSelfOptions<Values>, SuperOptions>()( {
@@ -184,8 +183,8 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
       if ( options.decimalPlaces !== null && ( typeof options.decimalPlaces === 'number' || options.decimalPlaces[ key ] !== null ) ) {
         // It won't be null (we checked above for hasDecimalPlaces), asserted below
         const decimalPlaces: number = ( typeof options.decimalPlaces === 'number' || options.decimalPlaces === null )
-                              ? options.decimalPlaces
-                              : options.decimalPlaces[ key ]!;
+                                      ? options.decimalPlaces
+                                      : options.decimalPlaces[ key ]!;
         assert && assert( decimalPlaces !== null );
 
         stringNumberMap = ( value: string | number ) => stringify( typeof value === 'number' ? Utils.toFixed( value, decimalPlaces ) : value );
