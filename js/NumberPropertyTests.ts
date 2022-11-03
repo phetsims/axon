@@ -205,7 +205,13 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
 
   assert.ok( property.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
   assert.ok( property.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
-  window.assert && assert.throws( () => {
+
+  property = new NumberProperty( 0, {
+    range: null
+  } );
+  assert.ok( !property.rangeProperty.isPhetioInstrumented(), 'null ranges do not get instrumented rangeProperty' );
+
+  window.assert && Tandem.VALIDATION && assert.throws( () => {
     property = new NumberProperty( 0, {
       range: new Range( 0, 20 ),
       tandem: tandem.createTandem( 'numberProperty2' ),

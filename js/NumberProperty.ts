@@ -85,17 +85,17 @@ export default class NumberProperty extends Property<number> {
       tandem: Tandem.OPTIONAL
     }, providedOptions );
 
-    // Defaults for rangePropertyOptions, since it depends on options.tandem
-    const rangePropertyDefaults = options.range ? {
+    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
       phetioValueType: NullableIO( Range.RangeIO ),
       phetioReadOnly: true,
-      tandem: options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME )
-    } : {};
-    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( rangePropertyDefaults, options.rangePropertyOptions );
 
-    if ( assert && options.rangePropertyOptions.tandem ) {
-      assert && assert( !options.rangePropertyOptions.tandem.supplied || options.rangePropertyOptions.tandem.name === RANGE_PROPERTY_TANDEM_NAME,
+      // If provided range is null, don't instrument the PhET-iO RangeProperty
+      tandem: options.range ? options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME ) : Tandem.OPT_OUT
+    }, options.rangePropertyOptions );
+
+    if ( assert && Tandem.VALIDATION && options.rangePropertyOptions.tandem && options.rangePropertyOptions.tandem.supplied ) {
+      assert && assert( options.rangePropertyOptions.tandem.name === RANGE_PROPERTY_TANDEM_NAME,
         `rangePropertyOptions.tandem.name must be ${RANGE_PROPERTY_TANDEM_NAME}: ${options.rangePropertyOptions.tandem.name}` );
     }
 
