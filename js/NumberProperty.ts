@@ -86,15 +86,18 @@ export default class NumberProperty extends Property<number> {
     }, providedOptions );
 
     // Defaults for rangePropertyOptions, since it depends on options.tandem
-    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( {
+    const rangePropertyDefaults = options.range ? {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
       phetioValueType: NullableIO( Range.RangeIO ),
       phetioReadOnly: true,
       tandem: options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME )
-    }, options.rangePropertyOptions );
+    } : {};
+    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( rangePropertyDefaults, options.rangePropertyOptions );
 
-    assert && assert( !options.rangePropertyOptions.tandem!.supplied || options.rangePropertyOptions.tandem!.name === RANGE_PROPERTY_TANDEM_NAME,
-      `rangePropertyOptions.tandem.name must be ${RANGE_PROPERTY_TANDEM_NAME}: ${options.rangePropertyOptions.tandem!.name}` );
+    if ( assert && options.rangePropertyOptions.tandem ) {
+      assert && assert( !options.rangePropertyOptions.tandem.supplied || options.rangePropertyOptions.tandem.name === RANGE_PROPERTY_TANDEM_NAME,
+        `rangePropertyOptions.tandem.name must be ${RANGE_PROPERTY_TANDEM_NAME}: ${options.rangePropertyOptions.tandem.name}` );
+    }
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
