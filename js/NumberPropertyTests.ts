@@ -206,6 +206,8 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
   assert.ok( property.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
   assert.ok( property.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
 
+  property.dispose();
+
   property = new NumberProperty( 0, {
     range: null
   } );
