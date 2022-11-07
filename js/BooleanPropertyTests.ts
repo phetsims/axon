@@ -9,26 +9,33 @@
 
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import BooleanProperty from './BooleanProperty.js';
+import Property from './Property.js';
 
 QUnit.module( 'BooleanProperty' );
 QUnit.test( 'BooleanProperty', assert => {
 
-  let p = null;
+  let fixtureProperty: Property<boolean>;
 
   window.assert && assert.throws( () => {
-    p = new BooleanProperty( 'hello' );
+
+    // @ts-ignore, this is purposefully failing typescript checks for testing
+    fixtureProperty = new BooleanProperty( 'hello' );
   }, 'invalid initial value' );
 
-  p = new BooleanProperty( true );
-  p.set( true );
-  p.set( false );
-  p.set( true );
+  fixtureProperty = new BooleanProperty( true );
+  fixtureProperty.set( true );
+  fixtureProperty.set( false );
+  fixtureProperty.set( true );
   window.assert && assert.throws( () => {
-    p.set( 123 );
+
+    // @ts-ignore, this is purposefully failing typescript checks for testing
+    fixtureProperty.set( 123 );
   }, 'invalid set value' );
 
   window.assert && assert.throws( () => {
-    p = new BooleanProperty( true, { phetioType: BooleanIO } );
+
+    //@ts-ignore, force set phetioType for testing.
+    fixtureProperty = new BooleanProperty( true, { phetioType: BooleanIO } );
   }, 'BooleanProperty' );
 
   assert.ok( true, 'so we have at least 1 test in this set' );

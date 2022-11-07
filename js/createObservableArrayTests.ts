@@ -8,15 +8,20 @@
 
 import Random from '../../dot/js/Random.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import createObservableArray from './createObservableArray.js';
+import createObservableArray, { ObservableArray } from './createObservableArray.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 QUnit.module( 'createObservableArray' );
+
+type runCallback = () => IntentionalAny;
+
+type testArrayEmittersCallback = { ( array: ObservableArray<unknown> ): void };
 
 QUnit.test( 'Hello', assert => {
 
   assert.ok( 'first test' );
 
-  const run = ( name, command ) => {
+  const run = ( name: string, command: runCallback ) => {
     console.log( `START: ${name}` );
     const result = command();
     console.log( `END: ${name}\n\n` );
@@ -43,9 +48,9 @@ QUnit.test( 'Hello', assert => {
 } );
 
 // Creates an array that is tested with the given modifiers against the expected results.
-const testArrayEmitters = ( assert, modifier, expected ) => {
+const testArrayEmitters = ( assert: Assert, modifier: testArrayEmittersCallback, expected: Array<unknown> ) => {
   const array = createObservableArray();
-  const deltas = [];
+  const deltas: Array<unknown> = [];
   array.elementAddedEmitter.addListener( e => deltas.push( { type: 'added', value: e } ) );
   array.elementRemovedEmitter.addListener( e => deltas.push( { type: 'removed', value: e } ) );
   modifier( array );
@@ -85,8 +90,10 @@ QUnit.test( 'Test delete', assert => {
     array.push( 'test' );
     delete array[ 0 ];
 
-    array.hello = 'there';
-    delete array.hello;
+    // FOR REVIEWER: The commented out code does not appear to have been testing anything. Expected does not include any
+    // return value comparisons for array.hello. Should this be actually testing something or safe to delete?
+    // array.hello = 'there';
+    // delete array.hello;
 
     array[ -7 ] = 'time';
     delete array[ -7 ];
@@ -245,7 +252,7 @@ QUnit.test( 'Test createObservableArray.unshift', assert => {
 QUnit.test( 'Test createObservableArray.copyWithin', assert => {
   testArrayEmitters( assert, array => {
     array.push( 1, 2, 3, 4, 5 );
-    array.copyWithin( -2 ); // [1, 2, 3, 1, 2]
+    array.copyWithin( -2, 0 ); // [1, 2, 3, 1, 2]
   }, [
     { type: 'added', value: 1 },
     { type: 'added', value: 2 },
@@ -437,6 +444,8 @@ QUnit.test( 'Test constructor arguments', assert => {
   // valid element types should succeed
   const a4 = createObservableArray( {
     elements: [ 'a', 'b' ],
+
+    // @ts-ignore, force set value type for testing
     valueType: 'string'
   } );
   assert.ok( !!a4, 'correct element types should succeed' );
@@ -444,13 +453,15 @@ QUnit.test( 'Test constructor arguments', assert => {
   // invalid element types should fail
   window.assert && assert.throws( () => createObservableArray( {
     elements: [ 'a', 'b' ],
+
+    // @ts-ignore, force set value type for testing
     valueType: 'number'
   } ), 'should fail for invalid element types' );
 
 } );
 
 QUnit.test( 'Test function values', assert => {
-  const array = createObservableArray();
+  const array: Array<() => void> = createObservableArray();
   let number = 7;
   array.push( () => {
     number++;
