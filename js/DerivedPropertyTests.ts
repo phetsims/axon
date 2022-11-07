@@ -15,104 +15,107 @@ import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 QUnit.module( 'DerivedProperty' );
 
 QUnit.test( 'Test stale values in DerivedProperty', assert => {
-  const a = new Property( 1 );
-  const b = new Property( 2 );
-  const c = new DerivedProperty( [ a, b ], ( ( a, b ) => {return a + b;} ) );
-  a.value = 7;
-  assert.equal( c.value, 9 );
+  const aProperty = new Property( 1 );
+  const bProperty = new Property( 2 );
+  const cProperty = new DerivedProperty( [ aProperty, bProperty ], ( ( aProperty, bProperty ) => {return aProperty + bProperty;} ) );
+  aProperty.value = 7;
+  assert.equal( cProperty.value, 9 );
 } );
 
 QUnit.test( 'Test DerivedProperty.unlink', assert => {
 
   const widthProperty = new Property( 2 );
-  const startingWidthListenerCount = widthProperty.getListenerCount();
+  const startingWidthListenerCount = widthProperty[ 'getListenerCount' ]();
   const heightProperty = new Property( 3 );
-  const startingHeightListenerCount = heightProperty.getListenerCount();
-  const areaProperty = new DerivedProperty( [ widthProperty, heightProperty ],
+  const startingHeightListenerCount = heightProperty[ 'getListenerCount' ]();
+  const areaPropertyDependencies: [ Property<number>, Property<number> ] = [ widthProperty, heightProperty ];
+  const areaProperty = new DerivedProperty( areaPropertyDependencies,
     ( ( width, height ) => width * height ) );
-  const listener = function( area ) { /*console.log( 'area = ' + area );*/ };
+  const listener = function( area: number ) { /*console.log( 'area = ' + area );*/ };
   areaProperty.link( listener );
 
-  assert.equal( widthProperty.getListenerCount(), 1 + startingWidthListenerCount );
-  assert.equal( heightProperty.getListenerCount(), 1 + startingHeightListenerCount );
-  assert.equal( areaProperty.dependencies.length, 2 );
+  assert.equal( widthProperty[ 'getListenerCount' ](), 1 + startingWidthListenerCount );
+  assert.equal( heightProperty[ 'getListenerCount' ](), 1 + startingHeightListenerCount );
+  assert.equal( areaPropertyDependencies.length, 2 );
 
   // Unlink the listener
   areaProperty.unlink( listener );
   areaProperty.dispose();
 
-  assert.equal( widthProperty.getListenerCount(), startingWidthListenerCount );
-  assert.equal( heightProperty.getListenerCount(), startingHeightListenerCount );
+  assert.equal( widthProperty[ 'getListenerCount' ](), startingWidthListenerCount );
+  assert.equal( heightProperty[ 'getListenerCount' ](), startingHeightListenerCount );
 
-  assert.equal( areaProperty.dependencies, null );
-  assert.equal( areaProperty.dependencyListeners, null );
-  assert.equal( areaProperty.dependencyValues, null );
+  assert.equal( areaProperty[ 'dependencies' ], null );
+
+  // @ts-ignore, type of dependencyListeners is implicitly any because DerivedProperty can have up to 16 dependencies of any type
+  assert.equal( areaProperty[ 'dependencyListeners' ], null );
+  assert.equal( areaProperty[ 'dependencies' ], null );
 } );
 
 QUnit.test( 'DerivedProperty.valueEquals', assert => {
-  const propA = new Property( 'a' );
-  const propB = new Property( 'b' );
-  const prop = DerivedProperty.valueEquals( propA, propB );
-  assert.equal( prop.value, false );
-  propA.value = 'b';
-  assert.equal( prop.value, true );
+  const aProperty = new Property( 'a' );
+  const bProperty = new Property( 'b' );
+  const cProperty = DerivedProperty[ 'valueEquals' ]( aProperty, bProperty );
+  assert.equal( cProperty.value, false );
+  aProperty.value = 'b';
+  assert.equal( cProperty.value, true );
 } );
 
 QUnit.test( 'Test defer', assert => {
-  const property1 = new Property( 0 );
-  const property2 = new Property( 2 );
-  const derivedProperty = new DerivedProperty( [ property1, property2 ], ( a, b ) => a + b );
+  const firstProperty = new Property( 0 );
+  const secondProperty = new Property( 2 );
+  const derivedProperty = new DerivedProperty( [ firstProperty, secondProperty ], ( a, b ) => a + b );
   assert.ok( derivedProperty.value === 2, 'base case, no defer' );
 
   // test a dependency being deferred
-  property1.setDeferred( true );
+  firstProperty.setDeferred( true );
   assert.ok( derivedProperty.value === 2, 'same value even after defer' );
-  property1.value = 2;
+  firstProperty.value = 2;
   assert.ok( derivedProperty.value === 2, 'same value even when set to new' );
-  const update = property1.setDeferred( false );
-  assert.ok( property1.value === 2, 'property has new value now' );
+  const update = firstProperty.setDeferred( false );
+  assert.ok( firstProperty.value === 2, 'property has new value now' );
   assert.ok( derivedProperty.value === 2, 'but the derivedProperty doesnt' );
-  update();
+   update && update();
   assert.ok( derivedProperty.value === 4, 'now derivedProperty was updated' );
 
   // test the DerivedProperty being deferred
   derivedProperty.setDeferred( true );
   assert.ok( derivedProperty.value === 4, 'still 4' );
-  property1.value = 4;
+  firstProperty.value = 4;
   assert.ok( derivedProperty.value === 4, 'still 4 after update' );
   const updateAgain = derivedProperty.setDeferred( false );
   assert.ok( derivedProperty.value === 6, 'now has the correct value' );
-  updateAgain();
+  updateAgain && updateAgain();
   assert.ok( derivedProperty.value === 6, 'nothing changed' );
 } );
 
 QUnit.test( 'DerivedProperty and/or', assert => {
 
-  const propA = new Property( false );
-  const propB = new Property( false );
-  const propC = new Property( false );
+  const aProperty = new Property( false );
+  const bProperty = new Property( false );
+  const cProperty = new Property( false );
 
   // correct usages of 'and' and 'or'
-  const and = DerivedProperty.and( [ propA, propB, propC ] );
-  const or = DerivedProperty.or( [ propA, propB, propC ] );
+  const andProperty = DerivedProperty.and( [ aProperty, bProperty, cProperty ] );
+  const orProperty = DerivedProperty.or( [ aProperty, bProperty, cProperty ] );
 
-  assert.equal( and.value, false );
-  assert.equal( or.value, false );
+  assert.equal( andProperty.value, false );
+  assert.equal( orProperty.value, false );
 
-  propA.value = true;
-  assert.equal( and.value, false );
-  assert.equal( or.value, true );
+  aProperty.value = true;
+  assert.equal( andProperty.value, false );
+  assert.equal( orProperty.value, true );
 
-  propB.value = true;
-  assert.equal( and.value, false );
-  assert.equal( or.value, true );
+  bProperty.value = true;
+  assert.equal( andProperty.value, false );
+  assert.equal( orProperty.value, true );
 
-  propC.value = true;
-  assert.equal( and.value, true );
-  assert.equal( or.value, true );
+  cProperty.value = true;
+  assert.equal( andProperty.value, true );
+  assert.equal( orProperty.value, true );
 
-  // fail: setting a dependency to a non-boolean value
-  window.assert && assert.throws( () => { propA.value = 0; },
+  // @ts-ignore fail: setting a dependency to a non-boolean value
+  window.assert && assert.throws( () => { aProperty.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );
 

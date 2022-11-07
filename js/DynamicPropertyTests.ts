@@ -157,8 +157,8 @@ QUnit.test( 'Bidirectional prevention of pingponging', assert => {
   const dynamicProperty = new DynamicProperty( wrapperProperty, {
     bidirectional: true,
     // NOT a true inverse
-    map: n => n + 2,
-    inverseMap: n => n - 1
+    map: ( n: number ) => n + 2,
+    inverseMap: ( n: number ) => n - 1
   } );
   dynamicProperty.link( () => {
     if ( callbackCount++ > 500 ) {
