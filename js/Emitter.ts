@@ -178,7 +178,15 @@ Emitter.EmitterIO = parameterTypes => {
           parameterTypes: parameterTypes,
 
           // Match `Emitter.emit`'s dynamic number of arguments
-          implementation: Emitter.prototype.emit,
+          implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
+            const errors = this.getValidationErrors( ...values );
+            if ( errors.length > 0 ) {
+              throw new Error( `Validation errors: ${errors.join( ', ' )}` );
+            }
+            else {
+              this.emit( values );
+            }
+          },
           documentation: 'Emits a single event to all listeners.',
           invocableForReadOnlyElements: false
         }
