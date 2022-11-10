@@ -26,7 +26,7 @@ export type DisposableOptions = {
 
 class Disposable implements TDisposable {
 
-  public readonly disposeEmitter = new TinyEmitter();
+  public readonly disposeEmitter: TEmitter = new TinyEmitter();
   public isDisposed = false;
   private _disposer: Disposer | null = null;
   private boundOnDisposer: ( () => void ) | null = null;
