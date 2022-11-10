@@ -11,6 +11,7 @@ import './BooleanPropertyTests.js';
 import './createObservableArrayTests.js';
 import './DerivedPropertyTests.js';
 import './DynamicPropertyTests.js';
+import './DisposableTests.js';
 import './EmitterIOTests.js';
 import './EmitterTests.js';
 import './EnabledComponentTests.js';
