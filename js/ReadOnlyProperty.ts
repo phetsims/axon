@@ -101,7 +101,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   // while deferred, new values neither take effect nor send notifications.  When isDeferred changes from
   // true to false, the final deferred value becomes the Property value.  An action is created which can be invoked to
   // send notifications.
-  protected isDeferred: boolean;
+  public isDeferred: boolean;
 
   // the value that this Property will take after no longer deferred
   protected deferredValue: T | null;

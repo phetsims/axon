@@ -9,32 +9,53 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import PhetioStateEngine from '../../phet-io/js/PhetioStateEngine.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 
+type PhaseMap = {
+  beforePhase?: PropertyStatePhase;
+  afterPhase?: PropertyStatePhase;
+  otherMap?: PhaseMap;
+  beforePhetioID?: Set<string>;
+  afterPhetioID?: Set<string>;
+} & Map<string, Set<string>>;
+
+type RelevantOrderDependencies = {
+  beforeTerm: string;
+  afterTerm: string;
+};
+
 class PropertyStateHandler {
+  private readonly phaseCallbackSets: PhaseCallbackSets;
+  private readonly undeferBeforeUndeferMapPair: OrderDependencyMapPair;
+  private readonly undeferBeforeNotifyMapPair: OrderDependencyMapPair;
+  private readonly notifyBeforeUndeferMapPair: OrderDependencyMapPair;
+  private readonly notifyBeforeNotifyMapPair: OrderDependencyMapPair;
+  private readonly mapPairs: OrderDependencyMapPair[];
+  public initialized: boolean;
 
   /**
-   * @param {PhetioStateEngine|undefined} phetioStateEngine - not provided for tests
+   * {PhetioStateEngine|undefined} phetioStateEngine - not provided for tests
    */
-  constructor( phetioStateEngine ) {
+  public constructor( phetioStateEngine?: PhetioStateEngine ) {
 
     // Properties support setDeferred(). We defer setting their values so all changes take effect
     // at once. This keeps track of finalization actions (embodied in a PhaseCallback) that must take place after all
     // Property values have changed. This keeps track of both types of PropertyStatePhase: undeferring and notification.
-    // @private {Set.<PhaseCallback>}
     this.phaseCallbackSets = new PhaseCallbackSets();
 
-    // @private - each pair has a Map optimized for looking up based on the "before phetioID" and the "after phetioID"
+    // each pair has a Map optimized for looking up based on the "before phetioID" and the "after phetioID"
     // of the dependency. Having a data structure set up for both directions of look-up makes each operation O(1). See https://github.com/phetsims/axon/issues/316
     this.undeferBeforeUndeferMapPair = new OrderDependencyMapPair( PropertyStatePhase.UNDEFER, PropertyStatePhase.UNDEFER );
     this.undeferBeforeNotifyMapPair = new OrderDependencyMapPair( PropertyStatePhase.UNDEFER, PropertyStatePhase.NOTIFY );
     this.notifyBeforeUndeferMapPair = new OrderDependencyMapPair( PropertyStatePhase.NOTIFY, PropertyStatePhase.UNDEFER );
     this.notifyBeforeNotifyMapPair = new OrderDependencyMapPair( PropertyStatePhase.NOTIFY, PropertyStatePhase.NOTIFY );
 
-    // @private - keep a list of all map pairs for easier iteration
+    // keep a list of all map pairs for easier iteration
     this.mapPairs = [
       this.undeferBeforeUndeferMapPair,
       this.undeferBeforeNotifyMapPair,
@@ -42,15 +63,10 @@ class PropertyStateHandler {
       this.notifyBeforeNotifyMapPair
     ];
 
-    // @public (PropertyStateHandlerTests read-only)
     this.initialized = false;
   }
 
-  /**
-   * @param {PhetioStateEngine} phetioStateEngine
-   * @public
-   */
-  initialize( phetioStateEngine ) {
+  public initialize( phetioStateEngine: PhetioStateEngine ): void {
     assert && assert( !this.initialized, 'cannot initialize twice' );
 
     phetioStateEngine.onBeforeApplyStateEmitter.addListener( phetioObject => {
@@ -85,32 +101,18 @@ class PropertyStateHandler {
     this.initialized = true;
   }
 
-  /**
-   * @private
-   * @param {ReadOnlyProperty} property
-   */
-  validateInstrumentedProperty( property ) {
+  private static validateInstrumentedProperty<T>( property: ReadOnlyProperty<T> ): void {
     assert && Tandem.VALIDATION && assert( property instanceof ReadOnlyProperty && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
   }
 
-  /**
-   * @private
-   * @param {Property} property
-   * @param {PropertyStatePhase} phase
-   */
-  validatePropertyPhasePair( property, phase ) {
-    this.validateInstrumentedProperty( property );
-    assert && assert( phase instanceof PropertyStatePhase, `unexpected phase: ${phase}` );
+  private validatePropertyPhasePair<T>( property: ReadOnlyProperty<T>, phase: PropertyStatePhase ): void {
+    PropertyStateHandler.validateInstrumentedProperty( property );
   }
 
   /**
    * Get the MapPair associated with the proved PropertyStatePhases
-   * @private
-   * @param {PropertyStatePhase} beforePhase
-   * @param {PropertyStatePhase} afterPhase
-   * @returns {OrderDependencyMapPair}
    */
-  getMapPairFromPhases( beforePhase, afterPhase ) {
+  private getMapPairFromPhases( beforePhase: PropertyStatePhase, afterPhase: PropertyStatePhase ): OrderDependencyMapPair {
     const matchedPairs = this.mapPairs.filter( mapPair => beforePhase === mapPair.beforePhase && afterPhase === mapPair.afterPhase );
     assert && assert( matchedPairs.length === 1, 'one and only one map should match the provided phases' );
     return matchedPairs[ 0 ];
@@ -121,14 +123,13 @@ class PropertyStateHandler {
    * is an ending state in PhET-iO state set where Property values solidify, notifications for value changes are called.
    * The PhET-iO state engine will always undefer a Property before it notifies its listeners. This is for registering
    * two different Properties.
-   * @public
    *
-   * @param {ReadOnlyProperty} beforeProperty - the Property that needs to be set before the second; must be instrumented for PhET-iO
-   * @param {PropertyStatePhase} beforePhase
-   * @param {ReadOnlyProperty} afterProperty - must be instrumented for PhET-iO
-   * @param {PropertyStatePhase} afterPhase
+   * @param beforeProperty - the Property that needs to be set before the second; must be instrumented for PhET-iO
+   * @param beforePhase
+   * @param afterProperty - must be instrumented for PhET-iO
+   * @param afterPhase
    */
-  registerPhetioOrderDependency( beforeProperty, beforePhase, afterProperty, afterPhase ) {
+  public registerPhetioOrderDependency( beforeProperty: ReadOnlyProperty<IntentionalAny>, beforePhase: PropertyStatePhase, afterProperty: ReadOnlyProperty<IntentionalAny>, afterPhase: PropertyStatePhase ): void {
     if ( Tandem.PHET_IO_ENABLED ) {
 
       this.validatePropertyPhasePair( beforeProperty, beforePhase );
@@ -142,23 +143,21 @@ class PropertyStateHandler {
   }
 
   /**
-   * @param {Property} property - must be instrumented for PhET-iO
-   * @returns {boolean} - true if Property is in any order dependency
-   * @private
+   * {Property} property - must be instrumented for PhET-iO
+   * {boolean} - true if Property is in any order dependency
    */
-  propertyInAnOrderDependency( property ) {
-    this.validateInstrumentedProperty( property );
+  private propertyInAnOrderDependency<T>( property: ReadOnlyProperty<T> ): boolean {
+    PropertyStateHandler.validateInstrumentedProperty( property );
     return _.some( this.mapPairs, mapPair => mapPair.usesPhetioID( property.tandem.phetioID ) );
   }
 
   /**
    * Unregisters all order dependencies for the given Property
-   * @param {ReadOnlyProperty} property - must be instrumented for PhET-iO
-   * @public
+   * {ReadOnlyProperty} property - must be instrumented for PhET-iO
    */
-  unregisterOrderDependenciesForProperty( property ) {
+  public unregisterOrderDependenciesForProperty<T>( property: ReadOnlyProperty<T> ): void {
     if ( Tandem.PHET_IO_ENABLED ) {
-      this.validateInstrumentedProperty( property );
+      PropertyStateHandler.validateInstrumentedProperty( property );
 
       // Be graceful if given a Property that is not registered in an order dependency.
       if ( this.propertyInAnOrderDependency( property ) ) {
@@ -172,11 +171,9 @@ class PropertyStateHandler {
   /**
    * Given registered Property Phase order dependencies, undefer all AXON/Property PhET-iO elements to take their
    * correct values and have each notify their listeners.
-   *
-   * @private
-   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
+   * {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
    */
-  undeferAndNotifyProperties( phetioIDsInState ) {
+  private undeferAndNotifyProperties( phetioIDsInState: Set<string> ): void {
     assert && assert( this.initialized, 'must be initialized before getting called' );
 
     // {Object.<string,boolean>} - true if a phetioID + phase pair has been applied, keys are the combination of
@@ -201,17 +198,14 @@ class PropertyStateHandler {
     }
   }
 
-  /**
-   * @param {Object.<string,boolean>} completedPhases
-   * @private
-   */
-  errorInUndeferAndNotifyStep( completedPhases ) {
+
+  private errorInUndeferAndNotifyStep( completedPhases: Record<string, boolean> ): void {
 
     // combine phetioID and Phase into a single string to keep this process specific.
-    const stillToDoIDPhasePairs = [];
+    const stillToDoIDPhasePairs: Array<string> = [];
     this.phaseCallbackSets.forEach( phaseCallback => stillToDoIDPhasePairs.push( phaseCallback.getTerm() ) );
 
-    const relevantOrderDependencies = [];
+    const relevantOrderDependencies: Array<RelevantOrderDependencies> = [];
 
     this.mapPairs.forEach( mapPair => {
       const beforeMap = mapPair.beforeMap;
@@ -250,10 +244,9 @@ class PropertyStateHandler {
   /**
    * Only for Testing!
    * Get the number of order dependencies registered in this class
-   * @public
-   * @returns {number}
+   *
    */
-  getNumberOfOrderDependencies() {
+  public getNumberOfOrderDependencies(): number {
     let count = 0;
     this.mapPairs.forEach( mapPair => {
       mapPair.afterMap.forEach( valueSet => { count += valueSet.size; } );
@@ -264,13 +257,12 @@ class PropertyStateHandler {
   /**
    * Go through all phases still to be applied, and apply them if the order dependencies allow it. Only apply for the
    * particular phase provided. In general UNDEFER must occur before the same phetioID gets NOTIFY.
-   * @private
    *
-   * @param {PropertyStatePhase} phase - only apply PhaseCallbacks for this particular PropertyStatePhase
-   * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
+   * @param phase - only apply PhaseCallbacks for this particular PropertyStatePhase
+   * @param completedPhases - map that keeps track of completed phases
+   * @param phetioIDsInState - set of phetioIDs that were set in state
    */
-  attemptToApplyPhases( phase, completedPhases, phetioIDsInState ) {
+  private attemptToApplyPhases( phase: PropertyStatePhase, completedPhases: Record<string, boolean>, phetioIDsInState: Set<string> ): void {
 
     const phaseCallbackSet = this.phaseCallbackSets.getSetFromPhase( phase );
 
@@ -294,14 +286,13 @@ class PropertyStateHandler {
   }
 
   /**
-   * @private
-   * @param {string} phetioID - think of this as the "afterPhetioID" since there may be some phases that need to be applied before it has this phase done.
-   * @param {PropertyStatePhase} phase
-   * @param {Object.<string,boolean>} completedPhases - map that keeps track of completed phases
-   * @param {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
-   * @returns {boolean} - if the provided phase can be applied given the dependency order dependencies of the state engine.
+   * @param phetioID - think of this as the "afterPhetioID" since there may be some phases that need to be applied before it has this phase done.
+   * @param phase
+   * @param completedPhases - map that keeps track of completed phases
+   * @param phetioIDsInState - set of phetioIDs that were set in state
+   * @param - if the provided phase can be applied given the dependency order dependencies of the state engine.
    */
-  phetioIDCanApplyPhase( phetioID, phase, completedPhases, phetioIDsInState ) {
+  private phetioIDCanApplyPhase( phetioID: string, phase: PropertyStatePhase, completedPhases: Record<string, boolean>, phetioIDsInState: Set<string> ): boolean {
 
     // Undefer must happen before notify
     if ( phase === PropertyStatePhase.NOTIFY && !completedPhases[ phetioID + PropertyStatePhase.UNDEFER ] ) {
@@ -309,7 +300,7 @@ class PropertyStateHandler {
     }
 
     // Get a list of the maps for this phase being applies.
-    const mapsToCheck = [];
+    const mapsToCheck: Array<PhaseMap> = [];
     this.mapPairs.forEach( mapPair => {
       if ( mapPair.afterPhase === phase ) {
 
@@ -327,7 +318,7 @@ class PropertyStateHandler {
       const setOfThingsThatShouldComeFirst = mapToCheck.get( phetioID );
 
       // O(K) where K is the number of elements that should come before Property X
-      for ( const beforePhetioID of setOfThingsThatShouldComeFirst ) {
+      for ( const beforePhetioID of setOfThingsThatShouldComeFirst! ) {
 
         // check if the before phase for this order dependency has already been completed
         // Make sure that we only care about elements that were actually set during this state set
@@ -343,38 +334,34 @@ class PropertyStateHandler {
 
 // POJSO for a callback for a specific Phase in a Property's state set lifecycle. See undeferAndNotifyProperties()
 class PhaseCallback {
+  public readonly phetioID;
+  public readonly phase;
+  public readonly listener;
 
-  /**
-   * @param {string} phetioID
-   * @param {function|null} listener
-   * @param {PropertyStatePhase} phase
-   */
-  constructor( phetioID, listener, phase ) {
+  public constructor( phetioID: string, listener: ( () => void ) | null, phase: PropertyStatePhase ) {
 
-    // @public
     this.phetioID = phetioID;
     this.phase = phase;
     this.listener = listener || _.noop;
   }
 
   /**
-   * @public
-   * @returns {string} - unique term for the id/phase pair
+   * {string} - unique term for the id/phase pair
    */
-  getTerm() {
+  public getTerm(): string {
     return this.phetioID + this.phase;
   }
 }
 
 class OrderDependencyMapPair {
 
-  /**
-   * @param {PropertyStatePhase} beforePhase
-   * @param {PropertyStatePhase} afterPhase
-   */
-  constructor( beforePhase, afterPhase ) {
+  public readonly beforeMap: PhaseMap;
+  public readonly afterMap: PhaseMap;
+  public readonly beforePhase;
+  public readonly afterPhase;
 
-    // @public (read-only) - fields for mass consumption
+  public constructor( beforePhase: PropertyStatePhase, afterPhase: PropertyStatePhase ) {
+
     this.beforeMap = new Map();
     this.beforeMap.beforePhase = beforePhase;
     this.beforeMap.afterPhase = afterPhase;
@@ -393,38 +380,33 @@ class OrderDependencyMapPair {
   /**
    * Register an order dependency between two phetioIDs. This will add data to maps in "both direction". If accessing
    * with just the beforePhetioID, or with the afterPhetioID.
-   * @public
-   * @param {string} beforePhetioID
-   * @param {string} afterPhetioID
    */
-  addOrderDependency( beforePhetioID, afterPhetioID ) {
+  public addOrderDependency( beforePhetioID: string, afterPhetioID: string ): void {
     if ( !this.beforeMap.has( beforePhetioID ) ) {
-      this.beforeMap.set( beforePhetioID, new Set() );
+      this.beforeMap.set( beforePhetioID, new Set<string>() );
     }
-    this.beforeMap.get( beforePhetioID ).add( afterPhetioID );
+    this.beforeMap.get( beforePhetioID )!.add( afterPhetioID );
 
     if ( !this.afterMap.has( afterPhetioID ) ) {
       this.afterMap.set( afterPhetioID, new Set() );
     }
-    this.afterMap.get( afterPhetioID ).add( beforePhetioID );
+    this.afterMap.get( afterPhetioID )!.add( beforePhetioID );
   }
 
   /**
    * Unregister all order dependencies for the provided Property
-   * @private
-   * @param {Property} property
    */
-  unregisterOrderDependenciesForProperty( property ) {
+  public unregisterOrderDependenciesForProperty<T>( property: ReadOnlyProperty<T> ): void {
     const phetioIDToRemove = property.tandem.phetioID;
 
     [ this.beforeMap, this.afterMap ].forEach( map => {
       if ( map.has( phetioIDToRemove ) ) {
-        map.get( phetioIDToRemove ).forEach( phetioID => {
-          const setOfAfterMapIDs = map.otherMap.get( phetioID );
+        map.get( phetioIDToRemove )!.forEach( phetioID => {
+          const setOfAfterMapIDs = map.otherMap!.get( phetioID );
           setOfAfterMapIDs && setOfAfterMapIDs.delete( phetioIDToRemove );
 
           // Clear out empty entries to avoid having lots of empty Sets sitting around
-          setOfAfterMapIDs.size === 0 && map.otherMap.delete( phetioID );
+          setOfAfterMapIDs!.size === 0 && map.otherMap!.delete( phetioID );
         } );
       }
       map.delete( phetioIDToRemove );
@@ -439,64 +421,39 @@ class OrderDependencyMapPair {
     } );
   }
 
-  /**
-   * @public
-   * @param {string} phetioID
-   * @returns {boolean}
-   */
-  usesPhetioID( phetioID ) {
+  public usesPhetioID( phetioID: string ): boolean {
     return this.beforeMap.has( phetioID ) || this.afterMap.has( phetioID );
   }
 }
 
 // POJSO to keep track of PhaseCallbacks while providing O(1) lookup time because it is built on Set
 class PhaseCallbackSets {
-  constructor() {
+  public readonly undeferSet: Set<PhaseCallback>;
+  public readonly notifySet: Set<PhaseCallback>;
+  public constructor() {
 
-    // @public (read-only) {Set.<PhaseCallback>}
     this.undeferSet = new Set();
     this.notifySet = new Set();
   }
 
-  /**
-   * @public
-   * @returns {number}
-   */
-  get size() {
+  public get size(): number {
     return this.undeferSet.size + this.notifySet.size;
   }
 
-  /**
-   * @public
-   * @param {function} callback
-   */
-  forEach( callback ) {
+  public forEach( callback: ( phaseCallback: PhaseCallback ) => number ): void {
     this.undeferSet.forEach( callback );
     this.notifySet.forEach( callback );
   }
 
-  /**
-   * @public
-   * @param {PhaseCallback} phaseCallback
-   */
-  addUndeferPhaseCallback( phaseCallback ) {
+  public addUndeferPhaseCallback( phaseCallback: PhaseCallback ): void {
     this.undeferSet.add( phaseCallback );
   }
 
-  /**
-   * @public
-   * @param {PhaseCallback} phaseCallback
-   */
-  addNotifyPhaseCallback( phaseCallback ) {
+  public addNotifyPhaseCallback( phaseCallback: PhaseCallback ): void {
     this.notifySet.add( phaseCallback );
   }
 
-  /**
-   * @public
-   * @param {PropertyStatePhase} phase
-   * @returns {Set.<PhaseCallback>}
-   */
-  getSetFromPhase( phase ) {
+  public getSetFromPhase( phase: PropertyStatePhase ): Set<PhaseCallback> {
     return phase === PropertyStatePhase.NOTIFY ? this.notifySet : this.undeferSet;
   }
 }

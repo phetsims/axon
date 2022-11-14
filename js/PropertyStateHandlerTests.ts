@@ -34,43 +34,43 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
-    const propertyA = new BooleanProperty( false, {
+    const aProperty = new BooleanProperty( false, {
       tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
     } );
-    const propertyB = new BooleanProperty( true, {
+    const bProperty = new BooleanProperty( true, {
       tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
     } );
-    const propertyC = new BooleanProperty( false, {
+    const cProperty = new BooleanProperty( false, {
       tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
     } );
 
     const originalOrderDependencyLength = propertyStateHandler.getNumberOfOrderDependencies();
     const getOrderDependencyLength = () => propertyStateHandler.getNumberOfOrderDependencies() - originalOrderDependencyLength;
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, bProperty, PropertyStatePhase.NOTIFY );
     assert.ok( getOrderDependencyLength() === 1, 'one expected' );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
     assert.ok( getOrderDependencyLength() === 2, 'two expected' );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( bProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
     assert.ok( getOrderDependencyLength() === 3, 'three expected' );
 
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyA );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( aProperty );
     assert.ok( getOrderDependencyLength() === 1, 'a was in two' );
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( bProperty );
     assert.ok( getOrderDependencyLength() === 0, 'none now' );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.registerPhetioOrderDependency( propertyB, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( bProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
     assert.ok( getOrderDependencyLength() === 2, 'none now' );
 
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyC );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( cProperty );
     assert.ok( getOrderDependencyLength() === 0, 'none now' );
 
-    propertyA.dispose();
-    propertyB.dispose();
-    propertyC.dispose();
+    aProperty.dispose();
+    bProperty.dispose();
+    cProperty.dispose();
 
     if ( window.assert ) {
       const uninstrumentedProperty = new Property( 2 );
@@ -78,10 +78,12 @@ if ( Tandem.PHET_IO_ENABLED ) {
         tandem: Tandem.ROOT_TEST.createTandem( 'instrumentedProperty' )
       } );
       assert.throws( () => {
+
         propertyStateHandler.registerPhetioOrderDependency( uninstrumentedProperty, PropertyStatePhase.UNDEFER, instrumentedProperty, PropertyStatePhase.UNDEFER );
       }, 'cannot register with an uninstrumented Property' );
 
       assert.throws( () => {
+
         propertyStateHandler.registerPhetioOrderDependency( instrumentedProperty, PropertyStatePhase.UNDEFER, instrumentedProperty, PropertyStatePhase.UNDEFER );
       }, 'same Property same phase. . . . no no.' );
     }
@@ -89,7 +91,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
   QUnit.test( 'Order dependency between NumberProperty and its Range', assert => {
     assert.ok( true, 'always pass' );
-    const rangeProperty = new Property( new Range( 0, 1 ), {
+    const rangeProperty = new Property<Range | null>( new Range( 0, 1 ), {
       tandem: Tandem.ROOT_TEST.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
       phetioValueType: Range.RangeIO
@@ -113,9 +115,9 @@ if ( Tandem.PHET_IO_ENABLED ) {
     );
 
     const serializedValue = NumberProperty.NumberPropertyIO.toStateObject( numberProperty );
-    serializedValue.range.min = 4;
-    serializedValue.range.max = 8;
-    serializedValue.value = 7;
+    serializedValue.range!.min = 4;
+    serializedValue.range!.max = 8;
+    serializedValue[ 'value' ] = 7;
 
     phet.phetio.phetioEngine.phetioStateEngine.setState( {
       'axon.test.numberProperty': serializedValue,
@@ -144,33 +146,33 @@ if ( Tandem.PHET_IO_ENABLED ) {
     } );
     assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
-    const propertyA = new BooleanProperty( false, {
+    const aProperty = new BooleanProperty( false, {
       tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
     } );
-    const propertyB = new BooleanProperty( true, {
+    const bProperty = new BooleanProperty( true, {
       tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
     } );
-    const propertyC = new BooleanProperty( false, {
+    const cProperty = new BooleanProperty( false, {
       tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
     } );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
-    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, bProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( bProperty );
+    assert.ok( propertyStateHandler[ 'undeferBeforeNotifyMapPair' ].beforeMap.size === 0, 'empty entries should be cleared' );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyA );
-    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, bProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( aProperty );
+    assert.ok( propertyStateHandler[ 'undeferBeforeNotifyMapPair' ].beforeMap.size === 0, 'empty entries should be cleared' );
 
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyB, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.registerPhetioOrderDependency( propertyA, PropertyStatePhase.UNDEFER, propertyC, PropertyStatePhase.NOTIFY );
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyB );
-    propertyStateHandler.unregisterOrderDependenciesForProperty( propertyC );
-    assert.ok( propertyStateHandler.undeferBeforeNotifyMapPair.beforeMap.size === 0, 'empty entries should be cleared' );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, bProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.registerPhetioOrderDependency( aProperty, PropertyStatePhase.UNDEFER, cProperty, PropertyStatePhase.NOTIFY );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( bProperty );
+    propertyStateHandler.unregisterOrderDependenciesForProperty( cProperty );
+    assert.ok( propertyStateHandler[ 'undeferBeforeNotifyMapPair' ].beforeMap.size === 0, 'empty entries should be cleared' );
 
-    propertyA.dispose();
-    propertyB.dispose();
-    propertyC.dispose();
+    aProperty.dispose();
+    bProperty.dispose();
+    cProperty.dispose();
   } );
 }
