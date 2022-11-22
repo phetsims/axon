@@ -31,7 +31,72 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
   // provide Emitter functionality via composition
   private readonly tinyEmitter: TinyEmitter<T>;
 
-  public static EmitterIO: ( parameterTypes: IOType[] ) => IOType;
+
+  /**
+   * IO Type for Emitter.
+   *
+   * Providing validators to instrumented Emitters:
+   * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).
+   * To provide validators, there are two methods. First, by default each IOType has its own
+   * validator that will be used. So specifying an argument object like `{ type: NumberIO }` will automatically use
+   * `NumberIO.validator` as the validator. This can be overridden with the `validator` key (second option), like
+   * { type: NumberIO, validator: { isValidValue: v=> typeof v === 'number' &&  v < 5 } }`
+   * NOTE: currently the implementation is either/or, if a validator is provided via the `validator` key, the validator
+   * from the `type` will be ignored.
+   * see https://github.com/phetsims/axon/issues/204 for more details.
+   *
+   * @author Sam Reid (PhET Interactive Simulations)
+   * @author Michael Kauzmann (PhET Interactive Simulations)
+   * @author Andrew Adare (PhET Interactive Simulations)
+   */
+  public static readonly EmitterIO = ( parameterTypes: IOType[] ): IOType => {
+
+    const key = parameterTypes.map( getTypeName ).join( ',' );
+
+    if ( !cache.has( key ) ) {
+      cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
+        valueType: Emitter,
+        documentation: 'Emits when an event occurs and calls added listeners.',
+        parameterTypes: parameterTypes,
+        events: [ 'emitted' ],
+        metadataDefaults: {
+          phetioState: PHET_IO_STATE_DEFAULT
+        },
+        methods: {
+          addListener: {
+            returnType: VoidIO,
+            parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+            implementation: Emitter.prototype.addListener,
+            documentation: 'Adds a listener which will be called when the emitter emits.'
+          },
+          removeListener: {
+            returnType: VoidIO,
+            parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
+            implementation: Emitter.prototype.removeListener,
+            documentation: 'Remove a listener.'
+          },
+          emit: {
+            returnType: VoidIO,
+            parameterTypes: parameterTypes,
+
+            // Match `Emitter.emit`'s dynamic number of arguments
+            implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
+              const errors = this.getValidationErrors( ...values );
+              if ( errors.length > 0 ) {
+                throw new Error( `Validation errors: ${errors.join( ', ' )}` );
+              }
+              else {
+                this.emit( values );
+              }
+            },
+            documentation: 'Emits a single event to all listeners.',
+            invocableForReadOnlyElements: false
+          }
+        }
+      } ) );
+    }
+    return cache.get( key )!;
+  };
 
   public constructor( providedOptions?: EmitterOptions ) {
 
@@ -129,71 +194,5 @@ const getTypeName = ( ioType: IOType ) => ioType.typeName;
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
 const cache = new Map<string, IOType>();
-
-/**
- * IO Type for Emitter.
- *
- * Providing validators to instrumented Emitters:
- * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).
- * To provide validators, there are two methods. First, by default each IOType has its own
- * validator that will be used. So specifying an argument object like `{ type: NumberIO }` will automatically use
- * `NumberIO.validator` as the validator. This can be overridden with the `validator` key (second option), like
- * { type: NumberIO, validator: { isValidValue: v=> typeof v === 'number' &&  v < 5 } }`
- * NOTE: currently the implementation is either/or, if a validator is provided via the `validator` key, the validator
- * from the `type` will be ignored.
- * see https://github.com/phetsims/axon/issues/204 for more details.
- *
- * @author Sam Reid (PhET Interactive Simulations)
- * @author Michael Kauzmann (PhET Interactive Simulations)
- * @author Andrew Adare (PhET Interactive Simulations)
- */
-Emitter.EmitterIO = parameterTypes => {
-
-  const key = parameterTypes.map( getTypeName ).join( ',' );
-
-  if ( !cache.has( key ) ) {
-    cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
-      valueType: Emitter,
-      documentation: 'Emits when an event occurs and calls added listeners.',
-      parameterTypes: parameterTypes,
-      events: [ 'emitted' ],
-      metadataDefaults: {
-        phetioState: PHET_IO_STATE_DEFAULT
-      },
-      methods: {
-        addListener: {
-          returnType: VoidIO,
-          parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: Emitter.prototype.addListener,
-          documentation: 'Adds a listener which will be called when the emitter emits.'
-        },
-        removeListener: {
-          returnType: VoidIO,
-          parameterTypes: [ FunctionIO( VoidIO, parameterTypes ) ],
-          implementation: Emitter.prototype.removeListener,
-          documentation: 'Remove a listener.'
-        },
-        emit: {
-          returnType: VoidIO,
-          parameterTypes: parameterTypes,
-
-          // Match `Emitter.emit`'s dynamic number of arguments
-          implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
-            const errors = this.getValidationErrors( ...values );
-            if ( errors.length > 0 ) {
-              throw new Error( `Validation errors: ${errors.join( ', ' )}` );
-            }
-            else {
-              this.emit( values );
-            }
-          },
-          documentation: 'Emits a single event to all listeners.',
-          invocableForReadOnlyElements: false
-        }
-      }
-    } ) );
-  }
-  return cache.get( key )!;
-};
 
 axon.register( 'Emitter', Emitter );
