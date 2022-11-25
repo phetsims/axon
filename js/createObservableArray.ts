@@ -14,7 +14,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize from '../../phet-core/js/optionize.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -288,11 +288,7 @@ class ObservableArrayPhetioObject<T> extends PhetioObject {
    */
   public constructor( observableArray: ObservableArray<T>, providedOptions?: ObservableArrayOptions<T> ) {
 
-    const options = optionize<ObservableArrayOptions<T>, EmptySelfOptions>()( {
-      phetioType: ObservableArrayIO
-    }, providedOptions );
-
-    super( options );
+    super( providedOptions );
 
     this.observableArray = observableArray;
   }
