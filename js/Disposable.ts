@@ -58,6 +58,7 @@ class Disposable implements TDisposable {
 
     assert && assert( this.boundOnDisposer, 'Must have set boundOnDisposer before calling onDisposer' );
     previousDisposeEmitter.removeListener( this.boundOnDisposer! );
+    this._disposer = null;
   }
 
   public getDisposer(): Disposer | null {
