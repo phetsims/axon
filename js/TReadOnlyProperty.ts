@@ -1,5 +1,4 @@
 // Copyright 2021-2022, University of Colorado Boulder
-import { LinkOptions } from './ReadOnlyProperty.js';
 
 /**
  * A simple read-only Property/TinyProperty-like interface
@@ -7,6 +6,10 @@ import { LinkOptions } from './ReadOnlyProperty.js';
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
+
+import ReadOnlyProperty, { LinkOptions } from './ReadOnlyProperty.js';
+import TinyProperty from './TinyProperty.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: TReadOnlyProperty<T> ) => void;
 export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: TReadOnlyProperty<T> ) => void;
@@ -29,4 +32,9 @@ type TReadOnlyProperty<T> = {
   isDisposed?: boolean;
   toString(): string;
 };
+
+export function isTReadOnlyProperty( something: IntentionalAny ): something is TReadOnlyProperty<unknown> {
+  return something instanceof ReadOnlyProperty || something instanceof TinyProperty;
+}
+
 export default TReadOnlyProperty;
