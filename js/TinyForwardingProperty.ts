@@ -228,7 +228,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   }
 
   public override dispose(): void {
-    this.targetProperty && this.forwardingListener && this.targetProperty.unlink( this.forwardingListener );
+    this.clearTargetProperty();
     this.disposeOwnedPhetioProperty();
     super.dispose();
   }
