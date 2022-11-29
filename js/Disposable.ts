@@ -43,9 +43,9 @@ class Disposable implements TDisposable {
       // overridden after the Node constructor (which may happen).
       const protoDispose = this.dispose;
       this.dispose = () => {
-        assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
+        assert && assert( !this.isDisposed, 'This Disposable has already been disposed, and cannot be disposed again' );
         protoDispose.call( this );
-        assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
+        assert && assert( this.isDisposed, 'Disposable.dispose() call is missing from an overridden dispose method' );
       };
     }
   }
@@ -58,6 +58,7 @@ class Disposable implements TDisposable {
 
     assert && assert( this.boundOnDisposer, 'Must have set boundOnDisposer before calling onDisposer' );
     previousDisposeEmitter.removeListener( this.boundOnDisposer! );
+    this._disposer = null;
   }
 
   public getDisposer(): Disposer | null {

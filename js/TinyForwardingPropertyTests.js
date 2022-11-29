@@ -55,3 +55,46 @@ QUnit.test( 'Forward to a TinyProperty', assert => {
 
   assert.ok( myForwardingProperty.value === 'seven', 'forward to other TinyProperty' );
 } );
+
+QUnit.test( 'Forward to a non PhET-iO case', assert => {
+
+  const myForwardingProperty = new TinyForwardingProperty( true, false );
+
+  const myTinyProperty = new TinyProperty( 'hi' );
+
+  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+
+  assert.ok( myForwardingProperty.value === 'hi', 'forward to tinyProperty' );
+
+  const otherTinyProperty = new TinyProperty( 'seven' );
+
+  myForwardingProperty.setTargetProperty( null, null, otherTinyProperty );
+
+  assert.ok( myForwardingProperty.value === 'seven', 'forward to other TinyProperty' );
+  assert.ok( myForwardingProperty[ 'targetProperty' ], 'have a targetProperty' );
+
+  myForwardingProperty.setValueOrTargetProperty( null, null, false );
+  assert.ok( myForwardingProperty.value === false, 'set to false value' );
+  assert.ok( !myForwardingProperty[ 'targetProperty' ], 'cleared targetProperty' );
+} );
+
+QUnit.test( 'Set target but value does not change', assert => {
+
+  const myForwardingProperty = new TinyForwardingProperty( true, false );
+
+  const myTinyProperty = new TinyProperty( false );
+  assert.ok( myTinyProperty.value === false, 'default value' );
+
+  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+
+  assert.ok( myForwardingProperty.value === false, 'forward to tinyProperty' );
+
+  let calledListener = false;
+  myForwardingProperty.lazyLink( () => {
+    calledListener = true;
+  } );
+
+  myForwardingProperty.setValueOrTargetProperty( null, null, false );
+  assert.ok( !calledListener, 'setting to same value' );
+  assert.ok( !myForwardingProperty[ 'targetProperty' ], 'cleared targetProperty' );
+} );

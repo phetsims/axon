@@ -15,25 +15,25 @@ import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import TProperty from './TProperty.js';
-import { PropertyLazyLinkListener } from './TReadOnlyProperty.js';
+import TReadOnlyProperty, { isTReadOnlyProperty, PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {
-  updateLinkedElementForProperty: <T>( tandemName: string, oldProperty?: TProperty<T> | null, newProperty?: TProperty<T> | null ) => void;
+  updateLinkedElementForProperty: <ValueType>( tandemName: string, oldProperty?: TProperty<ValueType> | null, newProperty?: TProperty<ValueType> | null ) => void;
   isPhetioInstrumented: () => boolean;
 };
 
-export default class TinyForwardingProperty<T> extends TinyProperty<T> {
+export default class TinyForwardingProperty<ValueType> extends TinyProperty<ValueType> {
 
   // Set in setTargetProperty()
-  private targetProperty?: TProperty<T> | null;
+  private targetProperty?: TProperty<ValueType> | null;
 
   // Set lazily in setTargetProperty()
-  protected forwardingListener?: PropertyLazyLinkListener<T>;
+  protected forwardingListener?: PropertyLazyLinkListener<ValueType>;
 
   // TinyProperty is not instrumented for PhET-iO, so when a Node is instrumented, by default, an instrumented
   // `Property` can be forwarded to. This field stores the default instrumented Property when
   // targetPropertyInstrumented is true. - Public for NodeTests
-  private ownedPhetioProperty?: TProperty<T>;
+  private ownedPhetioProperty?: TProperty<ValueType>;
 
   // when true, automatically set up a PhET-iO instrumented forwarded Property for this TinyProperty, see
   // this.initializePhetioObject() for usage.
@@ -42,7 +42,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
   // Guard against double initialization
   private phetioInitialized?: boolean;
 
-  public constructor( value: T, targetPropertyInstrumented: boolean, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
+  public constructor( value: ValueType, targetPropertyInstrumented: boolean, onBeforeNotify?: TinyPropertyOnBeforeNotify<ValueType> ) {
     super( value, onBeforeNotify );
 
     if ( targetPropertyInstrumented ) {
@@ -54,6 +54,32 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
     }
   }
 
+  // API support for setting a Property|ValueType onto the forwarding Property
+  public setValueOrTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>(
+    node: NodeParam, tandemName: string | null, newValueOrTargetProperty: TReadOnlyProperty<ValueType> | ValueType ): void {
+
+    if ( ( isTReadOnlyProperty( newValueOrTargetProperty ) ) ) {
+
+      // As a new Property
+      this.setTargetProperty( node, tandemName, newValueOrTargetProperty as TProperty<ValueType> );
+    }
+    else { // as a ValueType
+      const oldValue = this.get();
+
+      this.clearTargetProperty();
+
+      assert && assert( !this.targetProperty, 'just cleared' );
+
+      // If we're switching away from a targetProperty, prefer no notification (so set our value to the last value)
+      this.setPropertyValue( newValueOrTargetProperty );
+
+      // Changing forwarding target COULD change the value, so send notifications if this is the case.
+      if ( !this.areValuesEqual( oldValue, newValueOrTargetProperty ) ) {
+        this.notifyListeners( oldValue );
+      }
+    }
+  }
+
   /**
    * Sets (or unsets if `null` is provided) the Property that we use for forwarding changes.
    *
@@ -62,8 +88,8 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
-  public setTargetProperty<NodeType extends NodeLike>( node: NodeType, tandemName: string | null, newTargetProperty: TProperty<T> | null ): NodeType {
-    assert && node && tandemName === null && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
+  public setTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>( node: NodeParam, tandemName: string | null, newTargetProperty: TProperty<ValueType> | null ): NodeParam {
+    assert && node && tandemName === null && this.targetPropertyInstrumented && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
     if ( this.targetProperty === newTargetProperty ) {
@@ -87,19 +113,15 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
 
     node && tandemName !== null && node.updateLinkedElementForProperty( tandemName, previousTarget, newTargetProperty );
 
-    // Lazily set this value, it will be added as a listener to any targetProperty we have.
-    this.forwardingListener = this.forwardingListener || this.onTargetPropertyChange.bind( this );
-
     const oldValue = this.get();
 
-    if ( this.targetProperty ) {
-      this.targetProperty.unlink( this.forwardingListener );
-    }
+    this.clearTargetProperty();
 
     this.targetProperty = newTargetProperty;
 
     if ( this.targetProperty ) {
-      this.targetProperty.lazyLink( this.forwardingListener );
+      assert && assert( this.forwardingListener, 'forwardingListener is not set yet' );
+      this.targetProperty.lazyLink( this.forwardingListener! );
       this.setPropertyValue( this.targetProperty.value );
     }
     else {
@@ -107,21 +129,30 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
       this.setPropertyValue( oldValue );
     }
 
-    const newValue = this.get();
-
     // Changing forwarding target COULD change the value, so send notifications if this is the case.
-    if ( !this.areValuesEqual( oldValue, newValue ) ) {
+    if ( !this.areValuesEqual( oldValue, this.get() ) ) {
       this.notifyListeners( oldValue );
     }
 
     return node; // for chaining
   }
 
+  private clearTargetProperty(): void {
+
+    // Lazily set this value, it will be added as a listener to any targetProperty we have.
+    this.forwardingListener = this.forwardingListener || this.onTargetPropertyChange.bind( this );
+
+    if ( this.targetProperty ) {
+      this.targetProperty.unlink( this.forwardingListener );
+    }
+    this.targetProperty = null;
+  }
+
   /**
    * Notify this Property's listeners when the targetProperty changes.
    * For performance, keep this listener on the prototype.
    */
-  private onTargetPropertyChange( value: T ): void {
+  private onTargetPropertyChange( value: ValueType ): void {
     super.set( value );
   }
 
@@ -130,7 +161,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
    * hasn't changed, this is a no-op.
    */
-  public override set( value: T ): this {
+  public override set( value: ValueType ): this {
     if ( this.targetProperty ) {
       assert && assert( this.targetProperty.isSettable(), 'targetProperty must be settable' );
       this.targetProperty.set( value );
@@ -163,7 +194,7 @@ export default class TinyForwardingProperty<T> extends TinyProperty<T> {
    * @param tandemName
    * @param createProperty - creates an "owned" Property
    */
-  public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => TProperty<T> ): void {
+  public initializePhetio( node: NodeLike, tandemName: string, createProperty: () => TProperty<ValueType> ): void {
     assert && assert( !this.phetioInitialized, 'already initialized' );
     assert && assert( !this.ownedPhetioProperty, 'Already created the ownedPhetioProperty' );
 
