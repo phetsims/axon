@@ -53,12 +53,7 @@ class Disposable implements TDisposable {
   private onDisposer(): void {
     this.dispose();
 
-    // @ts-ignore instanceof check isn't flexible enough to check for all that implement TDisposable
-    const previousDisposeEmitter: TEmitter = this._disposer instanceof Disposable ? this._disposer.disposeEmitter : this._disposer;
-
-    assert && assert( this.boundOnDisposer, 'Must have set boundOnDisposer before calling onDisposer' );
-    previousDisposeEmitter.removeListener( this.boundOnDisposer! );
-    this._disposer = null;
+    this.clearDisposer();
   }
 
   public getDisposer(): Disposer | null {
@@ -73,25 +68,43 @@ class Disposable implements TDisposable {
 
     if ( disposer !== this._disposer ) {
 
-      // nullable
-      this.boundOnDisposer = this.boundOnDisposer || this.onDisposer.bind( this );
+      this.ensureBoundOnDisposer();
 
-      if ( this._disposer ) {
-
-        // @ts-ignore instanceof check isn't flexible enough to check for all that implement TDisposable
-        const previousDisposeEmitter: TEmitter = this._disposer instanceof Disposable ? this._disposer.disposeEmitter : this._disposer;
-
-        assert && assert( this.boundOnDisposer );
-        previousDisposeEmitter.removeListener( this.boundOnDisposer );
-      }
+      this.clearDisposer();
 
       this._disposer = disposer;
       if ( this._disposer ) {
 
-        // @ts-ignore instanceof check isn't flexible enough to check for all that implement TDisposable
-        const otherDisposeEmitter: TEmitter = this._disposer instanceof Disposable ? this._disposer.disposeEmitter : this._disposer;
-        otherDisposeEmitter.addListener( this.boundOnDisposer );
+
+        assert && assert( this.boundOnDisposer, 'must have a boundOnDisposer' );
+
+        this.getDisposerEmitter().addListener( this.boundOnDisposer! );
       }
+    }
+  }
+
+  // Lazily create boundOnDisposer only when disposer is set
+  private ensureBoundOnDisposer(): void {
+    this.boundOnDisposer = this.boundOnDisposer || this.onDisposer.bind( this );
+  }
+
+  private getDisposerEmitter(): TEmitter {
+    assert && assert( this._disposer, 'need a disposer set' );
+
+    // type case because instanceof check isn't flexible enough to check for all that implement TDisposable
+    return ( this._disposer instanceof Disposable ? this._disposer.disposeEmitter : this._disposer ) as TEmitter;
+  }
+
+  public clearDisposer(): void {
+
+    // graceful
+    if ( this._disposer ) {
+
+      this.ensureBoundOnDisposer();
+
+      assert && assert( this.boundOnDisposer, 'must have a boundOnDisposer' );
+      this.getDisposerEmitter().removeListener( this.boundOnDisposer! );
+      this._disposer = null;
     }
   }
 
