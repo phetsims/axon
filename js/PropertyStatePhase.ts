@@ -14,10 +14,10 @@ import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import axon from './axon.js';
 
 class PropertyStatePhase extends EnumerationValue {
-  public static UNDEFER = new PropertyStatePhase();
-  public static NOTIFY = new PropertyStatePhase();
+  public static readonly UNDEFER = new PropertyStatePhase();
+  public static readonly NOTIFY = new PropertyStatePhase();
 
-  public static enumeration = new Enumeration( PropertyStatePhase );
+  public static readonly enumeration = new Enumeration( PropertyStatePhase );
 }
 
 axon.register( 'PropertyStatePhase', PropertyStatePhase );

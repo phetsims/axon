@@ -15,11 +15,11 @@ QUnit.module( 'EnumerationProperty' );
 QUnit.test( 'EnumerationProperty', assert => {
 
   class Bird extends EnumerationValue {
-    public static ROBIN = new Bird();
-    public static JAY = new Bird();
-    public static WREN = new Bird();
+    public static readonly ROBIN = new Bird();
+    public static readonly JAY = new Bird();
+    public static readonly WREN = new Bird();
 
-    public static enumeration = new Enumeration( Bird );
+    public static readonly enumeration = new Enumeration( Bird );
   }
 
   let birdProperty: EnumerationProperty<Bird>;
@@ -65,19 +65,19 @@ QUnit.test( 'EnumerationProperty', assert => {
 QUnit.test( 'EnumerationIO validation', assert => {
 
     class Bird1 extends EnumerationValue {
-      public static ROBIN = new Bird1();
-      public static JAY = new Bird1();
-      public static WREN = new Bird1();
-      public static GOAT = new Bird1();
-      public static enumeration = new Enumeration( Bird1 );
+      public static readonly ROBIN = new Bird1();
+      public static readonly JAY = new Bird1();
+      public static readonly WREN = new Bird1();
+      public static readonly GOAT = new Bird1();
+      public static readonly enumeration = new Enumeration( Bird1 );
     }
 
     class Bird2 extends EnumerationValue {
-      public static ROBIN = new Bird2();
-      public static JAY = new Bird2();
-      public static WREN = new Bird2();
-      public static OTHER_WREN = new Bird2();
-      public static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
+      public static readonly ROBIN = new Bird2();
+      public static readonly JAY = new Bird2();
+      public static readonly WREN = new Bird2();
+      public static readonly OTHER_WREN = new Bird2();
+      public static readonly enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
     }
 
     // @ts-ignore checking these are indeed different enumerations
@@ -105,19 +105,19 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 
 
   class Bird1 extends EnumerationValue {
-    public static ROBIN = new Bird1();
-    public static JAY = new Bird1();
-    public static WREN = new Bird1();
-    public static WREN_2 = new Bird1();
-    public static enumeration = new Enumeration( Bird1 );
+    public static readonly ROBIN = new Bird1();
+    public static readonly JAY = new Bird1();
+    public static readonly WREN = new Bird1();
+    public static readonly WREN_2 = new Bird1();
+    public static readonly enumeration = new Enumeration( Bird1 );
   }
 
   class Bird2 extends EnumerationValue {
-    public static ROBIN = new Bird2();
-    public static JAY = new Bird2();
-    public static WREN = new Bird2();
-    public static WREN_3 = new Bird2();
-    public static enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
+    public static readonly ROBIN = new Bird2();
+    public static readonly JAY = new Bird2();
+    public static readonly WREN = new Bird2();
+    public static readonly WREN_3 = new Bird2();
+    public static readonly enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
   }
 
   // @ts-ignore testing these are indeed different enumerations
@@ -144,16 +144,16 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
 QUnit.test( 'Subtyping EnumerationValues', assert => {
 
   class Raptor extends EnumerationValue {
-    public static HAWK = new Raptor();
-    public static EAGLE = new Raptor();
-    public static enumeration = new Enumeration( Raptor, { phetioDocumentation: 'the second one' } );
+    public static readonly HAWK = new Raptor();
+    public static readonly EAGLE = new Raptor();
+    public static readonly enumeration = new Enumeration( Raptor, { phetioDocumentation: 'the second one' } );
   }
 
   class Bird extends Raptor {
-    public static ROBIN = new Bird();
-    public static JAY = new Bird();
-    public static WREN = new Bird();
-    public static override enumeration = new Enumeration( Bird, {
+    public static readonly ROBIN = new Bird();
+    public static readonly JAY = new Bird();
+    public static readonly WREN = new Bird();
+    public static override readonly enumeration = new Enumeration( Bird, {
       instanceType: Raptor
     } );
   }
