@@ -21,7 +21,7 @@ type TProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {
 };
 
 export function isTProperty( something: IntentionalAny ): something is TProperty<unknown> {
-  return something instanceof ReadOnlyProperty || something instanceof TinyProperty;
+  return ( something instanceof ReadOnlyProperty || something instanceof TinyProperty ) && something.isSettable();
 }
 
 export default TProperty;
