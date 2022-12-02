@@ -42,7 +42,7 @@ const PropertyIOImpl = PropertyIO( NumberIO );
 
 type SelfOptions = {
   numberType?: NumberType;
-  range?: Range | Property<Range | null> | null;
+  range?: Range | Property<Range> | null;
 
   // Passed to this.rangeProperty if NumberProperty creates it. Ignored if a Property is provided via options.range.
   rangePropertyOptions?: PropertyOptions<Range | null>;
@@ -109,7 +109,7 @@ export default class NumberProperty extends Property<number> {
 
     let rangeProperty: Property<Range | null>;
     if ( options.range instanceof ReadOnlyProperty ) {
-      rangeProperty = options.range;
+      rangeProperty = options.range as Property<Range | null>;
     }
     else {
       rangeProperty = new Property<Range | null>( options.range, options.rangePropertyOptions );

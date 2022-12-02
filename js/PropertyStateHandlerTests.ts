@@ -91,7 +91,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
   QUnit.test( 'Order dependency between NumberProperty and its Range', assert => {
     assert.ok( true, 'always pass' );
-    const rangeProperty = new Property<Range | null>( new Range( 0, 1 ), {
+    const rangeProperty = new Property<Range>( new Range( 0, 1 ), {
       tandem: Tandem.ROOT_TEST.createTandem( 'rangeProperty' ),
       phetioDynamicElement: true,
       phetioValueType: Range.RangeIO
