@@ -12,7 +12,7 @@ import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
-import Property from './Property.js';
+import { PropertyIO } from './ReadOnlyProperty.js';
 import validate from './validate.js';
 import Validation, { Validator } from './Validation.js';
 
@@ -179,7 +179,7 @@ QUnit.test( 'validationMessage is presented for all validation errors', assert =
   testContainsErrorMessage( false, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:false' } );
   testContainsErrorMessage( 5, { validValues: [ 'hi', true ], validationMessage: 'validValues with value:5' } );
   testContainsErrorMessage( 4, { isValidValue: v => v === 3, validationMessage: 'isValidValue 3, value 4' } );
-  testContainsErrorMessage( 'oh hello', { phetioType: Property.PropertyIO( BooleanIO ), validationMessage: 'isValidValue 3, value string' } );
+  testContainsErrorMessage( 'oh hello', { phetioType: PropertyIO( BooleanIO ), validationMessage: 'isValidValue 3, value string' } );
 
   const ioType = new IOType( 'TestIO', { valueType: 'boolean' } );
   const ioTypeValidationMessage = 'should be a boolean from this IOType in tests';
