@@ -115,8 +115,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
     );
 
     const serializedValue = NumberProperty.NumberPropertyIO.toStateObject( numberProperty );
-    serializedValue.range!.min = 4;
-    serializedValue.range!.max = 8;
+    serializedValue.range.min = 4;
+    serializedValue.range.max = 8;
     serializedValue[ 'value' ] = 7;
 
     phet.phetio.phetioEngine.phetioStateEngine.setState( {

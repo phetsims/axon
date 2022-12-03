@@ -16,10 +16,11 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
 import ReadOnlyProperty, { PropertyIO } from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
+import LinkableProperty from './LinkableProperty.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -31,9 +32,11 @@ type NumberType = typeof VALID_NUMBER_TYPES[number];
 // standardized tandem name for rangeProperty
 const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
+export const DEFAULT_RANGE = Range.EVERYTHING;
+
 export type NumberPropertyState = {
   numberType: string;
-  range: null | RangeStateObject;
+  range: RangeStateObject;
   rangePhetioID: string | null;
 } & ReadOnlyProperty<number>;
 
@@ -42,22 +45,16 @@ const PropertyIOImpl = PropertyIO( NumberIO );
 
 type SelfOptions = {
   numberType?: NumberType;
-  range?: Range | Property<Range> | null;
+  range?: Range | Property<Range>;
 
   // Passed to this.rangeProperty if NumberProperty creates it. Ignored if a Property is provided via options.range.
-  rangePropertyOptions?: PropertyOptions<Range | null>;
+  rangePropertyOptions?: PropertyOptions<Range>;
 };
 
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioValueType' | 'valueType'>;
 
 // Minimal types for ranged Properties - Generally use `new NumberProperty( ... ).asRanged()`
-export type RangedProperty = Property<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
-
-// User-defined type guards for ranged Properties. Only use these when you know that a null value won't be set
-// to the range
-export const isRangedProperty = ( property: TReadOnlyProperty<number> ): property is RangedProperty => {
-  return ( property as RangedProperty ).range && ( property as RangedProperty ).range !== null;
-};
+export type RangedProperty = LinkableProperty<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
 
 export default class NumberProperty extends Property<number> {
 
@@ -68,7 +65,7 @@ export default class NumberProperty extends Property<number> {
   // validation for NumberProperty and its rangeProperty, undefined if assertions are disabled
   private readonly validateNumberAndRangeProperty: ( ( value: number ) => void ) | undefined;
 
-  public readonly rangeProperty: Property<Range | null>;
+  public readonly rangeProperty: Property<Range>;
   private readonly disposeNumberProperty: () => void;
   private readonly resetNumberProperty: () => void;
 
@@ -78,20 +75,20 @@ export default class NumberProperty extends Property<number> {
 
       // NumberPropertyOptions
       numberType: 'FloatingPoint',
-      range: null,
+      range: DEFAULT_RANGE,
 
       // PropertyOptions
       validators: [],
       tandem: Tandem.OPTIONAL
     }, providedOptions );
 
-    options.rangePropertyOptions = optionize<PropertyOptions<Range | null>, EmptySelfOptions, PropertyOptions<Range>>()( {
+    options.rangePropertyOptions = optionize<PropertyOptions<Range>, EmptySelfOptions, PropertyOptions<Range>>()( {
       phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
-      phetioValueType: NullableIO( Range.RangeIO ),
+      phetioValueType: Range.RangeIO,
       phetioReadOnly: true,
 
-      // If provided range is null, don't instrument the PhET-iO RangeProperty
-      tandem: options.range ? options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME ) : Tandem.OPT_OUT
+      // If provided range is the default, don't instrument the PhET-iO RangeProperty
+      tandem: options.range !== DEFAULT_RANGE ? options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME ) : Tandem.OPT_OUT
     }, options.rangePropertyOptions );
 
     if ( assert && Tandem.VALIDATION && options.rangePropertyOptions.tandem && options.rangePropertyOptions.tandem.supplied ) {
@@ -107,22 +104,13 @@ export default class NumberProperty extends Property<number> {
     const rangePropertyProvided = options.range && options.range instanceof ReadOnlyProperty;
     const ownsRangeProperty = !rangePropertyProvided;
 
-    let rangeProperty: Property<Range | null>;
-    if ( options.range instanceof ReadOnlyProperty ) {
-      rangeProperty = options.range as Property<Range | null>;
-    }
-    else {
-      rangeProperty = new Property<Range | null>( options.range, options.rangePropertyOptions );
-    }
+    const rangeProperty = options.range instanceof ReadOnlyProperty ? options.range : new Property( options.range, options.rangePropertyOptions );
 
     if ( options.numberType === 'Integer' ) {
       options.validators.push( VALID_INTEGER );
     }
     options.validators.push( {
-      isValidValue: v => {
-        const range = rangeProperty.value;
-        return range === null || range.contains( v );
-      },
+      isValidValue: v => rangeProperty.value.contains( v ),
       validationMessage: 'Number must be within rangeProperty value.'
     } );
 
@@ -166,7 +154,7 @@ export default class NumberProperty extends Property<number> {
     };
   }
 
-  public get range(): Range | null {
+  public get range(): Range {
     return this.rangeProperty.value;
   }
 
@@ -175,7 +163,7 @@ export default class NumberProperty extends Property<number> {
    * immediately, and if the value is outside of this new Range an error will occur. See this.setValueAndRange() for
    *  way to set both at once without assertion errors.
    */
-  public set range( range: Range | null ) {
+  public set range( range: Range ) {
     this.rangeProperty.value = range;
   }
 
@@ -219,17 +207,7 @@ export default class NumberProperty extends Property<number> {
    * If you use setValueAndRange, you'll likely need to use this instead of reset.
    */
   public resetValueAndRange(): void {
-    this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue! );
-  }
-
-  // Returns a casted version with a guaranteed non-null range
-  public asRanged(): RangedProperty {
-    if ( isRangedProperty( this ) ) {
-      return this;
-    }
-    else {
-      throw new Error( 'Not a RangedProperty' );
-    }
+    this.setValueAndRange( this.initialValue, this.rangeProperty.initialValue );
   }
 
   /**
@@ -239,7 +217,7 @@ export default class NumberProperty extends Property<number> {
     const parentStateObject = PropertyIOImpl.toStateObject( this );
 
     parentStateObject.numberType = this.numberType;
-    parentStateObject.range = NullableIO( Range.RangeIO ).toStateObject( this.rangeProperty.value );
+    parentStateObject.range = Range.RangeIO.toStateObject( this.rangeProperty.value );
 
     const hasRangePhetioID = this.rangeProperty && this.rangeProperty.isPhetioInstrumented();
     parentStateObject.rangePhetioID = hasRangePhetioID ? this.rangeProperty.tandem.phetioID : null;
@@ -264,7 +242,7 @@ export default class NumberProperty extends Property<number> {
     },
     stateSchema: {
       numberType: StringIO,
-      range: NullableIO( Range.RangeIO ),
+      range: Range.RangeIO,
       rangePhetioID: NullableIO( StringIO ),
       value: NumberIO
     }

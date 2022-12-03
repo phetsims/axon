@@ -9,7 +9,7 @@
 
 import Range from '../../dot/js/Range.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import NumberProperty from './NumberProperty.js';
+import NumberProperty, { DEFAULT_RANGE } from './NumberProperty.js';
 import Property from './Property.js';
 
 QUnit.module( 'NumberProperty' );
@@ -188,7 +188,7 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
 
   property = new NumberProperty( 0 );
   property.value = 4;
-  assert.ok( property.rangeProperty.value === null, 'rangeProperty should have been created' );
+  assert.ok( property.rangeProperty.value === DEFAULT_RANGE, 'rangeProperty should have been created' );
   property.rangeProperty.value = new Range( 0, 4 );
   window.assert && assert.throws( () => {
     property.value = 5;
@@ -209,7 +209,7 @@ QUnit.test( 'Test NumberProperty phet-io options', assert => {
   property.dispose();
 
   property = new NumberProperty( 0, {
-    range: null
+    range: DEFAULT_RANGE
   } );
   assert.ok( !property.rangeProperty.isPhetioInstrumented(), 'null ranges do not get instrumented rangeProperty' );
 

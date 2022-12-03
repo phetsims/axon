@@ -26,9 +26,8 @@ import axon from './axon.js';
 import Range from '../../dot/js/Range.js';
 import TProperty from './TProperty.js';
 import MappedProperty, { MappedPropertyOptions } from './MappedProperty.js';
-import TinyProperty from './TinyProperty.js';
 import Property from './Property.js';
-import NumberProperty, { isRangedProperty, RangedProperty } from './NumberProperty.js';
+import NumberProperty, { DEFAULT_RANGE, RangedProperty } from './NumberProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 
 type SelfOptions = {
@@ -40,14 +39,14 @@ type SelfOptions = {
 type ParentOptions = MappedPropertyOptions<number, number>;
 export type UnitConversionPropertyOptions = SelfOptions & ParentOptions;
 
-export default class UnitConversionProperty extends MappedProperty<number, number> {
+export default class UnitConversionProperty extends MappedProperty<number, number> implements RangedProperty {
 
-  private readonly rangeProperty: TProperty<Range | null>;
+  public readonly rangeProperty: TProperty<Range>;
 
-  private _property: Property<number>;
-  private _rangeListener?: ( range: Range | null ) => void;
+  private _property: TProperty<number>;
+  private _rangeListener?: ( range: Range ) => void;
 
-  public constructor( property: Property<number>, providedOptions: UnitConversionPropertyOptions ) {
+  public constructor( property: TProperty<number>, providedOptions: UnitConversionPropertyOptions ) {
 
     const map = ( input: number ) => input * providedOptions.factor;
     const inverseMap = ( output: number ) => output / providedOptions.factor;
@@ -65,42 +64,27 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
 
     this._property = property;
 
-    this.rangeProperty = new TinyProperty<Range | null>( null );
+    this.rangeProperty = new Property<Range>( DEFAULT_RANGE );
 
     // Watch the range of the target Property, and update ours to match
     if ( ( property as NumberProperty ).rangeProperty ) {
-      this._rangeListener = ( range: Range | null ) => {
-        if ( range === null ) {
-          this.rangeProperty.value = null;
-        }
-        else {
-          const min = map( range.min );
-          const max = map( range.max );
-          // Handle a negative factor or something else where the min/max gets swapped
-          this.rangeProperty.value = new Range( Math.min( min, max ), Math.max( min, max ) );
-        }
+      this._rangeListener = ( range: Range ) => {
+        const min = map( range.min );
+        const max = map( range.max );
+        // Handle a negative factor or something else where the min/max gets swapped
+        this.rangeProperty.value = new Range( Math.min( min, max ), Math.max( min, max ) );
       };
       ( property as NumberProperty ).rangeProperty.link( this._rangeListener );
     }
   }
 
-  public get range(): Range | null {
+  public get range(): Range {
     return this.rangeProperty.value;
   }
 
   // NOTE: NOT bidirectional yet!
-  public set range( value: Range | null ) {
+  public set range( value: Range ) {
     this.rangeProperty.value = value;
-  }
-
-  // Returns a casted version with a guaranteed non-null range
-  public asRanged(): RangedProperty {
-    if ( isRangedProperty( this ) ) {
-      return this;
-    }
-    else {
-      throw new Error( 'Not a RangedProperty' );
-    }
   }
 
   public override dispose(): void {
