@@ -12,8 +12,13 @@ import TEmitter from './TEmitter.js';
 import TinyEmitter from './TinyEmitter.js';
 
 type TDisposable = {
-  disposeEmitter: TEmitter;
+  _disposeEmitter: TEmitter;
 };
+
+export const DISPOSABLE_OPTION_KEYS = [
+  'disposer',
+  'disposeEmitter'
+];
 
 export type Disposer = TEmitter | TDisposable;
 
@@ -22,11 +27,16 @@ export type DisposableOptions = {
   // When set, this is the object that is responsible for triggering disposal for this object. This Disposable will listen
   // for when the disposer calls dispose (via the disposeEmitter), and then will dispose itself.
   disposer?: Disposer | null;
+
+  // If provided will not overwrite the disposeEmitter set as a member, but will add itself to the disposal chain
+  disposeEmitter?: TEmitter;
 };
 
 class Disposable implements TDisposable {
 
-  public readonly disposeEmitter: TEmitter = new TinyEmitter();
+  // Called after all code that is directly in `dispose()` methods, be careful with mixing this pattern and the
+  // `this.disposeMyClass()` pattern.
+  public readonly _disposeEmitter: TEmitter = new TinyEmitter();
   public isDisposed = false;
   private _disposer: Disposer | null = null;
   private boundOnDisposer: ( () => void ) | null = null;
@@ -35,6 +45,10 @@ class Disposable implements TDisposable {
 
     if ( providedOptions && providedOptions.disposer ) {
       this.disposer = providedOptions.disposer;
+    }
+
+    if ( providedOptions && providedOptions.disposeEmitter ) {
+      this.disposeEmitter = providedOptions.disposeEmitter;
     }
 
     if ( assert ) {
@@ -51,7 +65,7 @@ class Disposable implements TDisposable {
   }
 
   private onDisposer(): void {
-    this.dispose();
+    !this.isDisposed && this.dispose(); // Disposable doesn't have to be in charge of disposal, just make sure it happens.
 
     this.clearDisposer();
   }
@@ -83,6 +97,26 @@ class Disposable implements TDisposable {
     }
   }
 
+  public getDisposeEmitter(): TEmitter {
+    return this._disposeEmitter;
+  }
+
+  public get disposeEmitter(): TEmitter {
+    return this.getDisposeEmitter();
+  }
+
+  public set disposeEmitter( disposeEmitter: TEmitter ) {
+    this.setDisposeEmitter( disposeEmitter );
+  }
+
+  // Cannot be removed, please set appropriately
+  public setDisposeEmitter( disposeEmitter: TEmitter ): void {
+
+    // No need to remove this listener because there is an assumption that the passed in disposeEmitter has the same lifetime
+    // as this Disposable (i.e. this.disposeEmitter).
+    this._disposeEmitter.addListener( disposeEmitter.emit.bind( disposeEmitter ) );
+  }
+
   // Lazily create boundOnDisposer only when disposer is set
   private ensureBoundOnDisposer(): void {
     this.boundOnDisposer = this.boundOnDisposer || this.onDisposer.bind( this );
@@ -92,7 +126,7 @@ class Disposable implements TDisposable {
     assert && assert( this._disposer, 'need a disposer set' );
 
     // type case because instanceof check isn't flexible enough to check for all that implement TDisposable
-    return ( this._disposer instanceof Disposable ? this._disposer.disposeEmitter : this._disposer ) as TEmitter;
+    return ( this._disposer instanceof Disposable ? this._disposer._disposeEmitter : this._disposer ) as TEmitter;
   }
 
   public clearDisposer(): void {
@@ -110,7 +144,7 @@ class Disposable implements TDisposable {
 
   public dispose(): void {
     assert && assert( !this.isDisposed, 'Disposable can only be disposed once' );
-    this.disposeEmitter.emit();
+    this._disposeEmitter.emit();
     this.isDisposed = true;
   }
 }
