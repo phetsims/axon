@@ -23,6 +23,7 @@ import TReadOnlyProperty from './TReadOnlyProperty.js';
 import LinkableProperty from './LinkableProperty.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
+const VALID_NON_NAN = { isValidValue: ( v: number ) => !isNaN( v ), validationMessage: 'Should not be NaN' };
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // valid values for options.numberType to convey whether it is continuous or discrete with step size 1
@@ -106,6 +107,7 @@ export default class NumberProperty extends Property<number> {
 
     const rangeProperty = options.range instanceof ReadOnlyProperty ? options.range : new Property( options.range, options.rangePropertyOptions );
 
+    options.validators.push( VALID_NON_NAN ); // seems right for this to run first
     if ( options.numberType === 'Integer' ) {
       options.validators.push( VALID_INTEGER );
     }
