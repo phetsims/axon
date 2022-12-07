@@ -20,8 +20,6 @@ class StringEnumerationProperty<T extends string> extends Property<T> {
   public constructor( value: T, providedOptions?: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
-
-      // @ts-ignore - OK to narrow values
       phetioValueType: StringIO
     }, providedOptions );
 

@@ -60,7 +60,7 @@ export default class EnabledComponent {
     assert && options.enabledPropertyOptions && assert( !( !options.phetioEnabledPropertyInstrumented && options.enabledPropertyOptions.tandem ),
       'incompatible options. Cannot specify phetioEnabledPropertyInstrumented opt out and a Tandem via enabledPropertyOptions.' );
 
-    // @ts-ignore There is no way without a plethora of parameterized types to convey if this enabledProperty is
+    // @ts-expect-error There is no way without a plethora of parameterized types to convey if this enabledProperty is
     // settable, so accept unsettable, and typecast to settable.
     this.enabledProperty = options.enabledProperty || new EnabledProperty( options.enabled, merge( {
       tandem: options.phetioEnabledPropertyInstrumented ? options.tandem.createTandem( EnabledProperty.TANDEM_NAME ) : Tandem.OPT_OUT

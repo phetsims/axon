@@ -74,7 +74,7 @@ QUnit.test( 'Test defer', assert => {
   assert.equal( callbacks, 0, 'should not call back while deferred' );
   assert.equal( property.value, 2, 'should have new value' );
 
-  // @ts-ignore .setDeferred(false) will always return () => void
+  // @ts-expect-error .setDeferred(false) will always return () => void
   update();
   assert.equal( callbacks, 1, 'should have been called back after update' );
   assert.equal( property.value, 2, 'should take final value' );
@@ -176,7 +176,7 @@ QUnit.test( 'Property value validation', assert => {
   };
   window.assert && assert.throws( () => {
 
-    // @ts-ignore value is invalid for testing
+    // @ts-expect-error value is invalid for testing
     new Property( 0, { validValues: 0 } ); // eslint-disable-line no-new
   }, 'options.validValues is invalid' );
   window.assert && assert.throws( () => {
@@ -196,7 +196,7 @@ QUnit.test( 'Property value validation', assert => {
   };
   window.assert && assert.throws( () => {
 
-    // @ts-ignore value is invalid for testing
+    // @ts-expect-error value is invalid for testing
     new Property( 0, { isValidValue: 0 } ); // eslint-disable-line no-new
   }, 'options.isValidValue is invalid' );
   window.assert && assert.throws( () => {
@@ -255,7 +255,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const propertyValue = 123;
     const validValues = [ 0, 1, 2, 3, propertyValue ];
 
-    // @ts-ignore redefining function for testing
+    // @ts-expect-error redefining function for testing
     tandem.addPhetioObject = function( instance: NumberProperty, options: IntentionalAny ): void {
 
       // PhET-iO operates under the assumption that nothing will access a PhetioObject until the next animation frame

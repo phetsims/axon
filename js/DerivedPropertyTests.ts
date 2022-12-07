@@ -47,7 +47,7 @@ QUnit.test( 'Test DerivedProperty.unlink', assert => {
 
   assert.equal( areaProperty[ 'dependencies' ], null );
 
-  // @ts-ignore, type of dependencyListeners is implicitly any because DerivedProperty can have up to 16 dependencies of any type
+  // @ts-expect-error, type of dependencyListeners is implicitly any because DerivedProperty can have up to 16 dependencies of any type
   assert.equal( areaProperty[ 'dependencyListeners' ], null );
   assert.equal( areaProperty[ 'dependencies' ], null );
 } );
@@ -114,7 +114,7 @@ QUnit.test( 'DerivedProperty and/or', assert => {
   assert.equal( andProperty.value, true );
   assert.equal( orProperty.value, true );
 
-  // @ts-ignore fail: setting a dependency to a non-boolean value
+  // @ts-expect-error fail: setting a dependency to a non-boolean value
   window.assert && assert.throws( () => { aProperty.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );

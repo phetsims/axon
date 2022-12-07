@@ -200,7 +200,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
       }
     } );
 
-    // @ts-ignore We can't get our dependencies to dynamically type here fully
+    // @ts-expect-error We can't get our dependencies to dynamically type here fully
     super( dependencies, ( ...propertyValues: unknown[] ) => {
 
       const getValue = ( value: unknown ): unknown => {

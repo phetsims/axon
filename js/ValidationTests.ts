@@ -61,7 +61,7 @@ QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => 
   window.assert && assert.throws( () => Validation.validateValidator( {
     valueType: Array,
 
-    // @ts-ignore
+    // @ts-expect-error
     isValidValue: 4
   } ), 'isValidValue should be function' );
 
@@ -73,16 +73,16 @@ QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => 
 
   assert.ok( !Validation.getValidatorValidationError( { valueType: 'number' } ), 'good valueType' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { validValue: 'number' } ), 'no validator keys supplied' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { validValue: 4 } ), 'no validator keys supplied' );
   assert.ok( Validation.getValidatorValidationError( { valueType: 'blaradysharady' } ), 'invalid valueType string' );
 
   assert.ok( !Validation.getValidatorValidationError( { isValidValue: () => true } ), 'isValidValue is a function' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { isValidValue: 'hi' } ), 'isValidValue should not be string' );
 
   assert.ok( !Validation.getValidatorValidationError( { valueType: null } ), 'null is valid' );
@@ -92,10 +92,10 @@ QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => 
 
   assert.ok( !Validation.isValueValid( undefined, { valueType: [ 'number', 'sstring' ] } ), 'sstring is not a valid valueType' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( !Validation.isValueValid( undefined, { valueType: [ 7 ] }, ASSERTIONS_TRUE ), '7 is not a valid valueType' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( !Validation.isValueValid( undefined, { valueType: [ 'number', {} ] }, ASSERTIONS_TRUE ), 'Object literal  is not a valid valueType' );
 } );
 
@@ -104,8 +104,6 @@ QUnit.test( 'Test valueType: {Array.<number|null|string|function|EnumerationDepr
   assert.ok( Validation.isValueValid( 7, { valueType: [ 'number', null ] } ), '7 is valid for null and number' );
   assert.ok( Validation.isValueValid( null, { valueType: [ 'number', null ] } ), 'null is valid for null and number' );
   assert.ok( Validation.isValueValid( new Node(), { valueType: [ 'number', null, Node ] } ), 'Node is valid' );
-
-  // @ts-ignore
   assert.ok( Validation.isValueValid( EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] ), { valueType: [ EnumerationDeprecated, null, Node ] } ), 'Node is valid' );
   assert.ok( !Validation.isValueValid( 'hello', { valueType: [ 'number', null, Node ] } ), 'string not valid' );
 
@@ -123,29 +121,29 @@ QUnit.test( 'Test valueType: {EnumerationDeprecated}', assert => {
   const Birds = EnumerationDeprecated.byKeys( [ 'ROBIN', 'JAY', 'WREN' ] );
   assert.ok( !Validation.getValidatorValidationError( { valueType: Birds } ), 'good valueType' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.isValueValid( Birds.ROBIN, { valueType: Birds } ), 'good value' );
   assert.ok( !Validation.isValueValid( 4, { valueType: Birds } ), 'bad value' );
 } );
 
 QUnit.test( 'Test phetioType', assert => {
 
-  // Stub phetioType here for testing. ts-ignores may be able to be removed when IOType is in typescript.
-  // @ts-ignore
+  // Stub phetioType here for testing. ts-expect-errors may be able to be removed when IOType is in typescript.
+  // @ts-expect-error
   assert.ok( !Validation.getValidatorValidationError( { phetioType: { validator: { valueType: 'number' } } } ), 'good phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( !Validation.getValidatorValidationError( { phetioType: { validator: { isValidValue: () => true } } } ), 'good phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: { notValidator: { isValidValue: () => true } } } ), 'bad phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: { validator: { isValidValue: 'number' } } } ), 'bad phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: { validator: {} } } ), 'bad phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: { validator: null } } ), 'bad phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: 'null' } ), 'bad phetioType' );
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { phetioType: null } ), 'bad phetioType' );
 
   assert.ok( Validation.isValueValid( 'hello', { phetioType: StringIO } ), 'string valid' );
@@ -192,10 +190,10 @@ QUnit.test( 'test Validator.validators', assert => {
 
   assert.ok( !Validation.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ), 'correct validator' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, { isValidValue: 7 } ] } ), 'incorrect validator' );
 
-  // @ts-ignore
+  // @ts-expect-error
   assert.ok( Validation.getValidatorValidationError( { validators: [ { valueType: 'boolean' }, 7 ] } ), 'incorrect validator2' );
 
   assert.ok( Validation.getValidationError( '7', { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );

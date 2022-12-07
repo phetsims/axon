@@ -59,7 +59,7 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
       inverseMap: inverseMap
     }, providedOptions );
 
-    // @ts-ignore
+    // @ts-expect-error
     super( property, options );
 
     this._property = property;

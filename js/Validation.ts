@@ -171,7 +171,6 @@ export default class Validation {
           validator.validationMessage );
       }
 
-      // @ts-ignore - until phetioType is in TypeScript
       const phetioTypeValidationError = Validation.getValidatorValidationError( validator.phetioType.validator );
       if ( phetioTypeValidationError ) {
         return this.combineErrorMessages( phetioTypeValidationError, validator.validationMessage );
@@ -296,7 +295,6 @@ export default class Validation {
     }
     if ( validator.hasOwnProperty( 'phetioType' ) ) {
 
-      // @ts-ignore - until phetioType is in TypeScript
       const phetioTypeValidationError = Validation.getValidationError( value, validator.phetioType!.validator, options );
       if ( phetioTypeValidationError ) {
         return this.combineErrorMessages( `value failed phetioType validator: ${value}, error: ${phetioTypeValidationError}`, validator.validationMessage );

@@ -18,14 +18,14 @@ QUnit.test( 'Test StringProperty', assert => {
   // valueType
   window.assert && assert.throws( () => {
 
-    // @ts-ignore setting valueType option for testing
+    // @ts-expect-error setting valueType option for testing
     p = new StringProperty( 'foo', { valueType: 'string' } );
   }, 'valueType cannot be set by client' );
   p = new StringProperty( 'foo' );
   p.value = 'bar';
   window.assert && assert.throws( () => {
 
-    // @ts-ignore setting wrong value for testing
+    // @ts-expect-error setting wrong value for testing
     p.value = 0;
   }, 'set value fails valueType test' );
 
@@ -38,7 +38,7 @@ QUnit.test( 'Test StringProperty', assert => {
   window.assert && assert.throws( () => {
     p = new StringProperty( 'foo', {
 
-      // @ts-ignore incorrect valueType for testing
+      // @ts-expect-error incorrect valueType for testing
       validValues: [ 'foo', 'bar', 0 ]
     } );
   }, 'member of validValues has incorrect valueType' );
@@ -81,7 +81,7 @@ QUnit.test( 'Test StringProperty', assert => {
 
   window.assert && assert.throws( () => {
 
-    // @ts-ignore setting phetioType for testing
+    // @ts-expect-error setting phetioType for testing
     p = new StringProperty( 'hello', { phetioType: StringIO } );
 
     // TODO: Is this still the case? see: https://github.com/phetsims/axon/issues/421

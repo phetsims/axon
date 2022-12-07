@@ -445,7 +445,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   const a4 = createObservableArray( {
     elements: [ 'a', 'b' ],
 
-    // @ts-ignore, force set value type for testing
+    // @ts-expect-error, force set value type for testing
     valueType: 'string'
   } );
   assert.ok( !!a4, 'correct element types should succeed' );
@@ -454,7 +454,7 @@ QUnit.test( 'Test constructor arguments', assert => {
   window.assert && assert.throws( () => createObservableArray( {
     elements: [ 'a', 'b' ],
 
-    // @ts-ignore, force set value type for testing
+    // @ts-expect-error, force set value type for testing
     valueType: 'number'
   } ), 'should fail for invalid element types' );
 

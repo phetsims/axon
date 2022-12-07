@@ -37,7 +37,7 @@ export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
  */
 function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
-  // @ts-ignore
+  // @ts-expect-error
   return derivation( ...dependencies.map( property => property.get() ) );
 }
 
@@ -113,7 +113,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
           // to have the right value.
           // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
           // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-          // @ts-ignore
           propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
         }
 
@@ -228,7 +227,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    */
   public static deriveAny<T>( dependencies: Array<TReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
     return new DerivedProperty(
-      // @ts-ignore
+      // @ts-expect-error
       dependencies,
 
       derivation, providedOptions );
@@ -271,7 +270,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
           returnType: VoidIO,
           parameterTypes: [ parameterType ],
 
-          // @ts-ignore
+          // @ts-expect-error
           implementation: DerivedProperty.prototype.set,
           documentation: 'Errors out when you try to set a derived property.',
           invocableForReadOnlyElements: false

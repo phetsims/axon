@@ -92,7 +92,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   // emit is called when the value changes (or on link)
   private tinyProperty: TinyProperty<T>;
 
-  // whether we are in the process of notifying listeners; changed in some Property test files with @ts-ignore
+  // whether we are in the process of notifying listeners; changed in some Property test files with @ts-expect-error
   private notifying: boolean;
 
   // whether to allow reentry of calls to set
@@ -145,7 +145,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     if ( assert && providedOptions ) {
 
-      // @ts-ignore -- for checking JS code
+      // @ts-expect-error -- for checking JS code
       assert && assert( !providedOptions.phetioType, 'Set phetioType via phetioValueType' );
     }
 
@@ -175,7 +175,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     this.tinyProperty = new TinyProperty( value );
 
     // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.
-    // @ts-ignore
+    // @ts-expect-error
     this.tinyProperty.useDeepEquality = options.useDeepEquality;
     this.notifying = false;
     this.reentrant = options.reentrant;

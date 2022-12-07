@@ -22,7 +22,7 @@ QUnit.test( 'test EmitterIO', assert => {
     assert.throws( () => {
       emitter = new Emitter( {
 
-        // @ts-ignore, force set phetioType for testing
+        // @ts-expect-error, force set phetioType for testing
         phetioType: Emitter.EmitterIO( [] )
       } );
     }, 'cannot supply default EmitterIO type' );
@@ -30,7 +30,7 @@ QUnit.test( 'test EmitterIO', assert => {
     assert.throws( () => {
       emitter = new Emitter( {
 
-        // @ts-ignore, force set phetioType for testing
+        // @ts-expect-error, force set phetioType for testing
         phetioType: IOType.ObjectIO
       } );
     }, 'cannot supply any phetioType' );
@@ -46,7 +46,7 @@ QUnit.test( 'test EmitterIO', assert => {
   window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string' );
   window.assert && assert.throws( () => emitter.emit( null ), 'cannot emit string' );
 
-  // @ts-ignore, the value of v must be unknown
+  // @ts-expect-error, the value of v must be unknown
   const validator = { isValidValue: ( v: unknown ) => v < 3 };
   emitter = new Emitter( {
     parameters: [ merge( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]

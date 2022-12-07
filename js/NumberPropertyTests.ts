@@ -22,14 +22,14 @@ QUnit.test( 'Test NumberProperty', assert => {
   // valueType
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     property = new NumberProperty( 'foo' );
   }, 'initial value has invalid valueType' );
   property = new NumberProperty( 0 );
   property.value = 1;
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     property.value = 'foo';
   }, 'set value has invalid valueType' );
 
@@ -55,7 +55,7 @@ QUnit.test( 'Test NumberProperty', assert => {
   // range
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     property = new NumberProperty( 0, { range: [ 0, 10 ] } );
   }, 'bad range' );
   window.assert && assert.throws( () => {
@@ -79,13 +79,9 @@ QUnit.test( 'Test NumberProperty', assert => {
   property = new NumberProperty( 0, { range: new Range( 0, 10 ) } );
   property.value = 5;
   window.assert && assert.throws( () => {
-
-    // @ts-ignore
     property.value = 11;
   }, 'set value is greater than range.max' );
   window.assert && assert.throws( () => {
-
-    // @ts-ignore
     property.value = -1;
   }, 'set value is less than range.min' );
 
@@ -113,11 +109,10 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   // valueType
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     property = new NumberProperty( 0, { range: 'hi' } );
   }, 'incorrect range type' );
 
-  // @ts-ignore
   property = new NumberProperty( 0, { range: rangeProperty } );
   assert.ok( property.rangeProperty === rangeProperty, 'rangeProperty should be set' );
   assert.ok( property.range === rangeProperty.value, 'rangeProperty value should be set NumberProperty.set on construction' );
@@ -139,7 +134,6 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   rangeProperty.dispose();
   rangeProperty = new Property( new Range( 0, 1 ) );
 
-  // @ts-ignore
   property = new NumberProperty( 0, { range: rangeProperty } );
   rangeProperty.value = new Range( 0, 10 );
   property.value = 2;
