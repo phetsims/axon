@@ -28,7 +28,7 @@ QUnit.test( 'Test DerivedProperty.unlink', assert => {
   const startingWidthListenerCount = widthProperty[ 'getListenerCount' ]();
   const heightProperty = new Property( 3 );
   const startingHeightListenerCount = heightProperty[ 'getListenerCount' ]();
-  const areaPropertyDependencies: [ Property<number>, Property<number> ] = [ widthProperty, heightProperty ];
+  const areaPropertyDependencies: readonly [ Property<number>, Property<number> ] = [ widthProperty, heightProperty ] as const;
   const areaProperty = new DerivedProperty( areaPropertyDependencies,
     ( ( width, height ) => width * height ) );
   const listener = function( area: number ) { /*console.log( 'area = ' + area );*/ };
@@ -75,7 +75,7 @@ QUnit.test( 'Test defer', assert => {
   const update = firstProperty.setDeferred( false );
   assert.ok( firstProperty.value === 2, 'property has new value now' );
   assert.ok( derivedProperty.value === 2, 'but the derivedProperty doesnt' );
-   update && update();
+  update && update();
   assert.ok( derivedProperty.value === 4, 'now derivedProperty was updated' );
 
   // test the DerivedProperty being deferred

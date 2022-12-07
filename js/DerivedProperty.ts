@@ -204,8 +204,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public static and( properties: TReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
-    // @ts-ignore
-    return new DerivedProperty( properties, _.reduce.bind( null, properties, andFunction, true ), options );
+    return DerivedProperty.deriveAny( properties, () => _.reduce( properties, andFunction, true ), options );
   }
 
   /**
@@ -214,8 +213,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public static or( properties: TReadOnlyProperty<boolean>[], options?: PropertyOptions<boolean> ): UnknownDerivedProperty<boolean> {
     assert && assert( properties.length > 0, 'must provide a dependency' );
 
-    // @ts-ignore
-    return new DerivedProperty( properties, _.reduce.bind( null, properties, orFunction, false ), options );
+    return DerivedProperty.deriveAny( properties, () => _.reduce( properties, orFunction, false ), options );
   }
 
   /**
