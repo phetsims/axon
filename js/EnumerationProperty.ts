@@ -12,6 +12,7 @@ import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import Enumeration from '../../phet-core/js/Enumeration.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import axon from './axon.js';
 
 type SelfOptions<T extends EnumerationValue> = {
 
@@ -40,3 +41,5 @@ export default class EnumerationProperty<T extends EnumerationValue> extends Pro
     super( value, options );
   }
 }
+
+axon.register( 'EnumerationProperty', EnumerationProperty );
