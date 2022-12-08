@@ -12,6 +12,7 @@ import StringIO from '../../tandem/js/types/StringIO.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import axon from './axon.js';
 
 type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioValueType'> &
   PickRequired<PropertyOptions<T>, 'validValues'>;
@@ -27,4 +28,5 @@ class StringEnumerationProperty<T extends string> extends Property<T> {
   }
 }
 
+axon.register( 'StringEnumerationProperty', StringEnumerationProperty );
 export default StringEnumerationProperty;
