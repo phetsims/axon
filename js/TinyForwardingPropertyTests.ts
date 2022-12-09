@@ -15,9 +15,9 @@ QUnit.module( 'TinyForwardingProperty' );
 
 QUnit.test( 'Basics', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
 
-  assert.ok( myForwardingProperty.get() === true, 'basic value for Property' );
+  assert.ok( myForwardingProperty.get(), 'basic value for Property' );
 
   const myTinyProperty = new TinyProperty( 'tinyProperty' );
   myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
@@ -32,6 +32,7 @@ QUnit.test( 'Basics', assert => {
 
 
   const myDerivedProperty = new DerivedProperty( [ myProperty ], value => value + 5 ); // plus 5!
+  // @ts-expect-error should this be able to use a DerivedProperty? https://github.com/phetsims/axon/issues/421
   myForwardingProperty.setTargetProperty( null, null, myDerivedProperty );
   assert.ok( myForwardingProperty.get() === 5, 'should forward after set to DerivedProperty' );
 
@@ -41,7 +42,7 @@ QUnit.test( 'Basics', assert => {
 
 QUnit.test( 'Forward to a TinyProperty', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
@@ -58,7 +59,7 @@ QUnit.test( 'Forward to a TinyProperty', assert => {
 
 QUnit.test( 'Forward to a non PhET-iO case', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
@@ -83,11 +84,11 @@ QUnit.test( 'Set target but value does not change', assert => {
   const myForwardingProperty = new TinyForwardingProperty( true, false );
 
   const myTinyProperty = new TinyProperty( false );
-  assert.ok( myTinyProperty.value === false, 'default value' );
+  assert.ok( !myTinyProperty.value, 'default value' );
 
   myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
 
-  assert.ok( myForwardingProperty.value === false, 'forward to tinyProperty' );
+  assert.ok( !myForwardingProperty.value, 'forward to tinyProperty' );
 
   let calledListener = false;
   myForwardingProperty.lazyLink( () => {
