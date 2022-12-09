@@ -9,6 +9,7 @@
  */
 
 import TinyEmitter from './TinyEmitter.js';
+import TEmitter from './TEmitter.js';
 
 QUnit.module( 'TinyEmitter' );
 
@@ -16,7 +17,7 @@ QUnit.test( 'TinyEmitter can emit anything', assert => {
 
   assert.ok( true, 'Token test, because each test must have at least one assert.' );
 
-  const e1 = new TinyEmitter();
+  const e1: TEmitter<[ arg1: unknown, arg2?: unknown]> = new TinyEmitter();
   e1.emit( 1 );
   e1.emit( 2, 2 );
   e1.emit( true );
@@ -24,14 +25,14 @@ QUnit.test( 'TinyEmitter can emit anything', assert => {
   e1.emit( undefined );
   e1.emit( null );
 
-  const e2 = new TinyEmitter();
-  e2.emit( new TinyEmitter(), {}, () => {} );
+  const e2: TEmitter<[ arg1: unknown, arg2?: unknown, arg3?: unknown ]> = new TinyEmitter();
+  e2.emit( new TinyEmitter(), {}, () => { _.noop(); } );
   e2.emit( 2, 2 );
   e2.emit( true );
   e2.emit( '2, 2' );
   e2.emit( undefined );
   e2.emit( null );
-  e2.emit( new TinyEmitter(), 7, () => {} );
+  e2.emit( new TinyEmitter(), 7, () => { _.noop(); } );
   e2.emit( new TinyEmitter() );
 } );
 
@@ -50,7 +51,7 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
   assert.ok( x === 5, 'fired all listeners' );
 
   const e1 = new TinyEmitter();
-  e1.addListener( () => {} );
+  e1.addListener( () => { _.noop(); } );
 
   // const testEmitter = ( emitter, numberOfLoopings ) => {
   //
@@ -70,7 +71,7 @@ QUnit.test( 'Test emit timing TinyEmitter', assert => {
 } );
 
 QUnit.test( 'TinyEmitter Basics', assert => {
-  const stack = [];
+  const stack: Array<string> = [];
   const emitter = new TinyEmitter();
   const a = () => {
     stack.push( 'a' );
@@ -90,22 +91,22 @@ QUnit.test( 'TinyEmitter Basics', assert => {
   assert.equal( emitter.hasListener( b ), false, 'b should have been removed' );
 
   emitter.dispose();
-  window.assert && assert.throws( () => emitter.addListener( () => {} ), 'should throw error when adding a listener to disposed' );
+  window.assert && assert.throws( () => emitter.addListener( () => { _.noop(); } ), 'should throw error when adding a listener to disposed' );
 } );
 
 QUnit.test( 'TinyEmitter Tricks', assert => {
-  const entries = [];
+  const entries: Array<{ listener: string; arg: string }> = [];
 
-  const emitter = new TinyEmitter();
+  const emitter: TEmitter<[ arg: string ]> = new TinyEmitter();
 
-  const a = arg => {
+  const a = ( arg: string ) => {
     entries.push( { listener: 'a', arg: arg } );
 
     if ( arg === 'first' ) {
       emitter.emit( 'second' );
     }
   };
-  const b = arg => {
+  const b = ( arg: string ) => {
     entries.push( { listener: 'b', arg: arg } );
 
     if ( arg === 'second' ) {
@@ -113,7 +114,7 @@ QUnit.test( 'TinyEmitter Tricks', assert => {
       emitter.emit( 'third' );
     }
   };
-  const c = arg => {
+  const c = ( arg: string ) => {
     entries.push( { listener: 'c', arg: arg } );
   };
 
