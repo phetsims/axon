@@ -10,6 +10,7 @@ import DerivedProperty from './DerivedProperty.js';
 import NumberProperty from './NumberProperty.js';
 import TinyForwardingProperty from './TinyForwardingProperty.js';
 import TinyProperty from './TinyProperty.js';
+import TProperty from './TProperty.js';
 
 QUnit.module( 'TinyForwardingProperty' );
 
@@ -32,12 +33,19 @@ QUnit.test( 'Basics', assert => {
 
 
   const myDerivedProperty = new DerivedProperty( [ myProperty ], value => value + 5 ); // plus 5!
-  // @ts-expect-error should this be able to use a DerivedProperty? https://github.com/phetsims/axon/issues/421
-  myForwardingProperty.setTargetProperty( null, null, myDerivedProperty );
+
+  // This is the pattern for supporting read-only Properties as targetProperties. It has been decided that supporting
+  // settability in TypeScript in TinyForwardingProperty is not worth the effort of parametrization. Instead, a type cast
+  // and a runtime assertion handle this quite well.
+  myForwardingProperty.setTargetProperty( null, null, myDerivedProperty as unknown as TProperty<number> );
   assert.ok( myForwardingProperty.get() === 5, 'should forward after set to DerivedProperty' );
 
   myProperty.value = 6;
   assert.ok( myForwardingProperty.get() === 11, 'should forward after set to DerivedProperty after dependencies change' );
+
+  window.assert && assert.throws( () => {
+    myForwardingProperty.set( 10 );
+  }, 'setting readOnly target' );
 } );
 
 QUnit.test( 'Forward to a TinyProperty', assert => {

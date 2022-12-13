@@ -5,6 +5,11 @@
  * where validation, phet-io support and other things are not needed. This includes additional logic for conditionally
  * forwarding to/from another Property.
  *
+ * Please note that TinyForwardingProperty exclusively supports settable Properties
+ * via its TypeScript implementation. If you want to use a read-only Property as the target, please type cast as settable
+ * and use runtime assertions to ensure that the target (or this forwarding Property) are not set. See examples like
+ * Node.setVisibleProperty.
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
