@@ -41,6 +41,7 @@ const units = {
     'm/s^2', // meters/seconds squared
     'mA', // milliampere
     'mm', //millimeters
+    'm^2/mol', // molar absorptivity
     'mol',
     'mol/L',
     'mol/s',
