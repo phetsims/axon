@@ -45,6 +45,7 @@ const units = {
     'mol',
     'mol/L',
     'mol/s',
+    'M', // molar
     'N', // Newtons
     'N/m', // Newtons/meter
     'nm', // nanometers
