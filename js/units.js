@@ -14,6 +14,7 @@ import axon from './axon.js';
 
 const units = {
   values: [
+    '1/(cm*M)', // molar absorptivity
     '%', // percent
     'A', // amperes
     'AMU', // atomic mass unit
@@ -41,7 +42,6 @@ const units = {
     'm/s^2', // meters/seconds squared
     'mA', // milliampere
     'mm', //millimeters
-    'm^2/mol', // molar absorptivity
     'mol',
     'mol/L',
     'mol/s',
