@@ -626,7 +626,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     return cache.get( parameterType )!;
   }
 
-  public static CHANGED_EVENT_NAME = 'changed';
+  public static readonly CHANGED_EVENT_NAME = 'changed';
 }
 
 export const PropertyIO = ReadOnlyProperty.PropertyIO; // eslint-disable-line bad-text
