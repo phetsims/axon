@@ -8,7 +8,7 @@
  */
 
 import Property, { PropertyOptions } from './Property.js';
-import StringIO from '../../tandem/js/types/StringIO.js';
+import StringUnionIO from '../../tandem/js/types/StringUnionIO.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
@@ -21,7 +21,7 @@ export default class StringEnumerationProperty<T extends string> extends Propert
   public constructor( value: T, providedOptions: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
-      phetioValueType: StringIO
+      phetioValueType: StringUnionIO( providedOptions.validValues )
     }, providedOptions );
 
     super( value, options );
