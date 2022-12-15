@@ -114,7 +114,7 @@ QUnit.test( 'DerivedProperty and/or', assert => {
   assert.equal( andProperty.value, true );
   assert.equal( orProperty.value, true );
 
-  // @ts-expect-error fail: setting a dependency to a non-boolean value
+  // @ts-expect-error INTENTIONAL fail: setting a dependency to a non-boolean value
   window.assert && assert.throws( () => { aProperty.value = 0; },
     'DerivedProperty dependency must have boolean value' );
 } );

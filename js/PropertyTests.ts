@@ -176,7 +176,7 @@ QUnit.test( 'Property value validation', assert => {
   };
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error value is invalid for testing
+    // @ts-expect-error INTENTIONAL value is invalid for testing
     new Property( 0, { validValues: 0 } ); // eslint-disable-line no-new
   }, 'options.validValues is invalid' );
   window.assert && assert.throws( () => {
@@ -196,7 +196,7 @@ QUnit.test( 'Property value validation', assert => {
   };
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error value is invalid for testing
+    // @ts-expect-error INTENTIONAL value is invalid for testing
     new Property( 0, { isValidValue: 0 } ); // eslint-disable-line no-new
   }, 'options.isValidValue is invalid' );
   window.assert && assert.throws( () => {

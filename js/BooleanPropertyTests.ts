@@ -18,7 +18,7 @@ QUnit.test( 'BooleanProperty', assert => {
 
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error, this is purposefully failing typescript checks for testing
+    // @ts-expect-error INTENTIONAL, this is purposefully failing typescript checks for testing
     fixtureProperty = new BooleanProperty( 'hello' );
   }, 'invalid initial value' );
 
@@ -28,13 +28,13 @@ QUnit.test( 'BooleanProperty', assert => {
   fixtureProperty.set( true );
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error, this is purposefully failing typescript checks for testing
+    // @ts-expect-error INTENTIONAL, this is purposefully failing typescript checks for testing
     fixtureProperty.set( 123 );
   }, 'invalid set value' );
 
   window.assert && assert.throws( () => {
 
-    //@ts-expect-error, force set phetioType for testing.
+    //@ts-expect-error INTENTIONAL, force set phetioType for testing.
     fixtureProperty = new BooleanProperty( true, { phetioType: BooleanIO } );
   }, 'BooleanProperty' );
 

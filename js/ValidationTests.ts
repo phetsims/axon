@@ -61,7 +61,7 @@ QUnit.test( 'Test getValidatorValidationError and validateValidator', assert => 
   window.assert && assert.throws( () => Validation.validateValidator( {
     valueType: Array,
 
-    // @ts-expect-error
+    // @ts-expect-error INTENTIONAL
     isValidValue: 4
   } ), 'isValidValue should be function' );
 

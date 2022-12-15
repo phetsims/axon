@@ -22,14 +22,14 @@ QUnit.test( 'Test NumberProperty', assert => {
   // valueType
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error
+    // @ts-expect-error INTENTIONAL
     property = new NumberProperty( 'foo' );
   }, 'initial value has invalid valueType' );
   property = new NumberProperty( 0 );
   property.value = 1;
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error
+    // @ts-expect-error INTENTIONAL
     property.value = 'foo';
   }, 'set value has invalid valueType' );
 
@@ -55,7 +55,7 @@ QUnit.test( 'Test NumberProperty', assert => {
   // range
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error
+    // @ts-expect-error INTENTIONAL
     property = new NumberProperty( 0, { range: [ 0, 10 ] } );
   }, 'bad range' );
   window.assert && assert.throws( () => {
@@ -109,7 +109,7 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
   // valueType
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error
+    // @ts-expect-error INTENTIONAL
     property = new NumberProperty( 0, { range: 'hi' } );
   }, 'incorrect range type' );
 

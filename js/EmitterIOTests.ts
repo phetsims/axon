@@ -22,7 +22,7 @@ QUnit.test( 'test EmitterIO', assert => {
     assert.throws( () => {
       emitter = new Emitter( {
 
-        // @ts-expect-error, force set phetioType for testing
+        // @ts-expect-error INTENTIONAL, force set phetioType for testing
         phetioType: Emitter.EmitterIO( [] )
       } );
     }, 'cannot supply default EmitterIO type' );
@@ -30,7 +30,7 @@ QUnit.test( 'test EmitterIO', assert => {
     assert.throws( () => {
       emitter = new Emitter( {
 
-        // @ts-expect-error, force set phetioType for testing
+        // @ts-expect-error INTENTIONAL, force set phetioType for testing
         phetioType: IOType.ObjectIO
       } );
     }, 'cannot supply any phetioType' );

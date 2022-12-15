@@ -30,7 +30,7 @@ QUnit.test( 'EnumerationProperty', assert => {
   }, 'good constructor value' );
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error testing behavior of passing in the wrong value
+    // @ts-expect-error INTENTIONAL testing behavior of passing in the wrong value
     birdProperty = new EnumerationProperty( true );
   }, 'invalid constructor value' );
 
@@ -40,24 +40,24 @@ QUnit.test( 'EnumerationProperty', assert => {
   }, 'good set value' );
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error testing behavior of passing in the wrong value
+    // @ts-expect-error INTENTIONAL testing behavior of passing in the wrong value
     birdProperty.set( 5 );
   }, 'bad set value' );
 
 
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error testing set of phetioType
+    // @ts-expect-error INTENTIONAL testing set of phetioType
     birdProperty = new EnumerationProperty( Bird.ROBIN, { phetioType: EnumerationIO } );
   }, 'EnumerationProperty sets phetioType' );
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error testing behavior of passing in the wrong value
+    // @ts-expect-error INTENTIONAL testing behavior of passing in the wrong value
     birdProperty = new EnumerationProperty( Bird, { phetioType: EnumerationIO } );
   }, 'Not the Enumeration, but a value as first arg' );
   window.assert && assert.throws( () => {
 
-    // @ts-expect-error testing behavior of passing in the wrong value
+    // @ts-expect-error INTENTIONAL testing behavior of passing in the wrong value
     birdProperty = new EnumerationProperty( {} );
   }, 'That is not an enumeration' );
 } );
@@ -80,7 +80,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
       public static readonly enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
     }
 
-    // @ts-expect-error checking these are indeed different enumerations
+    // @ts-expect-error INTENTIONAL checking these are indeed different enumerations
   assert.ok( Bird1 !== Bird2, 'different Enumerations' );
     assert.ok( Bird1.ROBIN !== Bird2.ROBIN, 'different Enumerations' );
     let birdProperty = new EnumerationProperty( Bird1.ROBIN );
@@ -120,7 +120,7 @@ QUnit.test( 'validValues as a subset of Enumeration values', assert => {
     public static readonly enumeration = new Enumeration( Bird2, { phetioDocumentation: 'the second one' } );
   }
 
-  // @ts-expect-error testing these are indeed different enumerations
+  // @ts-expect-error INTENTIONAL testing these are indeed different enumerations
   assert.ok( Bird1 !== Bird2, 'different Enumerations' );
   assert.ok( Bird1.ROBIN !== Bird2.ROBIN, 'different Enumerations' );
 
