@@ -17,7 +17,7 @@ import axon from './axon.js';
 type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioValueType'> &
   PickRequired<PropertyOptions<T>, 'validValues'>;
 
-class StringEnumerationProperty<T extends string> extends Property<T> {
+export default class StringEnumerationProperty<T extends string> extends Property<T> {
   public constructor( value: T, providedOptions: StringEnumerationPropertyOptions<T> ) {
 
     const options = optionize<StringEnumerationPropertyOptions<T>, EmptySelfOptions, PropertyOptions<T>>()( {
@@ -29,4 +29,3 @@ class StringEnumerationProperty<T extends string> extends Property<T> {
 }
 
 axon.register( 'StringEnumerationProperty', StringEnumerationProperty );
-export default StringEnumerationProperty;
