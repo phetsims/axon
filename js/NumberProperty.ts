@@ -170,11 +170,8 @@ export default class NumberProperty extends Property<number> {
   }
 
   public override reset(): void {
+    this.resetValueAndRange(); // even if we don't own the range, reset them together to prevent assertions, https://github.com/phetsims/axon/issues/427
     super.reset();
-
-    // Do subclass-specific reset after the value has been reset, because this reset may change the range
-    // such that the value isn't valid anymore.
-    this.resetNumberProperty();
   }
 
   public override dispose(): void {
