@@ -69,7 +69,7 @@ const units = {
     'W' // watts
   ],
 
-  isValidUnits: function( unit ) {
+  isValidUnits: function( unit: string ): boolean {
     return _.includes( units.values, unit );
   }
 };

@@ -24,7 +24,10 @@ QUnit.test( 'TinyProperty Basics', assert => {
 QUnit.test( 'TinyProperty onBeforeNotify', assert => {
 
   class MyObservedObject {
-    constructor() {
+    public hasFun: boolean;
+    public hadFun: boolean | null;
+    public hasFunProperty: TinyProperty<boolean>;
+    public constructor() {
       this.hasFun = false;
       this.hadFun = false;
       this.hasFunProperty = new TinyProperty( false, ( newValue, oldValue ) => {
@@ -45,7 +48,9 @@ QUnit.test( 'TinyProperty onBeforeNotify', assert => {
   x.hasFunProperty.value = true;
   x.hasFunProperty.value = false;
   x.hasFunProperty.value = true;
-  x.hasFunProperty.value = 42;
-  x.hasFunProperty.value = 'duh';
-  x.hasFunProperty.value = 'always';
+
+  // TODO: what is this testing? https://github.com/phetsims/axon/issues/421
+  // x.hasFunProperty.value = 42;
+  // x.hasFunProperty.value = 'duh';
+  // x.hasFunProperty.value = 'always';
 } );
