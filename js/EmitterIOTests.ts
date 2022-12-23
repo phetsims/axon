@@ -15,7 +15,7 @@ QUnit.module( 'EmitterIO' );
 
 QUnit.test( 'test EmitterIO', assert => {
 
-  let emitter: Emitter<[unknown]>;
+  let emitter: Emitter<[ unknown ]>;
 
   if ( window.assert ) {
 
@@ -46,8 +46,7 @@ QUnit.test( 'test EmitterIO', assert => {
   window.assert && assert.throws( () => emitter.emit( 'string' ), 'cannot emit string' );
   window.assert && assert.throws( () => emitter.emit( null ), 'cannot emit string' );
 
-  // @ts-expect-error, the value of v must be unknown
-  const validator = { isValidValue: ( v: unknown ) => v < 3 };
+  const validator = { isValidValue: ( v: unknown ) => typeof v === 'number' && v < 3 };
   emitter = new Emitter( {
     parameters: [ merge( { phetioType: NumberIO, name: 'helloIAMNumber' }, validator ) ]
   } );
