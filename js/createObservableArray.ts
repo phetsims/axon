@@ -161,10 +161,9 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
      * @param receiver
      * @returns - the requested value
      */
-    get: function( array: T[], key: string | symbol, receiver ): any {
+    get: function( array: T[], key: keyof typeof methods, receiver ): any {
       assert && assert( array === targetArray, 'array should match the targetArray' );
       if ( methods.hasOwnProperty( key ) ) {
-        // @ts-expect-error would need to further constrain key to be fields of method, but it's unclear if we can do that because we're implementing Proxy.get
         return methods[ key ];
       }
       else {
