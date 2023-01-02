@@ -54,10 +54,10 @@ type SelfOptions = {
 
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioValueType' | 'valueType'>;
 
-// Minimal types for ranged Properties - Generally use `new NumberProperty( ... ).asRanged()`
+// Minimal types for Properties that support a rangeProperty.
 export type RangedProperty = LinkableProperty<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
 
-export default class NumberProperty extends Property<number> {
+export default class NumberProperty extends Property<number> implements RangedProperty {
 
   // Used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
   // @readonly, but cannot set as such because it is set by PhET-iO state.
