@@ -25,12 +25,12 @@ if ( Tandem.PHET_IO_ENABLED ) {
     window.assert && window.assert( _.hasIn( window, 'phet.phetio.PhetioStateEngine' ), 'state engine expected for this test' );
 
     const propertyStateHandler = new PropertyStateHandler();
-    assert.ok( !propertyStateHandler.initialized, 'started not initialized' );
+    assert.ok( !propertyStateHandler[ 'initialized' ], 'started not initialized' );
     const phetioStateEngine = new phet.phetio.PhetioStateEngine( phet.phetio.phetioEngine, {
       propertyStateHandler: propertyStateHandler
     } );
 
-    assert.ok( propertyStateHandler.initialized, 'should be initialized by phetioStateEngine' );
+    assert.ok( propertyStateHandler[ 'initialized' ], 'should be initialized by phetioStateEngine' );
 
     assert.ok( phetioStateEngine, 'to avoid eslint no new as side-effects' );
 
@@ -140,7 +140,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( true, 'always pass' );
 
     const propertyStateHandler = new PropertyStateHandler();
-    assert.ok( !propertyStateHandler.initialized, 'started not initialized' );
+    assert.ok( !propertyStateHandler[ 'initialized' ], 'started not initialized' );
     const phetioStateEngine = new phet.phetio.PhetioStateEngine( phet.phetio.phetioEngine, {
       propertyStateHandler: propertyStateHandler
     } );
