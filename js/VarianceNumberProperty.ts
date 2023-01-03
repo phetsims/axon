@@ -31,7 +31,7 @@ export default class VarianceNumberProperty extends NumberProperty {
     this.computeVariance = computeVariance;
   }
 
-  public getRandomizedValue() : number {
+  public getRandomizedValue(): number {
     return this.computeVariance ? this.computeVariance( super.get() ) : this.get();
   }
 }

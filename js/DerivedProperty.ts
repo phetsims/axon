@@ -227,7 +227,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    */
   public static deriveAny<T>( dependencies: Array<TReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
     return new DerivedProperty(
-
       // @ts-expect-error we have to provide a mapping between an arbitrary length array and our max overload of 15 types.
       dependencies,
 

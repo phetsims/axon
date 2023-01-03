@@ -17,7 +17,7 @@ QUnit.test( 'TinyEmitter can emit anything', assert => {
 
   assert.ok( true, 'Token test, because each test must have at least one assert.' );
 
-  const e1: TEmitter<[ arg1: unknown, arg2?: unknown]> = new TinyEmitter();
+  const e1: TEmitter<[ arg1: unknown, arg2?: unknown ]> = new TinyEmitter();
   e1.emit( 1 );
   e1.emit( 2, 2 );
   e1.emit( true );

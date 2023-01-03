@@ -81,7 +81,7 @@ QUnit.test( 'EnumerationIO validation', assert => {
     }
 
     // @ts-expect-error INTENTIONAL checking these are indeed different enumerations
-  assert.ok( Bird1 !== Bird2, 'different Enumerations' );
+    assert.ok( Bird1 !== Bird2, 'different Enumerations' );
     assert.ok( Bird1.ROBIN !== Bird2.ROBIN, 'different Enumerations' );
     let birdProperty = new EnumerationProperty( Bird1.ROBIN );
     const bird2Property = new EnumerationProperty( Bird2.ROBIN );

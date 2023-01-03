@@ -27,6 +27,7 @@ QUnit.test( 'TinyProperty onBeforeNotify', assert => {
     public hasFun: boolean;
     public hadFun: boolean | null;
     public hasFunProperty: TinyProperty<boolean>;
+
     public constructor() {
       this.hasFun = false;
       this.hadFun = false;

@@ -430,6 +430,7 @@ class OrderDependencyMapPair {
 class PhaseCallbackSets {
   public readonly undeferSet: Set<PhaseCallback>;
   public readonly notifySet: Set<PhaseCallback>;
+
   public constructor() {
 
     this.undeferSet = new Set();

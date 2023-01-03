@@ -12,7 +12,7 @@ import TinyEmitter from './TinyEmitter.js';
 
 export type TimerListener = ( dt: number ) => void;
 
-export default class Timer extends TinyEmitter<[number]> {
+export default class Timer extends TinyEmitter<[ number ]> {
 
   /**
    * Adds a listener to be called back once after the specified time in milliseconds
