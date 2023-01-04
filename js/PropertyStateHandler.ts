@@ -75,7 +75,7 @@ class PropertyStateHandler {
           const potentialListener = phetioObject.setDeferred( false );
 
           // Always add a PhaseCallback so that we can track the order dependency, even though setDeferred can return null.
-          this.phaseCallbackSets.addNotifyPhaseCallback( new PhaseCallback( phetioID, PropertyStatePhase.NOTIFY, potentialListener ) );
+          this.phaseCallbackSets.addNotifyPhaseCallback( new PhaseCallback( phetioID, PropertyStatePhase.NOTIFY, potentialListener || _.noop ) );
         };
         this.phaseCallbackSets.addUndeferPhaseCallback( new PhaseCallback( phetioID, PropertyStatePhase.UNDEFER, listener ) );
       }
@@ -267,10 +267,9 @@ class PropertyStateHandler {
 
       // only try to check the order dependencies to see if this has to be after something that is incomplete.
       if ( this.phetioIDCanApplyPhase( phaseCallbackToPotentiallyApply.phetioID, phase, completedPhases, phetioIDsInState ) ) {
-        assert && assert( phaseCallbackToPotentiallyApply.listener, 'listener expected' );
 
         // Fire the listener;
-        phaseCallbackToPotentiallyApply.listener!();
+        phaseCallbackToPotentiallyApply.listener();
 
         // Remove it from the master list so that it doesn't get called again.
         phaseCallbackSet.delete( phaseCallbackToPotentiallyApply );
@@ -334,7 +333,7 @@ class PhaseCallback {
   public constructor(
     public readonly phetioID: string,
     public readonly phase: PropertyStatePhase,
-    public readonly listener: ( () => void ) | null = _.noop ) {
+    public readonly listener: ( () => void ) = _.noop ) {
   }
 
   /**
