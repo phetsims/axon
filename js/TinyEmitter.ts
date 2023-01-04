@@ -131,7 +131,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     if ( assert && window.phet?.chipper?.queryParameters && isFinite( phet.chipper.queryParameters.listenerLimit ) ) {
       if ( maxListenerCount < this.listeners.size ) {
         maxListenerCount = this.listeners.size;
-        console.log( maxListenerCount );
+        console.log( `Max TinyEmitter listeners: ${maxListenerCount}` );
         assert( maxListenerCount <= phet.chipper.queryParameters.listenerLimit,
           `listener count of ${maxListenerCount} above ?listenerLimit=${phet.chipper.queryParameters.listenerLimit}` );
       }
