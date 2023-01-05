@@ -19,8 +19,7 @@ import axon from './axon.js';
 import ReadOnlyProperty, { PropertyIO } from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
-import LinkableProperty from './LinkableProperty.js';
+import TRangedProperty from './TRangedProperty.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALID_NON_NAN = { isValidValue: ( v: number ) => !isNaN( v ), validationMessage: 'Should not be NaN' };
@@ -54,10 +53,7 @@ type SelfOptions = {
 
 export type NumberPropertyOptions = SelfOptions & StrictOmit<PropertyOptions<number>, 'phetioValueType' | 'valueType'>;
 
-// Minimal types for Properties that support a rangeProperty.
-export type RangedProperty = LinkableProperty<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };
-
-export default class NumberProperty extends Property<number> implements RangedProperty {
+export default class NumberProperty extends Property<number> implements TRangedProperty {
 
   // Used by PhET-iO in NumberPropertyIO as metadata passed to the wrapper.
   // @readonly, but cannot set as such because it is set by PhET-iO state.

@@ -27,8 +27,9 @@ import Range from '../../dot/js/Range.js';
 import TProperty from './TProperty.js';
 import MappedProperty, { MappedPropertyOptions } from './MappedProperty.js';
 import Property from './Property.js';
-import NumberProperty, { DEFAULT_RANGE, RangedProperty } from './NumberProperty.js';
+import NumberProperty, { DEFAULT_RANGE } from './NumberProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
+import TRangedProperty from './TRangedProperty.js';
 
 type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.
@@ -39,14 +40,14 @@ type SelfOptions = {
 type ParentOptions = MappedPropertyOptions<number, number>;
 export type UnitConversionPropertyOptions = SelfOptions & ParentOptions;
 
-export default class UnitConversionProperty extends MappedProperty<number, number> implements RangedProperty {
+export default class UnitConversionProperty extends MappedProperty<number, number> implements TRangedProperty {
 
   public readonly rangeProperty: TProperty<Range>;
 
-  private _property: RangedProperty;
+  private _property: TRangedProperty;
   private _rangeListener?: ( range: Range ) => void;
 
-  public constructor( property: RangedProperty, providedOptions: UnitConversionPropertyOptions ) {
+  public constructor( property: TRangedProperty, providedOptions: UnitConversionPropertyOptions ) {
 
     const map = ( input: number ) => input * providedOptions.factor;
     const inverseMap = ( output: number ) => output / providedOptions.factor;
