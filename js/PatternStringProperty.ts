@@ -159,6 +159,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
   unknown> {
   public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions?: PatternStringPropertyOptions<Values> ) {
 
+    // @ts-expect-error TODO This should be fixed as part of https://github.com/phetsims/chipper/issues/1360
     const options = optionize<PatternStringPropertyOptions<Values>, OptionalSelfOptions<Values>, SuperOptions>()( {
       formatNames: [],
 
