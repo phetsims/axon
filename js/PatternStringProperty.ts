@@ -1,4 +1,4 @@
-// Copyright 2022, University of Colorado Boulder
+// Copyright 2022-2023, University of Colorado Boulder
 
 /**
  * A DerivedProperty that applies a string pattern (like StringUtils.fillIn). It has options for mapping values,
