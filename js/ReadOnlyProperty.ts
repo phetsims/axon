@@ -234,9 +234,12 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   protected set( value: T ): void {
 
-    // state is managed by the PhetioStateEngine
+    // state is managed by the PhetioStateEngine.
+    // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
     const setManagedByPhetioState = _.hasIn( window, 'phet.joist.sim.isSettingPhetioStateProperty' ) &&
                                     phet.joist.sim.isSettingPhetioStateProperty.value &&
+                                    _.hasIn( window, 'phet.joist.sim.isClearingPhetioDynamicElementsProperty' ) &&
+                                    !phet.joist.sim.isClearingPhetioDynamicElementsProperty.value &&
                                     this.isPhetioInstrumented() && this.phetioState &&
 
                                     // However, DerivedProperty should be able to update during PhET-iO state set
