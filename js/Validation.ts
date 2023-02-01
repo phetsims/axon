@@ -36,6 +36,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
+import { ComparableObject } from './TinyProperty.js';
 
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
@@ -55,6 +56,8 @@ type ValueType =
 
   // allow Function here since it is the appropriate level of abstraction for checking instanceof
   Function; // eslint-disable-line @typescript-eslint/ban-types
+
+type ValueComparisonStrategy<T = unknown> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
 
 export type Validator<T = unknown> = {
 
@@ -76,6 +79,9 @@ export type Validator<T = unknown> = {
   // Example:
   // validValues: [ 'horizontal', 'vertical' ]
   validValues?: readonly T[];
+
+  // equalsFunction -> must have .equals() function on the type T
+  valueComparisonStrategy?: ValueComparisonStrategy<T>;
 
   // Function that validates the value. Single argument is the value, returns boolean. Unused if null.
   // Example:
@@ -99,8 +105,10 @@ export type Validator<T = unknown> = {
 const VALIDATOR_KEYS: Array<keyof Validator> = [
   'valueType',
   'validValues',
+  'valueComparisonStrategy',
   'isValidValue',
   'phetioType',
+  // 'validationMessage', // TODO: not sure why this can't be in here? https://github.com/phetsims/axon/issues/428
   'validators'
 ];
 
@@ -116,9 +124,11 @@ export default class Validation {
       // There won't be a validationMessage on a non-object
       return 'validator must be an Object';
     }
+
     if ( !( validator.hasOwnProperty( 'isValidValue' ) ||
             validator.hasOwnProperty( 'valueType' ) ||
             validator.hasOwnProperty( 'validValues' ) ||
+            validator.hasOwnProperty( 'valueComparisonStrategy' ) ||
             validator.hasOwnProperty( 'phetioType' ) ||
             validator.hasOwnProperty( 'validators' ) ) ) {
       return this.combineErrorMessages( `validator must have at least one of: ${VALIDATOR_KEYS.join( ',' )}`, validator.validationMessage );
@@ -138,6 +148,19 @@ export default class Validation {
               validator.isValidValue === null ||
               validator.isValidValue === undefined ) ) {
         return this.combineErrorMessages( `isValidValue must be a function: ${validator.isValidValue}`,
+          validator.validationMessage );
+      }
+    }
+
+    if ( validator.hasOwnProperty( 'valueComparisonStrategy' ) ) {
+
+      // Only accepted values are below
+      if ( !( validator.valueComparisonStrategy === 'reference' ||
+              validator.valueComparisonStrategy === 'lodashDeep' ||
+              validator.valueComparisonStrategy === 'equalsFunction' ||
+              typeof validator.isValidValue === 'function' ) ) {
+        return this.combineErrorMessages( `valueComparisonStrategy must be "reference", "lodashDeep", 
+        "equalsFunction", or a comparison function: ${validator.valueComparisonStrategy}`,
           validator.validationMessage );
       }
     }
@@ -287,8 +310,33 @@ export default class Validation {
       }
     }
 
-    if ( validator.hasOwnProperty( 'validValues' ) && !validator.validValues!.includes( value ) ) {
-      return this.combineErrorMessages( `value not in validValues: ${value}`, validator.validationMessage );
+    if ( validator.validValues ) {
+
+      const valueComparisonStrategy: ValueComparisonStrategy<T> = validator.valueComparisonStrategy || 'reference';
+      const valueValid = validator.validValues.some( validValue => {
+
+        if ( valueComparisonStrategy === 'reference' ) {
+          return validValue === value;
+        }
+        if ( valueComparisonStrategy === 'equalsFunction' ) {
+          const validComparable = validValue as ComparableObject;
+          assert && assert( !!validComparable.equals, 'no equals function for 1st arg' );
+          assert && assert( !!value.equals, 'no equals function for 2nd arg' );
+          assert && assert( validComparable.equals( value ) === value.equals( validComparable ), 'incompatible equality checks' );
+
+          return validComparable.equals( value );
+        }
+        if ( valueComparisonStrategy === 'lodashDeep' ) {
+          return _.isEqual( validValue, value );
+        }
+        else {
+          return valueComparisonStrategy( validValue, value );
+        }
+      } );
+
+      if ( !valueValid ) {
+        return this.combineErrorMessages( `value not in validValues: ${value}`, validator.validationMessage );
+      }
     }
     if ( validator.hasOwnProperty( 'isValidValue' ) && !validator.isValidValue!( value ) ) {
       return this.combineErrorMessages( `value failed isValidValue: ${value}`, validator.validationMessage );

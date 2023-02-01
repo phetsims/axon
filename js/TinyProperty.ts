@@ -15,7 +15,7 @@ import TinyEmitter from './TinyEmitter.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 
-type ComparableObject = {
+export type ComparableObject = {
   equals: ( a: unknown ) => boolean;
 };
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];

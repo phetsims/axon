@@ -6,6 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import Vector2 from '../../dot/js/Vector2.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import { Node } from '../../scenery/js/imports.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
@@ -200,4 +201,48 @@ QUnit.test( 'test Validator.validators', assert => {
   assert.ok( Validation.getValidationError( true, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
   assert.ok( Validation.getValidationError( undefined, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
   assert.ok( !Validation.getValidationError( false, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
+} );
+
+QUnit.test( 'Validator.valueComparisonStrategy', assert => {
+
+  const myValueArray = [ 7, 6, 5 ];
+
+  // @ts-expect-error wrong value for valueComparisonStrategy
+  assert.ok( Validation.getValidatorValidationError( { valueComparisonStrategy: 'referfdsafdsence' } ),
+    'that is not a correct valueComparisonStrategy' );
+
+  assert.ok( !Validation.getValidationError( myValueArray, {
+    validators: [ { validValues: [ myValueArray ], valueComparisonStrategy: 'reference' } ]
+  } ) );
+
+  assert.ok( !Validation.getValidationError( myValueArray, {
+    validators: [ { validValues: [ [ 7, 6, 5 ] ], valueComparisonStrategy: 'lodashDeep' } ]
+  } ) );
+
+  assert.ok( Validation.getValidationError( myValueArray, {
+    validators: [ { validValues: [ [ 7, 6, 5 ] ], valueComparisonStrategy: 'reference' } ]
+  } ), 'That isn\'t the same array!' );
+
+  window.assert && assert.throws( () => {
+    Validation.getValidationError( myValueArray, {
+      validators: [ { validValues: [ [ 7, 6, 5 ] ], valueComparisonStrategy: 'equalsFunction' } ]
+    } );
+  }, 'arrays do not have an equals function' );
+
+  assert.ok( !Validation.getValidationError( new Vector2( 0, 0 ), {
+    validators: [ { validValues: [ new Vector2( 0, 1 ), new Vector2( 0, 0 ) ], valueComparisonStrategy: 'equalsFunction' } ]
+  } ) );
+
+  assert.ok( Validation.getValidationError( new Vector2( 0, 2 ), {
+    validators: [ { validValues: [ new Vector2( 0, 1 ), new Vector2( 0, 0 ) ], valueComparisonStrategy: 'equalsFunction' } ]
+  } ) );
+
+  assert.ok( Validation.getValidationError<Vector2>( new Vector2( 0, 2 ), {
+    validators: [ {
+      validValues: [ new Vector2( 0, 100 ), new Vector2( 2, 2 ) ],
+
+      // compare only the x values.
+      valueComparisonStrategy: ( a, b ) => a.x === b.x
+    } ]
+  } ) );
 } );
