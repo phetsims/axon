@@ -108,7 +108,6 @@ const VALIDATOR_KEYS: Array<keyof Validator> = [
   'valueComparisonStrategy',
   'isValidValue',
   'phetioType',
-  // 'validationMessage', // TODO: not sure why this can't be in here? https://github.com/phetsims/axon/issues/428
   'validators'
 ];
 

@@ -47,10 +47,6 @@ export type ReadOnlyPropertyState<StateType> = {
 // Options defined by Property
 type SelfOptions = {
 
-  // useDeepEquality: true => Use the `equals` method on the values
-  // useDeepEquality: false => Use === for equality test
-  useDeepEquality?: boolean;
-
   // units for the number, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
   units?: string | null;
 
@@ -120,7 +116,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected constructor( value: T, providedOptions?: PropertyOptions<T> ) {
     const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions>()( {
 
-      useDeepEquality: false,
       units: null,
       reentrant: false,
 
@@ -174,9 +169,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     this.tinyProperty = new TinyProperty( value );
 
-    // Since we are already in the heavyweight Property, we always assign useDeepEquality for clarity.
+    // Since we are already in the heavyweight Property, we always assign TinyProperty.useDeepEquality for clarity.
     // @ts-expect-error
-    this.tinyProperty.useDeepEquality = options.useDeepEquality;
+    this.tinyProperty.useDeepEquality = options.valueComparisonStrategy && options.valueComparisonStrategy === 'equalsFunction';
     this.notifying = false;
     this.reentrant = options.reentrant;
     this.isDeferred = false;
