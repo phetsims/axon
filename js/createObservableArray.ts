@@ -35,10 +35,11 @@ export type ObservableArrayOptions<T> = {
   elements?: T[];
   tandem?: Tandem;
 
-  // Possibly passed through to the Emitter
+  // Possibly passed through to the Emitters
   phetioType?: IOType;
   phetioState?: boolean;
   phetioDocumentation?: string;
+  phetioFeatured?: boolean;
 };
 type ObservableArray<T> = {
   get: ( index: number ) => T;
@@ -91,7 +92,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
     length: 0,
     elements: [],
-    tandem: Tandem.OPTIONAL
+    tandem: Tandem.OPTIONAL,
+    phetioFeatured: false
   }, providedOptions );
 
   let emitterParameterOptions = null;
@@ -113,21 +115,24 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   const elementAddedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ],
-    phetioReadOnly: true
+    phetioReadOnly: true,
+    phetioFeatured: options.phetioFeatured
   } );
 
   // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter<[ T ]>( {
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ],
-    phetioReadOnly: true
+    phetioReadOnly: true,
+    phetioFeatured: options.phetioFeatured
   } );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
   const lengthProperty = new NumberProperty( 0, {
     numberType: 'Integer',
     tandem: options.tandem.createTandem( 'lengthProperty' ),
-    phetioReadOnly: true
+    phetioReadOnly: true,
+    phetioFeatured: options.phetioFeatured
   } );
 
   // The underlying array which is wrapped by the Proxy
