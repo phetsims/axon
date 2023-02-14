@@ -26,13 +26,13 @@ QUnit.test( 'TinyEmitter can emit anything', assert => {
   e1.emit( null );
 
   const e2: TEmitter<[ arg1: unknown, arg2?: unknown, arg3?: unknown ]> = new TinyEmitter();
-  e2.emit( new TinyEmitter(), {}, () => { _.noop(); } );
+  e2.emit( new TinyEmitter(), {}, _.noop() );
   e2.emit( 2, 2 );
   e2.emit( true );
   e2.emit( '2, 2' );
   e2.emit( undefined );
   e2.emit( null );
-  e2.emit( new TinyEmitter(), 7, () => { _.noop(); } );
+  e2.emit( new TinyEmitter(), 7, _.noop() );
   e2.emit( new TinyEmitter() );
 } );
 
