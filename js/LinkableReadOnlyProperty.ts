@@ -4,5 +4,5 @@ import { LinkableElement } from '../../tandem/js/PhetioObject.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 
-type LinkableReadonlyProperty<T> = TReadOnlyProperty<T> & LinkableElement;
-export default LinkableReadonlyProperty;
+type LinkableReadOnlyProperty<T> = TReadOnlyProperty<T> & LinkableElement;
+export default LinkableReadOnlyProperty;
