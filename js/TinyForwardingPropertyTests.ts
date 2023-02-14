@@ -18,7 +18,7 @@ QUnit.test( 'Basics', assert => {
 
   const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
 
-  assert.ok( myForwardingProperty.get(), 'basic value for Property' );
+  assert.ok( myForwardingProperty.get() === true, 'basic value for Property' );
 
   const myTinyProperty = new TinyProperty( 'tinyProperty' );
   myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
@@ -92,11 +92,14 @@ QUnit.test( 'Set target but value does not change', assert => {
   const myForwardingProperty = new TinyForwardingProperty( true, false );
 
   const myTinyProperty = new TinyProperty( false );
-  assert.ok( !myTinyProperty.value, 'default value' );
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+  assert.ok( myTinyProperty.value === false, 'default value' );
 
   myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
 
-  assert.ok( !myForwardingProperty.value, 'forward to tinyProperty' );
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+  assert.ok( myForwardingProperty.value === false, 'forward to tinyProperty' );
 
   let calledListener = false;
   myForwardingProperty.lazyLink( () => {
