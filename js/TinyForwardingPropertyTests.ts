@@ -16,7 +16,7 @@ QUnit.module( 'TinyForwardingProperty' );
 
 QUnit.test( 'Basics', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<boolean | string | number>( true, false );
 
   assert.ok( myForwardingProperty.get() === true, 'basic value for Property' );
 
@@ -50,7 +50,7 @@ QUnit.test( 'Basics', assert => {
 
 QUnit.test( 'Forward to a TinyProperty', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<boolean | string>( true, false );
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
@@ -67,7 +67,7 @@ QUnit.test( 'Forward to a TinyProperty', assert => {
 
 QUnit.test( 'Forward to a non PhET-iO case', assert => {
 
-  const myForwardingProperty = new TinyForwardingProperty<unknown>( true, false );
+  const myForwardingProperty = new TinyForwardingProperty<boolean | string>( true, false );
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
