@@ -16,7 +16,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import ReadOnlyProperty, { PropertyIO } from './ReadOnlyProperty.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
 import TRangedProperty from './TRangedProperty.js';
@@ -41,7 +41,7 @@ export type NumberPropertyState = {
 } & ReadOnlyProperty<number>;
 
 // For the IOType
-const PropertyIOImpl = PropertyIO( NumberIO );
+const PropertyIOImpl = Property.PropertyIO( NumberIO );
 
 type SelfOptions = {
   numberType?: NumberType;

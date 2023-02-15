@@ -121,7 +121,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
       // phet-io
       tandem: Tandem.OPTIONAL,
-      phetioOuterType: PropertyIO,
+      phetioOuterType: ReadOnlyProperty.PropertyIO,
       phetioValueType: IOType.ObjectIO
     }, providedOptions );
 
@@ -627,7 +627,5 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
   public static readonly CHANGED_EVENT_NAME = 'changed';
 }
-
-export const PropertyIO = ReadOnlyProperty.PropertyIO; // eslint-disable-line bad-text
 
 axon.register( 'ReadOnlyProperty', ReadOnlyProperty );

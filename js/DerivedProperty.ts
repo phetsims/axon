@@ -12,14 +12,14 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import { PropertyOptions } from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
-import ReadOnlyProperty, { PropertyIO } from './ReadOnlyProperty.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
@@ -258,7 +258,7 @@ DerivedProperty.DerivedPropertyIO = parameterType => {
     cache.set( parameterType, new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
       valueType: DerivedProperty,
       parameterTypes: [ parameterType ],
-      supertype: PropertyIO( parameterType ),
+      supertype: Property.PropertyIO( parameterType ),
       documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
                      'instances',
 
