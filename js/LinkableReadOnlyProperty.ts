@@ -1,4 +1,4 @@
-// Copyright 2022, University of Colorado Boulder
+// Copyright 2023, University of Colorado Boulder
 
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import LinkableElement from '../../tandem/js/LinkableElement.js';
