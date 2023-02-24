@@ -26,6 +26,7 @@ export type DisposableOptions = {
 
   // When set, this is the object that is responsible for triggering disposal for this object. This Disposable will listen
   // for when the disposer calls dispose (via the disposeEmitter), and then will dispose itself.
+  // @deprecated - Though this works, it is likely not the pattern of the future, please see https://github.com/phetsims/scenery/issues/1494
   disposer?: Disposer | null;
 
   // If provided will not overwrite the disposeEmitter set as a member, but will add itself to the disposal chain
@@ -76,8 +77,14 @@ class Disposable implements TDisposable {
 
   public get disposer(): Disposer | null { return this.getDisposer(); }
 
+  /**
+   * @deprecated - Though this works, it is likely not the pattern of the future, please see https://github.com/phetsims/scenery/issues/1494
+   */
   public set disposer( disposer: Disposer | null ) { this.setDisposer( disposer ); }
 
+  /**
+   * @deprecated - Though this works, it is likely not the pattern of the future, please see https://github.com/phetsims/scenery/issues/1494
+   */
   public setDisposer( disposer: Disposer | null ): void {
 
     if ( disposer !== this._disposer ) {
