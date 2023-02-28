@@ -15,13 +15,13 @@ import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
-import { PhetioObjectState } from '../../tandem/js/TandemConstants.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import TEmitter from './TEmitter.js';
+import { FullPhetioState } from '../../tandem/js/TandemConstants.js';
 
 type PhetioStateEngineStub = {
   onBeforeApplyStateEmitter: TEmitter<[ PhetioObject ]>;
-  stateSetEmitter: TEmitter<[ Record<string, PhetioObjectState | 'DELETED'>, Tandem ]>;
+  stateSetEmitter: TEmitter<[ FullPhetioState, Tandem ]>;
   isSettingStateProperty: TReadOnlyProperty<boolean>;
 };
 
