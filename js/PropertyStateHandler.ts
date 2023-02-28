@@ -9,12 +9,21 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import PhetioStateEngine from '../../phet-io/js/PhetioStateEngine.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
+import PhetioObject from '../../tandem/js/PhetioObject.js';
+import { PhetioObjectState } from '../../tandem/js/TandemConstants.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
+import TEmitter from './TEmitter.js';
+
+type PhetioStateEngineStub = {
+  onBeforeApplyStateEmitter: TEmitter<[ PhetioObject ]>;
+  stateSetEmitter: TEmitter<[ Record<string, PhetioObjectState | 'DELETED'>, Tandem ]>;
+  isSettingStateProperty: TReadOnlyProperty<boolean>;
+};
 
 type PhaseMap = {
   beforePhase: PropertyStatePhase;
@@ -59,7 +68,7 @@ class PropertyStateHandler {
     ];
   }
 
-  public initialize( phetioStateEngine: PhetioStateEngine ): void {
+  public initialize( phetioStateEngine: PhetioStateEngineStub ): void {
     assert && assert( !this.initialized, 'cannot initialize twice' );
 
     phetioStateEngine.onBeforeApplyStateEmitter.addListener( phetioObject => {
