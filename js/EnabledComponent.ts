@@ -37,7 +37,7 @@ export type EnabledComponentOptions = {
   // options to enabledProperty if we create it, ignored if enabledProperty is provided
   enabledPropertyOptions?: EnabledPropertyOptions | null;
 
-  // Whether or not the default-created enabledProperty should be instrumented for PhET-iO. Ignored if
+  // Whether the default-created enabledProperty should be instrumented for PhET-iO. Ignored if
   // options.enabledProperty is provided.
   phetioEnabledPropertyInstrumented?: boolean;
 
