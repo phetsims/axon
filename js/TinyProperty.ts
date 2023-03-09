@@ -29,12 +29,8 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
   protected useDeepEquality?: boolean;
 
-  /**
-   * @param value - The initial value of the property
-   * @param [onBeforeNotify]
-   */
-  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> ) {
-    super( onBeforeNotify );
+  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> | null, hasListenerOrderDependencies?: boolean ) {
+    super( onBeforeNotify, hasListenerOrderDependencies );
 
     this._value = value;
   }

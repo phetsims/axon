@@ -34,16 +34,23 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // If specified, this will be called before listeners are notified.
   private readonly onBeforeNotify?: TEmitterListener<T> | null;
 
+  // If specified as true, this flag will ensure that listener order never changes (like via ?shuffleListeners)
+  private readonly hasListenerOrderDependencies?: boolean | null;
+
   // The listeners that will be called on emit
   private listeners: Set<TEmitterListener<T>>;
 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
   private emitContexts: EmitContext<T>[];
 
-  public constructor( onBeforeNotify?: TEmitterListener<T> | null ) {
+  public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;
+    }
+
+    if ( hasListenerOrderDependencies ) {
+      this.hasListenerOrderDependencies = hasListenerOrderDependencies;
     }
 
     this.listeners = new Set();
@@ -78,7 +85,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
-    if ( assert && shuffleListeners ) {
+    if ( assert && shuffleListeners && !this.hasListenerOrderDependencies ) {
       this.listeners = new Set( _.shuffle( Array.from( this.listeners ) ) ); // eslint-disable-line bad-sim-text
     }
 

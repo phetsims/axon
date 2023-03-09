@@ -39,7 +39,7 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
     }, providedOptions );
 
     super( options );
-    this.tinyEmitter = new TinyEmitter();
+    this.tinyEmitter = new TinyEmitter( null, options.hasListenerOrderDependencies );
   }
 
   /**

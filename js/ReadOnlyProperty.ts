@@ -62,6 +62,9 @@ type SelfOptions = {
   // The IOType function that returns a parameterized IOType based on the valueType. There is a general default, but
   // subtypes can implement their own, more specific IOType.
   phetioOuterType?: ( parameterType: IOType ) => IOType;
+
+  // If specified as true, this flag will ensure that listener order never changes (like via ?shuffleListeners)
+  hasListenerOrderDependencies?: boolean;
 };
 
 // Options that can be passed in
@@ -115,9 +118,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   protected constructor( value: T, providedOptions?: PropertyOptions<T> ) {
     const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions>()( {
-
       units: null,
       reentrant: false,
+      hasListenerOrderDependencies: false,
 
       // phet-io
       tandem: Tandem.OPTIONAL,
@@ -167,7 +170,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     this.validValues = options.validValues;
 
-    this.tinyProperty = new TinyProperty( value );
+    this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies );
 
     // Since we are already in the heavyweight Property, we always assign TinyProperty.useDeepEquality for clarity.
     // @ts-expect-error
