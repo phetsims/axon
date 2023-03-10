@@ -13,3 +13,6 @@ to obtain simulation code and its dependencies, notes about architecture & desig
 
 ### License
 See the [license](LICENSE)
+
+### Contributing
+If you would like to contribute to this repo, please read our [contributing guidelines](https://github.com/phetsims/community/blob/master/CONTRIBUTING.md).
