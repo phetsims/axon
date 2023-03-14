@@ -65,6 +65,7 @@ import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
+import Tandem from '../../tandem/js/Tandem.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -158,6 +159,8 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
   unknown,
   unknown> {
   public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions?: PatternStringPropertyOptions<Values> ) {
+
+    assert && assert( !( values.tandem instanceof Tandem ), 'Did you intend to put tandem in providedOptions?' );
 
     const options = optionize<OptionalSelfOptions<Values> & { maps?: MapsType<Values> }, OptionalSelfOptions<Values>, SuperOptions>()( {
       formatNames: [],
