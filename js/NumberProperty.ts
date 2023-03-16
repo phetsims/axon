@@ -20,6 +20,7 @@ import ReadOnlyProperty from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
 import TRangedProperty from './TRangedProperty.js';
+import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALID_NON_NAN = { isValidValue: ( v: number ) => !isNaN( v ), validationMessage: 'Should not be NaN' };
@@ -67,6 +68,9 @@ export default class NumberProperty extends Property<number> implements TRangedP
   private readonly resetNumberProperty: () => void;
 
   public constructor( value: number, providedOptions?: NumberPropertyOptions ) {
+
+    // Please feel free to remove this if you have a reasonable case!
+    assert && providedOptions && assertMutuallyExclusiveOptions( [ 'range' ], [ 'validValues' ] );
 
     const options = optionize<NumberPropertyOptions, StrictOmit<SelfOptions, 'rangePropertyOptions'>, PropertyOptions<number>>()( {
 
