@@ -33,6 +33,7 @@ type FakeRandom<T> = { shuffle: ( arr: T[] ) => T[] }; // // We don't import bec
 export type ObservableArrayOptions<T> = {
   length?: number;
   elements?: T[];
+  hasListenerOrderDependencies?: boolean; // See TinyEmitter.hasListenerOrderDependencies
   tandem?: Tandem;
 
   // Possibly passed through to the Emitters
@@ -88,6 +89,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   const options = optionize<ObservableArrayOptions<T>, SpecifiedObservableArrayOptions<T>>()( {
 
+    hasListenerOrderDependencies: false,
+
     // Also supports phetioType or validator options.  If both are supplied, only the phetioType is respected
 
     length: 0,
@@ -116,7 +119,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    phetioFeatured: options.phetioFeatured
+    phetioFeatured: options.phetioFeatured,
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies
   } );
 
   // notifies when an element has been removed
@@ -124,7 +128,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    phetioFeatured: options.phetioFeatured
+    phetioFeatured: options.phetioFeatured,
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies
   } );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
