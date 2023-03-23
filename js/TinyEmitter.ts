@@ -13,6 +13,7 @@ import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 
 // constants
 const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
+const reverseListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.reverseListeners;
 
 type EmitContext<T extends IntentionalAny[]> = {
   index: number;
@@ -85,8 +86,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
-    if ( assert && shuffleListeners && !this.hasListenerOrderDependencies ) {
-      this.listeners = new Set( _.shuffle( Array.from( this.listeners ) ) ); // eslint-disable-line bad-sim-text
+    if ( assert && ( shuffleListeners || reverseListeners ) && !this.hasListenerOrderDependencies ) {
+      const asArray = Array.from( this.listeners );
+
+      // we can use shuffle here because it is behind assert and just for testing
+      const mixedUp = shuffleListeners ? _.shuffle( asArray ) : asArray.reverse(); // eslint-disable-line bad-sim-text
+      this.listeners = new Set( mixedUp );
     }
 
     // Notify wired-up listeners, if any
