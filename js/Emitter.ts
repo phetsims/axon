@@ -175,7 +175,7 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
                 throw new Error( `Validation errors: ${errors.join( ', ' )}` );
               }
               else {
-                this.emit( values );
+                this.emit( ...values );
               }
             },
             documentation: 'Emits a single event to all listeners.',
