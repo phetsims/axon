@@ -16,6 +16,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
+import Disposable, { DisposableOptions } from './Disposable.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -26,7 +27,7 @@ const DEFAULT_OPTIONS = {
   tandem: Tandem.OPTIONAL
 } as const;
 
-export type EnabledComponentOptions = {
+type SelfOptions = {
 
   // if not provided, a Property will be created
   enabledProperty?: TReadOnlyProperty<boolean> | null;
@@ -45,7 +46,9 @@ export type EnabledComponentOptions = {
   tandem?: Tandem;
 };
 
-export default class EnabledComponent {
+export type EnabledComponentOptions = SelfOptions & DisposableOptions;
+
+export default class EnabledComponent extends Disposable {
 
   public enabledProperty: TProperty<boolean>;
 
@@ -53,12 +56,14 @@ export default class EnabledComponent {
 
   public constructor( providedOptions?: EnabledComponentOptions ) {
 
-    const options = optionize3<EnabledComponentOptions, EnabledComponentOptions>()( {}, DEFAULT_OPTIONS, providedOptions );
+    const options = optionize3<EnabledComponentOptions, SelfOptions, DisposableOptions>()( {}, DEFAULT_OPTIONS, providedOptions );
 
     const ownsEnabledProperty = !options.enabledProperty;
 
     assert && options.enabledPropertyOptions && assert( !( !options.phetioEnabledPropertyInstrumented && options.enabledPropertyOptions.tandem ),
       'incompatible options. Cannot specify phetioEnabledPropertyInstrumented opt out and a Tandem via enabledPropertyOptions.' );
+
+    super( options );
 
     // @ts-expect-error There is no way without a plethora of parameterized types to convey if this enabledProperty is
     // settable, so accept unsettable, and typecast to settable.
@@ -82,8 +87,9 @@ export default class EnabledComponent {
 
   public isEnabled(): boolean { return this.enabledProperty.value; }
 
-  public dispose(): void {
+  public override dispose(): void {
     this.disposeEnabledComponent();
+    super.dispose();
   }
 }
 
