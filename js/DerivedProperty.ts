@@ -143,6 +143,10 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
   // for bind
   private getDerivedPropertyListener(): void {
+    // Don't try to recompute if we are disposed, see https://github.com/phetsims/axon/issues/432
+    if ( this.isDisposed ) {
+      return;
+    }
 
     // Just mark that there is a deferred value, then calculate the derivation below when setDeferred() is called.
     // This is in part supported by the PhET-iO state engine because it can account for intermediate states, such
