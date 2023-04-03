@@ -63,7 +63,7 @@ type SelfOptions = {
   // subtypes can implement their own, more specific IOType.
   phetioOuterType?: ( parameterType: IOType ) => IOType;
 
-  // If specified as true, this flag will ensure that listener order never changes (like via ?shuffleListeners)
+  // If specified as true, this flag will ensure that listener order never changes (like via ?listenerOrder=random)
   hasListenerOrderDependencies?: boolean;
 };
 

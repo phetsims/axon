@@ -47,7 +47,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // If specified, this will be called before listeners are notified.
   private readonly onBeforeNotify?: TEmitterListener<T> | null;
 
-  // If specified as true, this flag will ensure that listener order never changes (like via ?shuffleListeners)
+  // If specified as true, this flag will ensure that listener order never changes (like via ?listenerOrder=random)
   private readonly hasListenerOrderDependencies?: boolean | null;
 
   // The listeners that will be called on emit
