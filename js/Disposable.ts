@@ -152,6 +152,7 @@ class Disposable implements TDisposable {
   public dispose(): void {
     assert && assert( !this.isDisposed, 'Disposable can only be disposed once' );
     this._disposeEmitter.emit();
+    this._disposeEmitter.dispose();
     this.isDisposed = true;
   }
 }
