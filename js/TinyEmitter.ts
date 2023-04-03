@@ -10,10 +10,22 @@
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
+import Random from '../../dot/js/Random.js';
+import dotRandom from '../../dot/js/dotRandom.js';
 
 // constants
-const shuffleListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.shuffleListeners;
-const reverseListeners = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.reverseListeners;
+const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
+
+let random: Random | null = null;
+if ( listenerOrder.startsWith( 'random' ) ) {
+
+  // NOTE: this regular expression must be maintained in initialize-globals as well.
+  const match = listenerOrder.match( /random(?:%28|\()(\d+)(?:%29|\))/ );
+  const seed = match ? Number( match[ 1 ] ) : dotRandom.nextInt( 1000000 );
+  random = new Random( { seed: seed } );
+  console.log( 'listenerOrder random seed: ' + random.seed );
+}
+
 
 type EmitContext<T extends IntentionalAny[]> = {
   index: number;
@@ -86,12 +98,11 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
-    if ( assert && ( shuffleListeners || reverseListeners ) && !this.hasListenerOrderDependencies ) {
+    if ( assert && ( listenerOrder !== 'default' ) && !this.hasListenerOrderDependencies ) {
       const asArray = Array.from( this.listeners );
 
-      // we can use shuffle here because it is behind assert and just for testing
-      const mixedUp = shuffleListeners ? _.shuffle( asArray ) : asArray.reverse(); // eslint-disable-line bad-sim-text
-      this.listeners = new Set( mixedUp );
+      const reorderedListeners = listenerOrder.startsWith( 'random' ) ? random!.shuffle( asArray ) : asArray.reverse();
+      this.listeners = new Set( reorderedListeners );
     }
 
     // Notify wired-up listeners, if any
