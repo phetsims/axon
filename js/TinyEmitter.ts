@@ -17,7 +17,7 @@ import dotRandom from '../../dot/js/dotRandom.js';
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
 
 let random: Random | null = null;
-if ( listenerOrder.startsWith( 'random' ) ) {
+if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
 
   // NOTE: this regular expression must be maintained in initialize-globals as well.
   const match = listenerOrder.match( /random(?:%28|\()(\d+)(?:%29|\))/ );
@@ -98,7 +98,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // Support for a query parameter that shuffles listeners, but bury behind assert so it will be stripped out on build
     // so it won't impact production performance.
-    if ( assert && ( listenerOrder !== 'default' ) && !this.hasListenerOrderDependencies ) {
+    if ( assert && listenerOrder && ( listenerOrder !== 'default' ) && !this.hasListenerOrderDependencies ) {
       const asArray = Array.from( this.listeners );
 
       const reorderedListeners = listenerOrder.startsWith( 'random' ) ? random!.shuffle( asArray ) : asArray.reverse();
