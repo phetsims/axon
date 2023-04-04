@@ -20,7 +20,8 @@ class Disposable {
   // Called after all code that is directly in `dispose()` methods, be careful with mixing this pattern and the
   // `this.disposeMyClass()` pattern.
   public readonly _disposeEmitter: TEmitter = new TinyEmitter();
-  public isDisposed = false;
+
+  private _isDisposed = false;
 
   // Disposable should only be used by subtypes, no need to instantiate one on its own.
   protected constructor() {
@@ -30,9 +31,9 @@ class Disposable {
       // overridden after the Node constructor (which may happen).
       const protoDispose = this.dispose;
       this.dispose = () => {
-        assert && assert( !this.isDisposed, 'This Disposable has already been disposed, and cannot be disposed again' );
+        assert && assert( !this._isDisposed, 'This Disposable has already been disposed, and cannot be disposed again' );
         protoDispose.call( this );
-        assert && assert( this.isDisposed, 'Disposable.dispose() call is missing from an overridden dispose method' );
+        assert && assert( this._isDisposed, 'Disposable.dispose() call is missing from an overridden dispose method' );
       };
     }
   }
@@ -45,11 +46,15 @@ class Disposable {
     return this.getDisposeEmitter();
   }
 
+  public get isDisposed(): boolean {
+    return this._isDisposed;
+  }
+
   public dispose(): void {
-    assert && assert( !this.isDisposed, 'Disposable can only be disposed once' );
+    assert && assert( !this._isDisposed, 'Disposable can only be disposed once' );
     this._disposeEmitter.emit();
     this._disposeEmitter.dispose();
-    this.isDisposed = true;
+    this._isDisposed = true;
   }
 }
 
