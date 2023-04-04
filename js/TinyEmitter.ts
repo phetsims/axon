@@ -15,6 +15,7 @@ import dotRandom from '../../dot/js/dotRandom.js';
 
 // constants
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
+const listenerLimit = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerLimit;
 
 let random: Random | null = null;
 if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
@@ -151,13 +152,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     this.changeCount && this.changeCount( 1 );
 
-    if ( assert && window.phet?.chipper?.queryParameters && isFinite( phet.chipper.queryParameters.listenerLimit ) ) {
-      if ( maxListenerCount < this.listeners.size ) {
-        maxListenerCount = this.listeners.size;
-        console.log( `Max TinyEmitter listeners: ${maxListenerCount}` );
-        assert( maxListenerCount <= phet.chipper.queryParameters.listenerLimit,
-          `listener count of ${maxListenerCount} above ?listenerLimit=${phet.chipper.queryParameters.listenerLimit}` );
-      }
+    if ( assert && listenerLimit && isFinite( listenerLimit ) && maxListenerCount < this.listeners.size ) {
+      maxListenerCount = this.listeners.size;
+      console.log( `Max TinyEmitter listeners: ${maxListenerCount}` );
+      assert( maxListenerCount <= listenerLimit, `listener count of ${maxListenerCount} above ?listenerLimit=${listenerLimit}` );
     }
   }
 
