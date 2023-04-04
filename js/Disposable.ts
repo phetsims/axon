@@ -22,7 +22,8 @@ class Disposable {
   public readonly _disposeEmitter: TEmitter = new TinyEmitter();
   public isDisposed = false;
 
-  public constructor() {
+  // Disposable should only be used by subtypes, no need to instantiate one on its own.
+  protected constructor() {
     if ( assert ) {
 
       // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is

@@ -13,9 +13,13 @@ QUnit.module( 'Disposable' );
 QUnit.test( 'Disposable basics', assert => {
   assert.ok( true, 'initial test' );
 
-  const object1 = new Disposable();
+  class MyDisposable extends Disposable {
+    public constructor() { super();}
+  }
+
+  const object1 = new MyDisposable();
   assert.ok( !!object1.disposeEmitter, 'disposeEmitter needed' );
-  const object2 = new Disposable();
+  const object2 = new MyDisposable();
   object1.disposeEmitter.addListener( () => object2.dispose() );
 
   assert.ok( !object1.isDisposed, '1 is not disposed' );
