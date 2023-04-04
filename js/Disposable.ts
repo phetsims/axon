@@ -21,6 +21,7 @@ class Disposable {
   // `this.disposeMyClass()` pattern.
   public readonly _disposeEmitter: TEmitter = new TinyEmitter();
 
+  // Marked true when this Disposable has had dispose() called on it (after disposeEmitter is fired)
   private _isDisposed = false;
 
   // Disposable should only be used by subtypes, no need to instantiate one on its own.
