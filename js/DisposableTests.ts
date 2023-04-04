@@ -8,15 +8,15 @@
 
 import Disposable from './Disposable.js';
 
-QUnit.module( 'DisposableTests' );
+QUnit.module( 'Disposable' );
 
-QUnit.test( 'PhetioObject disposer', assert => {
+QUnit.test( 'Disposable basics', assert => {
   assert.ok( true, 'initial test' );
 
   const object1 = new Disposable();
-  const object2 = new Disposable( {
-    disposer: object1
-  } );
+  assert.ok( !!object1.disposeEmitter, 'disposeEmitter needed' );
+  const object2 = new Disposable();
+  object1.disposeEmitter.addListener( () => object2.dispose() );
 
   assert.ok( !object1.isDisposed, '1 is not disposed' );
   assert.ok( !object2.isDisposed, '2 is not disposed' );
@@ -24,5 +24,8 @@ QUnit.test( 'PhetioObject disposer', assert => {
   object1.dispose();
   assert.ok( object1.isDisposed, '1 is disposed' );
   assert.ok( object2.isDisposed, '2 is disposed' );
+
+  // @ts-expect-error isDisposed is not on TEmitter, but should be in place if assertions are enabled
+  window.assert && assert.ok( object1.disposeEmitter.isDisposed, 'disposeEmitter should be disposed too' );
 } );
 
