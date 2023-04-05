@@ -187,3 +187,21 @@ QUnit.test( 'TinyEmitter onBeforeNotify', assert => {
   callForHappinessEmitter.emit();
   assert.ok( state.happiness === 5, 'end count' );
 } );
+
+QUnit.test( 'TinyEmitter reverse and random', assert => {
+
+  assert.ok( true, 'first test' );
+
+  const emitter = new TinyEmitter();
+  const values: string[] = [];
+  emitter.addListener( () => values.push( 'a' ) );
+  emitter.addListener( () => values.push( 'b' ) );
+  emitter.addListener( () => values.push( 'c' ) );
+  emitter.addListener( () => values.push( 'd' ) );
+
+  emitter.emit();
+  assert.ok( values.join( '' ) === 'abcd', 'normal order' );
+
+  // Check these values when running with ?listenerOrder=reverse or ?listenerOrder=random or ?listenerOrder=random(123)
+  console.log( values.join( '' ) );
+} );
