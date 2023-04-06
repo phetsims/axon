@@ -80,7 +80,9 @@ export default class NumberProperty extends Property<number> implements TRangedP
 
       // PropertyOptions
       validators: [],
-      tandem: Tandem.OPTIONAL
+      tandem: Tandem.OPTIONAL,
+
+      phetioOuterType: () => NumberProperty.NumberPropertyIO
     }, providedOptions );
 
     options.rangePropertyOptions = optionize<PropertyOptions<Range>, EmptySelfOptions, PropertyOptions<Range>>()( {
@@ -99,7 +101,6 @@ export default class NumberProperty extends Property<number> implements TRangedP
 
     // client cannot specify superclass options that are controlled by NumberProperty
     options.valueType = 'number';
-    options.phetioOuterType = () => NumberProperty.NumberPropertyIO;
     options.phetioValueType = NumberIO; // not actually used, but for completeness, don't have ReadOnlyProperty storing the wrong default.
 
     const rangePropertyProvided = options.range && options.range instanceof ReadOnlyProperty;
