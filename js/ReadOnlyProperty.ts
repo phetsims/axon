@@ -237,7 +237,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     // state is managed by the PhetioStateEngine.
     // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
     const setManagedByPhetioState = simGlobal &&
+                                    simGlobal.isSettingPhetioStateProperty &&
                                     simGlobal.isSettingPhetioStateProperty.value &&
+                                    simGlobal.isClearingPhetioDynamicElementsProperty &&
                                     !simGlobal.isClearingPhetioDynamicElementsProperty.value &&
                                     this.isPhetioInstrumented() && this.phetioState &&
 
