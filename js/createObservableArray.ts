@@ -148,14 +148,18 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // TODO: Maybe this can be improved when we have better support for this in https://github.com/phetsims/phet-io/issues/1661
   assert && elementAddedEmitter.addListener( () => {
     if ( assert ) {
-      if ( !_.hasIn( window, 'phet.joist.sim' ) || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      const simGlobal = _.get( window, 'phet.joist.sim', null ); // returns null if global isn't found
+
+      if ( !simGlobal || !simGlobal.isSettingPhetioStateProperty.value ) {
         assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
       }
     }
   } );
   assert && elementRemovedEmitter.addListener( () => {
     if ( assert ) {
-      if ( !_.hasIn( window, 'phet.joist.sim' ) || !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      const simGlobal = _.get( window, 'phet.joist.sim', null ); // returns null if global isn't found
+
+      if ( !simGlobal || !simGlobal.isSettingPhetioStateProperty.value ) {
         assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
       }
     }
