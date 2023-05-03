@@ -119,7 +119,9 @@ type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
 
   // Maps a non-null valuePropertyProperty.value into the Property to be used. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
-  derive?: ( ( outerValue: OuterValueType ) => TReadOnlyProperty<InnerValueType> ) | KeysMatching<OuterValueType, TProperty<InnerValueType>>;
+  // NOTE: This accepts TReadOnlyProperty, but if you have bidirectional:true it must be a full TProperty.
+  // This is not currently type checked.
+  derive?: ( ( outerValue: OuterValueType ) => TReadOnlyProperty<InnerValueType> ) | KeysMatching<OuterValueType, TReadOnlyProperty<InnerValueType>>;
 
   // Maps our input Property value to/from this Property's value. See top-level documentation for usage.
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
