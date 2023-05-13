@@ -24,7 +24,7 @@ import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 const PHET_IO_STATE_DEFAULT = false;
 
 type SelfOptions = EmptySelfOptions;
-type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
+export type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioDataHandler<T> implements TEmitter<T> {
 

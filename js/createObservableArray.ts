@@ -21,7 +21,9 @@ import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter from './Emitter.js';
+import { EmitterOptions } from './Emitter.js';
 import NumberProperty from './NumberProperty.js';
+import { NumberPropertyOptions } from './NumberProperty.js';
 import Validation from './Validation.js';
 import TEmitter from './TEmitter.js';
 
@@ -41,6 +43,10 @@ export type ObservableArrayOptions<T> = {
   phetioState?: boolean;
   phetioDocumentation?: string;
   phetioFeatured?: boolean;
+
+  elementAddedEmitterOptions?: EmitterOptions;
+  elementRemovedEmitterOptions?: EmitterOptions;
+  lengthPropertyOptions?: NumberPropertyOptions;
 };
 type ObservableArray<T> = {
   get: ( index: number ) => T;
@@ -96,7 +102,11 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     length: 0,
     elements: [],
     tandem: Tandem.OPTIONAL,
-    phetioFeatured: false
+    phetioFeatured: false,
+
+    elementAddedEmitterOptions: {},
+    elementRemovedEmitterOptions: {},
+    lengthPropertyOptions: {}
   }, providedOptions );
 
   let emitterParameterOptions = null;
@@ -119,8 +129,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    phetioFeatured: options.phetioFeatured,
-    hasListenerOrderDependencies: options.hasListenerOrderDependencies
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies,
+    ...options.elementAddedEmitterOptions
   } );
 
   // notifies when an element has been removed
@@ -128,8 +138,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    phetioFeatured: options.phetioFeatured,
-    hasListenerOrderDependencies: options.hasListenerOrderDependencies
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies,
+    ...options.elementRemovedEmitterOptions
   } );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
@@ -137,7 +147,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     numberType: 'Integer',
     tandem: options.tandem.createTandem( 'lengthProperty' ),
     phetioReadOnly: true,
-    phetioFeatured: options.phetioFeatured
+    ...options.lengthPropertyOptions
   } );
 
   // The underlying array which is wrapped by the Proxy
