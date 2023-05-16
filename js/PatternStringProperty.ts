@@ -167,7 +167,10 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
 
       decimalPlaces: null,
 
-      phetioValueType: StringIO
+      phetioValueType: StringIO,
+
+      // Translatable strings are phetioFeatured by default, featuring this too keeps string info in the feature Studio tree.
+      phetioFeatured: true
     }, providedOptions );
 
     const dependencies: TReadOnlyProperty<IntentionalAny>[] = [ patternProperty ];
