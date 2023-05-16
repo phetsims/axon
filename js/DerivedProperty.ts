@@ -119,7 +119,10 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
         if ( options.phetioLinkDependencies ) {
           const dependenciesTandem = options.tandem.createTandem( 'dependencies' );
           this.addLinkedElement( dependency, {
-            tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID )
+            tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID ),
+
+            // Dependencies are more often implementation details, so only feature if the parent is featured too.
+            phetioFeatured: this.phetioFeatured && dependency.phetioFeatured
           } );
         }
       }
