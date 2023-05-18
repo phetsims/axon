@@ -14,7 +14,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
-import optionize from '../../phet-core/js/optionize.js';
+import optionize, { combineOptions } from '../../phet-core/js/optionize.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -44,10 +44,17 @@ export type ObservableArrayOptions<T> = {
   phetioDocumentation?: string;
   phetioFeatured?: boolean;
 
-  elementAddedEmitterOptions?: EmitterOptions;
-  elementRemovedEmitterOptions?: EmitterOptions;
-  lengthPropertyOptions?: NumberPropertyOptions;
+  // Whether to instrument the array's child elements
+  elementAddedEmitterInstrumented?: boolean;
+  elementRemovedEmitterInstrumented?: boolean;
+  lengthPropertyInstrumented?: boolean;
+
+  // Options for the array's child elements. Omitted options are the responsibility of the array.
+  elementAddedEmitterOptions?: StrictOmit<EmitterOptions, 'tandem' | 'parameters' | 'phetioReadOnly'>;
+  elementRemovedEmitterOptions?: StrictOmit<EmitterOptions, 'tandem' | 'parameters' | 'phetioReadOnly'>;
+  lengthPropertyOptions?: StrictOmit<NumberPropertyOptions, 'tandem' | 'numberType' | 'phetioReadOnly'>;
 };
+
 type ObservableArray<T> = {
   get: ( index: number ) => T;
   addItemAddedListener: ( listener: ObservableArrayListener<T> ) => void;
@@ -103,7 +110,9 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     elements: [],
     tandem: Tandem.OPTIONAL,
     phetioFeatured: false,
-
+    elementAddedEmitterInstrumented: true,
+    elementRemovedEmitterInstrumented: true,
+    lengthPropertyInstrumented: true,
     elementAddedEmitterOptions: {},
     elementRemovedEmitterOptions: {},
     lengthPropertyOptions: {}
@@ -125,30 +134,27 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   }
 
   // notifies when an element has been added
-  const elementAddedEmitter = new Emitter<[ T ]>( {
-    tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
+  const elementAddedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
+    tandem: options.elementAddedEmitterInstrumented ? options.tandem.createTandem( 'elementAddedEmitter' ) : Tandem.OPT_OUT,
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    hasListenerOrderDependencies: options.hasListenerOrderDependencies,
-    ...options.elementAddedEmitterOptions
-  } );
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies
+  }, options.elementAddedEmitterOptions ) );
 
   // notifies when an element has been removed
-  const elementRemovedEmitter = new Emitter<[ T ]>( {
-    tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
+  const elementRemovedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
+    tandem: options.elementRemovedEmitterInstrumented ? options.tandem.createTandem( 'elementRemovedEmitter' ) : Tandem.OPT_OUT,
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
-    hasListenerOrderDependencies: options.hasListenerOrderDependencies,
-    ...options.elementRemovedEmitterOptions
-  } );
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies
+  }, options.elementRemovedEmitterOptions ) );
 
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
-  const lengthProperty = new NumberProperty( 0, {
+  const lengthProperty = new NumberProperty( 0, combineOptions<NumberPropertyOptions>( {
     numberType: 'Integer',
-    tandem: options.tandem.createTandem( 'lengthProperty' ),
-    phetioReadOnly: true,
-    ...options.lengthPropertyOptions
-  } );
+    tandem: options.lengthPropertyInstrumented ? options.tandem.createTandem( 'lengthProperty' ) : Tandem.OPT_OUT,
+    phetioReadOnly: true
+  }, options.lengthPropertyOptions ) );
 
   // The underlying array which is wrapped by the Proxy
   const targetArray: T[] = [];
