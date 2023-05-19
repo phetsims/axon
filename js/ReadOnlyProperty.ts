@@ -582,15 +582,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
             returnType: VoidIO,
             parameterTypes: [ parameterType ],
             implementation: function( this: ReadOnlyProperty<unknown>, value: T ) {
-
-              const validationError = Validation.getValidationError( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
-
-              if ( validationError ) {
-                throw new Error( `Validation error: ${validationError}` );
-              }
-              else {
-                this.set( value );
-              }
+              this.set( value );
             },
             documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +
                            'notified with the new value.',

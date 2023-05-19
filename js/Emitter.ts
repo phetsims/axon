@@ -19,6 +19,9 @@ import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
+import NullableIO from '../../tandem/js/types/NullableIO.js';
+import StringIO from '../../tandem/js/types/StringIO.js';
+import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
@@ -170,16 +173,18 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
 
             // Match `Emitter.emit`'s dynamic number of arguments
             implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
-              const errors = this.getValidationErrors( ...values );
-              if ( errors.length > 0 ) {
-                throw new Error( `Validation errors: ${errors.join( ', ' )}` );
-              }
-              else {
-                this.emit( ...values );
-              }
+              this.emit( ...values );
             },
             documentation: 'Emits a single event to all listeners.',
             invocableForReadOnlyElements: false
+          },
+          getValidationErrors: {
+            returnType: ArrayIO( NullableIO( StringIO ) ),
+            parameterTypes: parameterTypes,
+            implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
+              return this.getValidationErrors( values );
+            },
+            documentation: 'Checks to see if the proposed values are valid. Returns an array of length N where each element is an error (string) or null if the value is valid.'
           }
         }
       } ) );
