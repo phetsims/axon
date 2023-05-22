@@ -56,10 +56,12 @@ QUnit.test( 'test EmitterIO', assert => {
   window.assert && assert.throws( () => emitter.emit( 'a' ), 'cannot emit string with  that validator' );
   window.assert && assert.throws( () => emitter.emit( 4 ), 'cannot emit incorrect number' );
 
-  if ( !window.assert ) {
-    const IOType = Emitter.EmitterIO( [ NumberIO ] );
-    IOType.methods!.emit.implementation.call( emitter, 2 );
+  const IOType = Emitter.EmitterIO( [ NumberIO ] );
+  IOType.methods!.emit.implementation.call( emitter, 2 );
 
-    assert.throws( () => IOType.methods!.emit.implementation.call( emitter, 4 ), 'cannot emit incorrect number' );
-  }
+  // @ts-expect-error typescript does not know that getValidationErrors exists
+  assert.ok( IOType.methods!.getValidationErrors.implementation.call( emitter, 2 )[ 0 ] === null, 'should be valid' );
+
+  // @ts-expect-error typescript does not know that getValidationErrors exists
+  assert.ok( IOType.methods!.getValidationErrors.implementation.call( emitter, 4 )[ 0 ] !== null, 'should be invalid' );
 } );
