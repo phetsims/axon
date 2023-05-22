@@ -182,7 +182,7 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
             returnType: ArrayIO( NullableIO( StringIO ) ),
             parameterTypes: parameterTypes,
             implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
-              return this.getValidationErrors( values );
+              return this.getValidationErrors( ...values );
             },
             documentation: 'Checks to see if the proposed values are valid. Returns an array of length N where each element is an error (string) or null if the value is valid.'
           }
