@@ -223,6 +223,13 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   }
 
   /**
+   * Get the target property, if any. Use sparingly! Internal use only.
+   */
+  public getTargetProperty(): TProperty<ValueType> | null {
+    return this.targetProperty || null;
+  }
+
+  /**
    * This currently also involves deleting the field.
    */
   private disposeOwnedPhetioProperty(): void {
