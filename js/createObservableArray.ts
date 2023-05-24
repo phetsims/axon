@@ -15,15 +15,13 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize, { combineOptions } from '../../phet-core/js/optionize.js';
-import PhetioObject from '../../tandem/js/PhetioObject.js';
+import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
-import Emitter from './Emitter.js';
-import { EmitterOptions } from './Emitter.js';
-import NumberProperty from './NumberProperty.js';
-import { NumberPropertyOptions } from './NumberProperty.js';
+import Emitter, { EmitterOptions } from './Emitter.js';
+import NumberProperty, { NumberPropertyOptions } from './NumberProperty.js';
 import Validation from './Validation.js';
 import TEmitter from './TEmitter.js';
 
@@ -32,28 +30,17 @@ type ObservableArrayListener<T> = ( element: T ) => void;
 type Predicate<T> = ( element: T ) => boolean;
 type ObservableArrayStateObject<T> = { array: any[] }; // eslint-disable-line -- futureproof type param if we type this
 type FakeRandom<T> = { shuffle: ( arr: T[] ) => T[] }; // // We don't import because of the repo dependency
-export type ObservableArrayOptions<T> = {
+type SelfOptions<T> = {
   length?: number;
   elements?: T[];
   hasListenerOrderDependencies?: boolean; // See TinyEmitter.hasListenerOrderDependencies
-  tandem?: Tandem;
-
-  // Possibly passed through to the Emitters
-  phetioType?: IOType;
-  phetioState?: boolean;
-  phetioDocumentation?: string;
-  phetioFeatured?: boolean;
-
-  // Whether to instrument the array's child elements
-  elementAddedEmitterInstrumented?: boolean;
-  elementRemovedEmitterInstrumented?: boolean;
-  lengthPropertyInstrumented?: boolean;
 
   // Options for the array's child elements. Omitted options are the responsibility of the array.
   elementAddedEmitterOptions?: StrictOmit<EmitterOptions, 'tandem' | 'parameters' | 'phetioReadOnly'>;
   elementRemovedEmitterOptions?: StrictOmit<EmitterOptions, 'tandem' | 'parameters' | 'phetioReadOnly'>;
   lengthPropertyOptions?: StrictOmit<NumberPropertyOptions, 'tandem' | 'numberType' | 'phetioReadOnly'>;
 };
+export type ObservableArrayOptions<T> = SelfOptions<T> & PhetioObjectOptions;
 
 type ObservableArray<T> = {
   get: ( index: number ) => T;
@@ -94,13 +81,12 @@ type PrivateObservableArray<T> = {
   _observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
 } & ObservableArray<T>;
 
-type SpecifiedObservableArrayOptions<T> = StrictOmit<ObservableArrayOptions<T>, 'phetioType' | 'phetioState' | 'phetioDocumentation'>;
 
 const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> ): ObservableArray<T> => {
 
   assertMutuallyExclusiveOptions( providedOptions, [ 'length' ], [ 'elements' ] );
 
-  const options = optionize<ObservableArrayOptions<T>, SpecifiedObservableArrayOptions<T>>()( {
+  const options = optionize<ObservableArrayOptions<T>, SelfOptions<T>, PhetioObjectOptions>()( {
 
     hasListenerOrderDependencies: false,
 
@@ -109,10 +95,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     length: 0,
     elements: [],
     tandem: Tandem.OPTIONAL,
-    phetioFeatured: false,
-    elementAddedEmitterInstrumented: true,
-    elementRemovedEmitterInstrumented: true,
-    lengthPropertyInstrumented: true,
     elementAddedEmitterOptions: {},
     elementRemovedEmitterOptions: {},
     lengthPropertyOptions: {}
@@ -135,7 +117,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   // notifies when an element has been added
   const elementAddedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
-    tandem: options.elementAddedEmitterInstrumented ? options.tandem.createTandem( 'elementAddedEmitter' ) : Tandem.OPT_OUT,
+    tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
     hasListenerOrderDependencies: options.hasListenerOrderDependencies
@@ -143,7 +125,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
-    tandem: options.elementRemovedEmitterInstrumented ? options.tandem.createTandem( 'elementRemovedEmitter' ) : Tandem.OPT_OUT,
+    tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
     hasListenerOrderDependencies: options.hasListenerOrderDependencies
@@ -152,7 +134,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
   const lengthProperty = new NumberProperty( 0, combineOptions<NumberPropertyOptions>( {
     numberType: 'Integer',
-    tandem: options.lengthPropertyInstrumented ? options.tandem.createTandem( 'lengthProperty' ) : Tandem.OPT_OUT,
+    tandem: options.tandem.createTandem( 'lengthProperty' ),
     phetioReadOnly: true
   }, options.lengthPropertyOptions ) );
 
@@ -292,7 +274,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   if ( options.tandem.supplied ) {
     assert && assert( options.phetioType );
 
-    observableArray.phetioElementType = options.phetioType!.parameterTypes![ 0 ];
+    observableArray.phetioElementType = options.phetioType.parameterTypes![ 0 ];
 
     // for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
