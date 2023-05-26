@@ -25,6 +25,7 @@ const units = {
     '\u00B0', // °, degrees (angle)
     '\u00B0C', // °C, degrees Celsius
     'F', // farad
+    '\u00B0F', // °F, degrees Fahrenheit
     'g', // grams
     'Hz', // hertz
     'J', // Joules
