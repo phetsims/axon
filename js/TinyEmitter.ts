@@ -46,10 +46,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   public isDisposed?: boolean;
 
   // If specified, this will be called before listeners are notified.
-  private readonly onBeforeNotify?: TEmitterListener<T> | null;
+  // NOTE: This is set ONLY if it's non-null
+  private readonly onBeforeNotify?: TEmitterListener<T>;
 
   // If specified as true, this flag will ensure that listener order never changes (like via ?listenerOrder=random)
-  private readonly hasListenerOrderDependencies?: boolean | null;
+  // NOTE: This is set ONLY if it's actually true
+  private readonly hasListenerOrderDependencies?: true;
 
   // The listeners that will be called on emit
   private listeners: Set<TEmitterListener<T>>;
@@ -57,6 +59,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
   private emitContexts: EmitContext<T>[];
 
+  // Null on parameters is a no-op
   public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null ) {
 
     if ( onBeforeNotify ) {
