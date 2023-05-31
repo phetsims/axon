@@ -383,7 +383,7 @@ class OrderDependencyMapPair {
    * Register an order dependency between two phetioIDs. This will add data to maps in "both direction". If accessing
    * with just the beforePhetioID, or with the afterPhetioID.
    */
-  public addOrderDependency( beforePhetioID: string, afterPhetioID: string ): void {
+  public addOrderDependency( beforePhetioID: PhetioID, afterPhetioID: PhetioID ): void {
     if ( !this.beforeMap.has( beforePhetioID ) ) {
       this.beforeMap.set( beforePhetioID, new Set<string>() );
     }

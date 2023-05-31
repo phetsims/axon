@@ -21,6 +21,7 @@ import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
 import TRangedProperty from './TRangedProperty.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
+import { PhetioID } from '../../tandem/js/TandemConstants.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALID_NON_NAN = { isValidValue: ( v: number ) => !isNaN( v ), validationMessage: 'Should not be NaN' };
@@ -38,7 +39,7 @@ export const DEFAULT_RANGE = Range.EVERYTHING;
 export type NumberPropertyState = {
   numberType: string;
   range: RangeStateObject;
-  rangePhetioID: string | null;
+  rangePhetioID: PhetioID | null;
 } & ReadOnlyProperty<number>;
 
 // For the IOType
