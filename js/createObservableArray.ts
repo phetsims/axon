@@ -24,6 +24,7 @@ import Emitter, { EmitterOptions } from './Emitter.js';
 import NumberProperty, { NumberPropertyOptions } from './NumberProperty.js';
 import Validation from './Validation.js';
 import TEmitter from './TEmitter.js';
+import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -145,21 +146,13 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // This is because we cannot specify ordering dependencies between Properties and ObservableArrays,
   // TODO: Maybe this can be improved when we have better support for this in https://github.com/phetsims/phet-io/issues/1661
   assert && elementAddedEmitter.addListener( () => {
-    if ( assert ) {
-      const simGlobal = _.get( window, 'phet.joist.sim', null ); // returns null if global isn't found
-
-      if ( !simGlobal || !simGlobal.isSettingPhetioStateProperty.value ) {
-        assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
-      }
+    if ( !isSettingPhetioStateProperty.value ) {
+      assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
     }
   } );
   assert && elementRemovedEmitter.addListener( () => {
-    if ( assert ) {
-      const simGlobal = _.get( window, 'phet.joist.sim', null ); // returns null if global isn't found
-
-      if ( !simGlobal || !simGlobal.isSettingPhetioStateProperty.value ) {
-        assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
-      }
+    if ( !isSettingPhetioStateProperty.value ) {
+      assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while removing element' );
     }
   } );
 

@@ -25,6 +25,7 @@ import Validation, { Validator } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
+import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -149,7 +150,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     // Support non-validated Property
     if ( !Validation.containsValidatorKey( options ) ) {
-       options.isValidValue = () => true;
+      options.isValidValue = () => true;
     }
     super( options );
     this.id = globalId++;
@@ -237,8 +238,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     // state is managed by the PhetioStateEngine.
     // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
     const setManagedByPhetioState = simGlobal &&
-                                    simGlobal.isSettingPhetioStateProperty &&
-                                    simGlobal.isSettingPhetioStateProperty.value &&
+                                    isSettingPhetioStateProperty.value &&
                                     simGlobal.isClearingPhetioDynamicElementsProperty &&
                                     !simGlobal.isClearingPhetioDynamicElementsProperty.value &&
                                     this.isPhetioInstrumented() && this.phetioState &&
