@@ -128,11 +128,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       phetioValueType: IOType.ObjectIO
     }, providedOptions );
 
-    // Support non-validated Property
-    if ( !Validation.containsValidatorKey( options ) ) {
-
-      options.isValidValue = () => true;
-    }
 
     assert && options.units && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
     if ( options.units ) {
@@ -150,6 +145,11 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     // Construct the IO Type
     if ( options.phetioOuterType && options.phetioValueType ) {
       options.phetioType = options.phetioOuterType( options.phetioValueType );
+    }
+
+    // Support non-validated Property
+    if ( !Validation.containsValidatorKey( options ) ) {
+       options.isValidValue = () => true;
     }
     super( options );
     this.id = globalId++;
