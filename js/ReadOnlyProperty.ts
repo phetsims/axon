@@ -26,6 +26,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
+import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -233,14 +234,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   protected set( value: T ): void {
 
-    const simGlobal = _.get( window, 'phet.joist.sim', null ); // returns null if global isn't found
-
     // state is managed by the PhetioStateEngine.
     // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
-    const setManagedByPhetioState = simGlobal &&
-                                    isSettingPhetioStateProperty.value &&
-                                    simGlobal.isClearingPhetioDynamicElementsProperty &&
-                                    !simGlobal.isClearingPhetioDynamicElementsProperty.value &&
+    const setManagedByPhetioState = isSettingPhetioStateProperty.value &&
+                                    !isClearingPhetioDynamicElementsProperty.value &&
                                     this.isPhetioInstrumented() && this.phetioState &&
 
                                     // However, DerivedProperty should be able to update during PhET-iO state set
