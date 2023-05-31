@@ -17,7 +17,7 @@ import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import TEmitter from './TEmitter.js';
-import { FullPhetioState } from '../../tandem/js/TandemConstants.js';
+import { FullPhetioState, PhetioID } from '../../tandem/js/TandemConstants.js';
 
 type PhetioStateEngineStub = {
   onBeforeApplyStateEmitter: TEmitter<[ PhetioObject ]>;
@@ -296,7 +296,7 @@ class PropertyStateHandler {
    * @param phetioIDsInState - set of phetioIDs that were set in state
    * @param - if the provided phase can be applied given the dependency order dependencies of the state engine.
    */
-  private phetioIDCanApplyPhase( phetioID: string, phase: PropertyStatePhase, completedPhases: Record<string, boolean>, phetioIDsInState: Set<string> ): boolean {
+  private phetioIDCanApplyPhase( phetioID: PhetioID, phase: PropertyStatePhase, completedPhases: Record<string, boolean>, phetioIDsInState: Set<string> ): boolean {
 
     // Undefer must happen before notify
     if ( phase === PropertyStatePhase.NOTIFY && !completedPhases[ phetioID + PropertyStatePhase.UNDEFER ] ) {
@@ -340,7 +340,7 @@ class PropertyStateHandler {
 // POJSO for a callback for a specific Phase in a Property's state set lifecycle. See undeferAndNotifyProperties()
 class PhaseCallback {
   public constructor(
-    public readonly phetioID: string,
+    public readonly phetioID: PhetioID,
     public readonly phase: PropertyStatePhase,
     public readonly listener: ( () => void ) = _.noop ) {
   }
@@ -421,7 +421,7 @@ class OrderDependencyMapPair {
     } );
   }
 
-  public usesPhetioID( phetioID: string ): boolean {
+  public usesPhetioID( phetioID: PhetioID ): boolean {
     return this.beforeMap.has( phetioID ) || this.afterMap.has( phetioID );
   }
 }
