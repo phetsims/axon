@@ -21,6 +21,7 @@ import optionize from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
+import StringIO from '../../tandem/js/types/StringIO.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
@@ -77,11 +78,17 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> );
   public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
 
+    // For PhET-iO, internationalizable strings should be studio autoselectable. This includes PatternStringProperty and
+    // DerivedProperty that are for translated strings. See https://github.com/phetsims/phet-io/issues/1943
+    const isStringIO = providedOptions && providedOptions.phetioValueType && providedOptions.phetioValueType === StringIO;
+    const hasLocalizedStringDependency = _.some( dependencies, dependency => dependency.hasOwnProperty( 'isLocalizedStringProperty' ) );
+
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       tandem: Tandem.OPTIONAL,
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
       phetioOuterType: DerivedProperty.DerivedPropertyIO,
-      phetioLinkDependencies: true
+      phetioLinkDependencies: true,
+      phetioFeatured: isStringIO && hasLocalizedStringDependency
     }, providedOptions );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
