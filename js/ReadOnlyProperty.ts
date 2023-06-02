@@ -202,7 +202,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       Validation.validateValidator( this.valueValidator );
 
       // validate the initial value as well as any changes in the future
-      this.link( ( value: T ) => validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE ) );
+      validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
 
       if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioState && Tandem.VALIDATION ) {
         assert && assert( options.phetioValueType !== IOType.ObjectIO, 'Stateful PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
@@ -293,6 +293,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   private _notifyListeners( oldValue: T | null ): void {
     const newValue = this.get();
 
+    // validate the before notifying listeners
+    assert && validate( newValue, this.valueValidator, VALIDATE_OPTIONS_FALSE );
+
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( ReadOnlyProperty.CHANGED_EVENT_NAME, {
@@ -309,6 +312,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     assert && assert( !this.notifying || this.reentrant,
       `reentry detected, value=${newValue}, oldValue=${oldValue}` );
     this.notifying = true;
+
     this.tinyProperty.emit( newValue, oldValue, this ); // cannot use tinyProperty.notifyListeners because it uses the wrong this
     this.notifying = false;
 
