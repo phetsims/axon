@@ -66,6 +66,7 @@ import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import WithRequired from '../../phet-core/js/types/WithRequired.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -137,7 +138,7 @@ type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> &
     } );
 
 type SuperOptions = DerivedPropertyOptions<string>;
-export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & SuperOptions;
+export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & WithRequired<SuperOptions, 'tandem'>;
 
 // Shared here, since it will always be the same function
 const stringify = ( value: string | number ): string => `${value}`;
@@ -158,7 +159,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
   unknown,
   unknown,
   unknown> {
-  public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions?: PatternStringPropertyOptions<Values> ) {
+  public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions: PatternStringPropertyOptions<Values> ) {
 
     assert && assert( !( values.tandem instanceof Tandem ), 'Did you intend to put tandem in providedOptions?' );
 
@@ -168,7 +169,8 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
       decimalPlaces: null,
 
       phetioFeatured: true, // This is the best default to match all i18n "model" strings, see https://github.com/phetsims/studio/issues/304#issuecomment-1572613118
-      phetioValueType: StringIO
+      phetioValueType: StringIO,
+      tandemNameSuffix: 'StringProperty'
     }, providedOptions );
 
     const dependencies: TReadOnlyProperty<IntentionalAny>[] = [ patternProperty ];

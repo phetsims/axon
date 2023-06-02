@@ -8,6 +8,7 @@
 
 import TinyProperty from './TinyProperty.js';
 import PatternStringProperty from './PatternStringProperty.js';
+import Tandem from '../../tandem/js/Tandem.js';
 
 QUnit.module( 'PatternStringProperty' );
 
@@ -16,7 +17,7 @@ QUnit.test( 'Basic usage', assert => {
   const valueProperty = new TinyProperty( 5 );
   const property = new PatternStringProperty( patternProperty, {
     value: valueProperty
-  } );
+  }, { tandem: Tandem.OPT_OUT } );
 
   assert.equal( property.value, 'Value: 5' );
 
@@ -31,7 +32,7 @@ QUnit.test( 'Constant usage', assert => {
   const patternProperty = new TinyProperty( 'Value: {{value}}' );
   const property = new PatternStringProperty( patternProperty, {
     value: 5
-  } );
+  }, { tandem: Tandem.OPT_OUT } );
 
   assert.equal( property.value, 'Value: 5' );
 
@@ -46,7 +47,7 @@ QUnit.test( 'Multiple Properties', assert => {
   const property = new PatternStringProperty( patternProperty, {
     valueA: valueAProperty,
     valueB: valueBProperty
-  } );
+  }, { tandem: Tandem.OPT_OUT } );
 
   assert.equal( property.value, 'Is 4 greater than 6?' );
 
@@ -63,6 +64,7 @@ QUnit.test( 'Decimal Places (basic)', assert => {
   const property = new PatternStringProperty( patternProperty, {
     value: valueProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     decimalPlaces: 2
   } );
 
@@ -80,6 +82,7 @@ QUnit.test( 'Decimal Places (multiple)', assert => {
     valueA: valueAProperty,
     valueB: valueBProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     decimalPlaces: {
       valueA: 1,
       valueB: 2
@@ -97,6 +100,7 @@ QUnit.test( 'Decimal Places (only one)', assert => {
     valueA: valueAProperty,
     valueB: valueBProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     decimalPlaces: {
       valueA: null,
       valueB: 2
@@ -112,6 +116,7 @@ QUnit.test( 'Map (basic)', assert => {
   const property = new PatternStringProperty( patternProperty, {
     value: valueProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     maps: {
       value: ( n: number ) => n * 2
     }
@@ -129,6 +134,7 @@ QUnit.test( 'Map (with decimal places)', assert => {
   const property = new PatternStringProperty( patternProperty, {
     value: valueProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     maps: {
       value: ( n: number ) => n / 4
     },
@@ -147,6 +153,7 @@ QUnit.test( 'Map (string)', assert => {
   const property = new PatternStringProperty( patternProperty, {
     value: valueProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     maps: {
       value: ( str: string ) => `${str}!`
     }
@@ -161,6 +168,7 @@ QUnit.test( 'Map (non-value)', assert => {
   const property = new PatternStringProperty( patternProperty, {
     sum: valueProperty
   }, {
+    tandem: Tandem.OPT_OUT,
     maps: {
       sum: ( values: number[] ) => _.sum( values )
     }
@@ -178,6 +186,7 @@ QUnit.test( 'formatNames', assert => {
     valueA: 5,
     valueB: 7
   }, {
+    tandem: Tandem.OPT_OUT,
     formatNames: [ 'valueA', 'valueB' ]
   } );
 
