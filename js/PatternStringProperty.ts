@@ -167,6 +167,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
 
       decimalPlaces: null,
 
+      phetioFeatured: true, // This is the best default to match all i18n "model" strings, see https://github.com/phetsims/studio/issues/304#issuecomment-1572613118
       phetioValueType: StringIO
     }, providedOptions );
 
