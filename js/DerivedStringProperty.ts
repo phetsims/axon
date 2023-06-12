@@ -2,9 +2,9 @@
 
 /**
  * DerivedStringProperty is intended to be used for strings that are derived from LocalizedStringProperty
- * (translated string Properties, generate from the strings.json file via 'grunt modulify') or other instances
- * of DerivedStringProperty.  Using this class in code ensures that they follow PhET-iO instrumentation
- * standards, and makes it easier to identify them.
+ * (translatable strings, generated from the {{REPO}}-strings_en.json file via 'grunt modulify') and/or other instances
+ * of DerivedStringProperty. Using this class ensures that code follows PhET-iO instrumentation standards,
+ * and makes occurrences of this type of string Property easier to identify.
  *
  * Responsibilities include:
  *  - ensures that the derivation returns a string
