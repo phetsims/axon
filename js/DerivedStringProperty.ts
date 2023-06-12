@@ -1,0 +1,54 @@
+// Copyright 2022-2023, University of Colorado Boulder
+
+/**
+ * DerivedStringProperty is intended to be used for strings that are derived from LocalizedStringProperty
+ * (translated string Properties, generate from the strings.json file via 'grunt modulify') or other instances
+ * of DerivedStringProperty.  Using this class in code ensures that they follow PhET-iO instrumentation
+ * standards, and makes it easier to identify them.
+ *
+ * Responsibilities include:
+ *  - ensures that the derivation returns a string
+ *  - ensures that the DerivedStringProperty is instrumented by making tandem a required option
+ *  - adds proper PhET-iO metadata, with defaults that have been specified by PhET-iO design, which can be
+ *    overridden where appropriate (e.g. phetioFeatured) and are not part of the public API where they should
+ *    not be overridable (e.g. phetioValueType)
+ *
+ * See https://github.com/phetsims/phet-io/issues/1943
+ *
+ * @author Chris Malley (PixelZoom, Inc.)
+ */
+
+import DerivedProperty, { DerivedPropertyOptions } from './DerivedProperty.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import StringIO from '../../tandem/js/types/StringIO.js';
+import axon from './axon.js';
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import { Dependencies } from './Multilink.js';
+
+type SelfOptions = EmptySelfOptions;
+
+type SuperOptions = DerivedPropertyOptions<string>; // the derivation returns a string
+
+export type DerivedStringPropertyOptions = SelfOptions &
+  StrictOmit<SuperOptions, 'phetioValueType' | 'tandemNameSuffix'> & // DerivedStringProperty is responsible for these metadata options
+  PickRequired<SuperOptions, 'tandem'>; // must be instrumented
+
+export default class DerivedStringProperty<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
+  extends DerivedProperty<string, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
+
+  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>,
+                      derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => string,
+                      providedOptions?: DerivedStringPropertyOptions ) {
+
+    const options = optionize<DerivedStringPropertyOptions, SelfOptions, SuperOptions>()( {
+      phetioFeatured: true, // featured by default, see https://github.com/phetsims/phet-io/issues/1943
+      phetioValueType: StringIO,
+      tandemNameSuffix: 'StringProperty'
+    }, providedOptions );
+
+    super( dependencies, derivation, options );
+  }
+}
+
+axon.register( 'DerivedStringProperty', DerivedStringProperty );
