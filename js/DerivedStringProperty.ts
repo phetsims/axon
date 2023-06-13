@@ -1,7 +1,7 @@
 // Copyright 2022-2023, University of Colorado Boulder
 
 /**
- * DerivedStringProperty is intended to be used for strings that are derived from LocalizedStringProperty
+ * DerivedStringProperty is typically used for strings that are derived from LocalizedStringProperty
  * (translatable strings, generated from the {{REPO}}-strings_en.json file via 'grunt modulify') and/or other instances
  * of DerivedStringProperty. Using this class ensures that code follows PhET-iO instrumentation standards,
  * and makes occurrences of this type of string Property easier to identify.
@@ -12,6 +12,10 @@
  *  - adds proper PhET-iO metadata, with defaults that have been specified by PhET-iO design, which can be
  *    overridden where appropriate (e.g. phetioFeatured) and are not part of the public API where they should
  *    not be overridable (e.g. phetioValueType)
+ *
+ * Note that you can also use DerivedStringProperty for model/logic strings that are not translated. But you'll
+ * need to consider whether you want to override the default of phetioFeatured: true, which was chosen as the default
+ * for translated strings.
  *
  * See https://github.com/phetsims/phet-io/issues/1943
  *
