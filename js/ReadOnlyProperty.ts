@@ -624,6 +624,23 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     return cache.get( parameterType )!;
   }
 
+  /**
+   * Support treating ourselves as an autoselectable entity for the "strings" selection mode.
+   */
+  public override getPhetioMouseHitTarget(): PhetioObject | 'phetioNotSelectable' {
+
+    if ( phet.tandem.phetioElementSelectionProperty.value === 'string' ) {
+
+      // As of this writing, the only way to get to this function is for Properties that have a value of strings, but
+      // in the future that may not be the case. SR and MK still think it is preferable to keep this general, as false
+      // positives for autoselect are generally better than false negatives.
+        return this.getPhetioMouseHitTargetSelf();
+    }
+
+    return super.getPhetioMouseHitTarget();
+  }
+
+
   public static readonly CHANGED_EVENT_NAME = 'changed';
 }
 
