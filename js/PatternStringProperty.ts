@@ -53,7 +53,6 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import DerivedProperty, { DerivedPropertyOptions } from './DerivedProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
@@ -63,10 +62,11 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import CollapsePropertyValue from '../../phet-core/js/types/CollapsePropertyValue.js';
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
-import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import WithRequired from '../../phet-core/js/types/WithRequired.js';
+import DerivedStringProperty, { DerivedStringPropertyOptions } from './DerivedStringProperty.js';
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -137,13 +137,16 @@ type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> &
       maps: MapsType<Values>;
     } );
 
-type SuperOptions = DerivedPropertyOptions<string>;
+type SuperOptions = DerivedStringPropertyOptions<string>;
 export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & WithRequired<SuperOptions, 'tandem'>;
+
+// Need special behavior to support conditionally requiring maps
+type FirstParameterTypeToOptionize<Values extends ValuesType> = OptionalSelfOptions<Values> & { maps?: MapsType<Values> } & PickRequired<SuperOptions, 'tandem'>;
 
 // Shared here, since it will always be the same function
 const stringify = ( value: string | number ): string => `${value}`;
 
-export default class PatternStringProperty<Values extends ValuesType> extends DerivedProperty<string,
+export default class PatternStringProperty<Values extends ValuesType> extends DerivedStringProperty<string,
   unknown,
   unknown,
   unknown,
@@ -163,13 +166,12 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
 
     assert && assert( !( values.tandem instanceof Tandem ), 'Did you intend to put tandem in providedOptions?' );
 
-    const options = optionize<OptionalSelfOptions<Values> & { maps?: MapsType<Values> }, OptionalSelfOptions<Values>, SuperOptions>()( {
+    const options = optionize<FirstParameterTypeToOptionize<Values>, OptionalSelfOptions<Values>, SuperOptions>()( {
       formatNames: [],
 
       decimalPlaces: null,
 
       phetioFeatured: true, // This is the best default to match all i18n "model" strings, see https://github.com/phetsims/studio/issues/304#issuecomment-1572613118
-      phetioValueType: StringIO,
       tandemNameSuffix: 'StringProperty'
     }, providedOptions );
 

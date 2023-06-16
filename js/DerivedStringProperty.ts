@@ -32,22 +32,22 @@ import { Dependencies } from './Multilink.js';
 
 type SelfOptions = EmptySelfOptions;
 
-type SuperOptions = DerivedPropertyOptions<string>; // the derivation returns a string
+type SuperOptions<T extends string> = DerivedPropertyOptions<T>; // the derivation returns a string
 
-export type DerivedStringPropertyOptions = SelfOptions &
-  StrictOmit<SuperOptions, 'phetioValueType' | 'tandemNameSuffix'> & // DerivedStringProperty is responsible for these metadata options
-  PickRequired<SuperOptions, 'tandem'>; // must be instrumented
+export type DerivedStringPropertyOptions<T extends string> = SelfOptions &
+  StrictOmit<SuperOptions<T>, 'phetioValueType'> & // DerivedStringProperty is responsible for this metadata
+  PickRequired<SuperOptions<T>, 'tandem'>; // must be instrumented
 
-export default class DerivedStringProperty<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
-  extends DerivedProperty<string, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
+export default class DerivedStringProperty<T extends string, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
+  extends DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
 
   public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>,
-                      derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => string,
-                      providedOptions?: DerivedStringPropertyOptions ) {
+                      derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T,
+                      providedOptions?: DerivedStringPropertyOptions<T> ) {
 
-    const options = optionize<DerivedStringPropertyOptions, SelfOptions, SuperOptions>()( {
+    const options = optionize<DerivedStringPropertyOptions<T>, SelfOptions, SuperOptions<T>>()( {
       phetioFeatured: true, // featured by default, see https://github.com/phetsims/phet-io/issues/1943
-      phetioValueType: StringIO,
+      phetioValueType: StringIO, // Change only with caution
       tandemNameSuffix: 'StringProperty'
     }, providedOptions );
 
