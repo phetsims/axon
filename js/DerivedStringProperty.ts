@@ -47,8 +47,8 @@ export default class DerivedStringProperty<T extends string, T1, T2, T3, T4, T5,
 
     const options = optionize<DerivedStringPropertyOptions<T>, SelfOptions, SuperOptions<T>>()( {
       phetioFeatured: true, // featured by default, see https://github.com/phetsims/phet-io/issues/1943
-      phetioValueType: StringIO, // Change only with caution
-      tandemNameSuffix: 'StringProperty'
+      phetioValueType: StringIO,
+      tandemNameSuffix: 'StringProperty' // Change only with caution
     }, providedOptions );
 
     super( dependencies, derivation, options );
