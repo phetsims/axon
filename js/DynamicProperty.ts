@@ -103,7 +103,6 @@ import Property, { PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
-import LinkableProperty from './LinkableProperty.js';
 
 export type TNullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
 
@@ -142,7 +141,7 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // } );
 // Here, ThisValueType=number (we're a Property<number>). You've passed in a Property<Foo>, so OuterValueType is a Foo.
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
-export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueType> extends ReadOnlyProperty<ThisValueType> implements LinkableProperty<ThisValueType> {
+export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueType> extends ReadOnlyProperty<ThisValueType> implements TProperty<ThisValueType> {
 
   // Set to true when this Property's value is changing from an external source.
   private isExternallyChanging: boolean;
