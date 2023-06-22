@@ -36,6 +36,23 @@ QUnit.test( 'EnabledComponent into Object', assert => {
   assert.ok( !myEnabledProperty.isDisposed, 'do not dispose my enabledProperty!' );
 } );
 
+QUnit.test( 'EnabledComponent.isDisposable', assert => {
+
+  const object1 = new EnabledComponent( {
+    isDisposable: true
+  } );
+  const object2 = new EnabledComponent();
+  const object3 = new EnabledComponent( {
+    isDisposable: false
+  } );
+
+  object1.dispose();
+  object2.dispose();
+  if ( window.assert ) {
+    assert.throws( () => object3.dispose(), 'should throw if isDisposable is false' );
+  }
+} );
+
 /**
  * Test basic functionality for an object that uses EnabledComponent
  * assert - from QUnit

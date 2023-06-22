@@ -15,6 +15,11 @@ import axon from './axon.js';
 import TEmitter from './TEmitter.js';
 import TinyEmitter from './TinyEmitter.js';
 
+// Used in subclasses to support mutate.
+export type DisposableOptions = {
+  isDisposable?: boolean;
+};
+
 class Disposable {
 
   // Called after all code that is directly in `dispose()` methods, be careful with mixing this pattern and the
@@ -29,7 +34,10 @@ class Disposable {
   private _isDisposed = false;
 
   // Disposable should only be used by subtypes, no need to instantiate one on its own.
-  protected constructor() {
+  protected constructor( providedOptions?: DisposableOptions ) {
+
+    providedOptions && this.initializeDisposable( providedOptions );
+
     if ( assert ) {
 
       // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
@@ -63,8 +71,14 @@ class Disposable {
     this._isDisposable = isDisposable;
   }
 
+  public initializeDisposable( options?: DisposableOptions ): void {
+    if ( options && options.hasOwnProperty( 'isDisposable' ) ) {
+      this._isDisposable = options.isDisposable!;
+    }
+  }
+
   public dispose(): void {
-    assert && !this.isDisposable && Disposable.assertNotDisposable();
+    assert && !this._isDisposable && Disposable.assertNotDisposable();
     assert && assert( !this._isDisposed, 'Disposable can only be disposed once' );
     this._disposeEmitter.emit();
     this._disposeEmitter.dispose();
