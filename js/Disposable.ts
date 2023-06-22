@@ -21,6 +21,10 @@ class Disposable {
   // `this.disposeMyClass()` pattern.
   public readonly _disposeEmitter: TEmitter = new TinyEmitter();
 
+  // Keep track if this instance supports disposing. If set to false, then an assertion will fire if trying to dispose
+  // this instance.
+  private _isDisposable = true;
+
   // Marked true when this Disposable has had dispose() called on it (after disposeEmitter is fired)
   private _isDisposed = false;
 
@@ -51,11 +55,24 @@ class Disposable {
     return this._isDisposed;
   }
 
+  public get isDisposable(): boolean {
+    return this._isDisposable;
+  }
+
+  public set isDisposable( isDisposable: boolean ) {
+    this._isDisposable = isDisposable;
+  }
+
   public dispose(): void {
+    assert && !this.isDisposable && Disposable.assertNotDisposable();
     assert && assert( !this._isDisposed, 'Disposable can only be disposed once' );
     this._disposeEmitter.emit();
     this._disposeEmitter.dispose();
     this._isDisposed = true;
+  }
+
+  public static assertNotDisposable(): void {
+    assert && assert( false, 'dispose is not supported, exists for the lifetime of the sim' );
   }
 }
 
