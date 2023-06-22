@@ -63,7 +63,7 @@ export default class EnabledComponent extends Disposable {
     assert && options.enabledPropertyOptions && assert( !( !options.phetioEnabledPropertyInstrumented && options.enabledPropertyOptions.tandem ),
       'incompatible options. Cannot specify phetioEnabledPropertyInstrumented opt out and a Tandem via enabledPropertyOptions.' );
 
-    super( providedOptions );
+    super( options );
 
     // @ts-expect-error There is no way without a plethora of parameterized types to convey if this enabledProperty is
     // settable, so accept unsettable, and typecast to settable.

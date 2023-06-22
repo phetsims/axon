@@ -6,7 +6,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import Disposable from './Disposable.js';
+import Disposable, { DisposableOptions } from './Disposable.js';
 
 QUnit.module( 'Disposable' );
 
@@ -33,3 +33,30 @@ QUnit.test( 'Disposable basics', assert => {
   window.assert && assert.ok( object1.disposeEmitter.isDisposed, 'disposeEmitter should be disposed too' );
 } );
 
+
+QUnit.test( 'Disposable.isDisposable', assert => {
+  assert.ok( true, 'when assertions are not enabled' );
+
+  class MyDisposable extends Disposable {
+    public constructor( options?: DisposableOptions ) {super( options );}
+  }
+
+  const object1 = new MyDisposable( {
+    isDisposable: true
+  } );
+  const object2 = new MyDisposable();
+
+  object1.dispose();
+  object2.dispose();
+
+  const object3 = new MyDisposable( {
+    isDisposable: false
+  } );
+  const object4 = new MyDisposable();
+  object4.isDisposable = false;
+
+  if ( window.assert ) {
+    assert.throws( () => object3.dispose(), 'should throw if isDisposable is false1' );
+    assert.throws( () => object4.dispose(), 'should throw if isDisposable is false2' );
+  }
+} );

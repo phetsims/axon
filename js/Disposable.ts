@@ -7,6 +7,8 @@
  *
  * This class also includes a public flag set to true when disposed.
  *
+ * You can also opt into asserting out when disposing, preventing disposal on your class, see Disposable.isDisposable
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
