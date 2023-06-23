@@ -17,6 +17,7 @@ import axon from './axon.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import Disposable, { DisposableOptions } from './Disposable.js';
+import { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -41,10 +42,7 @@ type SelfOptions = {
   // Whether the default-created enabledProperty should be instrumented for PhET-iO. Ignored if
   // options.enabledProperty is provided.
   phetioEnabledPropertyInstrumented?: boolean;
-
-  // phet-io
-  tandem?: Tandem;
-};
+} & Pick<PhetioObjectOptions, 'tandem'>;
 
 export type EnabledComponentOptions = SelfOptions & DisposableOptions;
 
