@@ -37,6 +37,7 @@ QUnit.test( 'EnabledComponent into Object', assert => {
 } );
 
 QUnit.test( 'EnabledComponent.isDisposable', assert => {
+  assert.ok( true, 'when no window.assertions' );
 
   const object1 = new EnabledComponent( {
     isDisposable: true
