@@ -17,7 +17,7 @@ import axon from './axon.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import Disposable, { DisposableOptions } from './Disposable.js';
-import { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
+import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 
 // constants
 const DEFAULT_OPTIONS = {
@@ -25,7 +25,7 @@ const DEFAULT_OPTIONS = {
   enabled: true,
   enabledPropertyOptions: null,
   phetioEnabledPropertyInstrumented: true,
-  tandem: Tandem.OPTIONAL
+  tandem: PhetioObject.DEFAULT_OPTIONS.tandem
 } as const;
 
 type SelfOptions = {

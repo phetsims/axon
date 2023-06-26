@@ -16,7 +16,6 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import optionize, { combineOptions } from '../../phet-core/js/optionize.js';
 import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
-import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
@@ -95,7 +94,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
     length: 0,
     elements: [],
-    tandem: Tandem.OPTIONAL,
     elementAddedEmitterOptions: {},
     elementRemovedEmitterOptions: {},
     lengthPropertyOptions: {}
@@ -118,7 +116,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   // notifies when an element has been added
   const elementAddedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
-    tandem: options.tandem.createTandem( 'elementAddedEmitter' ),
+    tandem: options.tandem?.createTandem( 'elementAddedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
     hasListenerOrderDependencies: options.hasListenerOrderDependencies
@@ -126,7 +124,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   // notifies when an element has been removed
   const elementRemovedEmitter = new Emitter<[ T ]>( combineOptions<EmitterOptions>( {
-    tandem: options.tandem.createTandem( 'elementRemovedEmitter' ),
+    tandem: options.tandem?.createTandem( 'elementRemovedEmitter' ),
     parameters: [ emitterParameterOptions ],
     phetioReadOnly: true,
     hasListenerOrderDependencies: options.hasListenerOrderDependencies
@@ -135,7 +133,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   // observe this, but don't set it. Updated when Array modifiers are called (except array.length=...)
   const lengthProperty = new NumberProperty( 0, combineOptions<NumberPropertyOptions>( {
     numberType: 'Integer',
-    tandem: options.tandem.createTandem( 'lengthProperty' ),
+    tandem: options.tandem?.createTandem( 'lengthProperty' ),
     phetioReadOnly: true
   }, options.lengthPropertyOptions ) );
 
@@ -264,7 +262,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   /******************************************
    * PhET-iO support
    *******************************************/
-  if ( options.tandem.supplied ) {
+  if ( options.tandem?.supplied ) {
     assert && assert( options.phetioType );
 
     observableArray.phetioElementType = options.phetioType.parameterTypes![ 0 ];

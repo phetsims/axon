@@ -81,7 +81,6 @@ export default class NumberProperty extends Property<number> implements TRangedP
 
       // PropertyOptions
       validators: [],
-      tandem: Tandem.OPTIONAL,
 
       phetioOuterType: () => NumberProperty.NumberPropertyIO
     }, providedOptions );
@@ -92,7 +91,7 @@ export default class NumberProperty extends Property<number> implements TRangedP
       phetioReadOnly: true,
 
       // If provided range is the default, don't instrument the PhET-iO RangeProperty
-      tandem: options.range !== DEFAULT_RANGE ? options.tandem.createTandem( RANGE_PROPERTY_TANDEM_NAME ) : Tandem.OPT_OUT
+      tandem: options.range !== DEFAULT_RANGE ? options.tandem?.createTandem( RANGE_PROPERTY_TANDEM_NAME ) : Tandem.OPT_OUT
     }, options.rangePropertyOptions );
 
     if ( assert && Tandem.VALIDATION && options.rangePropertyOptions.tandem && options.rangePropertyOptions.tandem.supplied ) {

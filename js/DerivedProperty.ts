@@ -78,7 +78,6 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
 
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
-      tandem: Tandem.OPTIONAL,
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
       phetioOuterType: DerivedProperty.DerivedPropertyIO,
       phetioLinkDependencies: true
@@ -116,7 +115,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
           propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
         }
 
-        if ( options.phetioLinkDependencies ) {
+        if ( options.tandem && options.phetioLinkDependencies ) {
           const dependenciesTandem = options.tandem.createTandem( 'dependencies' );
           this.addLinkedElement( dependency, {
             tandem: dependenciesTandem.createTandemFromPhetioID( dependency.tandem.phetioID )

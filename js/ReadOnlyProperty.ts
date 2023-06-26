@@ -125,7 +125,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       hasListenerOrderDependencies: false,
 
       // phet-io
-      tandem: Tandem.OPTIONAL,
       phetioOuterType: ReadOnlyProperty.PropertyIO,
       phetioValueType: IOType.ObjectIO
     }, providedOptions );
@@ -168,7 +167,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     assert && assert( !this.isPhetioInstrumented() ||
                       options.tandem.name.endsWith( ReadOnlyProperty.TANDEM_NAME_SUFFIX ) ||
                       options.tandem.name === 'property',
-      `Property tandem.name must end with Property: ${options.tandem.phetioID}` );
+      `Property tandem.name must end with Property: ${options.tandem?.phetioID}` );
 
     this.validValues = options.validValues;
 
