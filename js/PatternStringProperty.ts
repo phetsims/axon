@@ -162,7 +162,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
   unknown,
   unknown,
   unknown> {
-  public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions: PatternStringPropertyOptions<Values> ) {
+  public constructor( patternProperty: TReadOnlyProperty<string>, values: Values, providedOptions?: PatternStringPropertyOptions<Values> ) {
 
     assert && assert( !( values.tandem instanceof Tandem ), 'Did you intend to put tandem in providedOptions?' );
 
