@@ -68,7 +68,7 @@ const units = {
     'V', // volts
     'view-coordinates/s',
     'W', // watts
-    'y' // years
+    'years' // years
   ],
 
   isValidUnits: function( unit: string ): boolean {
