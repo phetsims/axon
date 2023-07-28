@@ -22,7 +22,7 @@ const validate = <T>( value: IntentionalAny, validator: Validator<T>, providedOp
     // Throws an error if not valid
     const result = Validation.getValidationError( value, validator, providedOptions );
     if ( result ) {
-      const prunedValidator = _.pick( validator, Validation.VALIDATOR_KEYS );
+      const prunedValidator = JSON.stringify( _.pick( validator, Validation.VALIDATOR_KEYS ), null, 2 );
       assert && assert( false, 'validation failed:', result, 'prunedValidator:', prunedValidator );
     }
   }
