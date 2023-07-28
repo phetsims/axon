@@ -86,7 +86,7 @@ export default class NumberProperty extends Property<number> implements TRangedP
     }, providedOptions );
 
     options.rangePropertyOptions = optionize<PropertyOptions<Range>, EmptySelfOptions, PropertyOptions<Range>>()( {
-      phetioDocumentation: 'provides the range of possible values for the parent NumberProperty',
+      phetioDocumentation: 'Provides the range of possible values for the parent NumberPropertyIO',
       phetioValueType: Range.RangeIO,
       phetioReadOnly: true,
 
