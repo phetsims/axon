@@ -280,7 +280,7 @@ class PropertyStateHandler {
         // Fire the listener;
         phaseCallbackToPotentiallyApply.listener();
 
-        // Remove it from the master list so that it doesn't get called again.
+        // Remove it from the main list so that it doesn't get called again.
         phaseCallbackSet.delete( phaseCallbackToPotentiallyApply );
 
         // Keep track of all completed PhaseCallbacks
