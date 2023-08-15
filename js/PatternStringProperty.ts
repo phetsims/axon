@@ -64,9 +64,7 @@ import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import axon from './axon.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import WithRequired from '../../phet-core/js/types/WithRequired.js';
 import DerivedStringProperty, { DerivedStringPropertyOptions } from './DerivedStringProperty.js';
-import PickRequired from '../../phet-core/js/types/PickRequired.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
