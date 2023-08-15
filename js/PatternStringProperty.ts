@@ -64,9 +64,7 @@ import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import axon from './axon.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import WithRequired from '../../phet-core/js/types/WithRequired.js';
 import DerivedStringProperty, { DerivedStringPropertyOptions } from './DerivedStringProperty.js';
-import PickRequired from '../../phet-core/js/types/PickRequired.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -138,10 +136,10 @@ type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> &
     } );
 
 type SuperOptions = DerivedStringPropertyOptions<string>;
-export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & WithRequired<SuperOptions, 'tandem'>;
+export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOptions<Values> & SuperOptions;
 
 // Need special behavior to support conditionally requiring maps
-type FirstParameterTypeToOptionize<Values extends ValuesType> = OptionalSelfOptions<Values> & { maps?: MapsType<Values> } & PickRequired<SuperOptions, 'tandem'>;
+type FirstParameterTypeToOptionize<Values extends ValuesType> = OptionalSelfOptions<Values> & { maps?: MapsType<Values> } & SuperOptions;
 
 // Shared here, since it will always be the same function
 const stringify = ( value: string | number ): string => `${value}`;
