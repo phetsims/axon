@@ -70,6 +70,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       this.hasListenerOrderDependencies = hasListenerOrderDependencies;
     }
 
+    // Listener order is preserved in Set
     this.listeners = new Set();
 
     this.emitContexts = [];

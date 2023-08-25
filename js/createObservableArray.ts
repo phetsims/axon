@@ -134,7 +134,8 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
   const lengthProperty = new NumberProperty( 0, combineOptions<NumberPropertyOptions>( {
     numberType: 'Integer',
     tandem: options.tandem?.createTandem( 'lengthProperty' ),
-    phetioReadOnly: true
+    phetioReadOnly: true,
+    hasListenerOrderDependencies: options.hasListenerOrderDependencies
   }, options.lengthPropertyOptions ) );
 
   // The underlying array which is wrapped by the Proxy
