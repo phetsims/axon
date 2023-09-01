@@ -199,28 +199,28 @@ QUnit.test( 'Test NumberProperty range option as Property', assert => {
 QUnit.test( 'Test NumberProperty phet-io options', assert => {
 
   const tandem = Tandem.ROOT_TEST;
-  let property = new NumberProperty( 0, {
+  let numberProperty = new NumberProperty( 0, {
     range: new Range( 0, 20 ),
     tandem: tandem.createTandem( 'numberProperty' ),
     rangePropertyOptions: { tandem: tandem.createTandem( 'rangeProperty' ) }
   } );
 
-  assert.ok( property.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
-  assert.ok( property.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
+  assert.ok( numberProperty.rangeProperty.isPhetioInstrumented(), 'rangeProperty instrumented' );
+  assert.ok( numberProperty.rangeProperty.tandem.name === 'rangeProperty', 'rangeProperty instrumented' );
 
-  property.dispose();
+  numberProperty.dispose();
 
-  property = new NumberProperty( 0, {
+  numberProperty = new NumberProperty( 0, {
     range: DEFAULT_RANGE
   } );
-  assert.ok( !property.rangeProperty.isPhetioInstrumented(), 'null ranges do not get instrumented rangeProperty' );
+  assert.ok( !numberProperty.rangeProperty.isPhetioInstrumented(), 'null ranges do not get instrumented rangeProperty' );
 
   window.assert && Tandem.VALIDATION && assert.throws( () => {
-    property = new NumberProperty( 0, {
+    numberProperty = new NumberProperty( 0, {
       range: new Range( 0, 20 ),
       tandem: tandem.createTandem( 'numberProperty2' ),
       rangePropertyOptions: { tandem: tandem.createTandem( 'rangePropertyfdsa' ) }
     } );
   }, 'cannot instrument default rangeProperty with tandem other than "rangeProperty"' );
-  property.dispose();
+  numberProperty.dispose();
 } );
