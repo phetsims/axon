@@ -14,16 +14,8 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import PhetioObject from '../../tandem/js/PhetioObject.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
-import TEmitter from './TEmitter.js';
-import { FullPhetioState, PhetioID } from '../../tandem/js/TandemConstants.js';
-
-type PhetioStateEngineStub = {
-  onBeforeApplyStateEmitter: TEmitter<[ PhetioObject ]>;
-  stateSetEmitter: TEmitter<[ FullPhetioState, Tandem ]>;
-  isSettingStateProperty: TReadOnlyProperty<boolean>;
-};
+import { PhetioID } from '../../tandem/js/TandemConstants.js';
+import { TPhetioStateEngine } from '../../tandem/js/TPhetioStateEngine.js';
 
 type PhaseMap = {
   beforePhase: PropertyStatePhase;
@@ -68,7 +60,7 @@ class PropertyStateHandler {
     ];
   }
 
-  public initialize( phetioStateEngine: PhetioStateEngineStub ): void {
+  public initialize( phetioStateEngine: TPhetioStateEngine ): void {
     assert && assert( !this.initialized, 'cannot initialize twice' );
 
     phetioStateEngine.onBeforeApplyStateEmitter.addListener( phetioObject => {
@@ -90,7 +82,7 @@ class PropertyStateHandler {
       }
     } );
 
-    phetioStateEngine.stateSetEmitter.addListener( state => {
+    phetioStateEngine.undeferEmitter.addListener( state => {
 
       // Properties set to final values and notify of any value changes.
       this.undeferAndNotifyProperties( new Set( Object.keys( state ) ) );
