@@ -19,6 +19,7 @@ const units = {
     'A', // amperes
     'AMU', // atomic mass unit
     'atm', // atmospheres
+    'AU', // astronomical units
     'cm', // centimeters
     'cm^2', // centimeters squared
     'C', // coulombs
@@ -33,6 +34,7 @@ const units = {
     'kg', // kilograms
     'kg/m^3', // kg/cubic meter
     'kg\u00b7m/s', // kg·m/s, kilogram-meters/second
+    'km/s',
     'kPa', // kilopascals
     'L',
     'L/s',
