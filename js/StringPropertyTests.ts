@@ -7,7 +7,6 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import StringIO from '../../tandem/js/types/StringIO.js';
 import StringProperty from './StringProperty.js';
 
 QUnit.module( 'StringProperty' );
@@ -78,14 +77,6 @@ QUnit.test( 'Test StringProperty', assert => {
       isValidValue: function( value ) { return value.length === 4; }
     } );
   }, 'incompatible validation options fail on initialization' );
-
-  window.assert && assert.throws( () => {
-
-    // @ts-expect-error INTENTIONAL setting phetioType for testing
-    p = new StringProperty( 'hello', { phetioType: StringIO } );
-
-    // TODO: Is this still the case? see: https://github.com/phetsims/axon/issues/421
-  }, 'EnumerationDeprecatedProperty sets phetioType' );
 
   assert.ok( true, 'so we have at least 1 test in this set' );
 } );

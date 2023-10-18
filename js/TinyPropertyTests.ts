@@ -49,9 +49,4 @@ QUnit.test( 'TinyProperty onBeforeNotify', assert => {
   x.hasFunProperty.value = true;
   x.hasFunProperty.value = false;
   x.hasFunProperty.value = true;
-
-  // TODO: what is this testing? https://github.com/phetsims/axon/issues/421
-  // x.hasFunProperty.value = 42;
-  // x.hasFunProperty.value = 'duh';
-  // x.hasFunProperty.value = 'always';
 } );
