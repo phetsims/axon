@@ -115,7 +115,7 @@ export default class NumberProperty extends Property<number> implements TRangedP
     }
     options.validators.push( {
       isValidValue: v => rangeProperty.value.contains( v ),
-      validationMessage: 'Number must be within rangeProperty value.'
+      validationMessage: `Number must be within rangeProperty value: ${rangeProperty.value}`
     } );
 
     super( value, options );
