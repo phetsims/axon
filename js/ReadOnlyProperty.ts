@@ -537,17 +537,11 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
         parameterTypes: [ parameterType ],
         toStateObject: property => {
           assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-          const stateObject: ReadOnlyPropertyState<StateType> = {
+          return {
             value: parameterType.toStateObject( property.value ),
-
-            // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
-            validValues: property.validValues ? property.validValues.map( v => {
-              return parameterType.toStateObject( v );
-            } ) : null,
+            validValues: NullableIO( ArrayIO( parameterType ) ).toStateObject( property.validValues === undefined ? null : property.validValues ),
             units: NullableIO( StringIO ).toStateObject( property.units )
           };
-
-          return stateObject;
         },
         applyState: ( property, stateObject ) => {
           const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
