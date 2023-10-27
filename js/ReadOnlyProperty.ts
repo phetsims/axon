@@ -7,7 +7,7 @@
  */
 
 import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
-import Tandem from '../../tandem/js/Tandem.js';
+import Tandem, { DYNAMIC_ARCHETYPE_NAME } from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -166,7 +166,8 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     }
     assert && assert( !this.isPhetioInstrumented() ||
                       options.tandem.name.endsWith( ReadOnlyProperty.TANDEM_NAME_SUFFIX ) ||
-                      options.tandem.name === 'property',
+                      options.tandem.name === 'property' ||
+                      options.tandem.name === DYNAMIC_ARCHETYPE_NAME, // It is ok to have dynamic element Properties (which would mean they are archetypes
       `Property tandem.name must end with Property: ${options.tandem?.phetioID}` );
 
     this.validValues = options.validValues;
