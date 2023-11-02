@@ -204,7 +204,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       // validate the initial value as well as any changes in the future
       validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
 
-      if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioState && Tandem.VALIDATION ) {
+      if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && Tandem.VALIDATION ) {
         assert && assert( options.phetioValueType !== IOType.ObjectIO, 'Stateful PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
       }
     }
