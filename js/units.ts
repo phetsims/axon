@@ -28,7 +28,7 @@ const units = {
     'F', // farad
     '\u00B0F', // °F, degrees Fahrenheit
     'g', // grams
-    'gauss',
+    'G', // gauss
     'Hz', // hertz
     'J', // Joules
     'K', // Kelvin
