@@ -158,13 +158,19 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     this.units = options.units;
 
     // When running as phet-io, if the tandem is specified, the type must be specified.
-    if ( Tandem.VALIDATION && this.isPhetioInstrumented() ) {
+    if ( this.isPhetioInstrumented() ) {
 
       // This assertion helps in instrumenting code that has the tandem but not type
-      assert && assert( this.phetioType, `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
+      assert && Tandem.VALIDATION && assert( this.phetioType,
+        `phetioType passed to Property must be specified. Tandem.phetioID: ${this.tandem.phetioID}` );
 
-      assert && assert( options.phetioType.parameterTypes![ 0 ], `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
+      assert && Tandem.VALIDATION && assert( options.phetioType.parameterTypes![ 0 ],
+        `phetioType parameter type must be specified (only one). Tandem.phetioID: ${this.tandem.phetioID}` );
+
+      assert && assert( options.phetioValueType !== IOType.ObjectIO,
+        'PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
     }
+
     assert && assert( !this.isPhetioInstrumented() ||
                       options.tandem.name.endsWith( ReadOnlyProperty.TANDEM_NAME_SUFFIX ) ||
                       options.tandem.name === 'property' ||
@@ -204,10 +210,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
       // validate the initial value as well as any changes in the future
       validate( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
-
-      if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && Tandem.VALIDATION ) {
-        assert && assert( options.phetioValueType !== IOType.ObjectIO, 'Stateful PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
-      }
     }
   }
 
