@@ -470,9 +470,9 @@ const reportDifference = ( shallowCopy: any[], observableArray: PrivateObservabl
   after.forEach( element => observableArray.elementAddedEmitter.emit( element ) );
 };
 
-// {Map.<cacheKey:function(new:ObservableArrayIO), function(new:ObservableArrayIO)>} - Cache each parameterized ObservableArrayIO
+// Cache each parameterized ObservableArrayIO
 // based on the parameter type, so that it is only created once.
-const cache = new Map();
+const cache = new Map<IOType, IOType>();
 
 /**
  * ObservableArrayIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
@@ -490,7 +490,7 @@ const ObservableArrayIO = ( parameterType: IOType ): IOType => {
       }
     } ) );
   }
-  return cache.get( parameterType );
+  return cache.get( parameterType )!;
 };
 
 createObservableArray.ObservableArrayIO = ObservableArrayIO;

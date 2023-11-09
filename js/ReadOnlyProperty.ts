@@ -35,7 +35,6 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 let globalId = 0; // auto-incremented for unique IDs
 
 // Cache each parameterized PropertyIO based on the parameter type, so that it is only created once
-// TODO: register all IOType caches with phetioEngine please, https://github.com/phetsims/phet-io-wrappers/issues/566
 const cache = new Map<IOType, IOType>();
 
 export type ReadOnlyPropertyState<StateType> = {
