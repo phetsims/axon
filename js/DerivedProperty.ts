@@ -40,10 +40,18 @@ export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 /**
  * Compute the derived value given a derivation and an array of dependencies
  */
-function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
+function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( accessNonDependencies: boolean, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
-  // @ts-expect-error
-  return derivation( ...dependencies.map( property => property.get() ) );
+  assert && !accessNonDependencies && derivationStack.push( dependencies );
+
+  try {
+
+    // @ts-expect-error
+    return derivation( ...dependencies.map( property => property.get() ) );
+  }
+  finally {
+    assert && !accessNonDependencies && derivationStack.pop();
+  }
 }
 
 // Convenience type for a Derived property that has a known return type but unknown dependency types.
@@ -93,7 +101,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    const initialValue = getDerivedValue( derivation, dependencies );
+    const initialValue = getDerivedValue( options.accessNonDependencies, derivation, dependencies );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     super( initialValue, options );
@@ -162,7 +170,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       this.hasDeferredValue = true;
     }
     else {
-      super.set( getDerivedValue( this.derivation, this.definedDependencies ) );
+      super.set( getDerivedValue( this.accessNonDependencies, this.derivation, this.definedDependencies ) );
     }
   }
 
@@ -195,7 +203,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    */
   public override setDeferred( isDeferred: boolean ): ( () => void ) | null {
     if ( this.isDeferred && !isDeferred ) {
-      this.deferredValue = getDerivedValue( this.derivation, this.definedDependencies );
+      this.deferredValue = getDerivedValue( this.accessNonDependencies, this.derivation, this.definedDependencies );
     }
     return super.setDeferred( isDeferred );
   }

@@ -227,6 +227,12 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * or internal code that must be fast.
    */
   public get(): T {
+    if ( assert && derivationStack && derivationStack.length > 0 ) {
+      const currentDependencies = derivationStack[ derivationStack.length - 1 ];
+      if ( !currentDependencies.includes( this ) ) {
+        assert && assert( false, 'accessed value outside of dependency tracking' );
+      }
+    }
     return this.tinyProperty.get();
   }
 
