@@ -76,6 +76,8 @@ export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
 
+export const derivationStack: IntentionalAny = [];
+
 /**
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
  * interface.  Initial value and resetting is not defined here.

@@ -19,7 +19,7 @@ import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
+import ReadOnlyProperty, { derivationStack } from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
@@ -28,6 +28,11 @@ type SelfOptions = {
 
   // When true, if this DerivedProperty is PhET-iO instrument, add a LinkedElement for each PhET-iO instrumented dependency.
   phetioLinkDependencies?: boolean;
+
+  // Typically, a DerivedProperty should only get values for its immediate dependencies, otherwise it could end up in a
+  // situation where some value central to the derivation has changed, but the derived property doesn't update because
+  // it isn't listening.
+  accessNonDependencies?: boolean;
 };
 
 export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
@@ -53,6 +58,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
   public static DerivedPropertyIO: ( parameterType: IOType ) => IOType;
+  private readonly accessNonDependencies: boolean;
 
   /**
    * @param dependencies - Properties that this Property's value is derived from
@@ -80,7 +86,8 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
       phetioOuterType: DerivedProperty.DerivedPropertyIO,
-      phetioLinkDependencies: true
+      phetioLinkDependencies: true,
+      accessNonDependencies: false
     }, providedOptions );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
@@ -99,6 +106,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
     this.dependencies = dependencies;
     this.derivation = derivation;
+    this.accessNonDependencies = options.accessNonDependencies;
     this.derivedPropertyListener = this.getDerivedPropertyListener.bind( this );
 
     dependencies.forEach( dependency => {
