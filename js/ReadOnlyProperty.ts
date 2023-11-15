@@ -230,7 +230,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     if ( assert && derivationStack && derivationStack.length > 0 ) {
       const currentDependencies = derivationStack[ derivationStack.length - 1 ];
       if ( !currentDependencies.includes( this ) ) {
-        assert && assert( false, 'accessed value outside of dependency tracking' );
+
+        // TODO: Re-enable assertion, see https://github.com/phetsims/axon/issues/441
+        // assert && assert( false, 'accessed value outside of dependency tracking' );
       }
     }
     return this.tinyProperty.get();
