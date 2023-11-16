@@ -27,6 +27,7 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
 import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
+import ioTypeCaches from '../../tandem/js/ioTypeCaches.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -36,6 +37,7 @@ let globalId = 0; // auto-incremented for unique IDs
 
 // Cache each parameterized PropertyIO based on the parameter type, so that it is only created once
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 export type ReadOnlyPropertyState<StateType> = {
   value: StateType;

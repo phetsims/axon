@@ -21,6 +21,7 @@ import optionize from '../../phet-core/js/optionize.js';
 import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 import ReadOnlyProperty, { derivationStack } from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
+import ioTypeCaches from '../../tandem/js/ioTypeCaches.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
@@ -268,6 +269,7 @@ const orFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
 
 // Cache each parameterized DerivedPropertyIO so that it is only created once.
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 /**
  * Parametric IO Type constructor.  Given a parameter type, this function returns an appropriate DerivedProperty

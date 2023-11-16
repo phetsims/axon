@@ -22,6 +22,7 @@ import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
+import ioTypeCaches from '../../tandem/js/ioTypeCaches.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
@@ -198,5 +199,6 @@ const getTypeName = ( ioType: IOType ) => ioType.typeName;
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
 const cache = new Map<string, IOType>();
+ioTypeCaches.register( cache );
 
 axon.register( 'Emitter', Emitter );
