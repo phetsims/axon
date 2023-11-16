@@ -24,7 +24,7 @@ import NumberProperty, { NumberPropertyOptions } from './NumberProperty.js';
 import Validation from './Validation.js';
 import TEmitter from './TEmitter.js';
 import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
-import ioTypeCaches from '../../tandem/js/ioTypeCaches.js';
+import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -473,8 +473,7 @@ const reportDifference = ( shallowCopy: any[], observableArray: PrivateObservabl
 
 // Cache each parameterized ObservableArrayIO
 // based on the parameter type, so that it is only created once.
-const cache = new Map<IOType, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache();
 
 
 /**
