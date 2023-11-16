@@ -165,7 +165,7 @@ class PropertyStateHandler {
   }
 
   /**
-   * Given registered Property Phase order dependencies, undefer all AXON/Property PhET-iO elements to take their
+   * Given registered Property Phase order dependencies, undefer all AXON/Property PhET-iO Elements to take their
    * correct values and have each notify their listeners.
    * {Set.<string>} phetioIDsInState - set of phetioIDs that were set in state
    */
