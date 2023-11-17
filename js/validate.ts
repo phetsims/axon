@@ -22,7 +22,13 @@ const validate = <T>( value: IntentionalAny, validator: Validator<T>, providedOp
     // Throws an error if not valid
     const result = Validation.getValidationError( value, validator, providedOptions );
     if ( result ) {
-      const prunedValidator = JSON.stringify( _.pick( validator, Validation.VALIDATOR_KEYS ), null, 2 );
+
+      // Just pick the helpful keys to print for the assertion message, so stub out the type of this
+      const validatorKeys: IntentionalAny = _.pick( validator, Validation.VALIDATOR_KEYS );
+      if ( validatorKeys.phetioType ) {
+        validatorKeys.phetioType = _.pick( validator.phetioType, [ 'validator', 'typeName' ] );
+      }
+      const prunedValidator = JSON.stringify( validatorKeys, null, 2 );
       assert && assert( false, 'validation failed:', result, 'prunedValidator:', prunedValidator );
     }
   }
