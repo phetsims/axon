@@ -59,6 +59,8 @@ type ValueType =
 
 type ValueComparisonStrategy<T = unknown> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
 
+export type ValidationMessage = string | ( () => string );
+
 export type Validator<T = unknown> = {
 
   // Type of the value.
@@ -94,7 +96,7 @@ export type Validator<T = unknown> = {
 
   // if provided, this will provide supplemental information to the assertion/validation messages in addition to the
   // validate-key-specific message that will be given.
-  validationMessage?: string;
+  validationMessage?: ValidationMessage;
 
   // A list of Validator objects, each of which must pass to be a valid value
   validators?: Validator<T>[];
@@ -258,9 +260,9 @@ export default class Validation {
     return false;
   }
 
-  private static combineErrorMessages( genericMessage: string, specificMessage?: string ): string {
+  private static combineErrorMessages( genericMessage: string, specificMessage?: ValidationMessage ): string {
     if ( specificMessage ) {
-      genericMessage = `${specificMessage}: ${genericMessage}`;
+      genericMessage = `${typeof specificMessage === 'function' ? specificMessage() : specificMessage}: ${genericMessage}`;
     }
     return genericMessage;
   }
@@ -363,7 +365,7 @@ export default class Validation {
     return null;
   }
 
-  private static getValueTypeValidationError( value: IntentionalAny, valueType: ValueType, message?: string ): string | null {
+  private static getValueTypeValidationError( value: IntentionalAny, valueType: ValueType, message?: ValidationMessage ): string | null {
     if ( typeof valueType === 'string' && typeof value !== valueType ) { // primitive type
       return this.combineErrorMessages( `value should have typeof ${valueType}, value=${value}`, message );
     }
