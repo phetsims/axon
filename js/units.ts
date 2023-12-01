@@ -67,6 +67,7 @@ const units = {
     'ps', // picoseconds
     'radians', // radians - note this has the same abbreviation as the radiation term "rad" so we use the full term
     'radians/s', // radians/second
+    'radians/s^2', // radians/second^2
     's', // seconds
     'V', // volts
     'view-coordinates/s',
