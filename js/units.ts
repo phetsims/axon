@@ -72,6 +72,7 @@ const units = {
     'V', // volts
     'view-coordinates/s',
     'W', // watts
+    'Wb', // weber
     'years' // years
   ],
 
