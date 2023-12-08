@@ -20,6 +20,7 @@ const units = {
     'AMU', // atomic mass unit
     'atm', // atmospheres
     'AU', // astronomical units
+    'AU^2', // astronomical units squared
     'cm', // centimeters
     'cm^2', // centimeters squared
     'C', // coulombs
