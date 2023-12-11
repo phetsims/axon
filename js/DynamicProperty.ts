@@ -59,6 +59,7 @@
  *    defaultValue: Color.BLACK
  *  } );
  * So that if the currentSceneProperty's value is null, the value of our DynamicProperty will be Color.BLACK.
+ * NOTE there are constraints using derive: 'string' when using parametric type parameters. See https://github.com/phetsims/projectile-data-lab/issues/10
  *
  *******************************
  * 'bidirectional' option
@@ -120,6 +121,7 @@ type SelfOptions<ThisValueType, InnerValueType, OuterValueType> = {
   // If it's a string, it will grab that named property out (e.g. it's like passing u => u[ derive ])
   // NOTE: This accepts TReadOnlyProperty, but if you have bidirectional:true it must be a full TProperty.
   // This is not currently type checked.
+  // NOTE there are constraints using derive: 'string' when using parametric type parameters. See https://github.com/phetsims/projectile-data-lab/issues/10
   derive?: ( ( outerValue: OuterValueType ) => TReadOnlyProperty<InnerValueType> ) | KeysMatching<OuterValueType, TReadOnlyProperty<InnerValueType>>;
 
   // Maps our input Property value to/from this Property's value. See top-level documentation for usage.
