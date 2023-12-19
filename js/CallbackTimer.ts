@@ -7,8 +7,6 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import optionize from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import stepTimer from './stepTimer.js';
 import { TimerListener } from './Timer.js';
@@ -31,43 +29,34 @@ export type CallbackTimerOptions = SelfOptions;
 
 export default class CallbackTimer {
 
-  private readonly callbacks: CallbackTimerCallback[];
+  private readonly callbacks: CallbackTimerCallback[] = [];
 
   // initial delay between when start is called and the timer first fires, in ms
-  private readonly delay: number;
+  private _delay = 400;
 
   // fire the timer at this continuous interval, in ms
-  private readonly interval: number;
+  private _interval = 100;
 
   // identifier for timer associated with the initial delay
-  private delayID: TimerListener | null;
+  private delayID: TimerListener | null = null;
 
   // identifier for timer associated with the continuous interval
-  private intervalID: TimerListener | null;
+  private intervalID: TimerListener | null = null;
 
   // has the timer fired since it was started?
-  private fired: boolean;
+  private fired = false;
 
-  public constructor( providedOptions?: CallbackTimerOptions ) {
+  public constructor( options?: CallbackTimerOptions ) {
 
-    const options = optionize<CallbackTimerOptions, StrictOmit<SelfOptions, 'callback'>>()( {
-      delay: 400,
-      interval: 100
-    }, providedOptions );
-
-    // validate options
-    assert && assert( options.delay >= 0, `bad value for delay: ${options.delay}` );
-    assert && assert( options.interval > 0, `bad value for interval: ${options.interval}` );
-
-    this.delay = options.delay;
-    this.interval = options.interval;
-
-    this.callbacks = [];
-    if ( options.callback ) { this.callbacks.push( options.callback ); }
-
-    this.delayID = null;
-    this.intervalID = null;
-    this.fired = false;
+    if ( options?.delay !== undefined ) {
+      this.delay = options.delay;
+    }
+    if ( options?.interval !== undefined ) {
+      this.interval = options.interval;
+    }
+    if ( options?.callback ) {
+      this.callbacks.push( options.callback );
+    }
   }
 
   public isRunning(): boolean {
@@ -129,6 +118,26 @@ export default class CallbackTimer {
       callbacksCopy[ i ]();
     }
     this.fired = true;
+  }
+
+  public set delay( delay: number ) {
+    assert && assert( delay >= 0, `bad value for delay: ${delay}` );
+
+    this._delay = delay;
+  }
+
+  public get delay(): number {
+    return this._delay;
+  }
+
+  public set interval( interval: number ) {
+    assert && assert( interval > 0, `bad value for interval: ${interval}` );
+
+    this._interval = interval;
+  }
+
+  public get interval(): number {
+    return this._interval;
   }
 
   public dispose(): void {
