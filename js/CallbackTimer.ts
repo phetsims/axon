@@ -1,4 +1,4 @@
-// Copyright 2019-2022, University of Colorado Boulder
+// Copyright 2019-2023, University of Colorado Boulder
 
 /**
  * CallbackTimer is a timer that calls a set of registered callbacks.
