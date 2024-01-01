@@ -32,18 +32,22 @@ type SelfOptions = {
 
   // Typically, a DerivedProperty should only get values for its immediate dependencies, otherwise it could end up in a
   // situation where some value central to the derivation has changed, but the derived property doesn't update because
-  // it isn't listening.
-  accessNonDependencies?: boolean;
+  // it isn't listening. These checks can be enabled via a package.json flag simFeatures.accessNonDependencies or
+  // the query parameter ?accessNonDependencies=true. The query parameter takes precedence.
+  // See https://github.com/phetsims/axon/issues/441
+  strictAxonDependencies?: boolean;
 };
 
 export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 
+const strictAxonDependenciesGlobal = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.strictAxonDependencies;
+
 /**
  * Compute the derived value given a derivation and an array of dependencies
  */
-function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( accessNonDependencies: boolean, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
+function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( strictAxonDependencies: boolean, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
-  assert && !accessNonDependencies && derivationStack.push( dependencies );
+  assert && strictAxonDependenciesGlobal && strictAxonDependencies && derivationStack.push( dependencies );
 
   try {
 
@@ -51,7 +55,7 @@ function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T
     return derivation( ...dependencies.map( property => property.get() ) );
   }
   finally {
-    assert && !accessNonDependencies && derivationStack.pop();
+    assert && strictAxonDependenciesGlobal && strictAxonDependencies && derivationStack.pop();
   }
 }
 
@@ -66,8 +70,9 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
+  private readonly strictAxonDependencies: boolean;
+
   public static DerivedPropertyIO: ( parameterType: IOType ) => IOType;
-  private readonly accessNonDependencies: boolean;
 
   /**
    * @param dependencies - Properties that this Property's value is derived from
@@ -96,13 +101,13 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
       phetioOuterType: DerivedProperty.DerivedPropertyIO,
       phetioLinkDependencies: true,
-      accessNonDependencies: false
+      strictAxonDependencies: true
     }, providedOptions );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
 
-    const initialValue = getDerivedValue( options.accessNonDependencies, derivation, dependencies );
+    const initialValue = getDerivedValue( options.strictAxonDependencies, derivation, dependencies );
 
     // We must pass supertype tandem to parent class so addInstance is called only once in the subclassiest constructor.
     super( initialValue, options );
@@ -115,7 +120,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
     this.dependencies = dependencies;
     this.derivation = derivation;
-    this.accessNonDependencies = options.accessNonDependencies;
+    this.strictAxonDependencies = options.strictAxonDependencies;
     this.derivedPropertyListener = this.getDerivedPropertyListener.bind( this );
 
     dependencies.forEach( dependency => {
@@ -171,7 +176,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       this.hasDeferredValue = true;
     }
     else {
-      super.set( getDerivedValue( this.accessNonDependencies, this.derivation, this.definedDependencies ) );
+      super.set( getDerivedValue( this.strictAxonDependencies, this.derivation, this.definedDependencies ) );
     }
   }
 
@@ -204,7 +209,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    */
   public override setDeferred( isDeferred: boolean ): ( () => void ) | null {
     if ( this.isDeferred && !isDeferred ) {
-      this.deferredValue = getDerivedValue( this.accessNonDependencies, this.derivation, this.definedDependencies );
+      this.deferredValue = getDerivedValue( this.strictAxonDependencies, this.derivation, this.definedDependencies );
     }
     return super.setDeferred( isDeferred );
   }

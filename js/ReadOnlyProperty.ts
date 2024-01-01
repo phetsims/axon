@@ -77,7 +77,8 @@ export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
 
-export const derivationStack: IntentionalAny = [];
+const strictAxonDependencies = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.strictAxonDependencies;
+export const derivationStack: Array<IntentionalAny> = [];
 
 /**
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
@@ -228,12 +229,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * or internal code that must be fast.
    */
   public get(): T {
-    if ( assert && derivationStack && derivationStack.length > 0 ) {
+    if ( assert && strictAxonDependencies && derivationStack.length > 0 ) {
       const currentDependencies = derivationStack[ derivationStack.length - 1 ];
       if ( !currentDependencies.includes( this ) ) {
-
-        // TODO: Re-enable assertion, see https://github.com/phetsims/axon/issues/441
-        // assert && assert( false, 'accessed value outside of dependency tracking' );
+        assert && assert( false, 'accessed value outside of dependency tracking' );
       }
     }
     return this.tinyProperty.get();
