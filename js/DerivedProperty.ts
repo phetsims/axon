@@ -1,4 +1,4 @@
-// Copyright 2013-2023, University of Colorado Boulder
+// Copyright 2013-2024, University of Colorado Boulder
 
 /**
  * A DerivedProperty is computed based on other Properties.  This implementation inherits from Property to (a) simplify
