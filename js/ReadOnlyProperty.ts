@@ -147,7 +147,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       assert && assert( !providedOptions.phetioType, 'Set phetioType via phetioValueType' );
     }
 
-    // Construct the IO Type
+    // Construct the IOType
     if ( options.phetioOuterType && options.phetioValueType ) {
       options.phetioType = options.phetioOuterType( options.phetioValueType );
     }
@@ -261,7 +261,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   }
 
   /**
-   * For usage by the IO Type during PhET-iO state setting.
+   * For usage by the IOType during PhET-iO state setting.
    */
   protected unguardedSet( value: T ): void {
     if ( !this.isDisposed ) {
@@ -532,7 +532,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
   /**
    * An observable Property that triggers notifications when the value changes.
-   * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+   * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
    */
   public static PropertyIO<T, StateType>( parameterType: IOType<T, StateType> ): IOType {
     assert && assert( parameterType, 'PropertyIO needs parameterType' );

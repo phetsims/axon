@@ -126,7 +126,7 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
   }
 
   /**
-   * IO Type for Emitter.
+   * PhET-iO Type for Emitter.
    *
    * Providing validators to instrumented Emitters:
    * Instrumented Emitters should have their `validators` for each argument passed via EmitterIO (the phetioType).

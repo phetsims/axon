@@ -90,7 +90,7 @@ export type Validator<T = unknown> = {
   // isValidValue: function( value ) { return Number.isInteger( value ) && value >= 0; }
   isValidValue?: ( v: T ) => boolean;
 
-  // A IOType used to specify the public typing for PhET-iO. Each IOType must have a
+  // An IOType used to specify the public typing for PhET-iO. Each IOType must have a
   // `validator` key specified that can be used for validation. See IOType for an example.
   phetioType?: IOType;
 

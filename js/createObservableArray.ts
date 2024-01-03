@@ -477,7 +477,7 @@ const cache = new IOTypeCache();
 
 
 /**
- * ObservableArrayIO is the IO Type for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
+ * ObservableArrayIO is the IOType for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
  * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
 const ObservableArrayIO = ( parameterType: IOType ): IOType => {
