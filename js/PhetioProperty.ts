@@ -1,4 +1,5 @@
 // Copyright 2023, University of Colorado Boulder
+// @author Michael Kauzmann (PhET Interactive Simulations)
 
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import TProperty from './TProperty.js';

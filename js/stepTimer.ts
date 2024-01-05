@@ -1,4 +1,5 @@
 // Copyright 2020-2022, University of Colorado Boulder
+// @author Sam Reid (PhET Interactive Simulations)
 
 import axon from './axon.js';
 import Timer from './Timer.js';

@@ -1,4 +1,5 @@
 // Copyright 2023, University of Colorado Boulder
+// @author Michael Kauzmann (PhET Interactive Simulations)
 
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import Range from '../../dot/js/Range.js';
