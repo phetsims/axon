@@ -32,8 +32,8 @@ type SelfOptions = {
 
   // Typically, a DerivedProperty should only get values for its immediate dependencies, otherwise it could end up in a
   // situation where some value central to the derivation has changed, but the derived property doesn't update because
-  // it isn't listening. These checks can be enabled via a package.json flag simFeatures.accessNonDependencies or
-  // the query parameter ?accessNonDependencies=true. The query parameter takes precedence.
+  // it isn't listening. These checks can be enabled via a package.json flag simFeatures.strictAxonDependencies or
+  // the query parameter ?strictAxonDependencies=true. The query parameter takes precedence.
   // See https://github.com/phetsims/axon/issues/441
   strictAxonDependencies?: boolean;
 };
