@@ -77,7 +77,13 @@ export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
 
-const strictAxonDependencies = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.strictAxonDependencies;
+// When changing the listener order via ?listenerOrder, we were running into strictAxonDependencies failures that
+// did not otherwise occur. Because we aren't interested in these corner cases, and because they are difficult to
+// understand and debug, we chose to turn off strictAxonDependencies if listener order is changed.
+// See https://github.com/phetsims/faradays-electromagnetic-lab/issues/57#issuecomment-1909089735
+const strictAxonDependencies = _.hasIn( window, 'phet.chipper.queryParameters' ) &&
+                               phet.chipper.queryParameters.strictAxonDependencies &&
+                               phet.chipper.queryParameters.listenerOrder === 'default';
 export const derivationStack: Array<IntentionalAny> = [];
 
 /**
