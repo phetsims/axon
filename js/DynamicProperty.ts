@@ -157,6 +157,10 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
   private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ) => void;
   private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
+  // We store the last propertyProperty's value as a workaround because Property is currently firing re-entrant Property
+  // changes in the incorrect order, see https://github.com/phetsims/axon/issues/447
+  private lastPropertyPropertyValue: OuterValueType | null = null;
+
   /**
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
    * @param [providedOptions] - options
@@ -243,11 +247,14 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
    *                                              undefined.
    */
   private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ): void {
-    if ( oldPropertyValue ) {
-      this.derive( oldPropertyValue ).unlink( this.propertyPropertyListener );
+    if ( this.lastPropertyPropertyValue ) {
+      this.derive( this.lastPropertyPropertyValue ).unlink( this.propertyPropertyListener );
+      this.lastPropertyPropertyValue = null;
     }
+
     if ( newPropertyValue ) {
       this.derive( newPropertyValue ).link( this.propertyPropertyListener );
+      this.lastPropertyPropertyValue = newPropertyValue;
     }
     else {
       // Switch to null when our Property's value is null.
@@ -282,8 +289,9 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
   public override dispose(): void {
     this.valuePropertyProperty.unlink( this.propertyListener );
 
-    if ( this.valuePropertyProperty.value !== null ) {
-      this.derive( this.valuePropertyProperty.value ).unlink( this.propertyPropertyListener );
+    if ( this.lastPropertyPropertyValue ) {
+      this.derive( this.lastPropertyPropertyValue ).unlink( this.propertyPropertyListener );
+      this.lastPropertyPropertyValue = null;
     }
 
     super.dispose();
