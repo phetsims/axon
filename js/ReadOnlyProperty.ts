@@ -28,7 +28,7 @@ import axon from './axon.js';
 import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
 import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
-import { ReentrantNotificationStrategy } from './TinyEmitter.js';
+import { TinyEmitterOptions } from './TinyEmitter.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -75,8 +75,7 @@ type SelfOptions = {
   // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
   // from b->c, that reentrant value change will queue its listeners for after all listeners have fired for a->b. For
   // specifics see documentation in TinyEmitter.
-  reentrantNotificationStrategy?: ReentrantNotificationStrategy;
-};
+} & Pick<TinyEmitterOptions, 'reentrantNotificationStrategy'>;
 
 // Options that can be passed in
 export type PropertyOptions<T> = SelfOptions & StrictOmit<Validator<T> & PhetioObjectOptions, 'phetioType'>;

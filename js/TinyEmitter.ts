@@ -29,6 +29,13 @@ if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
   console.log( 'listenerOrder random seed: ' + random.seed );
 }
 
+// While TinyEmitter doesn't use this in an optionize call, it is nice to be able to reuse the types of these options.
+export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
+  onBeforeNotify?: TEmitterListener<T>;
+  hasListenerOrderDependencies?: boolean;
+  reentrantNotificationStrategy?: ReentrantNotificationStrategy;
+};
+
 export type ReentrantNotificationStrategy = 'queue' | 'stack';
 
 type EmitContext<T extends IntentionalAny[]> = {
@@ -77,8 +84,9 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   private emitContexts: EmitContext<T>[];
 
   // Null on parameters is a no-op
-  public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null,
-                      reentrantNotificationStrategy?: ReentrantNotificationStrategy | null ) {
+  public constructor( onBeforeNotify?: TinyEmitterOptions<T>['onBeforeNotify'] | null,
+                      hasListenerOrderDependencies?: TinyEmitterOptions<T>['hasListenerOrderDependencies'] | null,
+                      reentrantNotificationStrategy?: TinyEmitterOptions<T>['reentrantNotificationStrategy'] | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;

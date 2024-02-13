@@ -11,7 +11,7 @@
  */
 
 import axon from './axon.js';
-import TinyEmitter, { ReentrantNotificationStrategy } from './TinyEmitter.js';
+import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 
@@ -21,6 +21,9 @@ export type ComparableObject = {
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
+// Just a shorter name
+type OptionsAlias<T> = TinyEmitterOptions<TinyPropertyEmitterParameters<T>>;
+
 export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterParameters<T>> implements TProperty<T> {
 
   public _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
@@ -29,8 +32,9 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
   protected useDeepEquality?: boolean;
 
-  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> | null,
-                      hasListenerOrderDependencies?: boolean | null, reentrantNotificationStrategy?: ReentrantNotificationStrategy | null ) {
+  public constructor( value: T, onBeforeNotify?: OptionsAlias<T>['onBeforeNotify'] | null,
+                      hasListenerOrderDependencies?: OptionsAlias<T>['hasListenerOrderDependencies'] | null,
+                      reentrantNotificationStrategy?: OptionsAlias<T>['reentrantNotificationStrategy'] | null ) {
 
     // Defaults to "queue" for Properties so that we notify all listeners for a value change
     // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
