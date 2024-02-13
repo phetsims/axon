@@ -97,7 +97,7 @@ QUnit.test( 'TinyEmitter Basics', assert => {
 QUnit.test( 'TinyEmitter Tricks', assert => {
   const entries: Array<{ listener: string; arg: string }> = [];
 
-  const emitter: TEmitter<[ arg: string ]> = new TinyEmitter();
+  const emitter: TEmitter<[ string ]> = new TinyEmitter();
 
   const a = ( arg: string ) => {
     entries.push( { listener: 'a', arg: arg } );
