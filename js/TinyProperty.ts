@@ -11,7 +11,7 @@
  */
 
 import axon from './axon.js';
-import TinyEmitter from './TinyEmitter.js';
+import TinyEmitter, { ReentrantNotificationStrategy } from './TinyEmitter.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 
@@ -29,8 +29,14 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
   protected useDeepEquality?: boolean;
 
-  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> | null, hasListenerOrderDependencies?: boolean ) {
-    super( onBeforeNotify, hasListenerOrderDependencies );
+  public constructor( value: T, onBeforeNotify?: TinyPropertyOnBeforeNotify<T> | null,
+                      hasListenerOrderDependencies?: boolean | null, reentrantNotificationStrategy?: ReentrantNotificationStrategy | null ) {
+
+    // Defaults to "queue" for Properties so that we notify all listeners for a value change
+    // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
+    // from b->c, that reentrant value change will queue its listeners for after all listeners have fired for a->b. For
+    // specifics see documentation in TinyEmitter.
+    super( onBeforeNotify, hasListenerOrderDependencies, reentrantNotificationStrategy || 'queue' );
 
     this._value = value;
   }

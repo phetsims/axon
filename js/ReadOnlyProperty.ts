@@ -28,6 +28,7 @@ import axon from './axon.js';
 import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
 import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import { ReentrantNotificationStrategy } from './TinyEmitter.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -68,6 +69,13 @@ type SelfOptions = {
 
   // If specified as true, this flag will ensure that listener order never changes (like via ?listenerOrder=random)
   hasListenerOrderDependencies?: boolean;
+
+  // Changes the behavior of how listeners are notified in reentrant cases (where linked listeners cause this Property
+  // to change its value again). Defaults to "queue" for Properties so that we notify all listeners for a value change
+  // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
+  // from b->c, that reentrant value change will queue its listeners for after all listeners have fired for a->b. For
+  // specifics see documentation in TinyEmitter.
+  reentrantNotificationStrategy?: ReentrantNotificationStrategy;
 };
 
 // Options that can be passed in
@@ -133,6 +141,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       units: null,
       reentrant: false,
       hasListenerOrderDependencies: false,
+      reentrantNotificationStrategy: 'queue',
 
       // phet-io
       phetioOuterType: ReadOnlyProperty.PropertyIO,
@@ -188,7 +197,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     this.validValues = options.validValues;
 
-    this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies );
+    this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies, options.reentrantNotificationStrategy );
 
     // Since we are already in the heavyweight Property, we always assign TinyProperty.useDeepEquality for clarity.
     // @ts-expect-error

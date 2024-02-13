@@ -50,3 +50,57 @@ QUnit.test( 'TinyProperty onBeforeNotify', assert => {
   x.hasFunProperty.value = false;
   x.hasFunProperty.value = true;
 } );
+
+QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:queue)', assert => {
+  let count = 2; // starts as a value of 1, so 2 is the first value we change to.
+
+  // queue is default
+  const myProperty = new TinyProperty<number>( 1 );
+
+  myProperty.lazyLink( value => {
+    if ( value < 10 ) {
+      myProperty.value = value + 1;
+    }
+  } );
+
+  // notify-queue:
+  // 1->2
+  // 2->3
+  // 3->4
+  // ...
+  // 8->9
+
+  myProperty.lazyLink( ( value, oldValue ) => {
+    assert.ok( value === oldValue + 1, `increment each time: ${oldValue} -> ${value}` );
+    assert.ok( value === count++, `increment by most recent changed: ${count - 2}->${count - 1}, received: ${oldValue} -> ${value}` );
+  } );
+  myProperty.value = count;
+} );
+
+QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:stack)', assert => {
+  let count = 2; // starts as a value of 1, so 2 is the first value we change to.
+  const finalCount = 10;
+  let lastListenerCount = 10;
+
+  const myProperty = new TinyProperty<number>( count - 1, null, null, 'stack' );
+
+  myProperty.lazyLink( value => {
+    if ( value < finalCount ) {
+      myProperty.value = value + 1;
+    }
+  } );
+
+  // stack-notify:
+  // 8->9
+  // 7->8
+  // 6->7
+  // ...
+  // 1->2
+  myProperty.lazyLink( ( value, oldValue ) => {
+    count++;
+    assert.ok( value === oldValue + 1, `increment each time: ${oldValue} -> ${value}` );
+    assert.ok( value === lastListenerCount--, `increment in order expected: ${lastListenerCount}->${lastListenerCount + 1}, received: ${oldValue} -> ${value}` );
+    assert.ok( oldValue === lastListenerCount, `new count is ${lastListenerCount}: the oldValue (most recent first in stack first` );
+  } );
+  myProperty.value = count;
+} );

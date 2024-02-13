@@ -17,6 +17,8 @@ import dotRandom from '../../dot/js/dotRandom.js';
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
 const listenerLimit = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerLimit;
 
+const EMIT_CONTEXT_MAX_LENGTH = 1000;
+
 let random: Random | null = null;
 if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
 
@@ -27,10 +29,12 @@ if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
   console.log( 'listenerOrder random seed: ' + random.seed );
 }
 
+export type ReentrantNotificationStrategy = 'queue' | 'stack';
 
 type EmitContext<T extends IntentionalAny[]> = {
   index: number;
   listenerArray?: TEmitterListener<T>[];
+  args: T;
 };
 
 // Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
@@ -53,6 +57,19 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // NOTE: This is set ONLY if it's actually true
   private readonly hasListenerOrderDependencies?: true;
 
+  /**
+   * How best to handle reentrant calls to emit()? There are two possibilities:
+   * Stack: Each new reentrant call to emit (from a listener), takes precedent. This behaves like a "depth first"
+   *        algorithm because it will not finish calling all listeners from the original call until nested emit() calls
+   *        notify fully. See notifyAsStack().
+   * Queue: Each new reentrant call to emit queues those listeners to run once the current notifications are done
+   *        firing. Here a recursive (reentrant) emit is basically a noop, because the original call will continue
+   *        looping through listeners from each new emit() call until there are no more. See notifyAsQueue().
+   *
+   * TODO: Instead of a default allocation, should we keep it optional and place the default inline in Emit? TODO: https://github.com/phetsims/axon/issues/447
+   */
+  private readonly reentrantNotificationStrategy: ReentrantNotificationStrategy = 'stack';
+
   // The listeners that will be called on emit
   private listeners: Set<TEmitterListener<T>>;
 
@@ -60,7 +77,8 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   private emitContexts: EmitContext<T>[];
 
   // Null on parameters is a no-op
-  public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null ) {
+  public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null,
+                      reentrantNotificationStrategy?: ReentrantNotificationStrategy | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;
@@ -68,6 +86,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     if ( hasListenerOrderDependencies ) {
       this.hasListenerOrderDependencies = hasListenerOrderDependencies;
+    }
+
+    if ( reentrantNotificationStrategy ) {
+      this.reentrantNotificationStrategy = reentrantNotificationStrategy;
     }
 
     // Listener order is preserved in Set
@@ -113,31 +135,124 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
+      // TODO: Pool emitContexts, figure out how to handle listenerArray already created. Same with args? https://github.com/phetsims/axon/issues/447
       const emitContext: EmitContext<T> = {
-        index: 0
+        index: 0,
+
+        // TODO only needed for notify-queue, optimize? https://github.com/phetsims/axon/issues/447
+        // We may not be able to emit right away. If we are already emitting and this is a recursive call, then that
+        // first emit needs to finish notifying its listeners before we start our notifications.
+        args: args //.slice() as T // TODO: do we need to slice? https://github.com/phetsims/axon/issues/447
+
         // listenerArray: [] // {Array.<function>|undefined} assigned if a mutation is made during emit
       };
       this.emitContexts.push( emitContext );
 
-      for ( const listener of this.listeners ) {
-        listener( ...args );
-        emitContext.index++;
-
-        // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
-        // iterate over the guarded array
-        if ( emitContext.listenerArray ) {
-          break;
-        }
+      if ( this.reentrantNotificationStrategy === 'queue' ) {
+        this.notifyAsQueue();
       }
+      else if ( this.reentrantNotificationStrategy === 'stack' ) {
+        this.notifyAsStack( emitContext, args );
+      }
+      else {
+        assert && assert( false, `Unknown reentrantNotificationStrategy: ${this.reentrantNotificationStrategy}` );
+      }
+    }
+  }
 
-      // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
-      // listeners in order from where we left off.
+  /**
+   * Notify listeners from the emit call with "stack-like" behavior. We also sometimes call this "depth-first"
+   * notification. This algorithm will prioritize the most recent emit call's listeners, such that reentrant emits
+   * will cause a full recursive call to emit() to complete before continuing to notify the rest of the listeners from
+   * the original call.
+   *
+   * Note this was the only method of notifying listeners on emit before 2/2024.
+   */
+  private notifyAsStack( emitContext: EmitContext<T>, args: T ): void {
+
+    for ( const listener of this.listeners ) {
+      listener( ...args );
+      emitContext.index++;
+
+      // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
+      // iterate over the guarded array
       if ( emitContext.listenerArray ) {
-        for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
-          emitContext.listenerArray[ i ]( ...args );
-        }
+        break;
       }
-      this.emitContexts.pop();
+    }
+
+    // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
+    // listeners in order from where we left off.
+    // TODO: factor this out with same loop in notifyAsQueue? https://github.com/phetsims/axon/issues/447
+    if ( emitContext.listenerArray ) {
+      for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
+        emitContext.listenerArray[ i ]( ...args );
+      }
+    }
+    this.emitContexts.pop();
+  }
+
+  /**
+   * Notify listeners from the emit call with "queue-like" behavior (FIFO). We also sometimes call this "breadth-first"
+   * notification. In this function, listeners for an earlier emit call will be called before any newer emit call that
+   * may occur inside of listeners (in a reentrant case).
+   *
+   * This is a better strategy in cases where  order may matter, for example:
+   * const emitter = new TinyEmitter<[ number ]>(  null, null, 'queue' );
+   * emitter.addListener( number => {
+   *   if ( number < 10 ) {
+   *     emitter.emit( number + 1 );
+   *     console.log( number );
+   *   }
+   * } );
+   * emitter.emit( 1 );
+   * -> 1,2,3,4,5,6,7,8,9
+   *
+   * Whereas `notifyAsQueue()` would yield the oppose order: 9->1
+   *
+   * Note, this algorithm does involve queueing a reentrant emit() calls' listeners for later notification. So in
+   * effect, reentrant emit() calls are no-ops. This could potentially lead some awkward or confusing cases. As a
+   * result it is recommended to use this predominantly with Properties, in which their stateful value makes more
+   * sense to notify changes on in order (preserving the correct oldValue through all notifications).
+   */
+  private notifyAsQueue(): void {
+
+    // This handles all reentrancy here (with a while loop), instead of doing so with recursion.
+    if ( this.emitContexts.length === 1 ) {
+      while ( this.emitContexts.length > 0 ) {
+
+        // Don't remove it from the list here. We need to be able to guardListeners.
+        const emitContext = this.emitContexts[ 0 ];
+
+        // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
+        const listeners = emitContext.listenerArray || this.listeners;
+        const startedWithListenerArray = !!emitContext.listenerArray;
+
+        for ( const listener of listeners ) {
+          listener( ...emitContext.args );
+          emitContext.index++;
+
+          // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
+          // iterate over the guarded array
+          if ( !startedWithListenerArray && emitContext.listenerArray ) {
+            break;
+          }
+        }
+
+        // If the listeners were guarded during emit, we bailed out on the for...of and continue iterating over the original
+        // listeners in order from where we left off.
+        if ( !startedWithListenerArray && emitContext.listenerArray ) {
+          for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
+            emitContext.listenerArray[ i ]( ...emitContext.args );
+          }
+        }
+
+        this.emitContexts.shift();
+      }
+    }
+    else {
+      assert && assert( this.emitContexts.length <= EMIT_CONTEXT_MAX_LENGTH,
+        `emitting reentrant depth of ${EMIT_CONTEXT_MAX_LENGTH} seems like a infinite loop to me!` );
     }
   }
 
@@ -201,7 +316,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
       // Once we meet a level that was already guarded, we can stop, since all previous levels were already guarded
-      if ( this.emitContexts[ i ].listenerArray ) {
+      // TODO: wouldn't we need the below guard, since guarding the listeners may want to overwrite the new listeners
+      //   for future contexts? I don't think so, but I can't help but feel like the listenerArray needs updating if a
+      //   previous listener changed the listener. JO likely we should just delete this one, https://github.com/phetsims/axon/issues/447
+      if ( /*i === 0 &&*/ this.emitContexts[ i ].listenerArray ) {
         break;
       }
       else {
