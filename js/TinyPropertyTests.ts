@@ -77,6 +77,16 @@ QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:
   myProperty.value = count;
 } );
 
+/**
+ * TODO: write a test that talks about how happy we are that the lazy link here doesn't get notified for the above value
+ *       change, and though that isn't technically "queue-like", we are really really happy about this. https://github.com/phetsims/axon/issues/447
+ *   myProperty.lazyLink( value => {
+ *     if ( value < finalCount ) {
+ *       myProperty.value = value + 1;
+ *       myProperty.lazyLink(()=>{'something'});
+ *     }
+ *   } );
+ */
 QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:stack)', assert => {
   let count = 2; // starts as a value of 1, so 2 is the first value we change to.
   const finalCount = 10;
