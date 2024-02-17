@@ -1,4 +1,4 @@
-// Copyright 2021-2022, University of Colorado Boulder
+// Copyright 2021-2024, University of Colorado Boulder
 
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
