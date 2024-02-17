@@ -33,7 +33,7 @@ type TReadOnlyProperty<T> = {
   toString(): string;
 };
 
-export function isTReadOnlyProperty( something: IntentionalAny ): something is TReadOnlyProperty<unknown> {
+export function isTReadOnlyProperty<T = unknown>( something: IntentionalAny ): something is TReadOnlyProperty<T> {
   return something instanceof ReadOnlyProperty || something instanceof TinyProperty;
 }
 
