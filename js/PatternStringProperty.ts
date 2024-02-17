@@ -53,9 +53,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import ReadOnlyProperty from './ReadOnlyProperty.js';
-import TinyProperty from './TinyProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 import Utils from '../../dot/js/Utils.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
@@ -179,7 +177,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
     const keys: ( keyof Values )[] = Object.keys( values );
     keys.forEach( key => {
       const value = values[ key ] as IntentionalAny; // This is the declared type anyway, TypeScript is needing the cast
-      if ( value instanceof ReadOnlyProperty || value instanceof TinyProperty ) {
+      if ( isTReadOnlyProperty( value ) ) {
         dependencies.push( value );
       }
 

@@ -3,8 +3,8 @@
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TinyProperty from './TinyProperty.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 /**
  * A simple Property/TinyProperty like interface
@@ -20,7 +20,7 @@ type TProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {
   get value(): T;
 };
 
-export function isTProperty( something: IntentionalAny ): something is TProperty<unknown> {
+export function isTProperty<T = unknown>( something: IntentionalAny ): something is TProperty<T> {
   return ( something instanceof ReadOnlyProperty || something instanceof TinyProperty ) && something.isSettable();
 }
 
