@@ -57,9 +57,10 @@ QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:
   // queue is default
   const myProperty = new TinyProperty<number>( 1 );
 
-  myProperty.lazyLink( value => {
+  myProperty.lazyLink( ( value, oldValue ) => {
     if ( value < 10 ) {
       myProperty.value = value + 1;
+      console.log( 'queue:', oldValue, '->', value );
     }
   } );
 
@@ -94,9 +95,10 @@ QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:
 
   const myProperty = new TinyProperty<number>( count - 1, null, null, 'stack' );
 
-  myProperty.lazyLink( value => {
+  myProperty.lazyLink( ( value, oldValue ) => {
     if ( value < finalCount ) {
       myProperty.value = value + 1;
+      console.log( 'stack:', oldValue, '->', value );
     }
   } );
 
