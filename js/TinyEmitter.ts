@@ -48,7 +48,13 @@ export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
   reentrantNotificationStrategy?: ReentrantNotificationStrategy;
 };
 
-class EmitContext<T extends IntentionalAny[] = IntentionalAny[]> implements TPoolable {
+type ParameterList = IntentionalAny[];
+
+/**
+ * Utility class for managing the context of an emit call. This is used to manage the state of the emit call, and
+ * especially to handle reentrant emit calls (through the stack/queue notification strategies)
+ */
+class EmitContext<T extends ParameterList = ParameterList> implements TPoolable {
   // Gets incremented with notifications
   public index!: number;
 
@@ -78,15 +84,28 @@ class EmitContext<T extends IntentionalAny[] = IntentionalAny[]> implements TPoo
     // the correct type.
     EmitContext.pool.freeToPool( this as unknown as EmitContext );
 
+    // NOTE: If we have fewer concerns about memory in the future, we could potentially improve performance by
+    // removing the clearing out of memory here. We don't seem to create many EmitContexts, HOWEVER if we have ONE
+    // "more re-entrant" case on sim startup that references a BIG BIG object, it could theoretically keep that
+    // object alive forever.
+
+    // We want to null things out to prevent memory leaks. Don't tell TypeScript!
+    // (It will have the correct types after the initialization, so this works well with our pooling pattern).
+    this.args = null as unknown as T;
+
+    // Clear out the listeners array, so we don't leak memory while we are in the pool. If we have less concerns
     this.listenerArray.length = 0;
   }
 
   public static readonly pool = new Pool( EmitContext, {
+    //REVIEW: Hmm, sims don't seem to be creating more than like 15. Should the maxSize be lower?
+    //REVIEW: It could reduce performance, however it could also prevent things showing up in memory testing that
+    //REVIEW: lead the investigator astray.
     maxSize: 1000,
     initialize: EmitContext.prototype.initialize
   } );
 
-  public static create<T extends IntentionalAny[]>( index: number, args: T ): EmitContext<T> {
+  public static create<T extends ParameterList>( index: number, args: T ): EmitContext<T> {
     // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
     // the correct type.
     return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
@@ -214,6 +233,8 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     for ( const listener of this.listeners ) {
       listener( ...args );
+
+      //REVIEW: Why increment here? We don't seem to be reading it in the stack-based form
       emitContext.index++;
 
       // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
@@ -226,6 +247,8 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
     // listeners in order from where we left off.
     // TODO: factor this out with same loop in notifyAsQueue? https://github.com/phetsims/axon/issues/447
+    //REVIEW: I'm not too concerned about this level of duplication in a performance-sensitive context.
+    //REVIEW: avoiding function calls (especially when usually unnecessary) sounds like a win.
     if ( emitContext.hasListenerArray ) {
       for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
         emitContext.listenerArray[ i ]( ...args );
@@ -268,6 +291,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
         // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
         const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
+
+        //REVIEW: I see that we're recording whether we started with a listener array, but I'm considering:
+        //REVIEW: What if we have a simple (one) for(i) loop that iterates over the listeners, BUT if
+        //REVIEW: emitContext.hasListenerArray, then we use listenerArray instead of this.listeners?
+        //REVIEW: Is this potentially worse performance due to the extra lookups?
+        //REVIEW: Maybe not, just... think about whether it is good?
         const startedWithListenerArray = emitContext.hasListenerArray;
 
         for ( const listener of listeners ) {
@@ -283,6 +312,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
         // If the listeners were guarded during emit, we bailed out on the for...of and continue iterating over the original
         // listeners in order from where we left off.
+        //REVIEW: I'm curious about variations where we don't need to check startedWithListenerArray.
+        //REVIEW: Our index is already correct, I believe we can actually skip/remove this guard and still have things
+        //REVIEW: be correct (currently), but it would probably increase the maintenance burden.
+        //REVIEW: (if emitContext.index < emitContext.listenerArray.length, it means (a) we have a listenerArray
+        //REVIEW: (otherwise it would be empty), and (b) we haven't finished notifying all listeners in the array)
+        //REVIEW: Thoughts?
         if ( !startedWithListenerArray && emitContext.hasListenerArray ) {
           for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
             emitContext.listenerArray[ i ]( ...emitContext.args );
@@ -363,13 +398,11 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       if ( emitContext.hasListenerArray ) {
         break;
       }
-      else {
 
-        // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
-        // list.
-        emitContext.listenerArray.push( ...this.listeners );
-        emitContext.hasListenerArray = true;
-      }
+      // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
+      // list.
+      emitContext.listenerArray.push( ...this.listeners );
+      emitContext.hasListenerArray = true;
     }
   }
 
