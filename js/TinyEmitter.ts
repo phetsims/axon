@@ -12,6 +12,7 @@ import axon from './axon.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import Random from '../../dot/js/Random.js';
 import dotRandom from '../../dot/js/dotRandom.js';
+import Pool, { TPoolable } from '../../phet-core/js/Pool.js';
 
 // constants
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
@@ -47,11 +48,50 @@ export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
   reentrantNotificationStrategy?: ReentrantNotificationStrategy;
 };
 
-type EmitContext<T extends IntentionalAny[]> = {
-  index: number;
-  listenerArray?: TEmitterListener<T>[];
-  args: T;
-};
+class EmitContext<T extends IntentionalAny[] = IntentionalAny[]> implements TPoolable {
+  // Gets incremented with notifications
+  public index!: number;
+
+  // Arguments that the emit was called with
+  public args!: T;
+
+  // Whether we should act like there is a listenerArray (has it been copied?)
+  public hasListenerArray = false;
+
+  // Only use this if hasListenerArray is true. NOTE: for performance, we're not using getters/etc.
+  public listenerArray: TEmitterListener<T>[] = [];
+
+  public constructor( index: number, args: T ) {
+    this.initialize( index, args );
+  }
+
+  public initialize( index: number, args: T ): this {
+    this.index = index;
+    this.args = args;
+    this.hasListenerArray = false;
+
+    return this;
+  }
+
+  public freeToPool(): void {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    EmitContext.pool.freeToPool( this as unknown as EmitContext );
+
+    this.listenerArray.length = 0;
+  }
+
+  public static readonly pool = new Pool( EmitContext, {
+    maxSize: 1000,
+    initialize: EmitContext.prototype.initialize
+  } );
+
+  public static create<T extends IntentionalAny[]>( index: number, args: T ): EmitContext<T> {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
+  }
+}
 
 // Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
 let maxListenerCount = 0;
@@ -80,7 +120,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   private listeners: Set<TEmitterListener<T>>;
 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
-  private emitContexts: EmitContext<T>[];
+  private emitContexts: EmitContext<T>[] = [];
 
   // Null on parameters is a no-op
   public constructor( onBeforeNotify?: TinyEmitterOptions<T>['onBeforeNotify'] | null,
@@ -101,8 +141,6 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // Listener order is preserved in Set
     this.listeners = new Set();
-
-    this.emitContexts = [];
 
     // for production memory concerns; no need to keep this around.
     if ( assert ) {
@@ -142,17 +180,13 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
-      // TODO: Pool emitContexts, figure out how to handle listenerArray already created. Same with args? https://github.com/phetsims/axon/issues/447
-      const emitContext: EmitContext<T> = {
-        index: 0,
-
-        // TODO only needed for notify-queue, optimize? https://github.com/phetsims/axon/issues/447
+      // no slice needed, we're not modifying the array
+      const emitContext = EmitContext.create(
+        0,
         // We may not be able to emit right away. If we are already emitting and this is a recursive call, then that
         // first emit needs to finish notifying its listeners before we start our notifications.
-        args: args //.slice() as T // TODO: do we need to slice? https://github.com/phetsims/axon/issues/447
-
-        // listenerArray: [] // {Array.<function>|undefined} assigned if a mutation is made during emit
-      };
+        args // no slice needed, we're not modifying the array
+      );
       this.emitContexts.push( emitContext );
 
       if ( this.reentrantNotificationStrategy === 'queue' ) {
@@ -184,7 +218,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
       // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
       // iterate over the guarded array
-      if ( emitContext.listenerArray ) {
+      if ( emitContext.hasListenerArray ) {
         break;
       }
     }
@@ -192,12 +226,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
     // listeners in order from where we left off.
     // TODO: factor this out with same loop in notifyAsQueue? https://github.com/phetsims/axon/issues/447
-    if ( emitContext.listenerArray ) {
+    if ( emitContext.hasListenerArray ) {
       for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
         emitContext.listenerArray[ i ]( ...args );
       }
     }
-    this.emitContexts.pop();
+    this.emitContexts.pop()?.freeToPool();
   }
 
   /**
@@ -227,14 +261,14 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // This handles all reentrancy here (with a while loop), instead of doing so with recursion.
     if ( this.emitContexts.length === 1 ) {
-      while ( this.emitContexts.length > 0 ) {
+      while ( this.emitContexts.length ) {
 
         // Don't remove it from the list here. We need to be able to guardListeners.
         const emitContext = this.emitContexts[ 0 ];
 
         // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
-        const listeners = emitContext.listenerArray || this.listeners;
-        const startedWithListenerArray = !!emitContext.listenerArray;
+        const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
+        const startedWithListenerArray = emitContext.hasListenerArray;
 
         for ( const listener of listeners ) {
           listener( ...emitContext.args );
@@ -242,20 +276,20 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
           // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
           // iterate over the guarded array
-          if ( !startedWithListenerArray && emitContext.listenerArray ) {
+          if ( !startedWithListenerArray && emitContext.hasListenerArray ) {
             break;
           }
         }
 
         // If the listeners were guarded during emit, we bailed out on the for...of and continue iterating over the original
         // listeners in order from where we left off.
-        if ( !startedWithListenerArray && emitContext.listenerArray ) {
+        if ( !startedWithListenerArray && emitContext.hasListenerArray ) {
           for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
             emitContext.listenerArray[ i ]( ...emitContext.args );
           }
         }
 
-        this.emitContexts.shift();
+        this.emitContexts.shift()?.freeToPool();
       }
     }
     else {
@@ -323,15 +357,18 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
+      const emitContext = this.emitContexts[ i ];
+
       // Once we meet a level that was already guarded, we can stop, since all previous levels were already guarded
-      if ( this.emitContexts[ i ].listenerArray ) {
+      if ( emitContext.hasListenerArray ) {
         break;
       }
       else {
 
         // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
         // list.
-        this.emitContexts[ i ].listenerArray = Array.from( this.listeners );
+        emitContext.listenerArray.push( ...this.listeners );
+        emitContext.hasListenerArray = true;
       }
     }
   }
