@@ -23,14 +23,14 @@ import TProperty from './TProperty.js';
 import TReadOnlyProperty, { isTReadOnlyProperty, PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {
-  updateLinkedElementForProperty: <ValueType>( tandemName: string, oldProperty?: TProperty<ValueType> | null, newProperty?: TProperty<ValueType> | null ) => void;
+  updateLinkedElementForProperty: <ValueType>( tandemName: string, oldProperty?: TReadOnlyProperty<ValueType> | null, newProperty?: TReadOnlyProperty<ValueType> | null ) => void;
   isPhetioInstrumented: () => boolean;
 };
 
 export default class TinyForwardingProperty<ValueType> extends TinyProperty<ValueType> {
 
   // Set in setTargetProperty().
-  private targetProperty?: TProperty<ValueType> | null;
+  private targetProperty?: TReadOnlyProperty<ValueType> | null;
 
   // Set lazily in setTargetProperty()
   protected forwardingListener?: PropertyLazyLinkListener<ValueType>;
@@ -93,11 +93,11 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
-  public setTargetProperty<
-    NodeType extends NodeLike,
-    NodeParam extends ( NodeType | null )>( newTargetProperty: TProperty<ValueType> | null,
-                                            node: NodeParam = null as NodeParam,
-                                            tandemName: string | null = null ): NodeParam {
+  public setTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>(
+    newTargetProperty: TReadOnlyProperty<ValueType> | null,
+    node: NodeParam = null as NodeParam,
+    tandemName: string | null = null
+  ): NodeParam {
     assert && node && tandemName === null && this.targetPropertyInstrumented && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
@@ -173,7 +173,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   public override set( value: ValueType ): this {
     if ( this.targetProperty ) {
       assert && assert( this.targetProperty.isSettable(), 'targetProperty must be settable' );
-      this.targetProperty.set( value );
+      ( this.targetProperty as TProperty<ValueType> ).set( value );
     }
     else {
       super.set( value );
@@ -229,7 +229,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   /**
    * Get the target property, if any. Use sparingly! Internal use only.
    */
-  public getTargetProperty(): TProperty<ValueType> | null {
+  public getTargetProperty(): TReadOnlyProperty<ValueType> | null {
     return this.targetProperty || null;
   }
 
