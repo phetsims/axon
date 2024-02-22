@@ -235,6 +235,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       listener( ...args );
 
       //REVIEW: Why increment here? We don't seem to be reading it in the stack-based form
+      // MK: We read from it below in the for loop for hasListenerArray.
       emitContext.index++;
 
       // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
@@ -246,9 +247,6 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
     // listeners in order from where we left off.
-    // TODO: factor this out with same loop in notifyAsQueue? https://github.com/phetsims/axon/issues/447
-    //REVIEW: I'm not too concerned about this level of duplication in a performance-sensitive context.
-    //REVIEW: avoiding function calls (especially when usually unnecessary) sounds like a win.
     if ( emitContext.hasListenerArray ) {
       for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
         emitContext.listenerArray[ i ]( ...args );
@@ -292,33 +290,20 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
         // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
         const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
 
-        //REVIEW: I see that we're recording whether we started with a listener array, but I'm considering:
-        //REVIEW: What if we have a simple (one) for(i) loop that iterates over the listeners, BUT if
-        //REVIEW: emitContext.hasListenerArray, then we use listenerArray instead of this.listeners?
-        //REVIEW: Is this potentially worse performance due to the extra lookups?
-        //REVIEW: Maybe not, just... think about whether it is good?
-        const startedWithListenerArray = emitContext.hasListenerArray;
-
         for ( const listener of listeners ) {
           listener( ...emitContext.args );
           emitContext.index++;
 
           // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
           // iterate over the guarded array
-          if ( !startedWithListenerArray && emitContext.hasListenerArray ) {
+          if ( emitContext.hasListenerArray ) {
             break;
           }
         }
 
         // If the listeners were guarded during emit, we bailed out on the for...of and continue iterating over the original
         // listeners in order from where we left off.
-        //REVIEW: I'm curious about variations where we don't need to check startedWithListenerArray.
-        //REVIEW: Our index is already correct, I believe we can actually skip/remove this guard and still have things
-        //REVIEW: be correct (currently), but it would probably increase the maintenance burden.
-        //REVIEW: (if emitContext.index < emitContext.listenerArray.length, it means (a) we have a listenerArray
-        //REVIEW: (otherwise it would be empty), and (b) we haven't finished notifying all listeners in the array)
-        //REVIEW: Thoughts?
-        if ( !startedWithListenerArray && emitContext.hasListenerArray ) {
+        if ( emitContext.hasListenerArray ) {
           for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
             emitContext.listenerArray[ i ]( ...emitContext.args );
           }
