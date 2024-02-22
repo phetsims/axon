@@ -29,7 +29,7 @@ type NodeLike = {
 
 export default class TinyForwardingProperty<ValueType> extends TinyProperty<ValueType> {
 
-  // Set in setTargetProperty()
+  // Set in setTargetProperty().
   private targetProperty?: TProperty<ValueType> | null;
 
   // Set lazily in setTargetProperty()
@@ -66,7 +66,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
     if ( ( isTReadOnlyProperty( newValueOrTargetProperty ) ) ) {
 
       // As a new Property
-      this.setTargetProperty( node, tandemName, newValueOrTargetProperty as TProperty<ValueType> );
+      this.setTargetProperty( newValueOrTargetProperty as TProperty<ValueType>, node, tandemName );
     }
     else { // as a ValueType
       const oldValue = this.get();
@@ -93,7 +93,11 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
    * @param newTargetProperty - null to "unset" forwarding.
    * @returns the passed in Node, for chaining.
    */
-  public setTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>( node: NodeParam, tandemName: string | null, newTargetProperty: TProperty<ValueType> | null ): NodeParam {
+  public setTargetProperty<
+    NodeType extends NodeLike,
+    NodeParam extends ( NodeType | null )>( newTargetProperty: TProperty<ValueType> | null,
+                                            node: NodeParam,
+                                            tandemName: string | null ): NodeParam {
     assert && node && tandemName === null && this.targetPropertyInstrumented && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
@@ -209,7 +213,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
       assert && assert( this.ownedPhetioProperty instanceof Property, 'The owned property should be an AXON/Property' );
       assert && assert( this.ownedPhetioProperty instanceof ReadOnlyProperty && this.ownedPhetioProperty.isPhetioInstrumented(), 'The owned property should be PhET-iO instrumented' );
 
-      this.setTargetProperty( node, tandemName, this.ownedPhetioProperty );
+      this.setTargetProperty( this.ownedPhetioProperty, node, tandemName );
     }
     else if ( this.targetProperty && this.targetProperty instanceof ReadOnlyProperty && this.targetProperty.isPhetioInstrumented() ) {
 

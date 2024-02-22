@@ -21,14 +21,14 @@ QUnit.test( 'Basics', assert => {
   assert.ok( myForwardingProperty.get() === true, 'basic value for Property' );
 
   const myTinyProperty = new TinyProperty( 'tinyProperty' );
-  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+  myForwardingProperty.setTargetProperty( myTinyProperty, null, null );
   assert.ok( myForwardingProperty.get() === 'tinyProperty', 'should forward' );
   myTinyProperty.set( 'otherString' );
   assert.ok( myForwardingProperty.get() === 'otherString', 'should forward after set to TinyProperty' );
 
 
   const myProperty = new NumberProperty( 0 );
-  myForwardingProperty.setTargetProperty( null, null, myProperty );
+  myForwardingProperty.setTargetProperty( myProperty, null, null );
   assert.ok( myForwardingProperty.get() === 0, 'should forward after set to Property' );
 
 
@@ -37,7 +37,7 @@ QUnit.test( 'Basics', assert => {
   // This is the pattern for supporting read-only Properties as targetProperties. It has been decided that supporting
   // settability in TypeScript in TinyForwardingProperty is not worth the effort of parametrization. Instead, a type cast
   // and a runtime assertion handle this quite well.
-  myForwardingProperty.setTargetProperty( null, null, myDerivedProperty as unknown as TProperty<number> );
+  myForwardingProperty.setTargetProperty( myDerivedProperty as unknown as TProperty<number>, null, null );
   assert.ok( myForwardingProperty.get() === 5, 'should forward after set to DerivedProperty' );
 
   myProperty.value = 6;
@@ -54,13 +54,13 @@ QUnit.test( 'Forward to a TinyProperty', assert => {
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
-  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+  myForwardingProperty.setTargetProperty( myTinyProperty, null, null );
 
   assert.ok( myForwardingProperty.value === 'hi', 'forward to tinyProperty' );
 
   const otherTinyProperty = new TinyProperty( 'seven' );
 
-  myForwardingProperty.setTargetProperty( null, null, otherTinyProperty );
+  myForwardingProperty.setTargetProperty( otherTinyProperty, null, null );
 
   assert.ok( myForwardingProperty.value === 'seven', 'forward to other TinyProperty' );
 } );
@@ -71,13 +71,13 @@ QUnit.test( 'Forward to a non PhET-iO case', assert => {
 
   const myTinyProperty = new TinyProperty( 'hi' );
 
-  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+  myForwardingProperty.setTargetProperty( myTinyProperty, null, null );
 
   assert.ok( myForwardingProperty.value === 'hi', 'forward to tinyProperty' );
 
   const otherTinyProperty = new TinyProperty( 'seven' );
 
-  myForwardingProperty.setTargetProperty( null, null, otherTinyProperty );
+  myForwardingProperty.setTargetProperty( otherTinyProperty, null, null );
 
   assert.ok( myForwardingProperty.value === 'seven', 'forward to other TinyProperty' );
   assert.ok( myForwardingProperty[ 'targetProperty' ], 'have a targetProperty' );
@@ -96,7 +96,7 @@ QUnit.test( 'Set target but value does not change', assert => {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
   assert.ok( myTinyProperty.value === false, 'default value' );
 
-  myForwardingProperty.setTargetProperty( null, null, myTinyProperty );
+  myForwardingProperty.setTargetProperty( myTinyProperty, null, null );
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
   assert.ok( myForwardingProperty.value === false, 'forward to tinyProperty' );
