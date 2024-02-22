@@ -96,8 +96,8 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   public setTargetProperty<
     NodeType extends NodeLike,
     NodeParam extends ( NodeType | null )>( newTargetProperty: TProperty<ValueType> | null,
-                                            node: NodeParam,
-                                            tandemName: string | null ): NodeParam {
+                                            node: NodeParam = null as NodeParam,
+                                            tandemName: string | null = null ): NodeParam {
     assert && node && tandemName === null && this.targetPropertyInstrumented && assert( !node.isPhetioInstrumented(), 'tandemName must be provided for instrumented Nodes' );
 
     // no-op if we are already forwarding to that property OR if we still aren't forwarding
