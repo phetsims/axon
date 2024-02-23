@@ -199,13 +199,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
-      // no slice needed, we're not modifying the array
-      const emitContext = EmitContext.create(
-        0,
-        // We may not be able to emit right away. If we are already emitting and this is a recursive call, then that
-        // first emit needs to finish notifying its listeners before we start our notifications.
-        args // no slice needed, we're not modifying the array
-      );
+      // We may not be able to emit right away. If we are already emitting and this is a recursive call, then that
+      // first emit needs to finish notifying its listeners before we start our notifications (in queue mode), so store
+      // the args for later. No slice needed, we're not modifying the args array.
+      const emitContext = EmitContext.create( 0, args );
       this.emitContexts.push( emitContext );
 
       if ( this.reentrantNotificationStrategy === 'queue' ) {
