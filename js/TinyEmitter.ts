@@ -34,10 +34,37 @@ if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
  * How to handle the notification of listeners in reentrant emit() cases. There are two possibilities:
  * 'stack': Each new reentrant call to emit (from a listener), takes precedent. This behaves like a "depth first"
  *        algorithm because it will not finish calling all listeners from the original call until nested emit() calls
- *        notify fully. See notifyAsStack().
+ *        notify fully. Notify listeners from the emit call with "stack-like" behavior. We also sometimes call this
+ *        "depth-first" notification. This algorithm will prioritize the most recent emit call's listeners, such that
+ *        reentrant emits will cause a full recursive call to emit() to complete before continuing to notify the
+ *        rest of the listeners from the original call.
+ *        Note: This was the only method of notifying listeners on emit before 2/2024.
+ *
  * 'queue': Each new reentrant call to emit queues those listeners to run once the current notifications are done
  *        firing. Here a recursive (reentrant) emit is basically a noop, because the original call will continue
  *        looping through listeners from each new emit() call until there are no more. See notifyAsQueue().
+ *        Notify listeners from the emit call with "queue-like" behavior (FIFO). We also sometimes call this "breadth-first"
+ *        notification. In this function, listeners for an earlier emit call will be called before any newer emit call that
+ *        may occur inside of listeners (in a reentrant case).
+ *
+ *        This is a better strategy in cases where order may matter, for example:
+ *        const emitter = new TinyEmitter<[ number ]>(  null, null, 'queue' );
+ *        emitter.addListener( number => {
+ *          if ( number < 10 ) {
+ *            emitter.emit( number + 1 );
+ *            console.log( number );
+ *          }
+ *        } );
+ *        emitter.emit( 1 );
+ *        -> 1,2,3,4,5,6,7,8,9
+ *
+ *        Whereas stack-based notification would yield the oppose order: 9->1, since the most recently called emit
+ *        would be the very first one notified.
+ *
+ *        Note, this algorithm does involve queueing a reentrant emit() calls' listeners for later notification. So in
+ *        effect, reentrant emit() calls are no-ops. This could potentially lead some awkward or confusing cases. As a
+ *        result it is recommended to use this predominantly with Properties, in which their stateful value makes more
+ *        sense to notify changes on in order (preserving the correct oldValue through all notifications).
  */
 export type ReentrantNotificationStrategy = 'queue' | 'stack';
 
@@ -202,10 +229,30 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       this.emitContexts.push( emitContext );
 
       if ( this.reentrantNotificationStrategy === 'queue' ) {
-        this.notifyAsQueue();
+
+        // This handles all reentrancy here (with a while loop), instead of doing so with recursion. If not the first context, then no-op because a previous call will handle this call's listener notifications.
+        if ( this.emitContexts.length === 1 ) {
+          while ( this.emitContexts.length ) {
+
+            // Don't remove it from the list here. We need to be able to guardListeners.
+            const emitContext = this.emitContexts[ 0 ];
+
+            // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
+            const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
+
+            this.notifyLoop( emitContext, listeners );
+
+            this.emitContexts.shift()?.freeToPool();
+          }
+        }
+        else {
+          assert && assert( this.emitContexts.length <= EMIT_CONTEXT_MAX_LENGTH,
+            `emitting reentrant depth of ${EMIT_CONTEXT_MAX_LENGTH} seems like a infinite loop to me!` );
+        }
       }
       else if ( !this.reentrantNotificationStrategy || this.reentrantNotificationStrategy === 'stack' ) {
-        this.notifyAsStack( emitContext, args );
+        this.notifyLoop( emitContext, this.listeners );
+        this.emitContexts.pop()?.freeToPool();
       }
       else {
         assert && assert( false, `Unknown reentrantNotificationStrategy: ${this.reentrantNotificationStrategy}` );
@@ -214,17 +261,13 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   }
 
   /**
-   * Notify listeners from the emit call with "stack-like" behavior. We also sometimes call this "depth-first"
-   * notification. This algorithm will prioritize the most recent emit call's listeners, such that reentrant emits
-   * will cause a full recursive call to emit() to complete before continuing to notify the rest of the listeners from
-   * the original call.
-   *
-   * Note this was the only method of notifying listeners on emit before 2/2024.
+   * Execute the notification of listeners (from the provided context and list). This function supports guarding against
+   * if listener order changes during the notification process, see guardListeners.
    */
-  private notifyAsStack( emitContext: EmitContext<T>, args: T ): void {
-    assert && assert( emitContext === _.last( this.emitContexts ), 'provided emitContext should be the most recent one (stack push)' );
+  private notifyLoop( emitContext: EmitContext<T>, listeners: TEmitterListener<T>[] | Set<TEmitterListener<T>> ): void {
+    const args = emitContext.args;
 
-    for ( const listener of this.listeners ) {
+    for ( const listener of listeners ) {
       listener( ...args );
 
       //REVIEW: Why increment here? We don't seem to be reading it in the stack-based form
@@ -244,70 +287,6 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
         emitContext.listenerArray[ i ]( ...args );
       }
-    }
-    this.emitContexts.pop()?.freeToPool();
-  }
-
-  /**
-   * Notify listeners from the emit call with "queue-like" behavior (FIFO). We also sometimes call this "breadth-first"
-   * notification. In this function, listeners for an earlier emit call will be called before any newer emit call that
-   * may occur inside of listeners (in a reentrant case).
-   *
-   * This is a better strategy in cases where  order may matter, for example:
-   * const emitter = new TinyEmitter<[ number ]>(  null, null, 'queue' );
-   * emitter.addListener( number => {
-   *   if ( number < 10 ) {
-   *     emitter.emit( number + 1 );
-   *     console.log( number );
-   *   }
-   * } );
-   * emitter.emit( 1 );
-   * -> 1,2,3,4,5,6,7,8,9
-   *
-   * Whereas `notifyAsQueue()` would yield the oppose order: 9->1
-   *
-   * Note, this algorithm does involve queueing a reentrant emit() calls' listeners for later notification. So in
-   * effect, reentrant emit() calls are no-ops. This could potentially lead some awkward or confusing cases. As a
-   * result it is recommended to use this predominantly with Properties, in which their stateful value makes more
-   * sense to notify changes on in order (preserving the correct oldValue through all notifications).
-   */
-  private notifyAsQueue(): void {
-
-    // This handles all reentrancy here (with a while loop), instead of doing so with recursion.
-    if ( this.emitContexts.length === 1 ) {
-      while ( this.emitContexts.length ) {
-
-        // Don't remove it from the list here. We need to be able to guardListeners.
-        const emitContext = this.emitContexts[ 0 ];
-
-        // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
-        const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
-
-        for ( const listener of listeners ) {
-          listener( ...emitContext.args );
-          emitContext.index++;
-
-          // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
-          // iterate over the guarded array
-          if ( emitContext.hasListenerArray ) {
-            break;
-          }
-        }
-
-        // If the listeners were guarded during emit, we bailed out on the for...of and continue iterating over the original
-        // listeners in order from where we left off.
-        if ( emitContext.hasListenerArray ) {
-          for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
-            emitContext.listenerArray[ i ]( ...emitContext.args );
-          }
-        }
-
-        this.emitContexts.shift()?.freeToPool();
-      }
-    }
-    else {
-      assert && assert( this.emitContexts.length <= EMIT_CONTEXT_MAX_LENGTH,
-        `emitting reentrant depth of ${EMIT_CONTEXT_MAX_LENGTH} seems like a infinite loop to me!` );
     }
   }
 
