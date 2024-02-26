@@ -77,64 +77,6 @@ export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
 
 type ParameterList = IntentionalAny[];
 
-/**
- * Utility class for managing the context of an emit call. This is used to manage the state of the emit call, and
- * especially to handle reentrant emit calls (through the stack/queue notification strategies)
- */
-class EmitContext<T extends ParameterList = ParameterList> implements TPoolable {
-  // Gets incremented with notifications
-  public index!: number;
-
-  // Arguments that the emit was called with
-  public args!: T;
-
-  // Whether we should act like there is a listenerArray (has it been copied?)
-  public hasListenerArray = false;
-
-  // Only use this if hasListenerArray is true. NOTE: for performance, we're not using getters/etc.
-  public listenerArray: TEmitterListener<T>[] = [];
-
-  public constructor( index: number, args: T ) {
-    this.initialize( index, args );
-  }
-
-  public initialize( index: number, args: T ): this {
-    this.index = index;
-    this.args = args;
-    this.hasListenerArray = false;
-
-    return this;
-  }
-
-  public freeToPool(): void {
-    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
-    // the correct type.
-    EmitContext.pool.freeToPool( this as unknown as EmitContext );
-
-    // NOTE: If we have fewer concerns about memory in the future, we could potentially improve performance by
-    // removing the clearing out of memory here. We don't seem to create many EmitContexts, HOWEVER if we have ONE
-    // "more re-entrant" case on sim startup that references a BIG BIG object, it could theoretically keep that
-    // object alive forever.
-
-    // We want to null things out to prevent memory leaks. Don't tell TypeScript!
-    // (It will have the correct types after the initialization, so this works well with our pooling pattern).
-    this.args = null as unknown as T;
-
-    // Clear out the listeners array, so we don't leak memory while we are in the pool. If we have less concerns
-    this.listenerArray.length = 0;
-  }
-
-  public static readonly pool = new Pool( EmitContext, {
-    initialize: EmitContext.prototype.initialize
-  } );
-
-  public static create<T extends ParameterList>( index: number, args: T ): EmitContext<T> {
-    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
-    // the correct type.
-    return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
-  }
-}
-
 // Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
 let maxListenerCount = 0;
 
@@ -393,5 +335,64 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     this.listeners.forEach( callback );
   }
 }
+
+/**
+ * Utility class for managing the context of an emit call. This is used to manage the state of the emit call, and
+ * especially to handle reentrant emit calls (through the stack/queue notification strategies)
+ */
+class EmitContext<T extends ParameterList = ParameterList> implements TPoolable {
+  // Gets incremented with notifications
+  public index!: number;
+
+  // Arguments that the emit was called with
+  public args!: T;
+
+  // Whether we should act like there is a listenerArray (has it been copied?)
+  public hasListenerArray = false;
+
+  // Only use this if hasListenerArray is true. NOTE: for performance, we're not using getters/etc.
+  public listenerArray: TEmitterListener<T>[] = [];
+
+  public constructor( index: number, args: T ) {
+    this.initialize( index, args );
+  }
+
+  public initialize( index: number, args: T ): this {
+    this.index = index;
+    this.args = args;
+    this.hasListenerArray = false;
+
+    return this;
+  }
+
+  public freeToPool(): void {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    EmitContext.pool.freeToPool( this as unknown as EmitContext );
+
+    // NOTE: If we have fewer concerns about memory in the future, we could potentially improve performance by
+    // removing the clearing out of memory here. We don't seem to create many EmitContexts, HOWEVER if we have ONE
+    // "more re-entrant" case on sim startup that references a BIG BIG object, it could theoretically keep that
+    // object alive forever.
+
+    // We want to null things out to prevent memory leaks. Don't tell TypeScript!
+    // (It will have the correct types after the initialization, so this works well with our pooling pattern).
+    this.args = null as unknown as T;
+
+    // Clear out the listeners array, so we don't leak memory while we are in the pool. If we have less concerns
+    this.listenerArray.length = 0;
+  }
+
+  public static readonly pool = new Pool( EmitContext, {
+    initialize: EmitContext.prototype.initialize
+  } );
+
+  public static create<T extends ParameterList>( index: number, args: T ): EmitContext<T> {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
+  }
+}
+
 
 axon.register( 'TinyEmitter', TinyEmitter );
