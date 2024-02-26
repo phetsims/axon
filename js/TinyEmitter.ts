@@ -212,8 +212,6 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     for ( const listener of listeners ) {
       listener( ...args );
 
-      //REVIEW: Why increment here? We don't seem to be reading it in the stack-based form
-      // MK: We read from it below in the for loop for hasListenerArray.
       emitContext.index++;
 
       // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
