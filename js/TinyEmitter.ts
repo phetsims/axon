@@ -98,10 +98,6 @@ class EmitContext<T extends ParameterList = ParameterList> implements TPoolable 
   }
 
   public static readonly pool = new Pool( EmitContext, {
-    //REVIEW: Hmm, sims don't seem to be creating more than like 15. Should the maxSize be lower?
-    //REVIEW: It could reduce performance, however it could also prevent things showing up in memory testing that
-    //REVIEW: lead the investigator astray.
-    maxSize: 1000,
     initialize: EmitContext.prototype.initialize
   } );
 

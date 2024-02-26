@@ -264,8 +264,7 @@ QUnit.test( 'TinyEmitter listener order should match emit order (reentrantNotify
   emitter.emit( 1 );
 } );
 
-// TODO: for notify-stack too, https://github.com/phetsims/axon/issues/447
-QUnit.test( 'TinyEmitter reentrant listener order should not call newly added listener', assert => {
+QUnit.test( 'TinyEmitter reentrant listener order should not call newly added listener (reentrant:queue)', assert => {
   const emitter = new TinyEmitter<[ number ]>( null, null, 'queue' );
   let count = 1;
   const neverCall = ( addedNumber: number ) => {
@@ -283,6 +282,28 @@ QUnit.test( 'TinyEmitter reentrant listener order should not call newly added li
     assert.ok( number === count++, `should go in order of emitting: ${number}` );
   } );
   emitter.emit( count );
+} );
+
+QUnit.test( 'TinyEmitter reentrant listener order should not call newly added listener (reentrant:stack)', assert => {
+  const emitter = new TinyEmitter<[ number ]>( null, null, 'stack' );
+  const finalNumber = 10;
+  let countDown = finalNumber;
+  const neverCall = ( addedNumber: number ) => {
+    return ( number: number ) => {
+      assert.ok( number > addedNumber, `this should never be called for ${addedNumber} or earlier since it was added after that number's emit call` );
+    };
+  };
+  emitter.addListener( number => {
+    if ( number < finalNumber ) {
+      emitter.addListener( neverCall( number ) );
+      emitter.emit( number + 1 );
+    }
+  } );
+  emitter.addListener( number => {
+    console.log( number );
+    assert.ok( number === countDown--, `should go in order of emitting: ${number}` );
+  } );
+  emitter.emit( 1 );
 } );
 
 QUnit.test( 'TinyEmitter reentrant emit and addListener (reentrantNotify:queue)', assert => {

@@ -78,16 +78,6 @@ QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:
   myProperty.value = count;
 } );
 
-/**
- * TODO: write a test that talks about how happy we are that the lazy link here doesn't get notified for the above value
- *       change, and though that isn't technically "queue-like", we are really really happy about this. https://github.com/phetsims/axon/issues/447
- *   myProperty.lazyLink( value => {
- *     if ( value < finalCount ) {
- *       myProperty.value = value + 1;
- *       myProperty.lazyLink(()=>{'something'});
- *     }
- *   } );
- */
 QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:stack)', assert => {
   let count = 2; // starts as a value of 1, so 2 is the first value we change to.
   const finalCount = 10;
@@ -116,3 +106,46 @@ QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:
   } );
   myProperty.value = count;
 } );
+
+
+QUnit.test( 'TinyProperty reentrant lazyLinks (reentrantNotificationStrategy:queue)', assert => {
+
+  const myProperty = new TinyProperty<number>( 0, null, null, 'queue' );
+  let linkCalledCount = 0;
+  let reentered = false;
+  myProperty.lazyLink( value => {
+    if ( !reentered ) {
+      reentered = true;
+      myProperty.value = value + 1;
+
+      myProperty.link( newValue => {
+        console.log( value, newValue );
+        assert.ok( ++linkCalledCount <= 1, 'should not be called from original change, just from link' );
+      } );
+
+      // This is great!. It isn't actually like a queue, but how strange it would be to have the above value change trigger
+      // this listener because of the queue based reentrant notification strategy. It is better to guard against that so
+      // this isn't called on previously called value changes.
+      myProperty.lazyLink( () => { assert.ok( false, 'should not be called from original change' )} );
+    }
+  } );
+  myProperty.value = 1;
+
+  myProperty.removeAllListeners();
+/////////////////////////////////////////
+  myProperty.value = -1;
+  myProperty.lazyLink( originalValue => {
+
+    if ( originalValue < 5 ) {
+      let lazyLinkCalledCount = originalValue + 1;
+      myProperty.value = originalValue + 1;
+      assert.equal( myProperty.value, originalValue + 1, 'value is immediately correct for access (reentrantly)' );
+      myProperty.lazyLink( newValue => {
+        assert.ok( newValue !== originalValue, `${originalValue}: should not be called from original change` );
+        assert.equal( newValue, ++lazyLinkCalledCount, `${lazyLinkCalledCount}: should be called in order (lazyLink)` );
+      } );
+    }
+  } );
+  myProperty.value = 0;
+} );
+
