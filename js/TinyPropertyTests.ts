@@ -126,7 +126,7 @@ QUnit.test( 'TinyProperty reentrant lazyLinks (reentrantNotificationStrategy:que
       // This is great!. It isn't actually like a queue, but how strange it would be to have the above value change trigger
       // this listener because of the queue based reentrant notification strategy. It is better to guard against that so
       // this isn't called on previously called value changes.
-      myProperty.lazyLink( () => { assert.ok( false, 'should not be called from original change' )} );
+      myProperty.lazyLink( () => { assert.ok( false, 'should not be called from original change' ); } );
     }
   } );
   myProperty.value = 1;
