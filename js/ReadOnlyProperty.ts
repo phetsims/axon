@@ -121,7 +121,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected hasDeferredValue: boolean;
 
   protected readonly valueValidator: Validator<T>;
-  public static readonly TANDEM_NAME_SUFFIX: string = 'Property';
 
   /**
    * This is protected to indicate to clients that subclasses should be used instead.
@@ -135,6 +134,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       hasListenerOrderDependencies: false,
 
       // phet-io
+      tandemNameSuffix: [ 'Property', DYNAMIC_ARCHETYPE_NAME ], // DYNAMIC_ARCHETYPE_NAME means that this Property is an archetype.
       phetioOuterType: ReadOnlyProperty.PropertyIO,
       phetioValueType: IOType.ObjectIO
     }, providedOptions );
@@ -179,12 +179,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       assert && assert( options.phetioValueType !== IOType.ObjectIO,
         'PhET-iO Properties must specify a phetioValueType: ' + this.phetioID );
     }
-
-    assert && assert( !this.isPhetioInstrumented() ||
-                      options.tandem.name.endsWith( ReadOnlyProperty.TANDEM_NAME_SUFFIX ) ||
-                      options.tandem.name === 'property' ||
-                      options.tandem.name === DYNAMIC_ARCHETYPE_NAME, // It is ok to have dynamic element Properties (which would mean they are archetypes
-      `Property tandem.name must end with Property: ${options.tandem?.phetioID}` );
 
     this.validValues = options.validValues;
 
