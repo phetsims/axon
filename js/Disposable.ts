@@ -35,8 +35,8 @@ class Disposable {
   // Marked true when this Disposable has had dispose() called on it (after disposeEmitter is fired)
   private _isDisposed = false;
 
-  // Disposable should only be used by subtypes, no need to instantiate one on its own.
-  protected constructor( providedOptions?: DisposableOptions ) {
+  // Most time, Disposable should only be used by subtypes, only instantiate it if you run into multiple inheritance issues.
+  public constructor( providedOptions?: DisposableOptions ) {
 
     providedOptions && this.initializeDisposable( providedOptions );
 
