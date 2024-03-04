@@ -69,7 +69,7 @@ export default class Timer extends TinyEmitter<[ number ]> {
     };
     this.addListener( callback );
 
-    // Return the callback so it can be removed with removeListener
+    // Return the callback so it can be removed if needed.
     return callback;
   }
 
