@@ -14,7 +14,7 @@
  */
 
 import axon from './axon.js';
-import TEmitter from './TEmitter.js';
+import TEmitter, { TReadOnlyEmitter } from './TEmitter.js';
 import TinyEmitter from './TinyEmitter.js';
 
 // Used in subclasses to support mutate.
@@ -24,9 +24,9 @@ export type DisposableOptions = {
 
 class Disposable {
 
-  // Called after all code that is directly in `dispose()` methods, be careful with mixing this pattern and the
+  // Called after all code that is directly in `dispose()` methods. Be careful with mixing this pattern and the
   // `this.disposeMyClass()` pattern.
-  public readonly _disposeEmitter: TEmitter = new TinyEmitter();
+  private readonly _disposeEmitter: TEmitter = new TinyEmitter();
 
   // Keep track if this instance supports disposing. If set to false, then an assertion will fire if trying to dispose
   // this instance.
@@ -53,11 +53,11 @@ class Disposable {
     }
   }
 
-  public getDisposeEmitter(): TEmitter {
+  public getDisposeEmitter(): TReadOnlyEmitter {
     return this._disposeEmitter;
   }
 
-  public get disposeEmitter(): TEmitter {
+  public get disposeEmitter(): TReadOnlyEmitter {
     return this.getDisposeEmitter();
   }
 
