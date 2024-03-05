@@ -1,4 +1,4 @@
-// Copyright 2022-2023, University of Colorado Boulder
+// Copyright 2022-2024, University of Colorado Boulder
 
 /**
  * A base class to help with managing disposal. Creates a disposeEmitter that will be fired when disposing. This occurs
