@@ -24,7 +24,7 @@ if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
   const match = listenerOrder.match( /random(?:%28|\()(\d+)(?:%29|\))/ );
   const seed = match ? Number( match[ 1 ] ) : dotRandom.nextInt( 1000000 );
   random = new Random( { seed: seed } );
-  console.log( 'listenerOrder random seed: ' + random.seed );
+  console.log( 'listenerOrder random seed: ' + seed );
 }
 
 
