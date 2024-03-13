@@ -96,7 +96,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
    * Notify listeners
    */
   public emit( ...args: T ): void {
-    assert && assert( !this.isDisposed, 'should not be called if disposed' );
+    assert && assert( !this.isDisposed, 'TinyEmitter.emit() should not be called if disposed.' );
 
     // optional callback, before notifying listeners
     this.onBeforeNotify && this.onBeforeNotify.apply( null, args );
