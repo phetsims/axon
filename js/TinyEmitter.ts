@@ -392,5 +392,4 @@ class EmitContext<T extends ParameterList = ParameterList> implements TPoolable 
   }
 }
 
-
 axon.register( 'TinyEmitter', TinyEmitter );
