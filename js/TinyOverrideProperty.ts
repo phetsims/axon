@@ -1,4 +1,4 @@
-// Copyright 2022, University of Colorado Boulder
+// Copyright 2022-2024, University of Colorado Boulder
 
 /**
  * A TinyProperty that will take the value of a target Property until it is set to a value. When that happens, it will

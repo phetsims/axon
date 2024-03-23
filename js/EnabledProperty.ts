@@ -1,4 +1,4 @@
-// Copyright 2020-2022, University of Colorado Boulder
+// Copyright 2020-2024, University of Colorado Boulder
 
 /**
  * Property to control the enabled of something. In general this should never be called by clients, but instead is factored

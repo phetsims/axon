@@ -1,4 +1,4 @@
-// Copyright 2022-2023, University of Colorado Boulder
+// Copyright 2022-2024, University of Colorado Boulder
 
 /**
  * A MappedProperty specialized for unit conversion. Just provide multiplicative factor to convert between the units,

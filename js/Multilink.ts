@@ -1,4 +1,4 @@
-// Copyright 2014-2023, University of Colorado Boulder
+// Copyright 2014-2024, University of Colorado Boulder
 
 /**
  * Multilink is used to link to multiple properties.  It is very similar to a DerivedProperty, but has no value and
