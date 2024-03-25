@@ -9,14 +9,14 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
 import axon from './axon.js';
-import TinyEmitter from './TinyEmitter.js';
+import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
@@ -27,7 +27,7 @@ import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = Pick<TinyEmitterOptions, 'reentrantNotificationStrategy'>;
 export type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioDataHandler<T> implements TEmitter<T> {
@@ -38,12 +38,14 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
   public constructor( providedOptions?: EmitterOptions ) {
 
     const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions>()( {
+      reentrantNotificationStrategy: 'stack',
+
       phetioOuterType: Emitter.EmitterIO,
       phetioState: PHET_IO_STATE_DEFAULT
     }, providedOptions );
 
     super( options );
-    this.tinyEmitter = new TinyEmitter( null, options.hasListenerOrderDependencies );
+    this.tinyEmitter = new TinyEmitter( null, options.hasListenerOrderDependencies, options.reentrantNotificationStrategy );
   }
 
   /**

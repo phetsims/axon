@@ -246,6 +246,74 @@ QUnit.test( 'Property value validation', assert => {
   assert.ok( true, 'so we have at least 1 test in this set' );
 } );
 
+QUnit.test( 'reentrantNotificationStrategy', assert => {
+  assert.ok( new Property( 'hi' )[ 'tinyProperty' ][ 'reentrantNotificationStrategy' ] === 'queue',
+    'default notification strategy for Property should be "queue"' );
+
+  ////////////////////////////////////////////
+  // queue
+  let queueCount = 2; // starts as a value of 1, so 2 is the first value we change to.
+
+  // queue is default
+  const queueProperty = new Property<number>( 1, {
+    reentrantNotificationStrategy: 'queue',
+    reentrant: true
+  } );
+
+  queueProperty.lazyLink( value => {
+    if ( value < 10 ) {
+      queueProperty.value = value + 1;
+    }
+  } );
+
+  // notify-queue:
+  // 1->2
+  // 2->3
+  // 3->4
+  // ...
+  // 8->9
+
+  queueProperty.lazyLink( ( value, oldValue ) => {
+    assert.ok( value === oldValue + 1, `increment each time: ${oldValue} -> ${value}` );
+    assert.ok( value === queueCount++, `increment by most recent changed: ${queueCount - 2}->${queueCount - 1}, received: ${oldValue} -> ${value}` );
+  } );
+  queueProperty.value = queueCount;
+
+  let stackCount = 2; // starts as a value of 1, so 2 is the first value we change to.
+  const finalCount = 10;
+  let lastListenerCount = 10;
+  ////////////////////////////////////////////
+
+  ////////////////////////////////////////////
+  // stack
+  const stackProperty = new Property<number>( stackCount - 1, {
+    reentrantNotificationStrategy: 'stack',
+    reentrant: true
+  } );
+
+  stackProperty.lazyLink( value => {
+    if ( value < finalCount ) {
+      stackProperty.value = value + 1;
+    }
+  } );
+
+  // stack-notify:
+  // 8->9
+  // 7->8
+  // 6->7
+  // ...
+  // 1->2
+  stackProperty.lazyLink( ( value, oldValue ) => {
+    stackCount++;
+    assert.ok( value === oldValue + 1, `increment each time: ${oldValue} -> ${value}` );
+    assert.ok( value === lastListenerCount--, `increment in order expected: ${lastListenerCount}->${lastListenerCount + 1}, received: ${oldValue} -> ${value}` );
+    assert.ok( oldValue === lastListenerCount, `new count is ${lastListenerCount}: the oldValue (most recent first in stack first` );
+  } );
+  stackProperty.value = stackCount;
+  //////////////////////////////////////////////////
+
+} );
+
 // Tests that can only run in phet-io mode
 if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', assert => {
@@ -312,3 +380,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
     thirdProperty.dispose();
   } );
 }
+///////////////////////////////
+// END PHET_IO ONLY TESTS
+///////////////////////////////

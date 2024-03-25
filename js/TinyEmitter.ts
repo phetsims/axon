@@ -12,10 +12,13 @@ import axon from './axon.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import Random from '../../dot/js/Random.js';
 import dotRandom from '../../dot/js/dotRandom.js';
+import Pool, { TPoolable } from '../../phet-core/js/Pool.js';
 
 // constants
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;
 const listenerLimit = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerLimit;
+
+const EMIT_CONTEXT_MAX_LENGTH = 1000;
 
 let random: Random | null = null;
 if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
@@ -27,11 +30,52 @@ if ( listenerOrder && listenerOrder.startsWith( 'random' ) ) {
   console.log( 'listenerOrder random seed: ' + seed );
 }
 
+/**
+ * How to handle the notification of listeners in reentrant emit() cases. There are two possibilities:
+ * 'stack': Each new reentrant call to emit (from a listener), takes precedent. This behaves like a "depth first"
+ *        algorithm because it will not finish calling all listeners from the original call until nested emit() calls
+ *        notify fully. Notify listeners from the emit call with "stack-like" behavior. We also sometimes call this
+ *        "depth-first" notification. This algorithm will prioritize the most recent emit call's listeners, such that
+ *        reentrant emits will cause a full recursive call to emit() to complete before continuing to notify the
+ *        rest of the listeners from the original call.
+ *        Note: This was the only method of notifying listeners on emit before 2/2024.
+ *
+ * 'queue': Each new reentrant call to emit queues those listeners to run once the current notifications are done
+ *        firing. Here a recursive (reentrant) emit is basically a noop, because the original call will continue
+ *        looping through listeners from each new emit() call until there are no more. See notifyAsQueue().
+ *        Notify listeners from the emit call with "queue-like" behavior (FIFO). We also sometimes call this "breadth-first"
+ *        notification. In this function, listeners for an earlier emit call will be called before any newer emit call that
+ *        may occur inside of listeners (in a reentrant case).
+ *
+ *        This is a better strategy in cases where order may matter, for example:
+ *        const emitter = new TinyEmitter<[ number ]>(  null, null, 'queue' );
+ *        emitter.addListener( number => {
+ *          if ( number < 10 ) {
+ *            emitter.emit( number + 1 );
+ *            console.log( number );
+ *          }
+ *        } );
+ *        emitter.emit( 1 );
+ *        -> 1,2,3,4,5,6,7,8,9
+ *
+ *        Whereas stack-based notification would yield the oppose order: 9->1, since the most recently called emit
+ *        would be the very first one notified.
+ *
+ *        Note, this algorithm does involve queueing a reentrant emit() calls' listeners for later notification. So in
+ *        effect, reentrant emit() calls are no-ops. This could potentially lead some awkward or confusing cases. As a
+ *        result it is recommended to use this predominantly with Properties, in which their stateful value makes more
+ *        sense to notify changes on in order (preserving the correct oldValue through all notifications).
+ */
+export type ReentrantNotificationStrategy = 'queue' | 'stack';
 
-type EmitContext<T extends IntentionalAny[]> = {
-  index: number;
-  listenerArray?: TEmitterListener<T>[];
+// While TinyEmitter doesn't use this in an optionize call, it is nice to be able to reuse the types of these options.
+export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
+  onBeforeNotify?: TEmitterListener<T>;
+  hasListenerOrderDependencies?: boolean;
+  reentrantNotificationStrategy?: ReentrantNotificationStrategy;
 };
+
+type ParameterList = IntentionalAny[];
 
 // Store the number of listeners from the single TinyEmitter instance that has the most listeners in the whole runtime.
 let maxListenerCount = 0;
@@ -53,14 +97,19 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // NOTE: This is set ONLY if it's actually true
   private readonly hasListenerOrderDependencies?: true;
 
+  // How best to handle reentrant calls to emit(). Defaults to stack. See full doc where the Type is declared.
+  private readonly reentrantNotificationStrategy?: ReentrantNotificationStrategy;
+
   // The listeners that will be called on emit
   private listeners: Set<TEmitterListener<T>>;
 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
-  private emitContexts: EmitContext<T>[];
+  private emitContexts: EmitContext<T>[] = [];
 
   // Null on parameters is a no-op
-  public constructor( onBeforeNotify?: TEmitterListener<T> | null, hasListenerOrderDependencies?: boolean | null ) {
+  public constructor( onBeforeNotify?: TinyEmitterOptions<T>['onBeforeNotify'] | null,
+                      hasListenerOrderDependencies?: TinyEmitterOptions<T>['hasListenerOrderDependencies'] | null,
+                      reentrantNotificationStrategy?: TinyEmitterOptions<T>['reentrantNotificationStrategy'] | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;
@@ -70,10 +119,12 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
       this.hasListenerOrderDependencies = hasListenerOrderDependencies;
     }
 
+    if ( reentrantNotificationStrategy ) {
+      this.reentrantNotificationStrategy = reentrantNotificationStrategy;
+    }
+
     // Listener order is preserved in Set
     this.listeners = new Set();
-
-    this.emitContexts = [];
 
     // for production memory concerns; no need to keep this around.
     if ( assert ) {
@@ -113,31 +164,69 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
     // Notify wired-up listeners, if any
     if ( this.listeners.size > 0 ) {
 
-      const emitContext: EmitContext<T> = {
-        index: 0
-        // listenerArray: [] // {Array.<function>|undefined} assigned if a mutation is made during emit
-      };
+      // We may not be able to emit right away. If we are already emitting and this is a recursive call, then that
+      // first emit needs to finish notifying its listeners before we start our notifications (in queue mode), so store
+      // the args for later. No slice needed, we're not modifying the args array.
+      const emitContext = EmitContext.create( 0, args );
       this.emitContexts.push( emitContext );
 
-      for ( const listener of this.listeners ) {
-        listener( ...args );
-        emitContext.index++;
+      if ( this.reentrantNotificationStrategy === 'queue' ) {
 
-        // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
-        // iterate over the guarded array
-        if ( emitContext.listenerArray ) {
-          break;
+        // This handles all reentrancy here (with a while loop), instead of doing so with recursion. If not the first context, then no-op because a previous call will handle this call's listener notifications.
+        if ( this.emitContexts.length === 1 ) {
+          while ( this.emitContexts.length ) {
+
+            // Don't remove it from the list here. We need to be able to guardListeners.
+            const emitContext = this.emitContexts[ 0 ];
+
+            // It is possible that this emitContext is later on in the while loop, and has already had a listenerArray set
+            const listeners = emitContext.hasListenerArray ? emitContext.listenerArray : this.listeners;
+
+            this.notifyLoop( emitContext, listeners );
+
+            this.emitContexts.shift()?.freeToPool();
+          }
+        }
+        else {
+          assert && assert( this.emitContexts.length <= EMIT_CONTEXT_MAX_LENGTH,
+            `emitting reentrant depth of ${EMIT_CONTEXT_MAX_LENGTH} seems like a infinite loop to me!` );
         }
       }
-
-      // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
-      // listeners in order from where we left off.
-      if ( emitContext.listenerArray ) {
-        for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
-          emitContext.listenerArray[ i ]( ...args );
-        }
+      else if ( !this.reentrantNotificationStrategy || this.reentrantNotificationStrategy === 'stack' ) {
+        this.notifyLoop( emitContext, this.listeners );
+        this.emitContexts.pop()?.freeToPool();
       }
-      this.emitContexts.pop();
+      else {
+        assert && assert( false, `Unknown reentrantNotificationStrategy: ${this.reentrantNotificationStrategy}` );
+      }
+    }
+  }
+
+  /**
+   * Execute the notification of listeners (from the provided context and list). This function supports guarding against
+   * if listener order changes during the notification process, see guardListeners.
+   */
+  private notifyLoop( emitContext: EmitContext<T>, listeners: TEmitterListener<T>[] | Set<TEmitterListener<T>> ): void {
+    const args = emitContext.args;
+
+    for ( const listener of listeners ) {
+      listener( ...args );
+
+      emitContext.index++;
+
+      // If a listener was added or removed, we cannot continue processing the mutated Set, we must switch to
+      // iterate over the guarded array
+      if ( emitContext.hasListenerArray ) {
+        break;
+      }
+    }
+
+    // If the listeners were guarded during emit, we bailed out on the for..of and continue iterating over the original
+    // listeners in order from where we left off.
+    if ( emitContext.hasListenerArray ) {
+      for ( let i = emitContext.index; i < emitContext.listenerArray.length; i++ ) {
+        emitContext.listenerArray[ i ]( ...args );
+      }
     }
   }
 
@@ -200,16 +289,17 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     for ( let i = this.emitContexts.length - 1; i >= 0; i-- ) {
 
+      const emitContext = this.emitContexts[ i ];
+
       // Once we meet a level that was already guarded, we can stop, since all previous levels were already guarded
-      if ( this.emitContexts[ i ].listenerArray ) {
+      if ( emitContext.hasListenerArray ) {
         break;
       }
-      else {
 
-        // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
-        // list.
-        this.emitContexts[ i ].listenerArray = Array.from( this.listeners );
-      }
+      // Mark copies as 'guarded' so that it will use the original listeners when emit started and not the modified
+      // list.
+      emitContext.listenerArray.push( ...this.listeners );
+      emitContext.hasListenerArray = true;
     }
   }
 
@@ -241,6 +331,64 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
    */
   public forEachListener( callback: ( listener: TEmitterListener<T> ) => void ): void {
     this.listeners.forEach( callback );
+  }
+}
+
+/**
+ * Utility class for managing the context of an emit call. This is used to manage the state of the emit call, and
+ * especially to handle reentrant emit calls (through the stack/queue notification strategies)
+ */
+class EmitContext<T extends ParameterList = ParameterList> implements TPoolable {
+  // Gets incremented with notifications
+  public index!: number;
+
+  // Arguments that the emit was called with
+  public args!: T;
+
+  // Whether we should act like there is a listenerArray (has it been copied?)
+  public hasListenerArray = false;
+
+  // Only use this if hasListenerArray is true. NOTE: for performance, we're not using getters/etc.
+  public listenerArray: TEmitterListener<T>[] = [];
+
+  public constructor( index: number, args: T ) {
+    this.initialize( index, args );
+  }
+
+  public initialize( index: number, args: T ): this {
+    this.index = index;
+    this.args = args;
+    this.hasListenerArray = false;
+
+    return this;
+  }
+
+  public freeToPool(): void {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    EmitContext.pool.freeToPool( this as unknown as EmitContext );
+
+    // NOTE: If we have fewer concerns about memory in the future, we could potentially improve performance by
+    // removing the clearing out of memory here. We don't seem to create many EmitContexts, HOWEVER if we have ONE
+    // "more re-entrant" case on sim startup that references a BIG BIG object, it could theoretically keep that
+    // object alive forever.
+
+    // We want to null things out to prevent memory leaks. Don't tell TypeScript!
+    // (It will have the correct types after the initialization, so this works well with our pooling pattern).
+    this.args = null as unknown as T;
+
+    // Clear out the listeners array, so we don't leak memory while we are in the pool. If we have less concerns
+    this.listenerArray.length = 0;
+  }
+
+  public static readonly pool = new Pool( EmitContext, {
+    initialize: EmitContext.prototype.initialize
+  } );
+
+  public static create<T extends ParameterList>( index: number, args: T ): EmitContext<T> {
+    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
+    // the correct type.
+    return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
   }
 }
 
