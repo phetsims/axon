@@ -148,4 +148,3 @@ QUnit.test( 'TinyProperty reentrant lazyLinks (reentrantNotificationStrategy:que
   } );
   myProperty.value = 0;
 } );
-
