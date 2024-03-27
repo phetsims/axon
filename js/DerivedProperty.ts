@@ -245,6 +245,24 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 
   /**
+   * Creates a derived number Property whose value is the result of multiplying all (number) dependencies together.
+   */
+  public static multiply( properties: TReadOnlyProperty<number>[], options?: PropertyOptions<number> ): UnknownDerivedProperty<number> {
+    assert && assert( properties.length > 0, 'must provide a dependency' );
+
+    return DerivedProperty.deriveAny( properties, () => _.reduce( properties, multiplyFunction, 1 ), options );
+  }
+
+  /**
+   * Creates a derived number Property whose value is the result of adding all (number) dependencies together.
+   */
+  public static add( properties: TReadOnlyProperty<number>[], options?: PropertyOptions<number> ): UnknownDerivedProperty<number> {
+    assert && assert( properties.length > 0, 'must provide a dependency' );
+
+    return DerivedProperty.deriveAny( properties, () => _.reduce( properties, addFunction, 0 ), options );
+  }
+
+  /**
    * Creates a derived boolean Property whose value is the inverse of the provided property.
    */
   public static not( propertyToInvert: TReadOnlyProperty<boolean>, options?: DerivedPropertyOptions<boolean> ): DerivedProperty<boolean, boolean, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
@@ -263,13 +281,23 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 }
 
-const andFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
+const andFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ): boolean => {
   return value && property.value;
 };
 
-const orFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ) => {
+const orFunction = ( value: boolean, property: TReadOnlyProperty<boolean> ): boolean => {
   assert && assert( typeof property.value === 'boolean', 'boolean value required' );
   return value || property.value;
+};
+
+const multiplyFunction = ( value: number, property: TReadOnlyProperty<number> ): number => {
+  assert && assert( typeof property.value === 'number', 'number value required' );
+  return value * property.value;
+};
+
+const addFunction = ( value: number, property: TReadOnlyProperty<number> ): number => {
+  assert && assert( typeof property.value === 'number', 'number value required' );
+  return value + property.value;
 };
 
 // Cache each parameterized DerivedPropertyIO so that it is only created once.

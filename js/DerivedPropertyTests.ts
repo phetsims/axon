@@ -119,6 +119,33 @@ QUnit.test( 'DerivedProperty and/or', assert => {
     'DerivedProperty dependency must have boolean value' );
 } );
 
+QUnit.test( 'DerivedProperty add/multiply', assert => {
+
+  const aProperty = new Property( 1 );
+  const bProperty = new Property( 2 );
+  const cProperty = new Property( 3 );
+
+  // correct usages of 'and' and 'or'
+  const addProperty = DerivedProperty.add( [ aProperty, bProperty, cProperty ] );
+  const mulitplyProperty = DerivedProperty.multiply( [ aProperty, bProperty, cProperty ] );
+
+  assert.equal( addProperty.value, 6 );
+  assert.equal( mulitplyProperty.value, 6 );
+
+  aProperty.value = 3;
+  assert.equal( addProperty.value, 8 );
+  assert.equal( mulitplyProperty.value, 18 );
+
+  bProperty.value = 0;
+  assert.equal( addProperty.value, 6 );
+  assert.equal( mulitplyProperty.value, 0 );
+
+  bProperty.value = 1;
+  cProperty.value = 10;
+  assert.equal( addProperty.value, 14 );
+  assert.equal( mulitplyProperty.value, 30 );
+} );
+
 if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'propertyStateHandlerSingleton tests for DerivedProperty', assert => {
 
