@@ -1,10 +1,15 @@
 // Copyright 2020-2024, University of Colorado Boulder
 
 /**
- * Property to control the enabled of something. In general this should never be called by clients, but instead is factored
- * out for consistency in PhET libraries. This serves as the default Property to control enabled with PhET-iO instrumentation
+ * Property to control if something is enabled. This serves as a consistent class to control
+ * enabled. It also factors out PhET-iO instrumentation. Likely you should use it in cases like so:
  *
- * @author Michael Kauzmann(PhET Interactive Simulations)
+ * const enabledProperty = new BooleanProperty( true, {
+ *   tandem: options.tandem.createTandem( 'enabledProperty' ),
+ *   phetioFeatured: true
+ * } );
+ *
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
 import optionize from '../../phet-core/js/optionize.js';
