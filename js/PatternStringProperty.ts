@@ -78,42 +78,49 @@ type MapsType<Values extends ValuesType> = {
 };
 
 type OptionalSelfOptions<Values extends ValuesType> = {
-  // For handling pattern strings from StringUtils.format, which will turn {0} => {{formatName[ 0 ]}},
-  // {1} => {{formatName[ 1 ]}}, etc.
-  //
-  // For example:
-  // | const stringProperty = new TinyProperty( 'Test: {0}' );
-  // | const valueProperty = new TinyProperty( 5 );
-  // | new PatternStringProperty( stringProperty, { value: valueProperty }, { formatNames: [ 'value' ] } );
-  // Will effectively replace {0} in the pattern to {{value}}, which will then be used as normal
-  formatNames?: string[];
 
-  // Rounds numeric values to a given number of decimal places if provided. If a number is given, it will apply to
-  // ALL numeric values (of type 'number'). A record can also be provided that provides decimalPlaces for specific
-  // values.
-  //
-  // For example:
-  // | const stringProperty = new TinyProperty( 'Test: {{value}}' );
-  // | const valueProperty = new TinyProperty( 5.12345 );
-  // | new PatternStringProperty( stringProperty, { value: valueProperty }, { decimalPlaces: 2 } )
-  // will take the value 'Test: 5.12'.
-  //
-  // Multiple decimal places example:
-  // | const stringProperty = new TinyProperty( 'There are {{squirrels}} million squirrels who eat more than {{acorns}} acorns a day' );
-  // | const squirrelsProperty = new TinyProperty( 5.12345 );
-  // | const acornsProperty = new TinyProperty( 20.254 );
-  // | new PatternStringProperty( stringProperty, {
-  // |   squirrels: squirrelsProperty,
-  // |   acorns: acornsProperty
-  // | }, {
-  // |   decimalPlaces: {
-  // |     squirrels: 0,
-  // |     acorns: 2
-  // |   }
-  // | } )
-  //
-  // NOTE: Provide null if decimal places should not be used for a given value
+  /**
+   * Rounds numeric values to a given number of decimal places if provided. If a number is given, it will apply to
+   * ALL numeric values (of type 'number'). A record can also be provided that provides decimalPlaces for specific
+   * values.
+   *
+   * For example:
+   * | const stringProperty = new TinyProperty( 'Test: {{value}}' );
+   * | const valueProperty = new TinyProperty( 5.12345 );
+   * | new PatternStringProperty( stringProperty, { value: valueProperty }, { decimalPlaces: 2 } )
+   * will take the value 'Test: 5.12'.
+   *
+   * Multiple decimal places example:
+   * | const stringProperty = new TinyProperty( 'There are {{squirrels}} million squirrels who eat more than {{acorns}} acorns a day' );
+   * | const squirrelsProperty = new TinyProperty( 5.12345 );
+   * | const acornsProperty = new TinyProperty( 20.254 );
+   * | new PatternStringProperty( stringProperty, {
+   * |   squirrels: squirrelsProperty,
+   * |   acorns: acornsProperty
+   * | }, {
+   * |   decimalPlaces: {
+   * |     squirrels: 0,
+   * |     acorns: 2
+   * |   }
+   * | } )
+   *
+   * NOTE: Provide null if decimal places should not be used for a given value
+   */
   decimalPlaces?: number | null | Record<keyof Values, number | null>;
+
+  /**
+   * @deprecated - only used for converting vestigial usages of StringUtils.format
+   *
+   * For handling pattern strings from StringUtils.format, which will turn {0} => {{formatName[ 0 ]}},
+   * {1} => {{formatName[ 1 ]}}, etc.
+   *
+   * For example:
+   * | const stringProperty = new TinyProperty( 'Test: {0}' );
+   * | const valueProperty = new TinyProperty( 5 );
+   * | new PatternStringProperty( stringProperty, { value: valueProperty }, { formatNames: [ 'value' ] } );
+   * Will effectively replace {0} in the pattern to {{value}}, which will then be used as normal
+   */
+  formatNames?: string[];
 };
 
 type SelfOptions<Values extends ValuesType> = OptionalSelfOptions<Values> &
