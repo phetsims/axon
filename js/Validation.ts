@@ -412,13 +412,17 @@ export default class Validation {
       return a === b;
     }
     if ( valueComparisonStrategy === 'equalsFunction' ) {
-      const aComparable = a as ComparableObject;
-      const bComparable = b as ComparableObject;
-      assert && assert( !!aComparable.equals, 'no equals function for 1st arg' );
-      assert && assert( !!bComparable.equals, 'no equals function for 2nd arg' );
-      assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ), 'incompatible equality checks' );
+      if ( a && b && a.constructor === b.constructor ) { // Support for heterogeneous values with equalsFunction
 
-      return aComparable.equals( bComparable );
+        const aComparable = a as unknown as ComparableObject;
+        const bComparable = b as unknown as ComparableObject;
+        assert && assert( !!aComparable.equals, 'no equals function for 1st arg' );
+        assert && assert( !!bComparable.equals, 'no equals function for 2nd arg' );
+        assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ), 'incompatible equality checks' );
+
+        return aComparable.equals( bComparable );
+      }
+      return a === b;
     }
     if ( valueComparisonStrategy === 'lodashDeep' ) {
       return _.isEqual( a, b );
