@@ -169,7 +169,7 @@ export default class Validation {
       if ( !( validator.valueComparisonStrategy === 'reference' ||
               validator.valueComparisonStrategy === 'lodashDeep' ||
               validator.valueComparisonStrategy === 'equalsFunction' ||
-              typeof validator.isValidValue === 'function' ) ) {
+              typeof validator.valueComparisonStrategy === 'function' ) ) {
         return this.combineErrorMessages( `valueComparisonStrategy must be "reference", "lodashDeep", 
         "equalsFunction", or a comparison function: ${validator.valueComparisonStrategy}`,
           validator.validationMessage );

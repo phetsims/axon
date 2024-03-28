@@ -282,6 +282,12 @@ QUnit.test( 'Validator.valueComparisonStrategy', assert => {
     } );
   }, 'arrays do not have an equals function' );
 
+  const sameInstanceVector = new Vector2( 2, 6 );
+
+  assert.ok( !Validation.getValidationError( sameInstanceVector, {
+    validators: [ { validValues: [ new Vector2( 0, 1 ), sameInstanceVector ], valueComparisonStrategy: 'equalsFunction' } ]
+  } ) );
+
   assert.ok( !Validation.getValidationError( new Vector2( 0, 0 ), {
     validators: [ { validValues: [ new Vector2( 0, 1 ), new Vector2( 0, 0 ) ], valueComparisonStrategy: 'equalsFunction' } ]
   } ) );
@@ -290,12 +296,16 @@ QUnit.test( 'Validator.valueComparisonStrategy', assert => {
     validators: [ { validValues: [ new Vector2( 0, 1 ), new Vector2( 0, 0 ) ], valueComparisonStrategy: 'equalsFunction' } ]
   } ) );
 
-  assert.ok( Validation.getValidationError<Vector2>( new Vector2( 0, 2 ), {
-    validators: [ {
-      validValues: [ new Vector2( 0, 100 ), new Vector2( 2, 2 ) ],
 
-      // compare only the x values.
-      valueComparisonStrategy: ( a, b ) => a.x === b.x
-    } ]
+  assert.ok( !Validation.getValidationError( sameInstanceVector, {
+    validators: [ { validValues: [ new Vector2( 0, 1 ), sameInstanceVector ], valueComparisonStrategy: ( a, b ) => a.x === b.x } ]
+  } ) );
+
+  assert.ok( !Validation.getValidationError( new Vector2( 0, 0 ), {
+    validators: [ { validValues: [ new Vector2( 5, 1 ), new Vector2( 0, 3 ) ], valueComparisonStrategy: ( a, b ) => a.x === b.x } ]
+  } ) );
+
+  assert.ok( Validation.getValidationError( new Vector2( 0, 0 ), {
+    validators: [ { validValues: [ new Vector2( 1, 1 ), new Vector2( 2, 0 ) ], valueComparisonStrategy: ( a, b ) => a.x === b.x } ]
   } ) );
 } );
