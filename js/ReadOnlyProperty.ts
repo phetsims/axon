@@ -77,8 +77,10 @@ type SelfOptions = {
   // specifics see documentation in TinyEmitter.
 } & Pick<TinyEmitterOptions, 'reentrantNotificationStrategy'>;
 
+type ParentOptions<T> = Validator<T> & PhetioObjectOptions;
+
 // Options that can be passed in
-export type PropertyOptions<T> = SelfOptions & StrictOmit<Validator<T> & PhetioObjectOptions, 'phetioType'>;
+export type PropertyOptions<T> = SelfOptions & StrictOmit<ParentOptions<T>, 'phetioType'>;
 
 export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
@@ -135,11 +137,16 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * @param [providedOptions]
    */
   protected constructor( value: T, providedOptions?: PropertyOptions<T> ) {
-    const options = optionize<PropertyOptions<T>, SelfOptions, PhetioObjectOptions>()( {
+    const options = optionize<PropertyOptions<T>, SelfOptions, ParentOptions<T>>()( {
       units: null,
       reentrant: false,
       hasListenerOrderDependencies: false,
       reentrantNotificationStrategy: 'queue',
+
+      // See Validation.ts for ValueComparisonStrategy for available values. Please note that this will be used for
+      // equality comparison both with validation (i.e. for validValue comparison), as well as determining if the
+      // value has changed such that listeners should fire, see TinyProperty.areValuesEqual().
+      valueComparisonStrategy: 'reference',
 
       // phet-io
       tandemNameSuffix: [ 'Property', DYNAMIC_ARCHETYPE_NAME ], // DYNAMIC_ARCHETYPE_NAME means that this Property is an archetype.
@@ -192,9 +199,8 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies, options.reentrantNotificationStrategy );
 
-    // Since we are already in the heavyweight Property, we always assign TinyProperty.useDeepEquality for clarity.
-    // @ts-expect-error
-    this.tinyProperty.useDeepEquality = options.valueComparisonStrategy && options.valueComparisonStrategy === 'equalsFunction';
+    // Since we are already in the heavyweight Property, we always assign TinyProperty.valueComparisonStrategy for clarity.
+    this.tinyProperty.valueComparisonStrategy = options.valueComparisonStrategy;
     this.notifying = false;
     this.reentrant = options.reentrant;
     this.isDeferred = false;

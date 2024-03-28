@@ -9,6 +9,8 @@
  */
 
 import TinyProperty from './TinyProperty.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Vector2 from '../../dot/js/Vector2.js';
 
 QUnit.module( 'TinyProperty' );
 
@@ -49,6 +51,43 @@ QUnit.test( 'TinyProperty onBeforeNotify', assert => {
   x.hasFunProperty.value = true;
   x.hasFunProperty.value = false;
   x.hasFunProperty.value = true;
+} );
+
+QUnit.test( 'TinyProperty valueComparisonStrategy', assert => {
+
+  let calledCount = 0;
+  const myProperty = new TinyProperty<IntentionalAny>( 0 );
+  myProperty.lazyLink( () => calledCount++ );
+
+  myProperty.value = 0;
+  assert.ok( calledCount === 0, 'no value change' );
+
+  myProperty.value = 1;
+  assert.ok( calledCount === 1, 'reference number valueChange' );
+
+  myProperty.valueComparisonStrategy = 'reference';
+  myProperty.value = 1;
+  assert.ok( calledCount === 1, 'no reference number valueChange' );
+  myProperty.value = 3;
+  assert.ok( calledCount === 2, 'reference number valueChange' );
+
+  myProperty.value = new Vector2( 0, 0 );
+  assert.ok( calledCount === 3, 'vector is different' );
+  myProperty.value = new Vector2( 0, 0 );
+  assert.ok( calledCount === 4, 'still reference vector is different' );
+  myProperty.valueComparisonStrategy = 'equalsFunction';
+  myProperty.value = new Vector2( 0, 0 );
+  assert.ok( calledCount === 4, 'equal' );
+  myProperty.value = new Vector2( 0, 3 );
+  assert.ok( calledCount === 5, 'not equal' );
+
+  myProperty.valueComparisonStrategy = 'lodashDeep';
+  myProperty.value = { something: 'hi' };
+  assert.ok( calledCount === 6, 'not equal' );
+  myProperty.value = { something: 'hi' };
+  assert.ok( calledCount === 6, 'equal' );
+  myProperty.value = { something: 'hi', other: false };
+  assert.ok( calledCount === 7, 'not equal with other key' );
 } );
 
 QUnit.test( 'TinyProperty reentrant notify order (reentrantNotificationStrategy:queue)', assert => {

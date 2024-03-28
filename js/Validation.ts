@@ -36,13 +36,12 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
-import { ComparableObject } from './TinyProperty.js';
 
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
 export type IsValidValueOptions = {
 
-  // By default validation will always check the validity of the  validator itself.  However, for types like
+  // By default validation will always check the validity of the validator itself. However, for types like
   // Property and Emitter re-checking the validator every time the Property value changes or the Emitter emits
   // wastes cpu. Hence cases like those can opt-out
   validateValidator?: boolean;
@@ -57,7 +56,18 @@ type ValueType =
   // allow Function here since it is the appropriate level of abstraction for checking instanceof
   Function; // eslint-disable-line @typescript-eslint/ban-types
 
-type ValueComparisonStrategy<T = unknown> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
+type ComparableObject = {
+  equals: ( a: unknown ) => boolean;
+};
+
+/**
+ * The way that two values can be compared for equality:
+ * "reference" - uses triple equals comparison (most often the default)
+ * "equalsFunction" - asserts that the two values have an `equals()` function that can used to compare (see "ComparableObject" type)
+ * "lodashDeep" - uses _.isEqual() for comparison
+ * custom function - define any function that returns if the two provided values are equal.
+ */
+export type ValueComparisonStrategy<T = unknown> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
 
 export type ValidationMessage = string | ( () => string );
 
@@ -313,26 +323,9 @@ export default class Validation {
 
     if ( validator.validValues ) {
 
-      const valueComparisonStrategy: ValueComparisonStrategy<T> = validator.valueComparisonStrategy || 'reference';
+      const valueComparisonStrategy = validator.valueComparisonStrategy || 'reference';
       const valueValid = validator.validValues.some( validValue => {
-
-        if ( valueComparisonStrategy === 'reference' ) {
-          return validValue === value;
-        }
-        if ( valueComparisonStrategy === 'equalsFunction' ) {
-          const validComparable = validValue as ComparableObject;
-          assert && assert( !!validComparable.equals, 'no equals function for 1st arg' );
-          assert && assert( !!value.equals, 'no equals function for 2nd arg' );
-          assert && assert( validComparable.equals( value ) === value.equals( validComparable ), 'incompatible equality checks' );
-
-          return validComparable.equals( value );
-        }
-        if ( valueComparisonStrategy === 'lodashDeep' ) {
-          return _.isEqual( validValue, value );
-        }
-        else {
-          return valueComparisonStrategy( validValue, value );
-        }
+        return Validation.equalsForValidationStrategy<T>( validValue, value, valueComparisonStrategy );
       } );
 
       if ( !valueValid ) {
@@ -409,6 +402,31 @@ export default class Validation {
     return null;
   }
 
+  /**
+   * Compare the two provided values for equality using the valueComparisonStrategy provided, see
+   * ValueComparisonStrategy type.
+   */
+  public static equalsForValidationStrategy<T = unknown>( a: T, b: T, valueComparisonStrategy: ValueComparisonStrategy<T> = 'reference' ): boolean {
+
+    if ( valueComparisonStrategy === 'reference' ) {
+      return a === b;
+    }
+    if ( valueComparisonStrategy === 'equalsFunction' ) {
+      const aComparable = a as ComparableObject;
+      const bComparable = b as ComparableObject;
+      assert && assert( !!aComparable.equals, 'no equals function for 1st arg' );
+      assert && assert( !!bComparable.equals, 'no equals function for 2nd arg' );
+      assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ), 'incompatible equality checks' );
+
+      return aComparable.equals( bComparable );
+    }
+    if ( valueComparisonStrategy === 'lodashDeep' ) {
+      return _.isEqual( a, b );
+    }
+    else {
+      return valueComparisonStrategy( a, b );
+    }
+  }
 
   public static readonly VALIDATOR_KEYS = VALIDATOR_KEYS;
 

@@ -15,6 +15,7 @@ import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Vector2 from '../../dot/js/Vector2.js';
 
 QUnit.module( 'Property' );
 
@@ -312,6 +313,33 @@ QUnit.test( 'reentrantNotificationStrategy', assert => {
   stackProperty.value = stackCount;
   //////////////////////////////////////////////////
 
+} );
+
+QUnit.test( 'options.valueComparisonStrategy', assert => {
+
+  let calledCount = 0;
+  let myProperty = new Property<IntentionalAny>( new Vector2( 0, 0 ), {
+    valueComparisonStrategy: 'equalsFunction'
+  } );
+  myProperty.lazyLink( () => calledCount++ );
+
+  myProperty.value = new Vector2( 0, 0 );
+  assert.ok( calledCount === 0, 'equal' );
+  myProperty.value = new Vector2( 0, 3 );
+  assert.ok( calledCount === 1, 'not equal' );
+
+  calledCount = 0;
+  myProperty = new Property<IntentionalAny>( new Vector2( 0, 0 ), {
+    valueComparisonStrategy: 'lodashDeep'
+  } );
+  myProperty.lazyLink( () => calledCount++ );
+
+  myProperty.value = { something: 'hi' };
+  assert.ok( calledCount === 1, 'not equal' );
+  myProperty.value = { something: 'hi' };
+  assert.ok( calledCount === 1, 'equal' );
+  myProperty.value = { something: 'hi', other: false };
+  assert.ok( calledCount === 2, 'not equal with other key' );
 } );
 
 // Tests that can only run in phet-io mode

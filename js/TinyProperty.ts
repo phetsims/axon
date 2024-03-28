@@ -14,10 +14,8 @@ import axon from './axon.js';
 import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
+import Validation, { ValueComparisonStrategy } from './Validation.js';
 
-export type ComparableObject = {
-  equals: ( a: unknown ) => boolean;
-};
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;
 
@@ -28,9 +26,10 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
 
   public _value: T; // Store the internal value -- NOT for general use (but used in Scenery for performance)
 
-  // Forces use of the deep equality checks. Keeps some compatibility with the Property interface to have the equality
-  // check in this type too. Not defining in the general case for memory usage, only using if we notice this flag set.
-  protected useDeepEquality?: boolean;
+  // If provided, force use of the custom value comparison beyond reference equality checks. Keeps some compatibility
+  // with the Property interface to have the equality check in this type too. Not defining in the general case for
+  // memory usage, only using if we notice this flag set. This is not readonly so that we can update this after construction. Defaults to "reference".
+  public valueComparisonStrategy?: ValueComparisonStrategy<T>;
 
   public constructor( value: T, onBeforeNotify?: OptionsAlias<T>['onBeforeNotify'] | null,
                       hasListenerOrderDependencies?: OptionsAlias<T>['hasListenerOrderDependencies'] | null,
@@ -100,31 +99,15 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   }
 
   /**
-   * Determines equality semantics for the wrapped type, including whether notifications are sent out when the
-   * wrapped value changes, and whether onValue is triggered.
-   * (Property)
-   *
-   * useDeepEquality: true => Use the `equals` method on the values
-   * useDeepEquality: false => Use === for equality test
+   * Determines equality semantics for value comparison, including whether notifications are sent out when the
+   * wrapped value changes, and whether onValue() is triggered. See Validation.equalsForValidationStrategy for details
+   * and doc on ValueComparisonStrategy
    *
    * Alternatively different implementation can be provided by subclasses or instances to change the equals
    * definition. See #10 and #73 and #115
    */
   public areValuesEqual( a: T, b: T ): boolean {
-    if ( this.useDeepEquality ) {
-      const aObject = a as unknown as ComparableObject;
-      const bObject = b as unknown as ComparableObject;
-
-      if ( aObject && bObject && aObject.constructor === bObject.constructor ) {
-        assert && assert( !!aObject.equals, 'no equals function for 1st arg' );
-        assert && assert( !!bObject.equals, 'no equals function for 2nd arg' );
-        assert && assert( aObject.equals( bObject ) === bObject.equals( aObject ), 'incompatible equality checks' );
-        return aObject.equals( bObject );
-      }
-    }
-
-    // Reference equality for objects, value equality for primitives
-    return a === b;
+    return Validation.equalsForValidationStrategy<T>( a, b, this.valueComparisonStrategy || 'reference' );
   }
 
   /**

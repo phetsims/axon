@@ -16,6 +16,8 @@ import Emitter from './Emitter.js';
 import Property from './Property.js';
 import validate from './validate.js';
 import Validation, { Validator } from './Validation.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Vector3 from '../../dot/js/Vector3.js';
 
 // constants
 const ASSERTIONS_TRUE = { assertions: true };
@@ -227,6 +229,28 @@ QUnit.test( 'test Validator.validators', assert => {
   assert.ok( Validation.getValidationError( true, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
   assert.ok( Validation.getValidationError( undefined, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
   assert.ok( !Validation.getValidationError( false, { validators: [ { valueType: 'boolean' }, { isValidValue: v => v === false } ] } ) );
+} );
+
+// See similar tests in TinyProperty for valueComparisonStrategy
+QUnit.test( 'Validator.equalsForValidationStrategy', assert => {
+
+  assert.ok( Validation.equalsForValidationStrategy( 1, 1, 'reference' ) );
+  assert.ok( Validation.equalsForValidationStrategy( 1, 1 ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( 1, '1' ) );
+  const object = {};
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( object, {}, 'reference' ) );
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>( object, object, 'reference' ) );
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>( {}, {}, ( a, b ) => ( a instanceof Object && b instanceof Object ) ) );
+
+  assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 0 ), Vector2.ZERO, 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy( new Vector2( 0, 1 ), Vector2.ZERO, 'equalsFunction' ) );
+
+  assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 1 ), new Vector2( 0, 3 ), ( a, b ) => a.x === b.x ) );
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>( new Vector2( 0, 1 ), new Vector3( 0, 4, 3 ), () => true ) );
+
+  assert.ok( Validation.equalsForValidationStrategy( {}, {}, 'lodashDeep' ) );
+  assert.ok( Validation.equalsForValidationStrategy( { hi: true }, { hi: true }, 'lodashDeep' ) );
+  assert.ok( !Validation.equalsForValidationStrategy( { hi: true }, { hi: true, other: false }, 'lodashDeep' ) );
 } );
 
 QUnit.test( 'Validator.valueComparisonStrategy', assert => {
