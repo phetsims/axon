@@ -412,17 +412,28 @@ export default class Validation {
       return a === b;
     }
     if ( valueComparisonStrategy === 'equalsFunction' ) {
-      if ( a && b && a.constructor === b.constructor ) { // Support for heterogeneous values with equalsFunction
+
+      // AHH!! We're sorry. Performance really matters here, so we use double equals to test for null and undefined.
+      // eslint-disable-next-line eqeqeq, no-eq-null
+      if ( a != null && b != null ) {
 
         const aComparable = a as unknown as ComparableObject;
         const bComparable = b as unknown as ComparableObject;
         assert && assert( !!aComparable.equals, 'no equals function for 1st arg' );
         assert && assert( !!bComparable.equals, 'no equals function for 2nd arg' );
-        assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ), 'incompatible equality checks' );
 
-        return aComparable.equals( bComparable );
+        // NOTE: If you hit this, and you think it is a bad assertion because of subtyping or something, then let's
+        // talk about removing this. Likely this should stick around (thinks JO and MK), but we can definitely discuss.
+        assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ),
+          'incompatible equality checks' );
+
+        const aEqualsB = aComparable.equals( bComparable );
+
+        // Support for heterogeneous values with equalsFunction. No need to check both directions if they are the
+        // same class.
+        return a.constructor === b.constructor ? aEqualsB : aEqualsB && bComparable.equals( a );
       }
-      return a === b;
+      return a === b; // Reference equality as a null/undefined fallback
     }
     if ( valueComparisonStrategy === 'lodashDeep' ) {
       return _.isEqual( a, b );

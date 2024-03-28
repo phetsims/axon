@@ -244,8 +244,7 @@ QUnit.test( 'Validator.equalsForValidationStrategy', assert => {
 
   assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 0 ), new Vector2( 0, 0 ), 'equalsFunction' ) );
 
-  // TODO: this fails because of constructor equality, https://github.com/phetsims/axon/issues/428
-  // assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 0 ), Vector2.ZERO, 'equalsFunction' ) );
+  assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 0 ), Vector2.ZERO, 'equalsFunction' ) );
   assert.ok( !Validation.equalsForValidationStrategy( new Vector2( 0, 1 ), new Vector2( 0, 0 ), 'equalsFunction' ) );
 
   assert.ok( Validation.equalsForValidationStrategy( new Vector2( 0, 1 ), new Vector2( 0, 3 ), ( a, b ) => a.x === b.x ) );
@@ -254,6 +253,62 @@ QUnit.test( 'Validator.equalsForValidationStrategy', assert => {
   assert.ok( Validation.equalsForValidationStrategy( {}, {}, 'lodashDeep' ) );
   assert.ok( Validation.equalsForValidationStrategy( { hi: true }, { hi: true }, 'lodashDeep' ) );
   assert.ok( !Validation.equalsForValidationStrategy( { hi: true }, { hi: true, other: false }, 'lodashDeep' ) );
+} );
+
+
+// See similar tests in TinyProperty for valueComparisonStrategy
+QUnit.test( 'equalsFunction quirks', assert => {
+
+  // DIFFERENT CONSTRUCTORS
+  class MyNumber {
+    public constructor( public readonly value: number ) {}
+
+    public equals( other: { value: number } ): boolean { return this.value === other.value;}
+  }
+
+  class MyNumberEqualsWhenSameSideOf5 {
+    public constructor( public readonly value: number ) {}
+
+    // If both are greater than or both are less than 5. Unequal if different. Equals 5 is treated as less than.
+    public equals( other: { value: number } ): boolean { return this.value > 5 === other.value > 5;}
+  }
+
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>( new MyNumber( 1 ), new MyNumber( 1 ), 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( new MyNumber( 2 ), new MyNumber( 1 ), 'equalsFunction' ) );
+
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>(
+    new MyNumber( 1 ),
+    new MyNumberEqualsWhenSameSideOf5( 1 ),
+    'equalsFunction' ) );
+
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>(
+    new MyNumberEqualsWhenSameSideOf5( 6 ),
+    new MyNumberEqualsWhenSameSideOf5( 7 ),
+    'equalsFunction' ) );
+
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>(
+    new MyNumberEqualsWhenSameSideOf5( 3 ),
+    new MyNumberEqualsWhenSameSideOf5( 7 ),
+    'equalsFunction' ) );
+
+  window.assert && assert.throws( () => !Validation.equalsForValidationStrategy<IntentionalAny>(
+    new MyNumber( 6 ),
+    new MyNumberEqualsWhenSameSideOf5( 7 ),
+    'equalsFunction' ) );
+
+  //////////////////////////////////////
+  // SUPPORT NULL AND UNDEFINED
+  assert.ok( Validation.equalsForValidationStrategy<IntentionalAny>( null, null, 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( null, undefined, 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( null, new MyNumber( 3 ), 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( undefined, new MyNumber( 3 ), 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( new MyNumber( 3 ), null, 'equalsFunction' ) );
+  assert.ok( !Validation.equalsForValidationStrategy<IntentionalAny>( new MyNumber( 3 ), undefined, 'equalsFunction' ) );
+
+  window.assert && assert.throws( () => Validation.equalsForValidationStrategy<IntentionalAny>( false, 7, 'equalsFunction' ) );
+  window.assert && assert.throws( () => Validation.equalsForValidationStrategy<IntentionalAny>( false, new MyNumber( 3 ), 'equalsFunction' ) );
+  window.assert && assert.throws( () => Validation.equalsForValidationStrategy<IntentionalAny>( '', new MyNumber( 3 ), 'equalsFunction' ) );
+  /////////////////////////////
 } );
 
 QUnit.test( 'Validator.valueComparisonStrategy', assert => {
