@@ -424,6 +424,9 @@ export default class Validation {
 
         // NOTE: If you hit this, and you think it is a bad assertion because of subtyping or something, then let's
         // talk about removing this. Likely this should stick around (thinks JO and MK), but we can definitely discuss.
+        // Basically using the instance defined `equals` function makes assumptions, and if this assertion fails, then
+        // it may be possible to have Property setting order dependencies. Likely it is just best to use a custom
+        // function provided as a valueComparisonStrategy. See https://github.com/phetsims/axon/issues/428#issuecomment-2030463728
         assert && assert( aComparable.equals( bComparable ) === bComparable.equals( aComparable ),
           'incompatible equality checks' );
 
