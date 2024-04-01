@@ -303,11 +303,14 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * Returns true if and only if the specified value equals the value of this property
    */
   protected equalsValue( value: T ): boolean {
+
+    // Ideally, we would call the equalsValue in tinyProperty, but it is protected. Furthermore, it is nice to get
+    // the assertions associated with ReadOnlyProperty.get().
     return this.areValuesEqual( value, this.get() );
   }
 
   /**
-   * See TinyProperty.areValuesEqual
+   * Determine if the two values are equal, see TinyProperty.areValuesEqual().
    */
   public areValuesEqual( a: T, b: T ): boolean {
     return this.tinyProperty.areValuesEqual( a, b );

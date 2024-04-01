@@ -74,6 +74,9 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * hasn't changed, this is a no-op.
    */
   public set( value: T ): void {
+
+    // It is very important that `equalsValue` holds all logic about if the value should change AND if listeners
+    // are notified.
     if ( !this.equalsValue( value ) ) {
       const oldValue = this._value;
 
@@ -92,19 +95,23 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   }
 
   /**
-   * Returns true if and only if the specified value equals the value of this property
+   * Returns true if and only if the specified value equals the value of this property. This is used to determine if
+   * a Property's value should change and if listeners should be notified. In general, this implementation should
+   * not be overridden except to provide more correct "value"s as parameters for the areValuesEqual() function.
    */
   protected equalsValue( value: T ): boolean {
     return this.areValuesEqual( value, this._value );
   }
 
   /**
+   * Central logic for determining value equality for Property. This determines if a value should change, and if
+   * listeners should notify based on set() call.
+   *
    * Determines equality semantics for value comparison, including whether notifications are sent out when the
    * wrapped value changes, and whether onValue() is triggered. See Validation.equalsForValidationStrategy for details
    * and doc on ValueComparisonStrategy
    *
-   * Alternatively different implementation can be provided by subclasses or instances to change the equals
-   * definition. See #10 and #73 and #115
+   * Overriding this function is deprecated, instead provide a custom valueComparisonStrategy.
    */
   public areValuesEqual( a: T, b: T ): boolean {
     return Validation.equalsForValidationStrategy<T>( a, b, this.valueComparisonStrategy || 'reference' );
