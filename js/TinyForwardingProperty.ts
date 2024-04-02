@@ -47,7 +47,12 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   // Guard against double initialization
   private phetioInitialized?: boolean;
 
-  public constructor( value: ValueType, targetPropertyInstrumented: boolean, onBeforeNotify?: TinyPropertyOnBeforeNotify<ValueType> ) {
+  /**
+   * @param value
+   * @param [targetPropertyInstrumented] - For phet-io support only, set to false if the target Property is not instrumented
+   * @param [onBeforeNotify]
+   */
+  public constructor( value: ValueType, targetPropertyInstrumented = false, onBeforeNotify?: TinyPropertyOnBeforeNotify<ValueType> ) {
     super( value, onBeforeNotify );
 
     if ( targetPropertyInstrumented ) {
@@ -88,9 +93,10 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   /**
    * Sets (or unsets if `null` is provided) the Property that we use for forwarding changes.
    *
-   * @param node - The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
-   * @param tandemName - null if the Property does not support PhET-iO instrumentation
    * @param newTargetProperty - null to "unset" forwarding.
+   * @param node - (For phet-io support only):
+   *               The container of TinyForwardingProperty which supports updateLinkedElementForProperty()
+   * @param tandemName - null if the Property does not support PhET-iO instrumentation
    * @returns the passed in Node, for chaining.
    */
   public setTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>(
