@@ -60,6 +60,18 @@ type ComparableObject = {
   equals: ( a: unknown ) => boolean;
 };
 
+type CustomValueComparisonMethodHolder<T> = {
+
+  // It is vital that this is "method" style syntax, and not "property" style, like customValueComparison:
+  // (a:T,b:T)=>boolean.  This is because TypeScript specifically makes a call to ignore contravariant type checking
+  // for methods, but it doesn't for Properties. Most importantly, this makes its way into TReadOnlyProperty, and causes
+  // lots of trouble when trying to use it with `unknown` parameter types.
+  // Paper trail1: https://github.com/phetsims/axon/issues/428#issuecomment-2033071432
+  // Paper trail2: https://stackoverflow.com/a/55992840/3408502
+  // Paper trail3: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-6.html#strict-function-types
+  customValueComparison( a: T, b: T ): boolean;
+};
+
 /**
  * The way that two values can be compared for equality:
  * "reference" - uses triple equals comparison (most often the default)
@@ -67,7 +79,7 @@ type ComparableObject = {
  * "lodashDeep" - uses _.isEqual() for comparison
  * custom function - define any function that returns if the two provided values are equal.
  */
-export type ValueComparisonStrategy<T> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
+export type ValueComparisonStrategy<T> = 'equalsFunction' | 'reference' | 'lodashDeep' | CustomValueComparisonMethodHolder<T>['customValueComparison'];
 
 export type ValidationMessage = string | ( () => string );
 

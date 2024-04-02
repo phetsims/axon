@@ -12,6 +12,9 @@ import TinyProperty from './TinyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import { ValueComparisonStrategy } from './Validation.js';
 
+// Even though these are the same types used for TProperty, it is vital that the tinyProperty parameter remains
+// TReadOnlyProperty to avoid contravariance type errors that may not be checked by TypeScript because contravariance
+// type checking is ignored in "method" types but not in "property" types. See https://github.com/phetsims/axon/issues/428#issuecomment-2033071432
 export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: TReadOnlyProperty<T> ) => void;
 export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: TReadOnlyProperty<T> ) => void;
 export type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
@@ -29,11 +32,7 @@ type TReadOnlyProperty<T> = {
   hasListener( listener: PropertyLinkListener<T> ): boolean;
   isSettable(): boolean;
   dispose(): void;
-
-  // TODO: why doesn't "T" work here? https://github.com/phetsims/axon/issues/428
-  // TODO: is it ok to add this to the interface? https://github.com/phetsims/axon/issues/428
-  valueComparisonStrategy: ValueComparisonStrategy<IntentionalAny>;
-
+  valueComparisonStrategy: ValueComparisonStrategy<T>;
   isDisposed?: boolean;
   toString(): string;
 };
