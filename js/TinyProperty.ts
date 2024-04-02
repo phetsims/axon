@@ -29,7 +29,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   // If provided, force use of the custom value comparison beyond reference equality checks. Keeps some compatibility
   // with the Property interface to have the equality check in this type too. Not defining in the general case for
   // memory usage, only using if we notice this flag set. This is not readonly so that we can update this after construction. Defaults to "reference".
-  public valueComparisonStrategy?: ValueComparisonStrategy<T>;
+  public _valueComparisonStrategy?: ValueComparisonStrategy<T>;
 
   public constructor( value: T, onBeforeNotify?: OptionsAlias<T>['onBeforeNotify'] | null,
                       hasListenerOrderDependencies?: OptionsAlias<T>['hasListenerOrderDependencies'] | null,
@@ -114,7 +114,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    * Overriding this function is deprecated, instead provide a custom valueComparisonStrategy.
    */
   public areValuesEqual( a: T, b: T ): boolean {
-    return Validation.equalsForValidationStrategy<T>( a, b, this.valueComparisonStrategy || 'reference' );
+    return Validation.equalsForValidationStrategy<T>( a, b, this.valueComparisonStrategy );
   }
 
   /**
@@ -175,6 +175,14 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    */
   public isSettable(): boolean {
     return true;
+  }
+
+  public get valueComparisonStrategy(): ValueComparisonStrategy<T> {
+    return this._valueComparisonStrategy || 'reference';
+  }
+
+  public set valueComparisonStrategy( valueComparisonStrategy: ValueComparisonStrategy<T> ) {
+    this._valueComparisonStrategy = valueComparisonStrategy;
   }
 
   /**

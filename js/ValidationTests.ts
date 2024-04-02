@@ -363,4 +363,6 @@ QUnit.test( 'Validator.valueComparisonStrategy', assert => {
   assert.ok( Validation.getValidationError( new Vector2( 0, 0 ), {
     validators: [ { validValues: [ new Vector2( 1, 1 ), new Vector2( 2, 0 ) ], valueComparisonStrategy: ( a, b ) => a.x === b.x } ]
   } ) );
+
+  assert.ok( Validation.equalsForValidationStrategy<unknown>( new Vector2( 0, 0 ), new Vector2( 0, 0 ), ( a, b ) => a === b ) );
 } );

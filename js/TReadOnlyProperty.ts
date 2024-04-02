@@ -10,6 +10,7 @@
 import ReadOnlyProperty, { LinkOptions } from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import { ValueComparisonStrategy } from './Validation.js';
 
 export type PropertyLinkListener<T> = ( value: T, oldValue: T | null, tinyProperty: TReadOnlyProperty<T> ) => void;
 export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty: TReadOnlyProperty<T> ) => void;
@@ -28,6 +29,10 @@ type TReadOnlyProperty<T> = {
   hasListener( listener: PropertyLinkListener<T> ): boolean;
   isSettable(): boolean;
   dispose(): void;
+
+  // TODO: why doesn't "T" work here? https://github.com/phetsims/axon/issues/428
+  // TODO: is it ok to add this to the interface? https://github.com/phetsims/axon/issues/428
+  valueComparisonStrategy: ValueComparisonStrategy<IntentionalAny>;
 
   isDisposed?: boolean;
   toString(): string;

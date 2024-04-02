@@ -21,7 +21,7 @@ import units from './units.js';
 import validate from './validate.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
-import Validation, { Validator } from './Validation.js';
+import Validation, { Validator, ValueComparisonStrategy } from './Validation.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
@@ -544,6 +544,14 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   public hasListeners(): boolean {
     assert && assert( arguments.length === 0, 'Property.hasListeners should be called without arguments' );
     return this.tinyProperty.hasListeners();
+  }
+
+  public get valueComparisonStrategy(): ValueComparisonStrategy<T> {
+    return this.tinyProperty.valueComparisonStrategy;
+  }
+
+  public set valueComparisonStrategy( valueComparisonStrategy: ValueComparisonStrategy<T> ) {
+    this.tinyProperty.valueComparisonStrategy = valueComparisonStrategy;
   }
 
 

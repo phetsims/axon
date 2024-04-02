@@ -67,7 +67,7 @@ type ComparableObject = {
  * "lodashDeep" - uses _.isEqual() for comparison
  * custom function - define any function that returns if the two provided values are equal.
  */
-export type ValueComparisonStrategy<T = unknown> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
+export type ValueComparisonStrategy<T> = 'equalsFunction' | 'reference' | 'lodashDeep' | ( ( a: T, b: T ) => boolean );
 
 export type ValidationMessage = string | ( () => string );
 
@@ -406,7 +406,7 @@ export default class Validation {
    * Compare the two provided values for equality using the valueComparisonStrategy provided, see
    * ValueComparisonStrategy type.
    */
-  public static equalsForValidationStrategy<T = unknown>( a: T, b: T, valueComparisonStrategy: ValueComparisonStrategy<T> = 'reference' ): boolean {
+  public static equalsForValidationStrategy<T>( a: T, b: T, valueComparisonStrategy: ValueComparisonStrategy<T> = 'reference' ): boolean {
 
     if ( valueComparisonStrategy === 'reference' ) {
       return a === b;
