@@ -60,7 +60,6 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
       inverseMap: inverseMap
     }, providedOptions );
 
-    // @ts-expect-error Expression produces a union type that is too complex to represent.
     super( property, options );
 
     this._property = property;
