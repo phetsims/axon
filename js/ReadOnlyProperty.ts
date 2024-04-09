@@ -255,14 +255,17 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   /**
    * Sets the value and notifies listeners, unless deferred or disposed. You can also use the es5 getter
    * (property.value) but this means is provided for inner loops or internal code that must be fast. If the value
-   * hasn't changed, this is a no-op.  For PhET-iO instrumented Properties that are phetioState: true, the value is only
-   * set by the state and cannot be modified by other code while isSettingPhetioStateProperty === true
+   * hasn't changed, this is a no-op.
+   *
+   * NOTE: For PhET-iO instrumented Properties that are phetioState: true, the value is only
+   * set by the PhetioStateEngine and cannot be modified by other code while isSettingPhetioStateProperty === true.
    */
   protected set( value: T ): void {
 
-    // state is managed by the PhetioStateEngine.
-    // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
+    // State is managed by the PhetioStateEngine, see https://github.com/phetsims/axon/issues/409
     const setManagedByPhetioState = isPhetioStateEngineManagingPropertyValuesProperty.value &&
+
+                                    // We still want to set Properties when clearing dynamic elements, see https://github.com/phetsims/phet-io/issues/1906
                                     !isClearingPhetioDynamicElementsProperty.value &&
                                     this.isPhetioInstrumented() && this.phetioState &&
 
@@ -271,6 +274,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     if ( !setManagedByPhetioState ) {
       this.unguardedSet( value );
+    }
+    else {
+      // Uncomment while implementing PhET-iO State for your simulation to see what value-setting is being silently ignored.
+      // console.warn( `Ignoring attempt to ReadOnlyProperty.set(): ${this.phetioID}` );
     }
   }
 
