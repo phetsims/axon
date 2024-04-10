@@ -181,7 +181,12 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 
   /**
-   * Allows forcing a recomputation (as a possible workaround to listener order).
+   * Allows forcing a recomputation (as a possible workaround to listener order). This works well if you have a
+   * non-Property event that should trigger a value change for this Property.
+   *
+   * For example:
+   * myEmitter.addListener( () => myDerivedProperty.recomputeDerivation() );
+   * myObservableArray.addItemAddedListener( () => myDerivedProperty.recomputeDerivation() );
    */
   public recomputeDerivation(): void {
     this.getDerivedPropertyListener();
