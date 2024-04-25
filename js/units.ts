@@ -35,6 +35,7 @@ const units = {
     'K', // Kelvin
     'kg', // kilograms
     'kg/m^3', // kg/cubic meter
+    'kg/L', // kg/liter
     'kg\u00b7m/s', // kg·m/s, kilogram-meters/second
     'km/s',
     'kPa', // kilopascals
