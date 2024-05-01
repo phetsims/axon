@@ -82,6 +82,9 @@ class PropertyStateHandler {
       }
     } );
 
+    // It is important that nothing else adds listeners at import time before this. Properties take precedent.
+    assert && assert( !phetioStateEngine.undeferEmitter.hasListeners(), 'At this time, we rely on Properties undeferring first.' );
+
     phetioStateEngine.undeferEmitter.addListener( state => {
 
       // Properties set to final values and notify of any value changes.
