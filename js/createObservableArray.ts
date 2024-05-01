@@ -25,6 +25,8 @@ import Validation from './Validation.js';
 import TEmitter from './TEmitter.js';
 import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import Tandem from '../../tandem/js/Tandem.js';
+import { PhetioState } from '../../tandem/js/TandemConstants.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
@@ -80,6 +82,12 @@ type PrivateObservableArray<T> = {
   targetArray: T[];
 
   _observableArrayPhetioObject?: ObservableArrayPhetioObject<T>;
+
+  // keep track of listeners to be called while deferred
+  deferredActions: VoidFunction[];
+  notificationsDeferred: boolean;
+  emitNotification: ( emitter: TEmitter<[ T ]>, element: T ) => void;
+  setNotificationsDeferred( notificationsDeferred: boolean ): void;
 } & ObservableArray<T>;
 
 
@@ -156,6 +164,16 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     }
   } );
 
+  const deferredActions: VoidFunction[] = [];
+  const emitNotification = ( emitter: TEmitter<[ T ]>, element: T ) => {
+    if ( observableArray.notificationsDeferred ) {
+      observableArray.deferredActions.push( () => emitter.emit( element ) );
+    }
+    else {
+      emitter.emit( element );
+    }
+  };
+
   // The Proxy which will intercept method calls and trigger notifications.
   const observableArray: PrivateObservableArray<T> = new Proxy( targetArray, {
 
@@ -202,17 +220,17 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
         lengthProperty.value = array.length;
 
         if ( oldValue !== undefined ) {
-          elementRemovedEmitter.emit( array[ key as any ] );
+          emitNotification( elementRemovedEmitter, array[ key as any ] );
         }
         if ( newValue !== undefined ) {
-          elementAddedEmitter.emit( newValue );
+          emitNotification( elementAddedEmitter, newValue );
         }
       }
       else if ( key === 'length' ) {
         lengthProperty.value = newValue;
 
         assert && assert( removedElements, 'removedElements should be defined for key===length' );
-        removedElements && removedElements.forEach( element => elementRemovedEmitter.emit( element ) );
+        removedElements && removedElements.forEach( element => emitNotification( elementRemovedEmitter, element ) );
       }
       return returnValue;
     },
@@ -232,14 +250,20 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
       }
       const returnValue = Reflect.deleteProperty( array, key );
       if ( removed !== undefined ) {
-        elementRemovedEmitter.emit( removed );
+        emitNotification( elementRemovedEmitter, removed );
       }
 
       return returnValue;
     }
   } ) as PrivateObservableArray<T>;
 
+  // private
   observableArray.targetArray = targetArray;
+  observableArray.notificationsDeferred = false;
+  observableArray.emitNotification = emitNotification;
+  observableArray.deferredActions = deferredActions;
+
+  // public
   observableArray.elementAddedEmitter = elementAddedEmitter;
   observableArray.elementRemovedEmitter = elementRemovedEmitter;
   observableArray.lengthProperty = lengthProperty;
@@ -272,6 +296,30 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
     // for managing state in phet-io
     // Use the same tandem and phetioState options so it can "masquerade" as the real object.  When PhetioObject is a mixin this can be changed.
     observableArray._observableArrayPhetioObject = new ObservableArrayPhetioObject( observableArray, options );
+
+    if ( Tandem.PHET_IO_ENABLED ) {
+
+      assert && assert( _.hasIn( window, 'phet.phetio.phetioEngine.phetioStateEngine' ),
+        'PhET-iO Instrumented ObservableArrays must be created once phetioEngine has been constructed' );
+
+      const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
+
+      // On state start, clear out the container and set to defer notifications.
+      phetioStateEngine.clearDynamicElementsEmitter.addListener( ( state: PhetioState, scopeTandem: Tandem ) => {
+
+        // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
+        if ( observableArray._observableArrayPhetioObject?.tandem.hasAncestor( scopeTandem ) ) {
+          observableArray.setNotificationsDeferred( true );
+        }
+      } );
+
+      // done with state setting
+      phetioStateEngine.undeferEmitter.addListener( () => {
+        if ( observableArray.notificationsDeferred ) {
+          observableArray.setNotificationsDeferred( false );
+        }
+      } );
+    }
   }
 
   return observableArray;
@@ -299,7 +347,7 @@ class ObservableArrayPhetioObject<T> extends PhetioObject {
 }
 
 // Methods shared by all ObservableArrayDef instances
-const methods = {
+const methods: ThisType<PrivateObservableArray<unknown>> = {
 
   /******************************************
    * Overridden Array methods
@@ -311,7 +359,7 @@ const methods = {
     const initialLength = thisArray.targetArray.length;
     const returnValue = Array.prototype.pop.apply( thisArray.targetArray, args as any );
     thisArray.lengthProperty.value = thisArray.length;
-    initialLength > 0 && thisArray.elementRemovedEmitter.emit( returnValue );
+    initialLength > 0 && thisArray.emitNotification( thisArray.elementRemovedEmitter, returnValue );
     return returnValue;
   },
 
@@ -321,7 +369,7 @@ const methods = {
     const initialLength = thisArray.targetArray.length;
     const returnValue = Array.prototype.shift.apply( thisArray.targetArray, args as any );
     thisArray.lengthProperty.value = thisArray.length;
-    initialLength > 0 && thisArray.elementRemovedEmitter.emit( returnValue );
+    initialLength > 0 && thisArray.emitNotification( thisArray.elementRemovedEmitter, returnValue );
     return returnValue;
   },
 
@@ -331,7 +379,7 @@ const methods = {
     const returnValue = Array.prototype.push.apply( thisArray.targetArray, args );
     thisArray.lengthProperty.value = thisArray.length;
     for ( let i = 0; i < arguments.length; i++ ) {
-      thisArray.elementAddedEmitter.emit( args[ i ] );
+      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
     }
     return returnValue;
   },
@@ -342,7 +390,7 @@ const methods = {
     const returnValue = Array.prototype.unshift.apply( thisArray.targetArray, args );
     thisArray.lengthProperty.value = thisArray.length;
     for ( let i = 0; i < args.length; i++ ) {
-      thisArray.elementAddedEmitter.emit( args[ i ] );
+      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
     }
     return returnValue;
   },
@@ -354,9 +402,9 @@ const methods = {
     thisArray.lengthProperty.value = thisArray.length;
     const deletedElements = returnValue;
     for ( let i = 2; i < args.length; i++ ) {
-      thisArray.elementAddedEmitter.emit( args[ i ] );
+      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
     }
-    deletedElements.forEach( deletedElement => thisArray.elementRemovedEmitter.emit( deletedElement ) );
+    deletedElements.forEach( deletedElement => thisArray.emitNotification( thisArray.elementRemovedEmitter, deletedElement ) );
     return returnValue;
   },
 
@@ -383,26 +431,26 @@ const methods = {
    * TODO https://github.com/phetsims/axon/issues/334 consider deleting after migration
    * TODO https://github.com/phetsims/axon/issues/334 if not deleted, rename 'Item' with 'Element'
    *******************************************/
-  get: function( index: number ) { return ( this as PrivateObservableArray<any> )[ index ]; },
-  addItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.addListener( listener ); },
-  removeItemAddedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementAddedEmitter.removeListener( listener ); },
-  addItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.addListener( listener ); },
-  removeItemRemovedListener: function( listener: ObservableArrayListener<any> ) { ( this as PrivateObservableArray<any> ).elementRemovedEmitter.removeListener( listener ); },
-  add: function( element: any ) { ( this as PrivateObservableArray<any> ).push( element );},
-  addAll: function( elements: any[] ) { ( this as PrivateObservableArray<any> ).push( ...elements );},
-  remove: function( element: any ) { arrayRemove( ( this as PrivateObservableArray<any> ), element );},
+  get: function( index: number ) { return this[ index ]; },
+  addItemAddedListener: function( listener: ObservableArrayListener<any> ) { this.elementAddedEmitter.addListener( listener ); },
+  removeItemAddedListener: function( listener: ObservableArrayListener<any> ) { this.elementAddedEmitter.removeListener( listener ); },
+  addItemRemovedListener: function( listener: ObservableArrayListener<any> ) { this.elementRemovedEmitter.addListener( listener ); },
+  removeItemRemovedListener: function( listener: ObservableArrayListener<any> ) { this.elementRemovedEmitter.removeListener( listener ); },
+  add: function( element: any ) { this.push( element ); },
+  addAll: function( elements: any[] ) { this.push( ...elements ); },
+  remove: function( element: any ) { arrayRemove( this, element ); },
   removeAll: function( elements: any[] ) {
-    elements.forEach( element => arrayRemove( ( this as PrivateObservableArray<any> ), element ) );
+    elements.forEach( element => arrayRemove( this, element ) );
   },
   clear: function() {
-    while ( ( this as PrivateObservableArray<any> ).length > 0 ) {
-      ( this as PrivateObservableArray<any> ).pop();
+    while ( this.length > 0 ) {
+      this.pop();
     }
   },
   count: function( predicate: Predicate<any> ) {
     let count = 0;
-    for ( let i = 0; i < ( this as PrivateObservableArray<any> ).length; i++ ) {
-      if ( predicate( ( this as PrivateObservableArray<any> )[ i ] ) ) {
+    for ( let i = 0; i < this.length; i++ ) {
+      if ( predicate( this[ i ] ) ) {
         count++;
       }
     }
@@ -410,23 +458,23 @@ const methods = {
   },
   find: function( predicate: Predicate<any>, fromIndex?: number ) {
     assert && ( fromIndex !== undefined ) && assert( typeof fromIndex === 'number', 'fromIndex must be numeric, if provided' );
-    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < ( this as PrivateObservableArray<any> ).length,
+    assert && ( typeof fromIndex === 'number' ) && assert( fromIndex >= 0 && fromIndex < this.length,
       `fromIndex out of bounds: ${fromIndex}` );
-    return _.find( ( this as PrivateObservableArray<any> ), predicate, fromIndex );
+    return _.find( this, predicate, fromIndex );
   },
   shuffle: function( random: FakeRandom<any> ) {
     assert && assert( random, 'random must be supplied' );
 
     // preserve the same _array reference in case any clients got a reference to it with getArray()
-    const shuffled = random.shuffle( ( this as PrivateObservableArray<any> ) );
+    const shuffled = random.shuffle( this );
 
     // Act on the targetArray so that removal and add notifications aren't sent.
-    ( this as PrivateObservableArray<any> ).targetArray.length = 0;
-    Array.prototype.push.apply( ( this as PrivateObservableArray<any> ).targetArray, shuffled );
+    this.targetArray.length = 0;
+    Array.prototype.push.apply( this.targetArray, shuffled );
   },
 
   // TODO https://github.com/phetsims/axon/issues/334 This also seems important to eliminate
-  getArrayCopy: function() { return ( this as PrivateObservableArray<any> ).slice(); },
+  getArrayCopy: function() { return this.slice(); },
 
   dispose: function() {
     const thisArray = this as PrivateObservableArray<any>;
@@ -440,12 +488,22 @@ const methods = {
    * PhET-iO
    *******************************************/
   toStateObject: function() {
-    return { array: ( this as PrivateObservableArray<any> ).map( item => ( this as PrivateObservableArray<any> ).phetioElementType!.toStateObject( item ) ) };
+    return { array: this.map( item => this.phetioElementType!.toStateObject( item ) ) };
   },
   applyState: function( stateObject: ObservableArrayStateObject<any> ) {
-    ( this as PrivateObservableArray<any> ).length = 0;
-    const elements = stateObject.array.map( paramStateObject => ( this as PrivateObservableArray<any> ).phetioElementType!.fromStateObject( paramStateObject ) );
+    this.length = 0;
+    const elements = stateObject.array.map( paramStateObject => this.phetioElementType!.fromStateObject( paramStateObject ) );
     this.push( ...elements );
+  },
+  setNotificationsDeferred: function( notificationsDeferred: boolean ) {
+
+    // Handle the case where a listener causes another element to be added/removed. That new action should notify last.
+    if ( !notificationsDeferred ) {
+      while ( this.deferredActions.length > 0 ) {
+        this.deferredActions.shift()!();
+      }
+    }
+    this.notificationsDeferred = notificationsDeferred;
   }
 };
 
@@ -467,8 +525,8 @@ const reportDifference = ( shallowCopy: any[], observableArray: PrivateObservabl
       i--;
     }
   }
-  before.forEach( element => observableArray.elementRemovedEmitter.emit( element ) );
-  after.forEach( element => observableArray.elementAddedEmitter.emit( element ) );
+  before.forEach( element => observableArray.emitNotification( observableArray.elementRemovedEmitter, element ) );
+  after.forEach( element => observableArray.emitNotification( observableArray.elementAddedEmitter, element ) );
 };
 
 // Cache each parameterized ObservableArrayIO

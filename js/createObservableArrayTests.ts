@@ -474,3 +474,37 @@ QUnit.test( 'createObservableArrayTests misc', assert => {
   const array = createObservableArray();
   assert.ok( Array.isArray( array ), 'should be an array' );
 } );
+
+QUnit.test( 'createObservableArrayTests notification deferring', assert => {
+  const array = createObservableArray<number>();
+
+  // @ts-expect-error
+  array.setNotificationsDeferred( true );
+  // @ts-expect-error
+  assert.ok( array.notificationsDeferred, 'should be' );
+  let fullCount = 0;
+  array.addItemAddedListener( count => {
+    fullCount += count;
+  } );
+
+  array.push( 5 );
+  assert.equal( fullCount, 0 );
+  // @ts-expect-error
+  array.setNotificationsDeferred( false );
+
+  // @ts-expect-error
+  assert.ok( !array.notificationsDeferred, 'should be' );
+  assert.equal( fullCount, 5 );
+
+  array.push( 5 );
+  assert.equal( fullCount, 10 );
+  // @ts-expect-error
+  array.setNotificationsDeferred( true );
+  array.push( 5 );
+  array.push( 4 );
+  array.push( 6 );
+  assert.equal( fullCount, 10 );
+  // @ts-expect-error
+  array.setNotificationsDeferred( false );
+  assert.equal( fullCount, 25 );
+} );
