@@ -152,7 +152,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
   // Verify that lengthProperty is updated before listeners are notified, but not when setting PhET-iO State,
   // This is because we cannot specify ordering dependencies between Properties and ObservableArrays,
-  // TODO: Maybe this can be improved when we have better support for this in https://github.com/phetsims/phet-io/issues/1661
   assert && elementAddedEmitter.addListener( () => {
     if ( !isSettingPhetioStateProperty.value ) {
       assert && assert( lengthProperty.value === targetArray.length, 'lengthProperty out of sync while adding element' );
