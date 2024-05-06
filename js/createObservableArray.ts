@@ -318,40 +318,6 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
           observableArray.setNotificationsDeferred( false );
         }
       } );
-
-      phetioStateEngine.addSetStateHelper( ( state: PhetioState, stillToSetIDs: string[] ) => {
-
-        // if we have any deferred actions at this point, execute one. Then check back later.
-        if ( observableArray.deferredActions.length > 0 ) {
-          observableArray.deferredActions.shift()!();
-
-          return true;
-        }
-        else {
-          return false;
-        }
-
-      } );
-      //   let creationNotified = false;
-      //
-      //   let iterationCount = 0;
-      //
-      //   while ( this.deferredCreations.length > 0 ) {
-      //
-      //     if ( iterationCount > 200 ) {
-      //       throw new Error( 'Too many iterations in deferred creations, stillToSetIDs = ' + stillToSetIDs.join( ', ' ) );
-      //     }
-      //
-      //     const deferredCreatedElement = this.deferredCreations[ 0 ];
-      //     if ( this.stateSetOnAllChildrenOfDynamicElement( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
-      //       this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
-      //       creationNotified = true;
-      //     }
-      //
-      //     iterationCount++;
-      //   }
-      //   return creationNotified;
-      // } );
     }
   }
 
