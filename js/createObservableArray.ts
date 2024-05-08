@@ -308,6 +308,10 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
         if ( observableArray._observableArrayPhetioObject?.tandem.hasAncestor( scopeTandem ) ) {
+
+          // Clear before deferring, so that removal notifications occur eagerly before state set.
+          observableArray.length = 0;
+
           observableArray.setNotificationsDeferred( true );
         }
       } );
@@ -316,6 +320,26 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
       phetioStateEngine.undeferEmitter.addListener( () => {
         if ( observableArray.notificationsDeferred ) {
           observableArray.setNotificationsDeferred( false );
+        }
+      } );
+
+      // It is possible and often that ObservableArray listeners are responsible for creating dynamic elements, and so
+      // we cannot assume that all listeners can be deferred until after setting values. This prevents "impossible set state. . ."
+      // assertions.
+      phetioStateEngine.addSetStateHelper( () => {
+
+        // If we have any deferred actions at this point, execute one. Then the PhET-iO State Engine can ask for more
+        // if needed next time. It may be better at some point to do more than just one action here (for performance),
+        // but it is a balance. Actions here may also have an order dependency expecting a Property to have its new
+        // value already, so one at a time seems best for now. Note that PhetioDynamicElementContainer elects to fire
+        // as many as possible, since it is more likely that the creation of one dynamic element would cause the
+        // creation of another (model element -> view element).
+        if ( observableArray.deferredActions.length > 0 ) {
+          observableArray.deferredActions.shift()!();
+          return true;
+        }
+        else {
+          return false;
         }
       } );
     }
@@ -490,6 +514,7 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
     return { array: this.map( item => this.phetioElementType!.toStateObject( item ) ) };
   },
   applyState: function( stateObject: ObservableArrayStateObject<any> ) {
+    assert && assert( this.length === 0, 'ObservableArrays should be cleared at the beginning of state setting.' );
     this.length = 0;
     const elements = stateObject.array.map( paramStateObject => this.phetioElementType!.fromStateObject( paramStateObject ) );
     this.push( ...elements );
