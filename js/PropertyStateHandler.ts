@@ -130,6 +130,8 @@ class PropertyStateHandler {
                                         beforePhase: PropertyStatePhase, afterProperty: ReadOnlyProperty<IntentionalAny>,
                                         afterPhase: PropertyStatePhase ): void {
     if ( Tandem.PHET_IO_ENABLED ) {
+      assert && assert( !( beforePhase === PropertyStatePhase.NOTIFY && afterPhase === PropertyStatePhase.UNDEFER ),
+        'It is PhET-iO policy at this time to have all notifications occur after all state values have been applied.' );
 
       this.validatePropertyPhasePair( beforeProperty, beforePhase );
       this.validatePropertyPhasePair( afterProperty, afterPhase );

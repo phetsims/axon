@@ -371,42 +371,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
       validValues: validValues
     } );
   } );
-
-  QUnit.test( 'propertyStateHandlerSingleton tests for Property', assert => {
-    const parentTandem = Tandem.ROOT_TEST;
-
-    const originalOrderDependencyLength = propertyStateHandlerSingleton.getNumberOfOrderDependencies();
-    const getOrderDependencyLength = () => propertyStateHandlerSingleton.getNumberOfOrderDependencies() - originalOrderDependencyLength;
-
-    const firstProperty = new Property( 1, {
-      tandem: parentTandem.createTandem( 'firstProperty' ),
-      phetioValueType: NumberIO
-    } );
-    const secondProperty = new Property( 1, {
-      tandem: parentTandem.createTandem( 'secondProperty' ),
-      phetioValueType: NumberIO
-    } );
-
-    propertyStateHandlerSingleton.registerPhetioOrderDependency( firstProperty, PropertyStatePhase.NOTIFY, secondProperty, PropertyStatePhase.UNDEFER );
-
-    firstProperty.dispose();
-    assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
-
-    const thirdProperty = new Property( 1, {
-      tandem: parentTandem.createTandem( 'thirdProperty' ),
-      phetioValueType: NumberIO
-    } );
-    secondProperty.link( () => { thirdProperty.value = 2;}, {
-      phetioDependencies: [ thirdProperty ]
-    } );
-
-    assert.ok( getOrderDependencyLength() === 1, 'just added orderDependency from phetioDependencies' );
-
-    secondProperty.dispose();
-    assert.ok( getOrderDependencyLength() === 0, 'dispose removes order dependency' );
-
-    thirdProperty.dispose();
-  } );
 }
 ///////////////////////////////
 // END PHET_IO ONLY TESTS
