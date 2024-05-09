@@ -7,12 +7,9 @@
  */
 
 import Tandem from '../../tandem/js/Tandem.js';
-import NumberIO from '../../tandem/js/types/NumberIO.js';
 import Multilink from './Multilink.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
-import PropertyStatePhase from './PropertyStatePhase.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Vector2 from '../../dot/js/Vector2.js';
