@@ -306,7 +306,8 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
    */
   public override set( value: ThisValueType ): void {
     assert && assert( this.bidirectional,
-      `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}` );
+      `Cannot set values directly to a non-bidirectional DynamicProperty, tried to set: ${value}${this.isPhetioInstrumented() ? ' for ' + this.phetioID : ''}`
+    );
 
     this.isExternallyChanging = true;
     super.set( value );
