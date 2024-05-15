@@ -17,7 +17,7 @@ import VoidIO from '../../tandem/js/types/VoidIO.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import TinyProperty from './TinyProperty.js';
-import units from './units.js';
+import units, { Units } from './units.js';
 import validate from './validate.js';
 import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
@@ -51,8 +51,8 @@ export type ReadOnlyPropertyState<StateType> = {
 // Options defined by Property
 type SelfOptions = {
 
-  // units for the number, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
-  units?: string | null;
+  // units for the value, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
+  units?: Units | null;
 
   // Whether reentrant calls to 'set' are allowed.
   // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
@@ -105,7 +105,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   private readonly id: number;
 
   // (phet-io) Units, if any.  See units.js for valid values
-  public readonly units: string | null;
+  public readonly units: Units | null;
 
   public validValues?: readonly T[];
 

@@ -87,7 +87,11 @@ QUnit.test( 'Test NumberProperty', assert => {
 
   // units
   window.assert && assert.throws( () => {
-    property = new NumberProperty( 0, { units: 'elephants' } );
+    property = new NumberProperty( 0, {
+
+      // @ts-expect-error - elephants is not a supported unit
+      units: 'elephants'
+    } );
   }, 'bad units' );
 
   ///////////////////////////////
