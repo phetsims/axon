@@ -60,7 +60,8 @@ type SelfOptions = {
   // cycles may pollute the data stream. See https://github.com/phetsims/axon/issues/179
   reentrant?: boolean;
 
-  // At this level, it doesn't matter what the state type is, so it defaults to IntentionalAny
+  // The IOType for the values this Property supports. At this level, it doesn't matter what the state type is, so
+  // it defaults to IntentionalAny.
   phetioValueType?: IOType;
 
   // The IOType function that returns a parameterized IOType based on the valueType. There is a general default, but
@@ -100,7 +101,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   // (phet-io) Units, if any.  See units.js for valid values
   public readonly units: Units | null;
 
-  public validValues?: readonly T[];
+  public readonly validValues?: readonly T[];
 
   // emit is called when the value changes (or on link)
   private tinyProperty: TinyProperty<T>;
@@ -123,6 +124,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected hasDeferredValue: boolean;
 
   protected readonly valueValidator: Validator<T>;
+
+  // The IOType for the values this Property supports.
+  protected readonly phetioValueType: IOType;
+
 
   /**
    * This is protected to indicate to clients that subclasses should be used instead.
@@ -199,6 +204,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     this.isDeferred = false;
     this.deferredValue = null;
     this.hasDeferredValue = false;
+    this.phetioValueType = options.phetioValueType;
 
     this.valueValidator = _.pick( options, Validation.VALIDATOR_KEYS );
     this.valueValidator.validationMessage = this.valueValidator.validationMessage || 'Property value not valid';
@@ -361,7 +367,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * Use this method when mutating a value (not replacing with a new instance) and you want to send notifications about the change.
    * This is different from the normal axon strategy, but may be necessary to prevent memory allocations.
    * This method is unsafe for removing listeners because it assumes the listener list not modified, to save another allocation
-   * Only provides the new reference as a callback (no oldvalue)
+   * Only provides the new reference as a callback (no oldValue)
    * See https://github.com/phetsims/axon/issues/6
    */
   public notifyListenersStatic(): void {
@@ -563,6 +569,32 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     this.tinyProperty.valueComparisonStrategy = valueComparisonStrategy;
   }
 
+  /**
+   * Implementation of serialization for PhET-iO support.
+   *
+   * This function is parameterized to support subtyping. That said, it is a bit useless, since we don't want to
+   * parameterize ReadOnlyProperty in general to the IOType's state type, so please bear with us.
+   */
+  protected toStateObject<StateType>(): ReadOnlyPropertyState<StateType> {
+    assert && assert( this.phetioValueType.toStateObject, `toStateObject doesn't exist for ${this.phetioValueType.typeName}` );
+    return {
+      value: this.phetioValueType.toStateObject( this.value ),
+      validValues: NullableIO( ArrayIO( this.phetioValueType ) ).toStateObject( this.validValues === undefined ? null : this.validValues ),
+      units: NullableIO( StringIO ).toStateObject( this.units )
+    };
+  }
+
+  protected applyState<StateType>( stateObject: ReadOnlyPropertyState<StateType> ): void {
+    const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+    assert && assert( this.units === units, 'Property units do not match' );
+    assert && assert( this.isSettable(), 'Property should be settable' );
+    this.unguardedSet( this.phetioValueType.fromStateObject( stateObject.value ) );
+
+    if ( stateObject.validValues ) {
+      // @ts-expect-error - TODO Should never be set after construction, see https://github.com/phetsims/axon/issues/453
+      this[ 'validValues' ] = stateObject.validValues.map( ( validValue: StateType ) => ( this.phetioValueType ).fromStateObject( validValue ) ); // eslint-disable-line @typescript-eslint/dot-notation
+    }
+  }
 
   /**
    * An observable Property that triggers notifications when the value changes.
@@ -583,22 +615,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
         events: [ ReadOnlyProperty.CHANGED_EVENT_NAME ],
         parameterTypes: [ parameterType ],
         toStateObject: property => {
-          assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-          return {
-            value: parameterType.toStateObject( property.value ),
-            validValues: NullableIO( ArrayIO( parameterType ) ).toStateObject( property.validValues === undefined ? null : property.validValues ),
-            units: NullableIO( StringIO ).toStateObject( property.units )
-          };
+          return property.toStateObject();
         },
         applyState: ( property, stateObject ) => {
-          const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
-          assert && assert( property.units === units, 'Property units do not match' );
-          assert && assert( property.isSettable(), 'Property should be settable' );
-          property.unguardedSet( parameterType.fromStateObject( stateObject.value ) );
-
-          if ( stateObject.validValues ) {
-            property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
-          }
+          property.applyState( stateObject );
         },
         stateSchema: {
           value: parameterType,

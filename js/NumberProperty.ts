@@ -216,16 +216,14 @@ export default class NumberProperty extends Property<number> implements TRangedP
   /**
    * Get parent state and append NumberProperty-specific metadata to it.
    */
-  public toStateObject(): NumberPropertyState {
-    const parentStateObject = PropertyIOImpl.toStateObject( this );
+  public override toStateObject<StateType>(): NumberPropertySelfState & ReadOnlyPropertyState<StateType> {
+    const parentStateObject = super.toStateObject<StateType>();
 
-    parentStateObject.numberType = this.numberType;
-    parentStateObject.range = Range.RangeIO.toStateObject( this.rangeProperty.value );
-
-    const hasRangePhetioID = this.rangeProperty && this.rangeProperty.isPhetioInstrumented();
-    parentStateObject.rangePhetioID = hasRangePhetioID ? this.rangeProperty.tandem.phetioID : null;
-
-    return parentStateObject;
+    return _.assignIn( {
+      numberType: this.numberType,
+      range: Range.RangeIO.toStateObject( this.rangeProperty.value ),
+      rangePhetioID: this.rangeProperty && this.rangeProperty.isPhetioInstrumented() ? this.rangeProperty.tandem.phetioID : null
+    } satisfies NumberPropertySelfState, parentStateObject );
   }
 
   public static NumberPropertyIO = new IOType<NumberProperty, NumberPropertyState, NumberPropertySelfState>( 'NumberPropertyIO', {
@@ -235,12 +233,13 @@ export default class NumberProperty extends Property<number> implements TRangedP
     parameterTypes: [ NumberIO ],
     documentation: `Extends PropertyIO to add values for the numeric range ( min, max ) and numberType ( '${
       VALID_NUMBER_TYPES.join( '\' | \'' )}' )`,
-    toStateObject: numberProperty => {
-      return numberProperty.toStateObject();
-    },
+
+    // Though this is identical to PropertyIO.toStateObject, this is still required because we don't want IOType to try
+    // to use a default toStateObject from the stateSchema parameters. We also can't directly use
+    // PropertyIO(NumberIO).toStateObject() because the IOType member wraps the option callback in more logic.
+    toStateObject: numberProperty => numberProperty.toStateObject(),
     applyState: ( numberProperty, stateObject ) => {
       // nothing to do here for range, because in order to support range, this NumberProperty's rangeProperty must be instrumented.
-
       PropertyIOImpl.applyState( numberProperty, stateObject );
     },
     stateSchema: {
