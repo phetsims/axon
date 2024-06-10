@@ -86,13 +86,6 @@ export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
 
-// When changing the listener order via ?listenerOrder, we were running into strictAxonDependencies failures that
-// did not otherwise occur. Because we aren't interested in these corner cases, and because they are difficult to
-// understand and debug, we chose to turn off strictAxonDependencies if listener order is changed.
-// See https://github.com/phetsims/faradays-electromagnetic-lab/issues/57#issuecomment-1909089735
-const strictAxonDependencies = _.hasIn( window, 'phet.chipper.queryParameters' ) &&
-                               phet.chipper.queryParameters.strictAxonDependencies &&
-                               phet.chipper.queryParameters.listenerOrder === 'default';
 export const derivationStack: Array<IntentionalAny> = [];
 
 /**
@@ -243,10 +236,19 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * or internal code that must be fast.
    */
   public get(): T {
-    if ( assert && strictAxonDependencies && derivationStack.length > 0 ) {
-      const currentDependencies = derivationStack[ derivationStack.length - 1 ];
-      if ( !currentDependencies.includes( this ) ) {
-        assert && assert( false, 'accessed value outside of dependency tracking' );
+
+    if ( assert ) {
+
+      // When changing the listener order via ?listenerOrder, we were running into strictAxonDependencies failures that
+      // did not otherwise occur. Because we aren't interested in these corner cases, and because they are difficult to
+      // understand and debug, we chose to turn off strictAxonDependencies if listener order is changed.
+      // See https://github.com/phetsims/faradays-electromagnetic-lab/issues/57#issuecomment-1909089735
+      const strictAxonDependencies = _.hasIn( window, 'phet.chipper.queryParameters' ) &&
+                                     phet.chipper.queryParameters.strictAxonDependencies &&
+                                     phet.chipper.queryParameters.listenerOrder === 'default';
+      if ( strictAxonDependencies && derivationStack.length > 0 ) {
+        const currentDependencies = derivationStack[ derivationStack.length - 1 ];
+        assert && assert( currentDependencies.includes( this ), 'accessed value outside of dependency tracking' );
       }
     }
     return this.tinyProperty.get();
