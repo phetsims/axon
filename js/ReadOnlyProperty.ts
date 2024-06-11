@@ -570,7 +570,8 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   }
 
   /**
-   * Implementation of serialization for PhET-iO support.
+   * Implementation of serialization for PhET-iO support. Override this function to customize how this state
+   * behaves (but be careful!).
    *
    * This function is parameterized to support subtyping. That said, it is a bit useless, since we don't want to
    * parameterize ReadOnlyProperty in general to the IOType's state type, so please bear with us.
@@ -584,6 +585,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     };
   }
 
+  /**
+   * Implementation of serialization for PhET-iO support. Override this function to customize how this state
+   * behaves (but be careful!).
+   */
   protected applyState<StateType>( stateObject: ReadOnlyPropertyState<StateType> ): void {
     const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
     assert && assert( this.units === units, 'Property units do not match' );
