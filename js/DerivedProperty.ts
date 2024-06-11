@@ -22,6 +22,7 @@ import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, R
 import ReadOnlyProperty, { derivationStack } from './ReadOnlyProperty.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import TinyStaticProperty from './TinyStaticProperty.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
@@ -101,7 +102,10 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
       phetioOuterType: DerivedProperty.DerivedPropertyIO,
       phetioLinkDependencies: true,
-      strictAxonDependencies: true
+
+      // TinyStaticProperties are only used in Node for supporting layout. This common code does not support knowing
+      // all dependencies at creation time. See https://github.com/phetsims/faradays-electromagnetic-lab/issues/171
+      strictAxonDependencies: !_.some( dependencies, dependency => dependency instanceof TinyStaticProperty )
     }, providedOptions );
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
