@@ -214,8 +214,8 @@ export default class NumberProperty extends Property<number> implements TRangedP
   /**
    * Get parent state and append NumberProperty-specific metadata to it.
    */
-  public toStateObject(): NumberPropertyState {
-    const parentStateObject = PropertyIOImpl.toStateObject( this );
+  public override toStateObject<StateType>(): NumberPropertySelfState & ReadOnlyPropertyState<StateType> {
+    const parentStateObject = super.toStateObject<StateType>() as ( NumberPropertySelfState & ReadOnlyPropertyState<StateType> );
 
     parentStateObject.numberType = this.numberType;
     parentStateObject.range = Range.RangeIO.toStateObject( this.rangeProperty.value );
