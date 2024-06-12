@@ -16,7 +16,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
+import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
 import TRangedProperty from './TRangedProperty.js';
@@ -34,11 +34,13 @@ const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
 export const DEFAULT_RANGE = Range.EVERYTHING;
 
-export type NumberPropertyState = {
+type NumberPropertySelfState = {
   numberType: string;
   range: RangeStateObject;
   rangePhetioID: string | null;
-} & ReadOnlyProperty<number>;
+};
+
+export type NumberPropertyState = NumberPropertySelfState & ReadOnlyPropertyState<number>;
 
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
