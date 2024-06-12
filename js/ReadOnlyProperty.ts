@@ -116,6 +116,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected readonly valueValidator: Validator<T>;
   public static readonly TANDEM_NAME_SUFFIX: string = 'Property';
 
+  // The IOType for the values this Property supports.
+  protected readonly phetioValueType: IOType;
+
   /**
    * This is protected to indicate to clients that subclasses should be used instead.
    * @param value - the initial value of the property
@@ -191,6 +194,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     this.isDeferred = false;
     this.deferredValue = null;
     this.hasDeferredValue = false;
+    this.phetioValueType = options.phetioValueType;
 
     this.valueValidator = _.pick( options, Validation.VALIDATOR_KEYS );
     this.valueValidator.validationMessage = this.valueValidator.validationMessage || 'Property value not valid';
@@ -341,6 +345,32 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   public notifyListenersStatic(): void {
     this._notifyListeners( null );
+  }
+
+  /**
+   * Implementation of serialization for PhET-iO support.
+   *
+   * This function is parameterized to support subtyping. That said, it is a bit useless, since we don't want to
+   * parameterize ReadOnlyProperty in general to the IOType's state type, so please bear with us.
+   */
+  protected toStateObject<StateType>(): ReadOnlyPropertyState<StateType> {
+    assert && assert( this.phetioValueType.toStateObject, `toStateObject doesn't exist for ${this.phetioValueType.typeName}` );
+    return {
+      value: this.phetioValueType.toStateObject( this.value ),
+      validValues: NullableIO( ArrayIO( this.phetioValueType ) ).toStateObject( this.validValues === undefined ? null : this.validValues ),
+      units: NullableIO( StringIO ).toStateObject( this.units )
+    };
+  }
+
+  protected applyState<StateType>( stateObject: ReadOnlyPropertyState<StateType> ): void {
+    const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+    assert && assert( this.units === units, 'Property units do not match' );
+    assert && assert( this.isSettable(), 'Property should be settable' );
+    this.unguardedSet( this.phetioValueType.fromStateObject( stateObject.value ) );
+
+    if ( stateObject.validValues ) {
+      this.validValues = stateObject.validValues.map( ( validValue: StateType ) => ( this.phetioValueType ).fromStateObject( validValue ) );
+    }
   }
 
   /**
@@ -550,22 +580,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
         events: [ ReadOnlyProperty.CHANGED_EVENT_NAME ],
         parameterTypes: [ parameterType ],
         toStateObject: property => {
-          assert && assert( parameterType.toStateObject, `toStateObject doesn't exist for ${parameterType.typeName}` );
-          return {
-            value: parameterType.toStateObject( property.value ),
-            validValues: NullableIO( ArrayIO( parameterType ) ).toStateObject( property.validValues === undefined ? null : property.validValues ),
-            units: NullableIO( StringIO ).toStateObject( property.units )
-          };
+          return property.toStateObject();
         },
         applyState: ( property, stateObject ) => {
-          const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
-          assert && assert( property.units === units, 'Property units do not match' );
-          assert && assert( property.isSettable(), 'Property should be settable' );
-          property.unguardedSet( parameterType.fromStateObject( stateObject.value ) );
-
-          if ( stateObject.validValues ) {
-            property.validValues = stateObject.validValues.map( ( validValue: StateType ) => parameterType.fromStateObject( validValue ) );
-          }
+          property.applyState( stateObject );
         },
         stateSchema: {
           value: parameterType,
