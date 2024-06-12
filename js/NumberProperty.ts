@@ -17,7 +17,7 @@ import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
+import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import validate from './validate.js';
 
@@ -31,11 +31,13 @@ type NumberType = typeof VALID_NUMBER_TYPES[number];
 // standardized tandem name for rangeProperty
 const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
-export type NumberPropertyState = {
+type NumberPropertySelfState = {
   numberType: string;
   range: null | RangeStateObject;
   rangePhetioID: string | null;
-} & ReadOnlyProperty<number>;
+};
+
+export type NumberPropertyState = NumberPropertySelfState & ReadOnlyPropertyState<number>;
 
 // For the IOType
 const PropertyIOImpl = Property.PropertyIO( NumberIO );
