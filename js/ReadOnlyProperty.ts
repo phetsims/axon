@@ -577,11 +577,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     assert && assert( this.units === units, 'Property units do not match' );
     assert && assert( this.isSettable(), 'Property should be settable' );
     this.unguardedSet( this.phetioValueType.fromStateObject( stateObject.value ) );
-
-    if ( stateObject.validValues ) {
-      // @ts-expect-error - TODO Should never be set after construction, see https://github.com/phetsims/axon/issues/453
-      this[ 'validValues' ] = stateObject.validValues.map( ( validValue: StateType ) => ( this.phetioValueType ).fromStateObject( validValue ) ); // eslint-disable-line @typescript-eslint/dot-notation
-    }
   }
 
   /**
