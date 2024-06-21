@@ -44,8 +44,8 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
 
   public readonly rangeProperty: TProperty<Range>;
 
-  private _property: ( TProperty<number> | TRangedProperty );
-  private _rangeListener?: ( range: Range ) => void;
+  private readonly _property: ( TProperty<number> | TRangedProperty );
+  private readonly _rangeListener?: ( range: Range ) => void;
 
   public constructor( property: ( TProperty<number> | TRangedProperty ), providedOptions: UnitConversionPropertyOptions ) {
 
