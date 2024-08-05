@@ -145,17 +145,17 @@ export type DynamicPropertyOptions<ThisValueType, InnerValueType, OuterValueType
 // InnerValueType is what we get from our derive (Color), and what the parameter of our map is.
 export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueType> extends ReadOnlyProperty<ThisValueType> implements TProperty<ThisValueType> {
 
-  // Set to true when this Property's value is changing from an external source.
+  // Set to true when this Property's value is changing from an external source. This is used in PolynomialEditNode which is not yet in TypeScript.
   private isExternallyChanging: boolean;
 
-  private defaultValue: InnerValueType;
-  protected derive: ( u: OuterValueType ) => TReadOnlyProperty<InnerValueType>;
-  protected map: ( v: InnerValueType ) => ThisValueType;
-  protected inverseMap: ( t: ThisValueType ) => InnerValueType;
-  protected bidirectional: boolean;
-  private valuePropertyProperty: TNullableProperty<OuterValueType>;
-  private propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ) => void;
-  private propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
+  private readonly defaultValue: InnerValueType;
+  protected readonly derive: ( u: OuterValueType ) => TReadOnlyProperty<InnerValueType>;
+  protected readonly map: ( v: InnerValueType ) => ThisValueType;
+  protected readonly inverseMap: ( t: ThisValueType ) => InnerValueType;
+  protected readonly bidirectional: boolean;
+  private readonly valuePropertyProperty: TNullableProperty<OuterValueType>;
+  private readonly propertyPropertyListener: ( value: InnerValueType, oldValue: InnerValueType | null, innerProperty: TReadOnlyProperty<InnerValueType> | null ) => void;
+  private readonly propertyListener: ( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ) => void;
 
   /**
    * @param valuePropertyProperty - If the value is null, it is considered disconnected.
