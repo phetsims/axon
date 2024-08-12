@@ -30,6 +30,7 @@ import Property from './Property.js';
 import { DEFAULT_RANGE } from './NumberProperty.js';
 import optionize from '../../phet-core/js/optionize.js';
 import TRangedProperty, { isTRangedProperty } from './TRangedProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.
@@ -44,10 +45,10 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
 
   public readonly rangeProperty: TProperty<Range>;
 
-  private readonly _property: ( TProperty<number> | TRangedProperty );
+  private readonly _property: ( TReadOnlyProperty<number> | TRangedProperty );
   private readonly _rangeListener?: ( range: Range ) => void;
 
-  public constructor( property: ( TProperty<number> | TRangedProperty ), providedOptions: UnitConversionPropertyOptions ) {
+  public constructor( property: ( TReadOnlyProperty<number> | TRangedProperty ), providedOptions: UnitConversionPropertyOptions ) {
 
     const map = ( input: number ) => input * providedOptions.factor;
     const inverseMap = ( output: number ) => output / providedOptions.factor;
