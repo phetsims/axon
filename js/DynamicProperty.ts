@@ -244,7 +244,15 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
    */
   private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ): void {
     if ( oldPropertyValue ) {
-      this.derive( oldPropertyValue ).unlink( this.propertyPropertyListener );
+      const propertyThatIsDerived = this.derive( oldPropertyValue ); // eslint-disable-line require-property-suffix
+
+      // This assertion is vital to prevent memory leaks, there are order-dependency cases where this may trigger, (like
+      // for PhET-iO State in https://github.com/phetsims/buoyancy/issues/67). In these cases, this unlink should not be
+      // graceful because there IS another propertyThatIsDerived out there with this listener attached.
+      assert && assert( propertyThatIsDerived.hasListener( this.propertyPropertyListener ),
+        'DynamicProperty tried to clean up a listener on its propertyProperty that doesn\'t exist.' );
+
+      propertyThatIsDerived.unlink( this.propertyPropertyListener );
     }
     if ( newPropertyValue ) {
       this.derive( newPropertyValue ).link( this.propertyPropertyListener );
@@ -285,7 +293,16 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
     this.valuePropertyProperty.unlink( this.propertyListener );
 
     if ( this.valuePropertyProperty.value !== null ) {
-      this.derive( this.valuePropertyProperty.value ).unlink( this.propertyPropertyListener );
+      const propertyThatIsDerived = this.derive( this.valuePropertyProperty.value ); // eslint-disable-line require-property-suffix
+
+      // This assertion is vital to prevent memory leaks, there are order-dependency cases where this may trigger, (like
+      // for PhET-iO State in https://github.com/phetsims/buoyancy/issues/67). In these cases, this unlink should not be
+      // graceful because there IS another propertyThatIsDerived out there with this listener attached, and so
+      // this DynamicProperty won't be disposed.
+      assert && assert( propertyThatIsDerived.hasListener( this.propertyPropertyListener ),
+        'DynamicProperty tried to clean up a listener on its propertyProperty that doesn\'t exist.' );
+
+      propertyThatIsDerived.unlink( this.propertyPropertyListener );
     }
 
     super.dispose();
