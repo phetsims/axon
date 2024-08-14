@@ -280,6 +280,8 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
    * Disposes this Property
    */
   public override dispose(): void {
+    assert && assert( !this.isDisposed, 'should not dispose twice, especially for DynamicProperty cleanup' );
+
     this.valuePropertyProperty.unlink( this.propertyListener );
 
     if ( this.valuePropertyProperty.value !== null ) {
