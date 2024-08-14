@@ -418,7 +418,10 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       if ( dependencyProperty instanceof ReadOnlyProperty && dependencyProperty.isPhetioInstrumented() && this.isPhetioInstrumented() ) {
 
         // The dependency should undefer (taking deferred value) before this Property notifies.
-        propertyStateHandlerSingleton.registerPhetioOrderDependency( dependencyProperty, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.NOTIFY );
+        propertyStateHandlerSingleton.registerPhetioOrderDependency(
+          dependencyProperty, PropertyStatePhase.UNDEFER,
+          this, PropertyStatePhase.NOTIFY
+        );
       }
     }
   }

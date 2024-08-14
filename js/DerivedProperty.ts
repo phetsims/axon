@@ -38,8 +38,8 @@ export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
  */
 function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
-    // @ts-expect-error
-    return derivation( ...dependencies.map( property => property.get() ) );
+  // @ts-expect-error
+  return derivation( ...dependencies.map( property => property.get() ) );
 }
 
 // Convenience type for a Derived property that has a known return type but unknown dependency types.
@@ -114,7 +114,10 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
           // to have the right value.
           // NOTE: Do not mark the beforePhase as NOTIFY, as this will potentially cause interdependence bugs when used
           // with Multilinks. See Projectile Motion's use of MeasuringTapeNode for an example.
-          propertyStateHandlerSingleton.registerPhetioOrderDependency( dependency, PropertyStatePhase.UNDEFER, this, PropertyStatePhase.UNDEFER );
+          propertyStateHandlerSingleton.registerPhetioOrderDependency(
+            dependency, PropertyStatePhase.UNDEFER,
+            this, PropertyStatePhase.UNDEFER
+          );
         }
 
         if ( options.tandem && options.phetioLinkDependencies ) {
