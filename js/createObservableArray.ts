@@ -377,75 +377,61 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
    *******************************************/
 
   pop( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const initialLength = thisArray.targetArray.length;
-    const returnValue = Array.prototype.pop.apply( thisArray.targetArray, args as any );
-    thisArray.lengthProperty.value = thisArray.length;
-    initialLength > 0 && thisArray.emitNotification( thisArray.elementRemovedEmitter, returnValue );
+    const initialLength = this.targetArray.length;
+    const returnValue = Array.prototype.pop.apply( this.targetArray, args as any );
+    this.lengthProperty.value = this.length;
+    initialLength > 0 && this.emitNotification( this.elementRemovedEmitter, returnValue );
     return returnValue;
   },
 
   shift( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const initialLength = thisArray.targetArray.length;
-    const returnValue = Array.prototype.shift.apply( thisArray.targetArray, args as any );
-    thisArray.lengthProperty.value = thisArray.length;
-    initialLength > 0 && thisArray.emitNotification( thisArray.elementRemovedEmitter, returnValue );
+    const initialLength = this.targetArray.length;
+    const returnValue = Array.prototype.shift.apply( this.targetArray, args as any );
+    this.lengthProperty.value = this.length;
+    initialLength > 0 && this.emitNotification( this.elementRemovedEmitter, returnValue );
     return returnValue;
   },
 
   push( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const returnValue = Array.prototype.push.apply( thisArray.targetArray, args );
-    thisArray.lengthProperty.value = thisArray.length;
+    const returnValue = Array.prototype.push.apply( this.targetArray, args );
+    this.lengthProperty.value = this.length;
     for ( let i = 0; i < arguments.length; i++ ) {
-      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
+      this.emitNotification( this.elementAddedEmitter, args[ i ] );
     }
     return returnValue;
   },
 
   unshift( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const returnValue = Array.prototype.unshift.apply( thisArray.targetArray, args );
-    thisArray.lengthProperty.value = thisArray.length;
+    const returnValue = Array.prototype.unshift.apply( this.targetArray, args );
+    this.lengthProperty.value = this.length;
     for ( let i = 0; i < args.length; i++ ) {
-      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
+      this.emitNotification( this.elementAddedEmitter, args[ i ] );
     }
     return returnValue;
   },
 
   splice( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const returnValue = Array.prototype.splice.apply( thisArray.targetArray, args as any );
-    thisArray.lengthProperty.value = thisArray.length;
+    const returnValue = Array.prototype.splice.apply( this.targetArray, args as any );
+    this.lengthProperty.value = this.length;
     const deletedElements = returnValue;
     for ( let i = 2; i < args.length; i++ ) {
-      thisArray.emitNotification( thisArray.elementAddedEmitter, args[ i ] );
+      this.emitNotification( this.elementAddedEmitter, args[ i ] );
     }
-    deletedElements.forEach( deletedElement => thisArray.emitNotification( thisArray.elementRemovedEmitter, deletedElement ) );
+    deletedElements.forEach( deletedElement => this.emitNotification( this.elementRemovedEmitter, deletedElement ) );
     return returnValue;
   },
 
   copyWithin( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const before = thisArray.targetArray.slice();
-    const returnValue = Array.prototype.copyWithin.apply( thisArray.targetArray, args as any );
-    reportDifference( before, thisArray );
+    const before = this.targetArray.slice();
+    const returnValue = Array.prototype.copyWithin.apply( this.targetArray, args as any );
+    reportDifference( before, this );
     return returnValue;
   },
 
   fill( ...args: any[] ): any {
-    const thisArray = this as PrivateObservableArray<any>;
-
-    const before = thisArray.targetArray.slice();
-    const returnValue = Array.prototype.fill.apply( thisArray.targetArray, args as any );
-    reportDifference( before, thisArray );
+    const before = this.targetArray.slice();
+    const returnValue = Array.prototype.fill.apply( this.targetArray, args as any );
+    reportDifference( before, this );
     return returnValue;
   },
 
@@ -500,11 +486,9 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
   getArrayCopy: function() { return this.slice(); },
 
   dispose: function() {
-    const thisArray = this as PrivateObservableArray<any>;
-    thisArray.elementAddedEmitter.dispose();
-    thisArray.elementRemovedEmitter.dispose();
-    thisArray.lengthProperty.dispose();
-    thisArray._observableArrayPhetioObject && thisArray._observableArrayPhetioObject.dispose();
+    this.elementRemovedEmitter.dispose();
+    this.lengthProperty.dispose();
+    this._observableArrayPhetioObject && this._observableArrayPhetioObject.dispose();
   },
 
   /******************************************
