@@ -486,6 +486,7 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
   getArrayCopy: function() { return this.slice(); },
 
   dispose: function() {
+    this.elementAddedEmitter.dispose();
     this.elementRemovedEmitter.dispose();
     this.lengthProperty.dispose();
     this._observableArrayPhetioObject && this._observableArrayPhetioObject.dispose();
