@@ -25,6 +25,7 @@ const UnitsValues = [
   'C', // coulombs
   '\u00B0', // °, degrees (angle)
   '\u00B0C', // °C, degrees Celsius
+  'eV', // electron volt
   'F', // farad
   '\u00B0F', // °F, degrees Fahrenheit
   'g', // grams
