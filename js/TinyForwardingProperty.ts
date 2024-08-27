@@ -65,7 +65,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
   }
 
   // API support for setting a Property|ValueType onto the forwarding Property
-  public setValueOrTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>(
+  public setValueOrTargetProperty<NodeType extends NodeLike, NodeParam extends( NodeType | null )>(
     node: NodeParam, tandemName: string | null, newValueOrTargetProperty: TReadOnlyProperty<ValueType> | ValueType ): void {
 
     if ( ( isTReadOnlyProperty( newValueOrTargetProperty ) ) ) {
@@ -99,7 +99,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
    * @param tandemName - null if the Property does not support PhET-iO instrumentation
    * @returns the passed in Node, for chaining.
    */
-  public setTargetProperty<NodeType extends NodeLike, NodeParam extends ( NodeType | null )>(
+  public setTargetProperty<NodeType extends NodeLike, NodeParam extends( NodeType | null )>(
     newTargetProperty: TReadOnlyProperty<ValueType> | null,
     node: NodeParam = null as NodeParam,
     tandemName: string | null = null

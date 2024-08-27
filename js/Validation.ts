@@ -54,7 +54,7 @@ type ValueType =
   ValueType[] |
 
   // allow Function here since it is the appropriate level of abstraction for checking instanceof
-  Function; // eslint-disable-line @typescript-eslint/ban-types
+  Function; // eslint-disable-line @typescript-eslint/no-restricted-types
 
 type ComparableObject = {
   equals: ( a: unknown ) => boolean;
