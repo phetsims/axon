@@ -14,7 +14,7 @@ export type TRangedProperty = PhetioProperty<number> & { range: Range; readonly 
 export function isTRangedProperty( something: IntentionalAny ): something is TRangedProperty {
   return ( something instanceof ReadOnlyProperty || something instanceof TinyProperty ) && something.isSettable() &&
 
-         // @ts-expect-error we are checking on the pressence, but can't use hasOwnProperty in case it is implemented wil es5 getters and setters
+         // @ts-expect-error we are checking on the pressence, but can't use hasOwnProperty in case it is implemented with es5 getters and setters
          !!something.range && !!something.rangeProperty;
 }
 
