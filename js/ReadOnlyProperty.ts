@@ -621,7 +621,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
           getValidationError: {
             returnType: NullableIO( StringIO ),
             parameterTypes: [ parameterType ],
-            implementation: ReadOnlyProperty.prototype.getValidationError,
+            implementation: function( this: ReadOnlyProperty<unknown>, value: T ) {
+              return this.getValidationError( value );
+            },
             documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
           },
 
