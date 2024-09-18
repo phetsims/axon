@@ -246,7 +246,8 @@ export default class NumberProperty extends Property<number> implements TRangedP
       numberType: StringIO,
       range: Range.RangeIO,
       rangePhetioID: NullableIO( StringIO )
-    }
+    },
+    apiStateKeys: [ 'numberType', 'range', 'rangePhetioID' ]
   } );
 }
 

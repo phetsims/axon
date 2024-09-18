@@ -6,6 +6,12 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
+import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
+import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
 import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
@@ -14,21 +20,15 @@ import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
+import axon from './axon.js';
 import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
+import { TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';
+import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import units, { Units } from './units.js';
 import validate from './validate.js';
-import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
-import optionize from '../../phet-core/js/optionize.js';
 import Validation, { Validator, ValueComparisonStrategy } from './Validation.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import axon from './axon.js';
-import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
-import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
-import IOTypeCache from '../../tandem/js/IOTypeCache.js';
-import { TinyEmitterOptions } from './TinyEmitter.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -611,6 +611,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
           validValues: NullableIO( ArrayIO( parameterType ) ),
           units: NullableIO( StringIO )
         },
+        apiStateKeys: [ 'validValues', 'units' ],
         methods: {
           getValue: {
             returnType: parameterType,
