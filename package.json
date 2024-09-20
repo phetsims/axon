@@ -29,7 +29,7 @@
         ],
         "parserOptions": {
           "project": [
-            "../axon/tsconfig.json"
+            "../chipper/tsconfig/eslint-all/tsconfig.json"
           ]
         }
       }
