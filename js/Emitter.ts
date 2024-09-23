@@ -11,18 +11,18 @@
 
 import optionize from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
+import Tandem from '../../tandem/js/Tandem.js';
+import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
-import VoidIO from '../../tandem/js/types/VoidIO.js';
-import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
-import axon from './axon.js';
-import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
-import Tandem from '../../tandem/js/Tandem.js';
-import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
-import ArrayIO from '../../tandem/js/types/ArrayIO.js';
-import IOTypeCache from '../../tandem/js/IOTypeCache.js';
+import VoidIO from '../../tandem/js/types/VoidIO.js';
+import axon from './axon.js';
+import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
+import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;

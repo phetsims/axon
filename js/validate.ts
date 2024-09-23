@@ -7,8 +7,8 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import axon from './axon.js';
 import Validation, { IsValidValueOptions, Validator } from './Validation.js';
 
 /**

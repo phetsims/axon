@@ -8,20 +8,20 @@
  */
 
 import Range, { RangeStateObject } from '../../dot/js/Range.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import { PhetioID } from '../../tandem/js/TandemConstants.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import Property, { PropertyOptions } from './Property.js';
-import validate from './validate.js';
+import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import TRangedProperty from './TRangedProperty.js';
-import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
-import { PhetioID } from '../../tandem/js/TandemConstants.js';
+import validate from './validate.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };
 const VALID_NON_NAN = { isValidValue: ( v: number ) => !isNaN( v ), validationMessage: 'Should not be NaN' };

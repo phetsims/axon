@@ -7,12 +7,12 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import dotRandom from '../../dot/js/dotRandom.js';
+import Random from '../../dot/js/Random.js';
+import Pool, { TPoolable } from '../../phet-core/js/Pool.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
-import Random from '../../dot/js/Random.js';
-import dotRandom from '../../dot/js/dotRandom.js';
-import Pool, { TPoolable } from '../../phet-core/js/Pool.js';
 
 // constants
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;

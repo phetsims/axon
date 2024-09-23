@@ -97,12 +97,12 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
+import optionize from '../../phet-core/js/optionize.js';
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
-import TProperty from './TProperty.js';
 import Property, { PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import optionize from '../../phet-core/js/optionize.js';
+import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 export type TNullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
