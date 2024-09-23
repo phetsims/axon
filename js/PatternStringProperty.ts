@@ -53,16 +53,16 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 import Utils from '../../dot/js/Utils.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import CollapsePropertyValue from '../../phet-core/js/types/CollapsePropertyValue.js';
 import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
-import axon from './axon.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import axon from './axon.js';
 import DerivedStringProperty, { DerivedStringPropertyOptions } from './DerivedStringProperty.js';
+import TCollapsePropertyValue from './TCollapsePropertyValue.js';
+import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -72,9 +72,9 @@ type StringNumberOrProperty = string | number | TReadOnlyProperty<string> | TRea
 
 // We'll require maps for things that aren't string | number, or Property types with only those values
 type MapsType<Values extends ValuesType> = {
-  [Key in KeysMatching<Values, StringNumberOrProperty>]?: ( value: CollapsePropertyValue<Values[Key]> ) => string | number;
+  [Key in KeysMatching<Values, StringNumberOrProperty>]?: ( value: TCollapsePropertyValue<Values[Key]> ) => string | number;
 } & {
-  [Key in KeysNotMatching<Values, StringNumberOrProperty>]: ( value: CollapsePropertyValue<Values[Key]> ) => string | number;
+  [Key in KeysNotMatching<Values, StringNumberOrProperty>]: ( value: TCollapsePropertyValue<Values[Key]> ) => string | number;
 };
 
 type OptionalSelfOptions<Values extends ValuesType> = {
