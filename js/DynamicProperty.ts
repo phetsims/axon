@@ -244,7 +244,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
    */
   private onPropertyChange( newPropertyValue: OuterValueType | null, oldPropertyValue: OuterValueType | null | undefined ): void {
     if ( oldPropertyValue ) {
-      const propertyThatIsDerived = this.derive( oldPropertyValue ); // eslint-disable-line require-property-suffix
+      const propertyThatIsDerived = this.derive( oldPropertyValue ); // eslint-disable-line phet/require-property-suffix
 
       // This assertion is vital to prevent memory leaks, there are order-dependency cases where this may trigger, (like
       // for PhET-iO State in https://github.com/phetsims/buoyancy/issues/67). In these cases, this unlink should not be
@@ -293,7 +293,7 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
     this.valuePropertyProperty.unlink( this.propertyListener );
 
     if ( this.valuePropertyProperty.value !== null ) {
-      const propertyThatIsDerived = this.derive( this.valuePropertyProperty.value ); // eslint-disable-line require-property-suffix
+      const propertyThatIsDerived = this.derive( this.valuePropertyProperty.value ); // eslint-disable-line phet/require-property-suffix
 
       // This assertion is vital to prevent memory leaks, there are order-dependency cases where this may trigger, (like
       // for PhET-iO State in https://github.com/phetsims/buoyancy/issues/67). In these cases, this unlink should not be

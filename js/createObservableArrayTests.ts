@@ -33,7 +33,7 @@ QUnit.test( 'Hello', assert => {
   } ) );
 
   assert.ok( Array.isArray( observableArray ), 'isArray check' );
-  assert.ok( observableArray instanceof Array, 'instanceof check' ); // eslint-disable-line no-instanceof-array
+  assert.ok( observableArray instanceof Array, 'instanceof check' ); // eslint-disable-line phet/no-instanceof-array
 
   run( 'push hello', () => observableArray.push( 'hello' ) );
   run( 'set element 0', () => { observableArray[ 0 ] = 'dinosaur'; } );
@@ -108,7 +108,7 @@ QUnit.test( 'Test same value', assert => {
   testArrayEmitters( assert, array => {
 
     array.push( 'test' );
-    array.shuffle( new Random() );// eslint-disable-line bad-sim-text
+    array.shuffle( new Random() );// eslint-disable-line phet/bad-sim-text
   }, [
     { type: 'added', value: 'test' }
   ] );

@@ -354,7 +354,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       // PhET-iO operates under the assumption that nothing will access a PhetioObject until the next animation frame
       // when the object is fully constructed.  For example, Property state variables are set after the callback
       // to addPhetioObject, which occurs during Property.constructor.super().
-      setTimeout( () => { // eslint-disable-line bad-sim-text
+      setTimeout( () => { // eslint-disable-line phet/bad-sim-text
 
         // Run in the next frame after the object finished getting constructed
         const stateObject = phetioType.toStateObject( instance );

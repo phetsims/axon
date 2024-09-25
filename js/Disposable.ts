@@ -89,7 +89,7 @@ class Disposable {
 
   public static assertNotDisposable(): void {
 
-    // eslint-disable-next-line bad-sim-text
+    // eslint-disable-next-line phet/bad-sim-text
     assert && assert( false, 'dispose is not supported, exists for the lifetime of the sim' );
   }
 }
