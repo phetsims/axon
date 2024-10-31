@@ -452,3 +452,11 @@ class PhaseCallbackSets {
 
 axon.register( 'PropertyStateHandler', PropertyStateHandler );
 export default PropertyStateHandler;
+
+/**
+ * Singleton responsible for AXON/Property specific state logic. Use this global for the project to have a single
+ * place to tap into the PhetioStateEngine, as well as a single point to register any order dependencies that Properties
+ * have between each other when setting their state and applying their values/notifying.
+ */
+export const propertyStateHandlerSingleton = new PropertyStateHandler();
+axon.register( 'propertyStateHandlerSingleton', propertyStateHandlerSingleton );

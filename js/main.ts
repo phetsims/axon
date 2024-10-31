@@ -22,7 +22,6 @@ import './NumberProperty.js';
 import './PatternStringProperty.js';
 import './Property.js';
 import './PropertyStateHandler.js';
-import './propertyStateHandlerSingleton.js';
 import './PropertyStatePhase.js';
 import './stepTimer.js';
 import './StringProperty.js';

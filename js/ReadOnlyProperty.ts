@@ -21,7 +21,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
+import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import { TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';

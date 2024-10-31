@@ -10,7 +10,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import DerivedProperty from './DerivedProperty.js';
 import Property from './Property.js';
-import propertyStateHandlerSingleton from './propertyStateHandlerSingleton.js';
+import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 
 QUnit.module( 'DerivedProperty' );
 
