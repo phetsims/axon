@@ -8,8 +8,8 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import TinyEmitter, { ReentrantNotificationStrategy } from './TinyEmitter.js';
 import TEmitter from './TEmitter.js';
+import TinyEmitter, { ReentrantNotificationStrategy } from './TinyEmitter.js';
 
 QUnit.module( 'TinyEmitter' );
 

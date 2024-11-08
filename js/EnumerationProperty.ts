@@ -6,13 +6,13 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Property, { PropertyOptions } from './Property.js';
-import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
+import Enumeration from '../../phet-core/js/Enumeration.js';
 import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
-import Enumeration from '../../phet-core/js/Enumeration.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import axon from './axon.js';
+import Property, { PropertyOptions } from './Property.js';
 
 type SelfOptions<T extends EnumerationValue> = {
 

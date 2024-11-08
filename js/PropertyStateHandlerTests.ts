@@ -12,8 +12,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import BooleanProperty from './BooleanProperty.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import PropertyStateHandler from './PropertyStateHandler.js';
-import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
+import PropertyStateHandler, { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 
 QUnit.module( 'PropertyStateHandler' );

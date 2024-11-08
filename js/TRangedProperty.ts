@@ -1,12 +1,12 @@
 // Copyright 2023-2024, University of Colorado Boulder
 // @author Michael Kauzmann (PhET Interactive Simulations)
 
-import TReadOnlyProperty from './TReadOnlyProperty.js';
 import Range from '../../dot/js/Range.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import PhetioProperty from './PhetioProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
-import PhetioProperty from './PhetioProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 // Minimal types for Properties that support a rangeProperty.
 export type TRangedProperty = PhetioProperty<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };

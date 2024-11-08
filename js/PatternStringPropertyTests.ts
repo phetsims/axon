@@ -6,9 +6,9 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TinyProperty from './TinyProperty.js';
-import PatternStringProperty from './PatternStringProperty.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import PatternStringProperty from './PatternStringProperty.js';
+import TinyProperty from './TinyProperty.js';
 
 QUnit.module( 'PatternStringProperty' );
 

@@ -9,15 +9,15 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import EnabledProperty, { EnabledPropertyOptions } from './EnabledProperty.js';
 import merge from '../../phet-core/js/merge.js';
 import { optionize3 } from '../../phet-core/js/optionize.js';
+import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
+import Disposable, { DisposableOptions } from './Disposable.js';
+import EnabledProperty, { EnabledPropertyOptions } from './EnabledProperty.js';
 import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
-import Disposable, { DisposableOptions } from './Disposable.js';
-import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 
 // constants
 const DEFAULT_OPTIONS = {

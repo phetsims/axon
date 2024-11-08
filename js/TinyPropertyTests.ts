@@ -8,9 +8,9 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import TinyProperty from './TinyProperty.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Vector2 from '../../dot/js/Vector2.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import TinyProperty from './TinyProperty.js';
 
 QUnit.module( 'TinyProperty' );
 

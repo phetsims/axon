@@ -21,11 +21,11 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import DerivedProperty, { DerivedPropertyOptions } from './DerivedProperty.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import DerivedProperty, { DerivedPropertyOptions } from './DerivedProperty.js';
 import { Dependencies } from './Multilink.js';
 
 type SelfOptions = EmptySelfOptions;

@@ -7,9 +7,9 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import ReadOnlyProperty, { LinkOptions } from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import { ValueComparisonStrategy } from './Validation.js';
 
 // Even though these are the same types used for TProperty, it is vital that the tinyProperty parameter remains

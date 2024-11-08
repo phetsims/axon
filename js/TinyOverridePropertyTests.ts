@@ -6,8 +6,8 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TinyProperty from './TinyProperty.js';
 import TinyOverrideProperty from './TinyOverrideProperty.js';
+import TinyProperty from './TinyProperty.js';
 
 QUnit.module( 'TinyOverrideProperty' );
 
