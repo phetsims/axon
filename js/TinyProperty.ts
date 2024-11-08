@@ -164,7 +164,7 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
    *
    * NOTE: Duplicated with Property.linkAttribute
    */
-  public linkAttribute<Attr extends string>( object: { [key in Attr]: T }, attributeName: Attr ): ( value: T ) => void {
+  public linkAttribute<Attr extends string>( object: Record<Attr, T>, attributeName: Attr ): ( value: T ) => void {
     const handle = ( value: T ) => { object[ attributeName ] = value; };
     this.link( handle );
     return handle;
