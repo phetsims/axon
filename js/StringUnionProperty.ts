@@ -1,4 +1,4 @@
-// Copyright 2022, University of Colorado Boulder
+// Copyright 2022-2024, University of Colorado Boulder
 
 /**
  * In TypeScript, it is common to use a string literal union as an enumeration.  This type automatically specifies
