@@ -210,8 +210,26 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
     return new DerivedProperty( [ firstProperty, secondProperty ], ( u: unknown, v: unknown ) => u === v, options );
   }
 
+  /**
+   * Creates a derived boolean Property whose value is true iff firstProperty's value is not equal to the
+   * secondProperty's value.
+   */
+  public static valueNotEquals( firstProperty: TReadOnlyProperty<unknown>, secondProperty: TReadOnlyProperty<unknown>, options?: DerivedPropertyOptions<boolean> ): TReadOnlyProperty<boolean> {
+    return new DerivedProperty( [ firstProperty, secondProperty ], ( u: unknown, v: unknown ) => u !== v, options );
+  }
+
+  /**
+   * Creates a derived boolean Property whose value is true iff firstProperty's value is equal to a constant value.
+   */
   public static valueEqualsConstant( firstProperty: TReadOnlyProperty<unknown>, value: unknown, options?: DerivedPropertyOptions<boolean> ): TReadOnlyProperty<boolean> {
     return new DerivedProperty( [ firstProperty ], ( u: unknown ) => u === value, options );
+  }
+
+  /**
+   * Creates a derived boolean Property whose value is true iff firstProperty's value is not equal to a constant value.
+   */
+  public static valueNotEqualsConstant( firstProperty: TReadOnlyProperty<unknown>, value: unknown, options?: DerivedPropertyOptions<boolean> ): TReadOnlyProperty<boolean> {
+    return new DerivedProperty( [ firstProperty ], ( u: unknown ) => u !== value, options );
   }
 
   /**
