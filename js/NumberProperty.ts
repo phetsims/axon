@@ -12,7 +12,7 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import { PhetioID } from '../../tandem/js/TandemConstants.js';
+import { PhetioID } from '../../tandem/js/phet-io-types.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';

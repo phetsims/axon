@@ -19,7 +19,7 @@ import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
 import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import { PhetioState } from '../../tandem/js/TandemConstants.js';
+import { PhetioState } from '../../tandem/js/phet-io-types.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
