@@ -10,15 +10,15 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import BooleanProperty, { BooleanPropertyOptions } from '../../../axon/js/BooleanProperty.js';
-import { DerivedProperty2, DerivedPropertyOptions } from '../../../axon/js/DerivedProperty.js';
-import TProperty from '../../../axon/js/TProperty.js';
-import TReadOnlyProperty from '../../../axon/js/TReadOnlyProperty.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import StrictOmit from '../../../phet-core/js/types/StrictOmit.js';
-import Tandem from '../../../tandem/js/Tandem.js';
-import BooleanIO from '../../../tandem/js/types/BooleanIO.js';
-import { scenery } from '../imports.js';
+import optionize from '../../phet-core/js/optionize.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import Tandem from '../../tandem/js/Tandem.js';
+import BooleanIO from '../../tandem/js/types/BooleanIO.js';
+import axon from './axon.js';
+import BooleanProperty, { BooleanPropertyOptions } from './BooleanProperty.js';
+import { DerivedProperty2, DerivedPropertyOptions } from './DerivedProperty.js';
+import TProperty from './TProperty.js';
+import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   selfVisibleInitiallyVisible?: boolean;
@@ -27,7 +27,7 @@ type SelfOptions = {
 type ParentOptions = DerivedPropertyOptions<boolean>;
 type GatedVisiblePropertyOptions = SelfOptions & StrictOmit<ParentOptions, 'tandem'>;
 
-class GatedVisibleProperty extends DerivedProperty2<boolean, boolean, boolean> {
+class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
   public readonly selfVisibleProperty: TProperty<boolean>;
 
   public constructor( providedVisibleProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedVisiblePropertyOptions ) {
@@ -67,6 +67,8 @@ class GatedVisibleProperty extends DerivedProperty2<boolean, boolean, boolean> {
   }
 }
 
-export default GatedVisibleProperty;
+export class GatedVisibleProperty extends GatedBooleanProperty {}
 
-scenery.register( 'GatedVisibleProperty', GatedVisibleProperty );
+export default GatedBooleanProperty;
+
+axon.register( 'GatedBooleanProperty', GatedBooleanProperty );
