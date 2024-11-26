@@ -10,7 +10,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import optionize from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
@@ -21,53 +21,75 @@ import TProperty from './TProperty.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type SelfOptions = {
-  selfVisibleInitiallyVisible?: boolean;
-  selfVisiblePropertyOptions?: BooleanPropertyOptions;
+  tandemName?: string;
+  selfTandemName?: string;
+  selfBooleanInitialValue?: boolean;
+  selfBooleanPropertyOptions?: BooleanPropertyOptions;
 };
 type ParentOptions = DerivedPropertyOptions<boolean>;
-type GatedVisiblePropertyOptions = SelfOptions & StrictOmit<ParentOptions, 'tandem'>;
+type GatedBooleanPropertyOptions = SelfOptions & StrictOmit<ParentOptions, 'tandem'>;
 
 class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
-  public readonly selfVisibleProperty: TProperty<boolean>;
+  public readonly selfBooleanProperty: TProperty<boolean>;
 
-  public constructor( providedVisibleProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedVisiblePropertyOptions ) {
+  public constructor( providedBooleanProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedBooleanPropertyOptions ) {
 
-    const options = optionize<GatedVisiblePropertyOptions, SelfOptions, ParentOptions>()( {
-      selfVisibleInitiallyVisible: true,
-      selfVisiblePropertyOptions: {
-        tandem: parentTandem.createTandem( 'selfVisibleProperty' ),
-        phetioFeatured: true,
-        phetioDocumentation: 'Provides an additional way to toggle the visibility for the PhET-iO Element.'
+    const options = optionize<GatedBooleanPropertyOptions, SelfOptions, ParentOptions>()( {
+      tandemName: 'property',
+      selfTandemName: 'selfProperty',
+      selfBooleanInitialValue: true,
+      selfBooleanPropertyOptions: {
+        phetioFeatured: true
       },
 
-      tandem: parentTandem.createTandem( 'visibleProperty' ),
       phetioValueType: BooleanIO
-      // see below for phetioDocumentation
+      // see below for phetioDocumentation, replaces {{SELF_PROPERTY_TANDEM_NAME}} with the name of the self property
     }, providedOptions );
 
-    const selfVisibleProperty = new BooleanProperty( options.selfVisibleInitiallyVisible, options.selfVisiblePropertyOptions );
-    if ( !options.phetioDocumentation ) {
-      options.phetioDocumentation = `Whether the PhET-iO Element is visible, see ${selfVisibleProperty.tandem.name} for customization.`;
+    if ( !options.tandem ) {
+      options.tandem = parentTandem.createTandem( options.tandemName );
+    }
+    if ( !options.selfBooleanPropertyOptions.tandem ) {
+      options.selfBooleanPropertyOptions.tandem = parentTandem.createTandem( options.selfTandemName );
+    }
+
+    const selfBooleanProperty = new BooleanProperty( options.selfBooleanInitialValue, options.selfBooleanPropertyOptions );
+    if ( options.phetioDocumentation ) {
+      options.phetioDocumentation = options.phetioDocumentation.replace( '{{SELF_PROPERTY_TANDEM_NAME}}', selfBooleanProperty.tandem.name );
     }
 
     super(
-      [ providedVisibleProperty, selfVisibleProperty ],
-      ( providedVisible, selfVisible ) => providedVisible && selfVisible,
+      [ providedBooleanProperty, selfBooleanProperty ],
+      ( providedBoolean, selfBoolean ) => providedBoolean && selfBoolean,
       options
     );
 
-    this.selfVisibleProperty = selfVisibleProperty;
+    this.selfBooleanProperty = selfBooleanProperty;
   }
 
   public override dispose(): void {
 
-    // Remove the selfVisibleProperty from the PhET-iO registry
-    this.selfVisibleProperty.dispose();
+    // Remove the selfBooleanProperty from the PhET-iO registry
+    this.selfBooleanProperty.dispose();
     super.dispose();
   }
 }
 
-export class GatedVisibleProperty extends GatedBooleanProperty {}
+export class GatedVisibleProperty extends GatedBooleanProperty {
+  public constructor( providedBooleanProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedBooleanPropertyOptions ) {
+
+    const options = optionize<GatedBooleanPropertyOptions, EmptySelfOptions, GatedBooleanPropertyOptions>()( {
+      tandemName: 'visibleProperty',
+      selfTandemName: 'selfVisibleProperty',
+      phetioDocumentation: 'Whether the PhET-iO Element is visible, see {{SELF_PROPERTY_TANDEM_NAME}} for customization.',
+      selfBooleanPropertyOptions: {
+        phetioDocumentation: 'Provides an additional way to toggle the visibility for the PhET-iO Element.'
+      }
+    }, providedOptions );
+
+    super( providedBooleanProperty, parentTandem, options );
+  }
+}
 
 export default GatedBooleanProperty;
 
