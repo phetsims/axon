@@ -91,6 +91,22 @@ export class GatedVisibleProperty extends GatedBooleanProperty {
   }
 }
 
+export class GatedEnabledProperty extends GatedBooleanProperty {
+  public constructor( providedBooleanProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedBooleanPropertyOptions ) {
+
+    const options = optionize<GatedBooleanPropertyOptions, EmptySelfOptions, GatedBooleanPropertyOptions>()( {
+      tandemName: 'enabledProperty',
+      selfTandemName: 'selfEnabledProperty',
+      phetioDocumentation: 'Whether the PhET-iO Element is enabled, see {{SELF_PROPERTY_TANDEM_NAME}} for customization.',
+      selfBooleanPropertyOptions: {
+        phetioDocumentation: 'Provides an additional way to toggle enabled for the PhET-iO Element.'
+      }
+    }, providedOptions );
+
+    super( providedBooleanProperty, parentTandem, options );
+  }
+}
+
 export default GatedBooleanProperty;
 
 axon.register( 'GatedBooleanProperty', GatedBooleanProperty );
