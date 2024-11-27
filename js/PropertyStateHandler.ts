@@ -10,8 +10,8 @@
  */
 
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import Tandem from '../../tandem/js/Tandem.js';
 import { PhetioID } from '../../tandem/js/phet-io-types.js';
+import Tandem from '../../tandem/js/Tandem.js';
 import { TPhetioStateEngine } from '../../tandem/js/TPhetioStateEngine.js';
 import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
