@@ -240,6 +240,11 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
     return this.targetProperty || null;
   }
 
+  // A TinyForwardingProperty is settable if the target property is settable.
+  public override isSettable(): boolean {
+    return this.targetProperty ? this.targetProperty.isSettable() : super.isSettable();
+  }
+
   /**
    * This currently also involves deleting the field.
    */
