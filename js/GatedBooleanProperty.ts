@@ -1,10 +1,14 @@
 // Copyright 2024, University of Colorado Boulder
 
 /**
- * The GatedVisibleProperty class abstracts the process of creating a "gated" visibility Property
+ * The GatedBooleanProperty class abstracts the process of creating a "gated" boolean Property
  * designed for PhET-iO integration. This pattern comes in handy when an object's visibility is already controlled
- * within the simulation, but there is a need to grant additional visibility control to an external entity,
+ * within the simulation, but there is a need to grant additional control to an external entity,
  * such as a studio or a PhET-iO client.
+ *
+ * Subclasses GatedVisibleProperty and GatedEnabledProperty should be used when your Property fills the role
+ * of a visibleProperty or enabledProperty respectively. These subclasses provide standardized tandem names
+ * and PhET-iO metadata.
  *
  * @author Marla Schulz (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
