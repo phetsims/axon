@@ -1,10 +1,12 @@
 // Copyright 2024, University of Colorado Boulder
 
 /**
- * The GatedBooleanProperty class abstracts the process of creating a "gated" boolean Property
- * designed for PhET-iO integration. This pattern comes in handy when an object's visibility is already controlled
- * within the simulation, but there is a need to grant additional control to an external entity,
- * such as a studio or a PhET-iO client.
+ * The GatedBooleanProperty class abstracts the process of creating a boolean Property with an extra controlling Property.
+ * Partially designed for its primary use case, PhET-iO instrumented Properties. This pattern comes in handy when an
+ * object's boolean value is already controlled within the simulation, but there is a need to grant additional control
+ * to an external entity such as a studio or a PhET-iO client. Here "gate" is an extra level of control (via the
+ * composed Property). The class is a DerivedProperty that listens correctly to convey the boolean with
+ * respect to all inputs.
  *
  * Subclasses GatedVisibleProperty and GatedEnabledProperty should be used when your Property fills the role
  * of a visibleProperty or enabledProperty respectively. These subclasses provide standardized tandem names
@@ -12,6 +14,7 @@
  *
  * @author Marla Schulz (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
+ * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
