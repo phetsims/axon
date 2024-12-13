@@ -7,6 +7,8 @@
  */
 
 import Vector2 from '../../dot/js/Vector2.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
+import merge from '../../phet-core/js/merge.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import Multilink from './Multilink.js';
@@ -244,6 +246,34 @@ QUnit.test( 'Property value validation', assert => {
   assert.ok( true, 'so we have at least 1 test in this set' );
 } );
 
+QUnit.test( 'do not recurse in merge for non *Options', assert => {
+
+  const testFirstProperty = new Property( 'hi' );
+  const testSecondProperty = new Property( 'hi2' );
+  const TestEnumeration = EnumerationDeprecated.byKeys( [ 'ONE', 'TWO' ] );
+  const TestEnumeration2 = EnumerationDeprecated.byKeys( [ 'ONE1', 'TWO2' ] );
+  const original = {
+    prop: testFirstProperty,
+    enum: TestEnumeration,
+    someOptions: { nestedProp: testFirstProperty }
+  };
+
+  let newObject = merge( {}, original );
+  assert.ok( _.isEqual( original, newObject ), 'should be equal from reference equality' );
+  assert.ok( original.prop === newObject.prop, 'same Property' );
+  assert.ok( original.enum === newObject.enum, 'same EnumerationDeprecated' );
+
+  // test defaults with other non mergeable objects
+  newObject = merge( {
+    prop: testSecondProperty,
+    enum: TestEnumeration2,
+    someOptions: { nestedProp: testSecondProperty }
+  }, original );
+  assert.ok( _.isEqual( original, newObject ), 'should be equal' );
+  assert.ok( original.prop === newObject.prop, 'same Property, ignore default' );
+  assert.ok( original.enum === newObject.enum, 'same EnumerationDeprecated, ignore default' );
+} );
+
 QUnit.test( 'reentrantNotificationStrategy', assert => {
   assert.ok( new Property( 'hi' )[ 'tinyProperty' ][ 'reentrantNotificationStrategy' ] === 'queue',
     'default notification strategy for Property should be "queue"' );
@@ -339,8 +369,12 @@ QUnit.test( 'options.valueComparisonStrategy', assert => {
   assert.ok( calledCount === 2, 'not equal with other key' );
 } );
 
-// Tests that can only run in phet-io mode
+///////////////////////////////
+// START PHET_IO ONLY TESTS
+///////////////////////////////
 if ( Tandem.PHET_IO_ENABLED ) {
+// Tests that can only run in phet-io mode
+
   QUnit.test( 'Test PropertyIO toStateObject/fromStateObject', assert => {
     const done = assert.async();
     const tandem = Tandem.ROOT_TEST.createTandem( 'testTandemProperty' );
