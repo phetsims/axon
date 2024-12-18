@@ -12,8 +12,9 @@
 
 import axon from './axon.js';
 import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
-import TProperty from './TProperty.js';
-import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
+import type TProperty from './TProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import Validation, { ValueComparisonStrategy } from './Validation.js';
 
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
