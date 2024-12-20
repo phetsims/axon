@@ -15,6 +15,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
+import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
@@ -114,7 +115,7 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
 
     const currentForwardingPropertyInstrumented = this.targetProperty &&
                                                   this.targetProperty instanceof ReadOnlyProperty && this.targetProperty.isPhetioInstrumented();
-    assert && currentForwardingPropertyInstrumented && assert( newTargetProperty && newTargetProperty instanceof ReadOnlyProperty && newTargetProperty.isPhetioInstrumented(),
+    assert && currentForwardingPropertyInstrumented && Tandem.PHET_IO_ENABLED && assert( newTargetProperty && newTargetProperty instanceof ReadOnlyProperty && newTargetProperty.isPhetioInstrumented(),
       'Cannot set swap out a PhET-iO instrumented targetProperty for an uninstrumented one' );
 
     // We need this information eagerly for later on in the function
