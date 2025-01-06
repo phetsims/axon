@@ -364,9 +364,7 @@ class EmitContext<T extends ParameterList = ParameterList> implements TPoolable 
   }
 
   public freeToPool(): void {
-    // TypeScript doesn't need to know that we're using this for different types. When it is "active", it will be
-    // the correct type.
-    EmitContext.pool.freeToPool( this as unknown as EmitContext );
+    EmitContext.pool.freeToPool( this );
 
     // NOTE: If we have fewer concerns about memory in the future, we could potentially improve performance by
     // removing the clearing out of memory here. We don't seem to create many EmitContexts, HOWEVER if we have ONE
