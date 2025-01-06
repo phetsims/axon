@@ -79,6 +79,17 @@ class Disposable {
     }
   }
 
+  /**
+   * Add disposables that will be disposed when this instance is disposed.
+   */
+  public addDisposable( ...disposables: HasDispose[] ): void {
+    this.disposeEmitter.addListener( () => {
+      for ( let i = 0; i < disposables.length; i++ ) {
+        disposables[ i ].dispose();
+      }
+    } );
+  }
+
   public dispose(): void {
     assert && !this._isDisposable && Disposable.assertNotDisposable();
     assert && assert( !this._isDisposed, 'Disposable can only be disposed once' );
