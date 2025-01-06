@@ -6,6 +6,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import BooleanProperty from './BooleanProperty.js';
 import Disposable, { DisposableOptions } from './Disposable.js';
 
 QUnit.module( 'Disposable' );
@@ -58,5 +59,59 @@ QUnit.test( 'Disposable.isDisposable', assert => {
   if ( window.assert ) {
     assert.throws( () => object3.dispose(), 'should throw if isDisposable is false1' );
     assert.throws( () => object4.dispose(), 'should throw if isDisposable is false2' );
+  }
+} );
+
+QUnit.test( 'Disposable.addDisposer', assert => {
+  assert.ok( true, 'when assertions are not enabled' );
+
+  class Model extends Disposable {
+    public readonly myProperty = new BooleanProperty( false );
+    private readonly myListener: () => void;
+
+    public constructor() {
+      super();
+      this.myListener = () => console.log( 'link called back' );
+      this.myProperty.link( this.myListener, { disposer: this } );
+
+      const b = () => console.log( 'second link' );
+      this.myProperty.link( b );
+      this.myProperty.unlink( b );
+    }
+
+    public detachListener(): void {
+      this.myProperty.unlink( this.myListener );
+    }
+  }
+
+  {
+    const model = new Model();
+
+    // @ts-expect-error disposeEmitter is a TEmitter.
+    const listenerCount = model.disposeEmitter[ 'listeners' ];
+    assert.ok( listenerCount.size === 1, 'disposer wired up on construction' );
+    assert.ok( model.myProperty.hasListeners(), 'after creating the model, it should have a listerer' );
+    model.detachListener();
+    assert.ok( !model.myProperty.hasListeners(), 'after disposing the model, it should not have a listener' );
+  }
+  {
+    const model = new Model();
+    model.dispose();
+    assert.ok( !model.myProperty.hasListeners(), 'after disposing the model, it should not have a listener' );
+  }
+  {
+    const model = new Model();
+
+    // @ts-expect-error disposeEmitter is a TEmitter.
+    const listenersSet = model.disposeEmitter[ 'listeners' ];
+    const listenerCount = listenersSet.size;
+    model.myProperty.dispose();
+    assert.ok( !model.myProperty.hasListeners(), 'after disposing the model, it should not have a listener' );
+    if ( window.assert ) {
+      for ( const [ key, value ] of model.myProperty[ 'disposerMap' ]!.entries() ) {
+        assert.ok( value.size === 0, `after disposing the Property, it should not have any lingering disposers: ${key}` );
+      }
+    }
+    assert.ok( listenersSet.size === listenerCount - 1, 'disposing Property should remove the listener on model.disposeEmitter' );
   }
 } );

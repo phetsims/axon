@@ -21,12 +21,12 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
+import { DisposerOptions } from './Disposable.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import { TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
-import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
+import TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
 import units, { Units } from './units.js';
 import validate from './validate.js';
 import Validation, { Validator, ValueComparisonStrategy } from './Validation.js';
@@ -87,6 +87,9 @@ export type PropertyOptions<T> = SelfOptions & StrictOmit<ParentOptions<T>, 'phe
 export type LinkOptions = {
   phetioDependencies?: Array<TReadOnlyProperty<unknown>>;
 };
+
+// If provided, will be unlinked when the disposable is disposed
+type ReadOnlyPropertyLinkOptions = LinkOptions & DisposerOptions;
 
 /**
  * Base class for Property, DerivedProperty, DynamicProperty.  Set methods are protected/not part of the public
@@ -434,12 +437,15 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * @param listener - a function that takes a new value, old value, and this Property as arguments
    * @param [options]
    */
-  public link( listener: PropertyLinkListener<T>, options?: LinkOptions ): void {
+  public link( listener: PropertyLinkListener<T>, options?: ReadOnlyPropertyLinkOptions ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
 
     this.tinyProperty.addListener( listener ); // cannot use tinyProperty.link() because of wrong this
+
+    this.addPropertyDisposerAction( listener, options );
+
     listener( this.get(), null, this ); // null should be used when an object is expected but unavailable
   }
 
@@ -447,11 +453,13 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * Add a listener to the Property, without calling it back right away. This is used when you need to register a
    * listener without an immediate callback.
    */
-  public lazyLink( listener: PropertyLazyLinkListener<T>, options?: LinkOptions ): void {
+  public lazyLink( listener: PropertyLazyLinkListener<T>, options?: ReadOnlyPropertyLinkOptions ): void {
     if ( options && options.phetioDependencies ) {
       this.addPhetioStateDependencies( options.phetioDependencies );
     }
-    this.tinyProperty.lazyLink( listener );
+    this.tinyProperty.lazyLink( listener ); // Note: do not pass through the disposer options
+
+    this.addPropertyDisposerAction( listener, options );
   }
 
   /**
@@ -459,6 +467,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   public unlink( listener: PropertyListener<T> ): void {
     this.tinyProperty.unlink( listener );
+
+    // undo addDisposer (see above)
+    this.removeDisposerAction( 'link', listener );
   }
 
   /**
@@ -466,6 +477,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    */
   public unlinkAll(): void {
     this.tinyProperty.unlinkAll();
+
+    // undo addDisposer (see above)
+    this.removeAllDisposerActions( 'link' );
   }
 
   /**
@@ -504,6 +518,11 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
   public getValidationError( value: T ): string | null {
     return Validation.getValidationError( value, this.valueValidator, VALIDATE_OPTIONS_FALSE );
+  }
+
+  // If a disposer is specified, then automatically remove this listener when the disposer is disposed.
+  private addPropertyDisposerAction( listener: PropertyListener<T>, options?: DisposerOptions ): void {
+    options?.disposer && this.addDisposerAction( 'link', listener, options.disposer, () => this.unlink( listener ) );
   }
 
   // Ensures that the Property is eligible for GC

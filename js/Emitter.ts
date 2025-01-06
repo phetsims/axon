@@ -21,6 +21,7 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
+import { DisposerOptions } from './Disposable.js';
 import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
 import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
 
@@ -77,8 +78,11 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
   /**
    * Adds a listener which will be called during emit.
    */
-  public addListener( listener: TEmitterListener<T> ): void {
+  public addListener( listener: TEmitterListener<T>, options?: DisposerOptions ): void {
     this.tinyEmitter.addListener( listener );
+
+    // If a disposer is specified, then automatically remove this listener when the disposer is disposed.
+    options?.disposer && this.addDisposerAction( 'listener', listener, options.disposer, () => this.removeListener( listener ) );
   }
 
   /**
@@ -86,6 +90,9 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
    */
   public removeListener( listener: TEmitterListener<T> ): void {
     this.tinyEmitter.removeListener( listener );
+
+    // undo addDisposer (see above)
+    this.removeDisposerAction( 'listener', listener );
   }
 
   /**
@@ -93,6 +100,9 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
    */
   public removeAllListeners(): void {
     this.tinyEmitter.removeAllListeners();
+
+    // undo addDisposer (see above)
+    this.removeAllDisposerActions( 'listener' );
   }
 
   /**
