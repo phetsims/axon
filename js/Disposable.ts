@@ -130,7 +130,7 @@ class Disposable implements Disposer, HasDispose {
       }
     }
 
-    // TODO: Emit in reverse order so that tear-downs happen in the opposite order of setup. separate issue, see https://github.com/phetsims/axon/issues/455
+    // TODO: Emit in reverse order so that tear-downs happen in the opposite order of setup. separate issue, see https://github.com/phetsims/axon/issues/456
     this._disposeEmitter.emit();
     this._disposeEmitter.dispose();
 
