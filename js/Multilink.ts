@@ -39,7 +39,7 @@ export type RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> = Reado
 export type RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12>, ROP<T13>, ROP<T14> ]>;
 export type RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> = Readonly<[ ROP<T1>, ROP<T2>, ROP<T3>, ROP<T4>, ROP<T5>, ROP<T6>, ROP<T7>, ROP<T8>, ROP<T9>, ROP<T10>, ROP<T11>, ROP<T12>, ROP<T13>, ROP<T14>, ROP<T15> ]>;
 
-export type Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> =
+export type DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> =
   RP1<T1> |
   RP2<T1, T2> |
   RP3<T1, T2, T3> |
@@ -62,7 +62,7 @@ export type UnknownMultilink = Multilink<unknown, unknown, unknown, unknown, unk
 
 export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
 
-  private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
+  private dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
 
   // Keep track of listeners so they can be detached
   private dependencyListeners: Map<TReadOnlyProperty<unknown>, () => void>;
@@ -90,8 +90,8 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   public constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void, lazy?: boolean ) ;
   public constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void, lazy?: boolean ) ;
   public constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) ;
-  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean );
-  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) {
+  public constructor( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean );
+  public constructor( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void, lazy?: boolean ) {
 
     this.dependencies = dependencies;
 
@@ -134,7 +134,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   /**
    * Returns dependencies that are guaranteed to be defined internally.
    */
-  private get definedDependencies(): Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
+  private get definedDependencies(): DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
     assert && assert( this.dependencies !== null, 'Dependencies should be defined, has this Property been disposed?' );
     return this.dependencies!;
   }
@@ -180,7 +180,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
   static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
   static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
-  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line @typescript-eslint/explicit-member-accessibility
+  static multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line @typescript-eslint/explicit-member-accessibility
     return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, false /* lazy */ );
   }
 
@@ -213,7 +213,7 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
   static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
   static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
   static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>; // eslint-disable-line @typescript-eslint/explicit-member-accessibility
-  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line @typescript-eslint/explicit-member-accessibility
+  static lazyMultilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, callback: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => void ): Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> { // eslint-disable-line @typescript-eslint/explicit-member-accessibility
     return new Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( dependencies, callback, true /* lazy */ );
   }
 

@@ -26,7 +26,7 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
 import DerivedProperty, { DerivedPropertyOptions } from './DerivedProperty.js';
-import { Dependencies } from './Multilink.js';
+import { DependenciesType } from './Multilink.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -39,7 +39,7 @@ export type DerivedStringPropertyOptions<T extends string> = SelfOptions &
 export default class DerivedStringProperty<T extends string, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
   extends DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
 
-  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>,
+  public constructor( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>,
                       derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T,
                       providedOptions?: DerivedStringPropertyOptions<T> ) {
 

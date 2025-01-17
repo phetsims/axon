@@ -16,7 +16,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import { Dependencies, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
+import { DependenciesType, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
 import Property, { PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
@@ -36,7 +36,7 @@ export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
 /**
  * Compute the derived value given a derivation and an array of dependencies
  */
-function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
+function getDerivedValue<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>( derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ): T {
 
   // @ts-expect-error
   return derivation( ...dependencies.map( property => property.get() ) );
@@ -50,7 +50,7 @@ export type UnknownDerivedProperty<T> = DerivedProperty<T, unknown, unknown, unk
  * Parameters[] = types of the callback parameters, e.g. [ Vector2, number, boolean ]
  */
 export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> extends ReadOnlyProperty<T> implements TReadOnlyProperty<T> {
-  private dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
+  private dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> | null;
   private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
 
@@ -76,8 +76,8 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   public constructor( dependencies: RP13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
   public constructor( dependencies: RP14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
   public constructor( dependencies: RP15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) ;
-  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> );
-  public constructor( dependencies: Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
+  public constructor( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> );
+  public constructor( dependencies: DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T, providedOptions?: DerivedPropertyOptions<T> ) {
 
     const options = optionize<DerivedPropertyOptions<T>, SelfOptions, PropertyOptions<T>>()( {
       phetioReadOnly: true, // derived properties can be read but not set by PhET-iO
@@ -140,7 +140,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   /**
    * Returns dependencies that are guaranteed to be defined internally.
    */
-  private get definedDependencies(): Dependencies<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
+  private get definedDependencies(): DependenciesType<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
     assert && assert( this.dependencies !== null, 'Dependencies should be defined, has this Property been disposed?' );
     return this.dependencies!;
   }
