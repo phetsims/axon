@@ -474,7 +474,6 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
   shuffle: function( random: FakeRandom<any> ) {
     assert && assert( random, 'random must be supplied' );
 
-    // preserve the same _array reference in case any clients got a reference to it with getArray()
     const shuffled = random.shuffle( this );
 
     // Act on the targetArray so that removal and add notifications aren't sent.
