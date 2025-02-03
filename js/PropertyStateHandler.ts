@@ -15,7 +15,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import type { TPhetioStateEngine } from '../../tandem/js/TPhetioStateEngine.js';
 import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
+import type ReadOnlyProperty from './ReadOnlyProperty.js';
 
 type PhaseMap = {
   beforePhase: PropertyStatePhase;
@@ -60,7 +60,7 @@ class PropertyStateHandler {
     ];
   }
 
-  public initialize( phetioStateEngine: TPhetioStateEngine ): void {
+  public initialize( phetioStateEngine: TPhetioStateEngine, ReadOnlyPropertyConstructor: typeof ReadOnlyProperty<unknown> ): void {
     assert && assert( !this.initialized, 'cannot initialize twice' );
 
     phetioStateEngine.onBeforeApplyStateEmitter.addListener( phetioObject => {
@@ -68,7 +68,7 @@ class PropertyStateHandler {
       // withhold AXON/Property notifications until all values have been set to avoid inconsistent intermediate states,
       // see https://github.com/phetsims/phet-io-wrappers/issues/229
       // only do this if the PhetioObject is already not deferred
-      if ( phetioObject instanceof ReadOnlyProperty && !phetioObject.isDeferred ) {
+      if ( phetioObject instanceof ReadOnlyPropertyConstructor && !phetioObject.isDeferred ) {
         phetioObject.setDeferred( true );
         const phetioID = phetioObject.tandem.phetioID;
 
@@ -99,7 +99,8 @@ class PropertyStateHandler {
   }
 
   private static validateInstrumentedProperty( property: ReadOnlyProperty<unknown> ): void {
-    assert && Tandem.VALIDATION && assert( property instanceof ReadOnlyProperty && property.isPhetioInstrumented(), `must be an instrumented Property: ${property}` );
+    assert && Tandem.VALIDATION && assert( property.isPhetioInstrumented && property.isPhetioInstrumented(),
+      `must be an instrumented Property: ${property}` );
   }
 
   private validatePropertyPhasePair( property: ReadOnlyProperty<unknown>, phase: PropertyStatePhase ): void {
