@@ -1,4 +1,4 @@
-// Copyright 2020-2024, University of Colorado Boulder
+// Copyright 2020-2025, University of Colorado Boulder
 
 /**
  * Responsible for handling Property-specific logic associated with setting PhET-iO state. This file will defer Properties
