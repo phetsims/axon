@@ -56,6 +56,7 @@ const UnitsValues = [
   'N/m', // Newtons/meter
   'nm', // nanometers
   'nm/ps', // nanometers/picosecond
+  'ns', // nanoseconds
   'N\u00b7s/m', // N·s/m, Newton-seconds/meter
   '\u03A9', // Ω, ohms - don't use the one in MathSymbols to prevent a dependency on scenery-phet
   '\u03A9\u00b7cm', // Ω·cm, ohm-centimeters
