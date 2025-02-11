@@ -9,12 +9,12 @@
 import Vector2 from '../../dot/js/Vector2.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import Multilink from './Multilink.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 QUnit.module( 'Property' );
 

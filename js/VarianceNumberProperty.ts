@@ -8,7 +8,7 @@
  */
 
 import axon from './axon.js';
-import NumberProperty, { NumberPropertyOptions } from './NumberProperty.js';
+import NumberProperty, { type NumberPropertyOptions } from './NumberProperty.js';
 
 type VarianceComputer = ( value: number ) => number;
 

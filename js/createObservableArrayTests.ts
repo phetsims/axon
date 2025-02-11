@@ -8,8 +8,8 @@
 
 import Random from '../../dot/js/Random.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import createObservableArray, { ObservableArray } from './createObservableArray.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import createObservableArray, { type ObservableArray } from './createObservableArray.js';
 
 QUnit.module( 'createObservableArray' );
 

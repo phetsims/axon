@@ -8,7 +8,7 @@
  */
 
 import Emitter from './Emitter.js';
-import TEmitter from './TEmitter.js';
+import type TEmitter from './TEmitter.js';
 
 QUnit.module( 'Emitter' );
 

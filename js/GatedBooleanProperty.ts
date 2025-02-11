@@ -17,15 +17,15 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import Tandem from '../../tandem/js/Tandem.js';
+import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import type Tandem from '../../tandem/js/Tandem.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import axon from './axon.js';
-import BooleanProperty, { BooleanPropertyOptions } from './BooleanProperty.js';
-import { DerivedProperty2, DerivedPropertyOptions } from './DerivedProperty.js';
-import TProperty from './TProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import BooleanProperty, { type BooleanPropertyOptions } from './BooleanProperty.js';
+import { DerivedProperty2, type DerivedPropertyOptions } from './DerivedProperty.js';
+import type TProperty from './TProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   tandemName?: string;

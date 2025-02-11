@@ -9,7 +9,7 @@
 
 import axon from './axon.js';
 import stepTimer from './stepTimer.js';
-import { TimerListener } from './Timer.js';
+import { type TimerListener } from './Timer.js';
 
 export type CallbackTimerCallback = () => void;
 

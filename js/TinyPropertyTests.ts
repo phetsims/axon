@@ -9,7 +9,7 @@
  */
 
 import Vector2 from '../../dot/js/Vector2.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TinyProperty from './TinyProperty.js';
 
 QUnit.module( 'TinyProperty' );

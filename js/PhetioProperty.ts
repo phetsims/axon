@@ -1,8 +1,8 @@
 // Copyright 2023-2024, University of Colorado Boulder
 // @author Michael Kauzmann (PhET Interactive Simulations)
 
-import PhetioObject from '../../tandem/js/PhetioObject.js';
-import TProperty from './TProperty.js';
+import type PhetioObject from '../../tandem/js/PhetioObject.js';
+import type TProperty from './TProperty.js';
 
 // When calling PhetioObject.addLinkedElement, the parameter must be a PhetioObject, so this type alias covers that ground
 // and helps with cases like LocalizedStringProperty (and DynamicProperty in general) which satisfies the TProperty

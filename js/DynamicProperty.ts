@@ -98,12 +98,13 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
+import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import axon from './axon.js';
-import Property, { PropertyOptions } from './Property.js';
+import type Property from './Property.js';
+import { type PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import TProperty from './TProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TProperty from './TProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 export type TNullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
 

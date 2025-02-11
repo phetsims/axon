@@ -19,9 +19,10 @@ import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import TinyProperty, { TinyPropertyOnBeforeNotify } from './TinyProperty.js';
-import TProperty from './TProperty.js';
-import TReadOnlyProperty, { isTReadOnlyProperty, PropertyLazyLinkListener } from './TReadOnlyProperty.js';
+import TinyProperty, { type TinyPropertyOnBeforeNotify } from './TinyProperty.js';
+import type TProperty from './TProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import { isTReadOnlyProperty, type PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {
   updateLinkedElementForProperty: <ValueType>( tandemName: string, oldProperty?: TReadOnlyProperty<ValueType> | null, newProperty?: TReadOnlyProperty<ValueType> | null ) => void;

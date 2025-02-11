@@ -25,12 +25,13 @@
 import Range from '../../dot/js/Range.js';
 import optionize from '../../phet-core/js/optionize.js';
 import axon from './axon.js';
-import MappedProperty, { MappedPropertyOptions } from './MappedProperty.js';
+import MappedProperty, { type MappedPropertyOptions } from './MappedProperty.js';
 import { DEFAULT_RANGE } from './NumberProperty.js';
 import Property from './Property.js';
-import TProperty from './TProperty.js';
-import TRangedProperty, { isTRangedProperty } from './TRangedProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TProperty from './TProperty.js';
+import type TRangedProperty from './TRangedProperty.js';
+import { isTRangedProperty } from './TRangedProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.

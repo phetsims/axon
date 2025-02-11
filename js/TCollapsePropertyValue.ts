@@ -9,7 +9,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 type CollapsePropertyValue<T> = T extends TReadOnlyProperty<infer Value> ? Value : T;
 export default CollapsePropertyValue;

@@ -7,20 +7,20 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import Range, { RangeStateObject } from '../../dot/js/Range.js';
+import Range, { type RangeStateObject } from '../../dot/js/Range.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import { PhetioID } from '../../tandem/js/phet-io-types.js';
+import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import { type PhetioID } from '../../tandem/js/phet-io-types.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import Property, { PropertyOptions } from './Property.js';
-import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
-import TRangedProperty from './TRangedProperty.js';
+import Property, { type PropertyOptions } from './Property.js';
+import ReadOnlyProperty, { type ReadOnlyPropertyState } from './ReadOnlyProperty.js';
+import type TRangedProperty from './TRangedProperty.js';
 import validate from './validate.js';
 
 const VALID_INTEGER = { valueType: 'number', isValidValue: ( v: number ) => v % 1 === 0, validationMessage: 'Should be a valid integer' };

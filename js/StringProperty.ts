@@ -7,11 +7,11 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import axon from './axon.js';
-import Property, { PropertyOptions } from './Property.js';
+import Property, { type PropertyOptions } from './Property.js';
 
 type SelfOptions = EmptySelfOptions;
 

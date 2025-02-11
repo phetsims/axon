@@ -1,8 +1,8 @@
 // Copyright 2022-2024, University of Colorado Boulder
 
 import axon from './axon.js';
-import ReadOnlyProperty, { PropertyOptions } from './ReadOnlyProperty.js';
-import TProperty from './TProperty.js';
+import ReadOnlyProperty, { type PropertyOptions } from './ReadOnlyProperty.js';
+import type TProperty from './TProperty.js';
 
 /**
  * Adds initial value and reset, and a mutable interface.

@@ -9,7 +9,7 @@
 import Vector2 from '../../dot/js/Vector2.js';
 import Vector3 from '../../dot/js/Vector3.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Node from '../../scenery/js/nodes/Node.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
@@ -17,7 +17,7 @@ import StringIO from '../../tandem/js/types/StringIO.js';
 import Emitter from './Emitter.js';
 import Property from './Property.js';
 import validate from './validate.js';
-import Validation, { Validator } from './Validation.js';
+import Validation, { type Validator } from './Validation.js';
 
 // constants
 const ASSERTIONS_TRUE = { assertions: true };

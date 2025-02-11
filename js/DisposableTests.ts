@@ -7,7 +7,7 @@
  */
 
 import BooleanProperty from './BooleanProperty.js';
-import Disposable, { DisposableOptions } from './Disposable.js';
+import Disposable, { type DisposableOptions } from './Disposable.js';
 
 QUnit.module( 'Disposable' );
 

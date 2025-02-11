@@ -11,7 +11,7 @@
 
 import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
-import { PropertyLinkListener } from './TReadOnlyProperty.js';
+import { type PropertyLinkListener } from './TReadOnlyProperty.js';
 
 export default class TinyStaticProperty<T> extends TinyProperty<T> {
 

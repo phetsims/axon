@@ -33,7 +33,7 @@
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import optionize from '../../phet-core/js/optionize.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 

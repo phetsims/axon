@@ -7,7 +7,7 @@
  */
 
 import BooleanProperty from './BooleanProperty.js';
-import EnabledComponent, { EnabledComponentOptions } from './EnabledComponent.js';
+import EnabledComponent, { type EnabledComponentOptions } from './EnabledComponent.js';
 import Property from './Property.js';
 
 QUnit.module( 'EnabledComponent' );

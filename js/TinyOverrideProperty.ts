@@ -9,7 +9,7 @@
 
 import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 export default class TinyOverrideProperty<T> extends TinyProperty<T> {
 

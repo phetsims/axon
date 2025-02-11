@@ -55,14 +55,15 @@
 
 import Utils from '../../dot/js/Utils.js';
 import optionize from '../../phet-core/js/optionize.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import KeysMatching from '../../phet-core/js/types/KeysMatching.js';
-import KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
+import type KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
-import DerivedStringProperty, { DerivedStringPropertyOptions } from './DerivedStringProperty.js';
-import TCollapsePropertyValue from './TCollapsePropertyValue.js';
-import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
+import DerivedStringProperty, { type DerivedStringPropertyOptions } from './DerivedStringProperty.js';
+import type TCollapsePropertyValue from './TCollapsePropertyValue.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;

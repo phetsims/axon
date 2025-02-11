@@ -11,11 +11,10 @@
  */
 
 import axon from './axon.js';
-import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
+import TinyEmitter, { type TinyEmitterOptions } from './TinyEmitter.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
-import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
-import Validation, { ValueComparisonStrategy } from './Validation.js';
+import type TReadOnlyProperty, { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
+import Validation, { type ValueComparisonStrategy } from './Validation.js';
 
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
 export type TinyPropertyOnBeforeNotify<T> = ( ...args: TinyPropertyEmitterParameters<T> ) => void;

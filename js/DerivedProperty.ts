@@ -9,19 +9,19 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import { DependenciesType, RP1, RP10, RP11, RP12, RP13, RP14, RP15, RP2, RP3, RP4, RP5, RP6, RP7, RP8, RP9 } from './Multilink.js';
-import Property, { PropertyOptions } from './Property.js';
+import { type DependenciesType, type RP1, type RP10, type RP11, type RP12, type RP13, type RP14, type RP15, type RP2, type RP3, type RP4, type RP5, type RP6, type RP7, type RP8, type RP9 } from './Multilink.js';
+import Property, { type PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 

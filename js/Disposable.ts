@@ -14,9 +14,10 @@
  */
 
 import affirm, { isAffirmEnabled } from '../../perennial-alias/js/browser-and-node/affirm.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
-import TEmitter, { TReadOnlyEmitter } from './TEmitter.js';
+import type TEmitter from './TEmitter.js';
+import { type TReadOnlyEmitter } from './TEmitter.js';
 import TinyEmitter from './TinyEmitter.js';
 
 // A "disposer" is a Type for another entity that can be responsible for disposing this instance. This type is much better

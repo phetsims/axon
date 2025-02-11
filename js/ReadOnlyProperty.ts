@@ -7,12 +7,12 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import isClearingPhetioDynamicElementsProperty from '../../tandem/js/isClearingPhetioDynamicElementsProperty.js';
 import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/isPhetioStateEngineManagingPropertyValuesProperty.js';
-import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
+import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
@@ -21,16 +21,16 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import { DisposerOptions } from './Disposable.js';
+import { type DisposerOptions } from './Disposable.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import { TinyEmitterOptions } from './TinyEmitter.js';
+import { type TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';
 import type TReadOnlyProperty from './TReadOnlyProperty.js';
 import { type PropertyLazyLinkListener, type PropertyLinkListener, type PropertyListener } from './TReadOnlyProperty.js';
-import units, { Units } from './units.js';
+import units, { type Units } from './units.js';
 import validate from './validate.js';
-import Validation, { Validator, ValueComparisonStrategy } from './Validation.js';
+import Validation, { type Validator, type ValueComparisonStrategy } from './Validation.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };

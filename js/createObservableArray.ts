@@ -14,18 +14,18 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize, { combineOptions } from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import isSettingPhetioStateProperty from '../../tandem/js/isSettingPhetioStateProperty.js';
-import { PhetioState } from '../../tandem/js/phet-io-types.js';
-import PhetioObject, { PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
+import { type PhetioState } from '../../tandem/js/phet-io-types.js';
+import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
-import Emitter, { EmitterOptions } from './Emitter.js';
-import NumberProperty, { NumberPropertyOptions } from './NumberProperty.js';
-import TEmitter from './TEmitter.js';
+import Emitter, { type EmitterOptions } from './Emitter.js';
+import NumberProperty, { type NumberPropertyOptions } from './NumberProperty.js';
+import type TEmitter from './TEmitter.js';
 import Validation from './Validation.js';
 
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.

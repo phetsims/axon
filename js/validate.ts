@@ -7,9 +7,9 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
-import Validation, { IsValidValueOptions, Validator } from './Validation.js';
+import Validation, { type IsValidValueOptions, type Validator } from './Validation.js';
 
 /**
  * If assertions are enabled, assert out if the value does not adhere to the validator. No-op without assertions.

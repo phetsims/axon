@@ -10,9 +10,9 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
-import PhetioDataHandler, { PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
+import PhetioDataHandler, { type PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
@@ -21,9 +21,10 @@ import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
-import { DisposerOptions } from './Disposable.js';
-import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
-import TinyEmitter, { TinyEmitterOptions } from './TinyEmitter.js';
+import { type DisposerOptions } from './Disposable.js';
+import type TEmitter from './TEmitter.js';
+import { type TEmitterListener, type TEmitterParameter } from './TEmitter.js';
+import TinyEmitter, { type TinyEmitterOptions } from './TinyEmitter.js';
 
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;

@@ -9,10 +9,11 @@
 
 import dotRandom from '../../dot/js/dotRandom.js';
 import Random from '../../dot/js/Random.js';
-import Pool, { TPoolable } from '../../phet-core/js/Pool.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Pool, { type TPoolable } from '../../phet-core/js/Pool.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import axon from './axon.js';
-import TEmitter, { TEmitterListener, TEmitterParameter } from './TEmitter.js';
+import type TEmitter from './TEmitter.js';
+import { type TEmitterListener, type TEmitterParameter } from './TEmitter.js';
 
 // constants
 const listenerOrder = _.hasIn( window, 'phet.chipper.queryParameters' ) && phet.chipper.queryParameters.listenerOrder;

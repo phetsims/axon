@@ -10,7 +10,7 @@ import DerivedProperty from './DerivedProperty.js';
 import NumberProperty from './NumberProperty.js';
 import TinyForwardingProperty from './TinyForwardingProperty.js';
 import TinyProperty from './TinyProperty.js';
-import TProperty from './TProperty.js';
+import type TProperty from './TProperty.js';
 
 QUnit.module( 'TinyForwardingProperty' );
 

@@ -8,7 +8,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // undefined and never are not allowed as parameters to Emitter
 export type TEmitterParameter = Exclude<IntentionalAny, undefined | never>;

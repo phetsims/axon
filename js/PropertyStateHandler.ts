@@ -9,8 +9,8 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import { PhetioID } from '../../tandem/js/phet-io-types.js';
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import { type PhetioID } from '../../tandem/js/phet-io-types.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import type { TPhetioStateEngine } from '../../tandem/js/TPhetioStateEngine.js';
 import axon from './axon.js';

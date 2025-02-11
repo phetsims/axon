@@ -9,7 +9,7 @@
 
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import BooleanProperty from './BooleanProperty.js';
-import Property from './Property.js';
+import type Property from './Property.js';
 
 QUnit.module( 'BooleanProperty' );
 QUnit.test( 'BooleanProperty', assert => {
