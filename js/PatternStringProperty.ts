@@ -53,7 +53,6 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import Utils from '../../dot/js/Utils.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
@@ -64,6 +63,7 @@ import DerivedStringProperty, { type DerivedStringPropertyOptions } from './Deri
 import type TCollapsePropertyValue from './TCollapsePropertyValue.js';
 import type TReadOnlyProperty from './TReadOnlyProperty.js';
 import { isTReadOnlyProperty } from './TReadOnlyProperty.js';
+import { toFixed } from '../../dot/js/util/toFixed.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -199,7 +199,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
                                       : options.decimalPlaces[ key ]!;
         assert && assert( decimalPlaces !== null );
 
-        stringNumberMap = ( value: string | number ) => stringify( typeof value === 'number' ? Utils.toFixed( value, decimalPlaces ) : value );
+        stringNumberMap = ( value: string | number ) => stringify( typeof value === 'number' ? toFixed( value, decimalPlaces ) : value );
       }
 
       // If we are applying a map, "prepend" that map before the others, so that if it returns a number, we can
