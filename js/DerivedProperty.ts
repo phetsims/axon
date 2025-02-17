@@ -276,6 +276,22 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   }
 
   /**
+   * Creates a derived property based on a record lookup. When evaluated, the DerivedProperty returns the value of
+   * the property in the record corresponding to the key's current value.
+   *
+   * @param key - A property whose current value corresponds to one of the keys in the record.
+   * @param record - A record mapping keys to Properties.
+   * @param options - Optional settings for the DerivedProperty
+   */
+  public static fromRecord<A extends string | number | symbol, B>( key: TReadOnlyProperty<A>, record: Record<A, TReadOnlyProperty<B>>, options?: DerivedPropertyOptions<B> ): UnknownDerivedProperty<B> {
+    const m: TReadOnlyProperty<B>[] = Object.values( record );
+    return DerivedProperty.deriveAny( [ key, ...m ], () => {
+      assert && assert( key.value in record, `key ${String( key.value )} not found in record from DerivedProperty.fromRecord` );
+      return record[ key.value ].value;
+    }, options );
+  }
+
+  /**
    * Create a DerivedProperty from any number of dependencies.  This is parallel to Multilink.multilinkAny
    */
   public static deriveAny<T>( dependencies: Array<TReadOnlyProperty<unknown>>, derivation: () => T, providedOptions?: DerivedPropertyOptions<T> ): UnknownDerivedProperty<T> {
