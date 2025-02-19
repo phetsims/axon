@@ -82,6 +82,9 @@ class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
   }
 }
 
+/**
+ * Provides PhET-iO clients with a way to permanently hide this Node via 'selfVisibleProperty'
+ */
 export class GatedVisibleProperty extends GatedBooleanProperty {
   public constructor( providedBooleanProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedBooleanPropertyOptions ) {
 
