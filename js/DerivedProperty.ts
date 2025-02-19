@@ -8,6 +8,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import { toFixed } from '../../dot/js/util/toFixed.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
@@ -289,6 +290,18 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
       assert && assert( key.value in record, `key ${String( key.value )} not found in record from DerivedProperty.fromRecord` );
       return record[ key.value ].value;
     }, options );
+  }
+
+  /**
+   * Creates a derived property that formats the numeric value from the provided property with a fixed number of
+   * decimal places.
+   *
+   * @param valueProperty
+   * @param decimalPlaces
+   * @param options
+   */
+  public static toFixed( valueProperty: TReadOnlyProperty<number>, decimalPlaces: number, options?: DerivedPropertyOptions<string> ): DerivedProperty<string, number, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
+    return new DerivedProperty( [ valueProperty ], value => toFixed( value, decimalPlaces ), options );
   }
 
   /**
