@@ -21,7 +21,7 @@ import Property, { type PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
@@ -277,18 +277,33 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
   /**
    * Creates a derived property based on a record lookup. When evaluated, the DerivedProperty returns the value of
-   * the property in the record corresponding to the key's current value.
+   * the Property in the record corresponding to the key's current value.
+   *
+   * Record values can also be non-Property values, in which case the DerivedProperty will return that value.
    *
    * @param key - A property whose current value corresponds to one of the keys in the record.
-   * @param record - A record mapping keys to Properties.
+   * @param record - A record mapping keys to Properties or values.
    * @param options - Optional settings for the DerivedProperty
    */
-  public static fromRecord<A extends string | number | symbol, B>( key: TReadOnlyProperty<A>, record: Record<A, TReadOnlyProperty<B>>, options?: DerivedPropertyOptions<B> ): UnknownDerivedProperty<B> {
-    const m: TReadOnlyProperty<B>[] = Object.values( record );
+  public static fromRecord<KeyType extends string | number | symbol, ValueType>(
+    key: TReadOnlyProperty<KeyType>,
+    record: Record<KeyType, ValueType | TReadOnlyProperty<ValueType>>,
+    options?: DerivedPropertyOptions<ValueType | TReadOnlyProperty<ValueType>>
+  ): UnknownDerivedProperty<ValueType> {
+
+    // All the dependencies that are Properties
+    const m: TReadOnlyProperty<ValueType>[] = Object.values( record ).filter( value => isTReadOnlyProperty<ValueType>( value ) );
+
     return DerivedProperty.deriveAny( [ key, ...m ], () => {
       assert && assert( key.value in record, `key ${String( key.value )} not found in record from DerivedProperty.fromRecord` );
-      return record[ key.value ].value;
-    }, options );
+      const value = record[ key.value ];
+      if ( isTReadOnlyProperty<ValueType>( value ) ) {
+        return value.value;
+      }
+      else {
+        return value;
+      }
+    }, options ) as UnknownDerivedProperty<ValueType>; // The type checker can't infer that the return type is B
   }
 
   /**
