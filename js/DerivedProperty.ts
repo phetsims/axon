@@ -11,6 +11,7 @@
 import { toFixed } from '../../dot/js/util/toFixed.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
@@ -32,7 +33,10 @@ type SelfOptions = {
   phetioLinkDependencies?: boolean;
 };
 
-export type DerivedPropertyOptions<T> = SelfOptions & PropertyOptions<T>;
+export type DerivedPropertyOptions<T> = SelfOptions &
+
+  // All DerivedProperties must be read-only, https://github.com/phetsims/axon/issues/461
+  StrictOmit<PropertyOptions<T>, 'phetioReadOnly'>;
 
 /**
  * Compute the derived value given a derivation and an array of dependencies
