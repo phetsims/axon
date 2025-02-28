@@ -15,6 +15,7 @@ import isPhetioStateEngineManagingPropertyValuesProperty from '../../tandem/js/i
 import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
+import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
 import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
@@ -686,6 +687,19 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
             parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
             implementation: ReadOnlyProperty.prototype.unlink,
             documentation: 'Removes a listener.'
+          }
+        },
+        fuzzElement: ( element, shouldLog ) => {
+          if ( element.phetioType.parameterTypes?.length === 1 &&
+               element.phetioType.parameterTypes[ 0 ] === BooleanIO && // We want this more general than in BooleanProperty
+               element.isSettable() ) {
+
+            const oldValue = element.value;
+            const newValue = !oldValue;
+            shouldLog && console.log( `${element.phetioID}:`, oldValue, '->', newValue );
+
+            // @ts-expect-error
+            element.value = newValue;
           }
         }
       } ) );
