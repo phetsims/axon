@@ -92,6 +92,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
     assert && assert( dependencies.every( _.identity ), 'dependencies should all be truthy' );
     assert && assert( dependencies.length === _.uniq( dependencies ).length, 'duplicate dependencies' );
+    assert && assert( options.phetioReadOnly, 'DerivedProperty must be read-only' );
 
     const initialValue = getDerivedValue( derivation, dependencies );
 
