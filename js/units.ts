@@ -48,6 +48,7 @@ const UnitsValues = [
   'm/s^2', // meters/seconds squared
   'mA', // milliampere
   'mm', //millimeters
+  'mV', // millivolts
   'mol',
   'mol/L',
   'mol/s',
