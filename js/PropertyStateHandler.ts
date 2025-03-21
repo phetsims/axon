@@ -238,9 +238,7 @@ class PropertyStateHandler {
     assert && assert( false, assertMessage );
 
     // We must exit here even if assertions are disabled so it wouldn't lock up the browser.
-    if ( !assert ) {
-      throw new Error( assertMessage );
-    }
+    throw new Error( assertMessage );
   }
 
   /**
