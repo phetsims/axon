@@ -21,7 +21,7 @@ import { type PhetioState } from '../../tandem/js/phet-io-types.js';
 import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
-import IOType from '../../tandem/js/types/IOType.js';
+import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 import Emitter, { type EmitterOptions } from './Emitter.js';
 import NumberProperty, { type NumberPropertyOptions } from './NumberProperty.js';
@@ -31,7 +31,7 @@ import Validation from './Validation.js';
 // NOTE: Is this up-to-date and correct? Looks like we tack on phet-io stuff depending on the phetioType.
 type ObservableArrayListener<T> = ( element: T ) => void;
 type Predicate<T> = ( element: T ) => boolean;
-type ObservableArrayStateObject<T> = { array: any[] }; // eslint-disable-line -- futureproof type param if we type this
+type ObservableArrayState<T> = { array: any[] }; // eslint-disable-line -- futureproof type param if we type this
 type FakeRandom<T> = { shuffle: ( arr: T[] ) => T[] }; // // We don't import because of the repo dependency
 type SelfOptions<T> = {
   length?: number;
@@ -61,8 +61,8 @@ type ObservableArray<T> = {
   shuffle: ( random: FakeRandom<T> ) => void;
   getArrayCopy: () => T[];
   dispose: () => void;
-  toStateObject: () => ObservableArrayStateObject<T>;
-  applyState: ( state: ObservableArrayStateObject<T> ) => void;
+  toStateObject: () => ObservableArrayState<T>;
+  applyState: ( state: ObservableArrayState<T> ) => void;
 
   // listen only please
   elementAddedEmitter: TEmitter<[ T ]>;
@@ -73,7 +73,7 @@ type ObservableArray<T> = {
   reset: () => void;
 
   // Possibly passed through to the Emitter
-  phetioElementType?: IOType;
+  phetioElementType?: AnyIOType;
 } & T[];
 
 // Typed for internal usage
@@ -497,7 +497,7 @@ const methods: ThisType<PrivateObservableArray<unknown>> = {
   toStateObject: function() {
     return { array: this.map( item => this.phetioElementType!.toStateObject( item ) ) };
   },
-  applyState: function( stateObject: ObservableArrayStateObject<any> ) {
+  applyState: function( stateObject: ObservableArrayState<any> ) {
     assert && assert( this.length === 0, 'ObservableArrays should be cleared at the beginning of state setting.' );
     this.length = 0;
     const elements = stateObject.array.map( paramStateObject => this.phetioElementType!.fromStateObject( paramStateObject ) );
@@ -539,20 +539,23 @@ const reportDifference = ( shallowCopy: any[], observableArray: PrivateObservabl
 
 // Cache each parameterized ObservableArrayIO
 // based on the parameter type, so that it is only created once.
-const cache = new IOTypeCache();
-
+const cache = new IOTypeCache<IOType<ObservableArrayPhetioObject<any>, ObservableArrayState<any>>>();
 
 /**
  * ObservableArrayIO is the IOType for ObservableArrayDef. It delegates most of its implementation to ObservableArrayDef.
  * Instead of being a parametric type, it leverages the phetioElementType on ObservableArrayDef.
  */
-const ObservableArrayIO = ( parameterType: IOType ): IOType => {
+const ObservableArrayIO = ( parameterType: AnyIOType ): IOType<ObservableArrayPhetioObject<any>, ObservableArrayState<any>> => {
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `ObservableArrayIO<${parameterType.typeName}>`, {
+    cache.set( parameterType, new IOType<ObservableArrayPhetioObject<any>, ObservableArrayState<any>>( `ObservableArrayIO<${parameterType.typeName}>`, {
       valueType: ObservableArrayPhetioObject,
       parameterTypes: [ parameterType ],
-      toStateObject: ( observableArrayPhetioObject: ObservableArrayPhetioObject<any> ) => observableArrayPhetioObject.observableArray.toStateObject(),
-      applyState: ( observableArrayPhetioObject: ObservableArrayPhetioObject<any>, state: ObservableArrayStateObject<any> ) => observableArrayPhetioObject.observableArray.applyState( state ),
+      toStateObject: observableArrayPhetioObject => {
+        return observableArrayPhetioObject.observableArray.toStateObject();
+      },
+      applyState: ( observableArrayPhetioObject, state ) => {
+        return observableArrayPhetioObject.observableArray.applyState( state );
+      },
       stateSchema: {
         array: ArrayIO( parameterType )
       }

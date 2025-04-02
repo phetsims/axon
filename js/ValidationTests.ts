@@ -55,7 +55,7 @@ QUnit.test( 'Test containsValidatorKey', assert => {
   assert.ok( !Validation.containsValidatorKey( null ), 'null: no validator key' );
   assert.ok( !Validation.containsValidatorKey( 5 ), 'number: no validator key' );
   assert.ok( !Validation.containsValidatorKey( { fdsaf: true } ), 'undefined: no validator key' );
-  assert.ok( !Validation.containsValidatorKey( new IOType( 'TestIO', { valueType: 'string' } ) ),
+  assert.ok( !Validation.containsValidatorKey( new IOType<IntentionalAny, IntentionalAny>( 'TestIO', { valueType: 'string' } ) ),
     'undefined: no validator key' );
   assert.ok( Validation.containsValidatorKey( { valueType: 'fdsaf' } ),
     'has valueType, even though valueType has the wrong value' );
@@ -208,7 +208,7 @@ QUnit.test( 'validationMessage is presented for all validation errors', assert =
   testContainsErrorMessage( 4, { isValidValue: v => v === myVar, validationMessage: () => `isValidValue ${myVar}, value 4` } );
   testContainsErrorMessage( 'oh hello', { phetioType: Property.PropertyIO( BooleanIO ), validationMessage: 'isValidValue 3, value string' } );
 
-  const ioType = new IOType( 'TestIO', { valueType: 'boolean' } );
+  const ioType = new IOType<IntentionalAny, IntentionalAny>( 'TestIO', { valueType: 'boolean' } );
   const ioTypeValidationMessage = 'should be a boolean from this IOType in tests';
 
   ioType.validator.validationMessage = ioTypeValidationMessage;

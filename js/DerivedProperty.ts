@@ -15,14 +15,14 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
-import IOType from '../../tandem/js/types/IOType.js';
+import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
 import axon from './axon.js';
 import { type DependenciesType, type RP1, type RP10, type RP11, type RP12, type RP13, type RP14, type RP15, type RP2, type RP3, type RP4, type RP5, type RP6, type RP7, type RP8, type RP9 } from './Multilink.js';
 import Property, { type PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
+import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import TReadOnlyProperty, { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
@@ -59,7 +59,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
   private readonly derivation: ( ...params: [ T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 ] ) => T;
   private readonly derivedPropertyListener: () => void;
 
-  public static DerivedPropertyIO: ( parameterType: IOType ) => IOType;
+  public static DerivedPropertyIO: ( parameterType: AnyIOType ) => IOType<UnknownDerivedProperty<IntentionalAny>, ReadOnlyPropertyState<IntentionalAny>>;
 
   /**
    * @param dependencies - Properties that this Property's value is derived from
@@ -363,33 +363,36 @@ const cache = new IOTypeCache();
  * Parametric IOType constructor.  Given a parameter type, this function returns an appropriate DerivedProperty
  * IOType. Unlike PropertyIO, DerivedPropertyIO cannot be set by PhET-iO clients.
  * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
+ * TODO: Move into static on class, https://github.com/phetsims/tandem/issues/261
  */
-DerivedProperty.DerivedPropertyIO = parameterType => {
+DerivedProperty.DerivedPropertyIO = (
+  parameterType: AnyIOType ): IOType<UnknownDerivedProperty<IntentionalAny>, ReadOnlyPropertyState<IntentionalAny>> => {
   assert && assert( parameterType, 'DerivedPropertyIO needs parameterType' );
 
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
-      valueType: DerivedProperty,
-      parameterTypes: [ parameterType ],
-      supertype: Property.PropertyIO( parameterType ),
-      documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
-                     'instances',
+    cache.set( parameterType, new IOType<UnknownDerivedProperty<IntentionalAny>, ReadOnlyPropertyState<IntentionalAny>>(
+      `${DERIVED_PROPERTY_IO_PREFIX}<${parameterType.typeName}>`, {
+        valueType: DerivedProperty,
+        parameterTypes: [ parameterType ],
+        supertype: Property.PropertyIO( parameterType ),
+        documentation: 'Like PropertyIO, but not settable.  Instead it is derived from other DerivedPropertyIO or PropertyIO ' +
+                       'instances',
 
-      // Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
-      // back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
-      applyState: _.noop,
-      methods: {
-        setValue: {
-          returnType: VoidIO,
-          parameterTypes: [ parameterType ],
+        // Override the parent implementation as a no-op.  DerivedProperty values appear in the state, but should not be set
+        // back into a running simulation. See https://github.com/phetsims/phet-io/issues/1292
+        applyState: _.noop,
+        methods: {
+          setValue: {
+            returnType: VoidIO,
+            parameterTypes: [ parameterType ],
 
-          // @ts-expect-error
-          implementation: DerivedProperty.prototype.set,
-          documentation: 'Errors out when you try to set a derived property.',
-          invocableForReadOnlyElements: false
+            // @ts-expect-error
+            implementation: DerivedProperty.prototype.set,
+            documentation: 'Errors out when you try to set a derived property.',
+            invocableForReadOnlyElements: false
+          }
         }
-      }
-    } ) );
+      } ) );
   }
 
   return cache.get( parameterType )!;

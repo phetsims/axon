@@ -17,7 +17,7 @@ import Tandem, { DYNAMIC_ARCHETYPE_NAME } from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
-import IOType from '../../tandem/js/types/IOType.js';
+import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -39,8 +39,10 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // variables
 let globalId = 0; // auto-incremented for unique IDs
 
+type AnyPropertyIOType = IOType<ReadOnlyProperty<IntentionalAny>, ReadOnlyPropertyState<IntentionalAny>>;
+
 // Cache each parameterized PropertyIO based on the parameter type, so that it is only created once
-const cache = new IOTypeCache();
+const cache = new IOTypeCache<AnyPropertyIOType>();
 
 export type ReadOnlyPropertyState<StateType> = {
   value: StateType;
@@ -65,11 +67,11 @@ type SelfOptions = {
 
   // The IOType for the values this Property supports. At this level, it doesn't matter what the state type is, so
   // it defaults to IntentionalAny.
-  phetioValueType?: IOType;
+  phetioValueType?: AnyIOType;
 
   // The IOType function that returns a parameterized IOType based on the valueType. There is a general default, but
   // subtypes can implement their own, more specific IOType.
-  phetioOuterType?: ( parameterType: IOType ) => IOType;
+  phetioOuterType?: ( parameterType: AnyIOType ) => AnyIOType;
 
   // If specified as true, this flag will ensure that listener order never changes (like via ?listenerOrder=random)
   hasListenerOrderDependencies?: boolean;
@@ -130,7 +132,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   protected readonly valueValidator: Validator<T>;
 
   // The IOType for the values this Property supports.
-  protected readonly phetioValueType: IOType;
+  protected readonly phetioValueType: IOType<T, IntentionalAny>;
 
 
   /**
@@ -588,7 +590,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     assert && assert( this.phetioValueType.toStateObject, `toStateObject doesn't exist for ${this.phetioValueType.typeName}` );
     return {
       value: this.phetioValueType.toStateObject( this.value ),
-      validValues: NullableIO( ArrayIO( this.phetioValueType ) ).toStateObject( this.validValues === undefined ? null : this.validValues ),
+      validValues: NullableIO( ArrayIO( this.phetioValueType ) ).toStateObject( this.validValues === undefined ? null : this.validValues as T[] ),
       units: NullableIO( StringIO ).toStateObject( this.units )
     };
   }
@@ -608,11 +610,13 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * An observable Property that triggers notifications when the value changes.
    * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
    */
-  public static PropertyIO<T, StateType>( parameterType: IOType<T, StateType> ): IOType {
+  public static PropertyIO<ParameterType, ParameterStateType>(
+    parameterType: IOType<ParameterType, ParameterStateType>
+  ): IOType<ReadOnlyProperty<ParameterType>, ReadOnlyPropertyState<ParameterStateType>> {
     assert && assert( parameterType, 'PropertyIO needs parameterType' );
 
     if ( !cache.has( parameterType ) ) {
-      cache.set( parameterType, new IOType<ReadOnlyProperty<T>, ReadOnlyPropertyState<StateType>>( `PropertyIO<${parameterType.typeName}>`, {
+      cache.set( parameterType, new IOType<ReadOnlyProperty<ParameterType>, ReadOnlyPropertyState<ParameterStateType>>( `PropertyIO<${parameterType.typeName}>`, {
 
         // We want PropertyIO to work for DynamicProperty and DerivedProperty, but they extend ReadOnlyProperty
         valueType: ReadOnlyProperty,
@@ -644,7 +648,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
           getValidationError: {
             returnType: NullableIO( StringIO ),
             parameterTypes: [ parameterType ],
-            implementation: function( this: ReadOnlyProperty<unknown>, value: T ) {
+            implementation: function( this: ReadOnlyProperty<unknown>, value: ParameterType ) {
               return this.getValidationError( value );
             },
             documentation: 'Checks to see if a proposed value is valid. Returns the first validation error, or null if the value is valid.'
@@ -653,7 +657,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
           setValue: {
             returnType: VoidIO,
             parameterTypes: [ parameterType ],
-            implementation: function( this: ReadOnlyProperty<unknown>, value: T ) {
+            implementation: function( this: ReadOnlyProperty<unknown>, value: ParameterType ) {
               this.set( value );
             },
             documentation: 'Sets the value of the Property. If the value differs from the previous value, listeners are ' +

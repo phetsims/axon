@@ -34,7 +34,7 @@
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import type IOType from '../../tandem/js/types/IOType.js';
+import { AnyIOType } from '../../tandem/js/types/IOType.js';
 import axon from './axon.js';
 
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
@@ -114,7 +114,7 @@ export type Validator<T = unknown> = {
 
   // An IOType used to specify the public typing for PhET-iO. Each IOType must have a
   // `validator` key specified that can be used for validation. See IOType for an example.
-  phetioType?: IOType;
+  phetioType?: AnyIOType;
 
   // if provided, this will provide supplemental information to the assertion/validation messages in addition to the
   // validate-key-specific message that will be given.

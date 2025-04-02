@@ -10,13 +10,14 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from '../../tandem/js/IOTypeCache.js';
 import PhetioDataHandler, { type PhetioDataHandlerOptions } from '../../tandem/js/PhetioDataHandler.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import FunctionIO from '../../tandem/js/types/FunctionIO.js';
-import IOType from '../../tandem/js/types/IOType.js';
+import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
@@ -155,12 +156,12 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
    * @author Michael Kauzmann (PhET Interactive Simulations)
    * @author Andrew Adare (PhET Interactive Simulations)
    */
-  public static readonly EmitterIO = ( parameterTypes: IOType[] ): IOType => {
+  public static readonly EmitterIO = ( parameterTypes: AnyIOType[] ): AnyIOType => {
 
     const key = parameterTypes.map( getTypeName ).join( ',' );
 
     if ( !cache.has( key ) ) {
-      cache.set( key, new IOType( `EmitterIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
+      cache.set( key, new IOType<Emitter, IntentionalAny>( `EmitterIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
         valueType: Emitter,
         documentation: 'Emits when an event occurs and calls added listeners.',
         parameterTypes: parameterTypes,
@@ -207,10 +208,10 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
   };
 }
 
-const getTypeName = ( ioType: IOType ) => ioType.typeName;
+const getTypeName = ( ioType: AnyIOType ) => ioType.typeName;
 
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
-const cache = new IOTypeCache<string>();
+const cache = new IOTypeCache<AnyIOType, string>();
 
 axon.register( 'Emitter', Emitter );
