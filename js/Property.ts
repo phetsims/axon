@@ -1,14 +1,15 @@
 // Copyright 2022-2025, University of Colorado Boulder
 
-import axon from './axon.js';
-import ReadOnlyProperty, { type PropertyOptions } from './ReadOnlyProperty.js';
-import type TProperty from './TProperty.js';
-
 /**
  * Adds initial value and reset, and a mutable interface.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
+
+import axon from './axon.js';
+import ReadOnlyProperty, { type PropertyOptions } from './ReadOnlyProperty.js';
+import type TProperty from './TProperty.js';
+
 export default class Property<T> extends ReadOnlyProperty<T> implements TProperty<T> {
 
   protected _initialValue: T;

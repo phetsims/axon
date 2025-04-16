@@ -1,17 +1,16 @@
 // Copyright 2021-2025, University of Colorado Boulder
 
-import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
-import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
-
 /**
  * A simple Property/TinyProperty like interface
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
+import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
+import TinyProperty from './TinyProperty.js';
+import type TReadOnlyProperty from './TReadOnlyProperty.js';
 
 // See comments in Property.ts / TinyProperty.ts
 type TProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {

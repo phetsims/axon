@@ -1,9 +1,6 @@
 // Copyright 2020-2024, University of Colorado Boulder
 // @author Sam Reid (PhET Interactive Simulations)
 
-import axon from './axon.js';
-import Timer from './Timer.js';
-
 /**
  * Register and return a singleton timer, which can be used to schedule events. This ticks under the following circumstances:
  * 1) When a JOIST/Sim is active, during the step event
@@ -16,6 +13,10 @@ import Timer from './Timer.js';
  * Sim.stepSimulation. Listeners added with setTimeout/setInterval are called with no arguments. This is not specific
  * to the running screen, it is global across all screens.
  */
+
+import axon from './axon.js';
+import Timer from './Timer.js';
+
 const stepTimer = new Timer();
 
 axon.register( 'stepTimer', stepTimer );
