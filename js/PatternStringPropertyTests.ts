@@ -6,6 +6,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
+import stripEmbeddingMarks from '../../phet-core/js/stripEmbeddingMarks.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import PatternStringProperty from './PatternStringProperty.js';
 import TinyProperty from './TinyProperty.js';
@@ -19,13 +20,13 @@ QUnit.test( 'Basic usage', assert => {
     value: valueProperty
   }, { tandem: Tandem.OPT_OUT } );
 
-  assert.equal( property.value, 'Value: 5' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 5' );
 
   patternProperty.value = 'Why {{value}}?';
-  assert.equal( property.value, 'Why 5?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Why 5?' );
 
   valueProperty.value = 10;
-  assert.equal( property.value, 'Why 10?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Why 10?' );
 } );
 
 QUnit.test( 'Constant usage', assert => {
@@ -34,10 +35,10 @@ QUnit.test( 'Constant usage', assert => {
     value: 5
   }, { tandem: Tandem.OPT_OUT } );
 
-  assert.equal( property.value, 'Value: 5' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 5' );
 
   patternProperty.value = 'Why {{value}}?';
-  assert.equal( property.value, 'Why 5?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Why 5?' );
 } );
 
 QUnit.test( 'Multiple Properties', assert => {
@@ -49,13 +50,13 @@ QUnit.test( 'Multiple Properties', assert => {
     valueB: valueBProperty
   }, { tandem: Tandem.OPT_OUT } );
 
-  assert.equal( property.value, 'Is 4 greater than 6?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Is 4 greater than 6?' );
 
   valueAProperty.value = 7;
-  assert.equal( property.value, 'Is 7 greater than 6?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Is 7 greater than 6?' );
 
   valueBProperty.value = 10;
-  assert.equal( property.value, 'Is 7 greater than 10?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Is 7 greater than 10?' );
 } );
 
 QUnit.test( 'Decimal Places (basic)', assert => {
@@ -68,10 +69,10 @@ QUnit.test( 'Decimal Places (basic)', assert => {
     decimalPlaces: 2
   } );
 
-  assert.equal( property.value, 'Value: 4.00' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 4.00' );
 
   valueProperty.value = Math.PI;
-  assert.equal( property.value, 'Value: 3.14' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 3.14' );
 } );
 
 QUnit.test( 'Decimal Places (multiple)', assert => {
@@ -89,7 +90,7 @@ QUnit.test( 'Decimal Places (multiple)', assert => {
     }
   } );
 
-  assert.equal( property.value, 'Is 4.0 greater than 6.00?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Is 4.0 greater than 6.00?' );
 } );
 
 QUnit.test( 'Decimal Places (only one)', assert => {
@@ -107,7 +108,7 @@ QUnit.test( 'Decimal Places (only one)', assert => {
     }
   } );
 
-  assert.equal( property.value, 'Is 4 greater than 6.00?' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Is 4 greater than 6.00?' );
 } );
 
 QUnit.test( 'Map (basic)', assert => {
@@ -122,10 +123,10 @@ QUnit.test( 'Map (basic)', assert => {
     }
   } );
 
-  assert.equal( property.value, 'Value: 8' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 8' );
 
   valueProperty.value = 1;
-  assert.equal( property.value, 'Value: 2' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 2' );
 } );
 
 QUnit.test( 'Map (with decimal places)', assert => {
@@ -141,10 +142,10 @@ QUnit.test( 'Map (with decimal places)', assert => {
     decimalPlaces: 2
   } );
 
-  assert.equal( property.value, 'Value: 0.50' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 0.50' );
 
   valueProperty.value = 1;
-  assert.equal( property.value, 'Value: 0.25' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Value: 0.25' );
 } );
 
 QUnit.test( 'Map (string)', assert => {
@@ -159,7 +160,7 @@ QUnit.test( 'Map (string)', assert => {
     }
   } );
 
-  assert.equal( property.value, 'What does the fox say: Hello!' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'What does the fox say: Hello!' );
 } );
 
 QUnit.test( 'Map (non-value)', assert => {
@@ -174,10 +175,10 @@ QUnit.test( 'Map (non-value)', assert => {
     }
   } );
 
-  assert.equal( property.value, 'Sum is 6' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Sum is 6' );
 
   valueProperty.value = [ 4, 0, 9 ];
-  assert.equal( property.value, 'Sum is 13' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Sum is 13' );
 } );
 
 QUnit.test( 'formatNames', assert => {
@@ -190,5 +191,5 @@ QUnit.test( 'formatNames', assert => {
     formatNames: [ 'valueA', 'valueB' ]
   } );
 
-  assert.equal( property.value, 'Values: 5 and 7' );
+  assert.equal( stripEmbeddingMarks( property.value ), 'Values: 5 and 7' );
 } );

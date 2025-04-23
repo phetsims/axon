@@ -57,13 +57,13 @@ import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import type KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
+import StringUtils from '../../phetcommon/js/util/StringUtils.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import DerivedStringProperty, { type DerivedStringPropertyOptions } from './DerivedStringProperty.js';
 import type TCollapsePropertyValue from './TCollapsePropertyValue.js';
 import type TReadOnlyProperty from './TReadOnlyProperty.js';
 import { isTReadOnlyProperty } from './TReadOnlyProperty.js';
-import { toFixed } from '../../dot/js/util/toFixed.js';
 
 // The type of allowed values for a PatternStringProperty
 type ValuesType = Record<string, IntentionalAny>;
@@ -147,8 +147,10 @@ export type PatternStringPropertyOptions<Values extends ValuesType> = SelfOption
 // Need special behavior to support conditionally requiring maps
 type FirstParameterTypeToOptionize<Values extends ValuesType> = OptionalSelfOptions<Values> & { maps?: MapsType<Values> } & SuperOptions;
 
-// Shared here, since it will always be the same function
-const stringify = ( value: string | number ): string => `${value}`;
+// Shared here, since it will always be the same function.
+const stringify = ( value: string | number ): string => typeof value === 'number' ?
+                                                        StringUtils.wrapLTR( `${value}` ) :
+                                                        value;
 
 export default class PatternStringProperty<Values extends ValuesType> extends DerivedStringProperty<string,
   unknown,
@@ -199,7 +201,9 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
                                       : options.decimalPlaces[ key ]!;
         assert && assert( decimalPlaces !== null );
 
-        stringNumberMap = ( value: string | number ) => stringify( typeof value === 'number' ? toFixed( value, decimalPlaces ) : value );
+        stringNumberMap = ( value: string | number ) => typeof value === 'number' ?
+                                                        StringUtils.toSafeFixed( value, decimalPlaces ) :
+                                                        value;
       }
 
       // If we are applying a map, "prepend" that map before the others, so that if it returns a number, we can
@@ -222,7 +226,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
         return index >= 0 ? propertyValues[ index ] : value;
       };
 
-      let result = `${getValue( patternProperty )}`; // String cast (it won't be a number, due to TypeScript)
+      let result = stringify( getValue( patternProperty ) as string | number );
 
       // Handle StringUtils.format compatibility, turning {0} => formatName[ 0 ], {1} => formatName[ 1 ], etc.
       options.formatNames.forEach( ( formatName: string, index: number ) => {
