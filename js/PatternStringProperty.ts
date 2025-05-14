@@ -202,7 +202,7 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
         assert && assert( decimalPlaces !== null );
 
         stringNumberMap = ( value: string | number ) => typeof value === 'number' ?
-                                                        StringUtils.toSafeFixed( value, decimalPlaces ) :
+                                                        StringUtils.toFixedLTR( value, decimalPlaces ) :
                                                         value;
       }
 
