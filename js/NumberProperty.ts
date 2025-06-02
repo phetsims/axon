@@ -32,7 +32,7 @@ const VALID_NUMBER_TYPES = [ 'FloatingPoint', 'Integer' ] as const;
 type NumberType = typeof VALID_NUMBER_TYPES[number];
 
 // standardized tandem name for rangeProperty
-const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
+export const RANGE_PROPERTY_TANDEM_NAME = 'rangeProperty';
 
 export const DEFAULT_RANGE = Range.EVERYTHING;
 
