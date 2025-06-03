@@ -321,7 +321,7 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
    * @param decimalPlaces
    * @param options
    */
-  public static toFixed( valueProperty: TReadOnlyProperty<number>, decimalPlaces: number, options?: DerivedPropertyOptions<string> ): DerivedProperty<string, number, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
+  public static toFixedProperty( valueProperty: TReadOnlyProperty<number>, decimalPlaces: number, options?: DerivedPropertyOptions<string> ): DerivedProperty<string, number, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown> {
     return new DerivedProperty( [ valueProperty ], value => toFixed( value, decimalPlaces ), options );
   }
 
