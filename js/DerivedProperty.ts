@@ -8,6 +8,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import Range from '../../dot/js/Range.js';
 import { toFixed } from '../../dot/js/util/toFixed.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
@@ -311,6 +312,65 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
         return value;
       }
     }, options ) as UnknownDerivedProperty<ValueType>; // The type checker can't infer that the return type is B
+  }
+
+  /**
+   * Creates a DerivedProperty that maps a numeric value to a label, chosen from threshold boundaries.
+   *
+   * Useful for description, when you want to map a numeric value to qualitative labels.
+   *
+   * The numeric values are normalized to the [0,1] range defined by `fullRange`. They must be
+   * sorted in ascending order and cover the entire range.
+   *
+   * const thresholds = [
+   *   { label: 'Low', max: 0.3 },
+   *   { label: 'Medium', max: 0.7 },
+   *   { label: 'High', max: 1 }
+   * ] as const; // So that TypeScript can infer the type for the Property value.
+   * const labelProperty = DerivedProperty.fromThresholds(new NumberProperty( 25 ), new Range( 0, 100 ), thresholds);
+   *
+   * @param numberProperty - Readable property for the numeric value to map.
+   * @param fullRange - Range object defining the minimum and maximum raw value.
+   * @param thresholds - Sorted array of thresholds, each with a label and a max value (between 0 and 1, inclusive).
+   *                     The last threshold's max must be exactly 1.
+   */
+  public static fromThresholds<
+    T extends ReadonlyArray<{ label: string; max: number }>
+  >(
+    numberProperty: TReadOnlyProperty<number>,
+    fullRange: Range,
+    thresholds: T
+  ): DerivedProperty1<T[number]['label'], number> {
+    assert && assert( thresholds.length > 0, 'Thresholds array must be non-empty.' );
+
+    // Validation - makes sure that every value in the range is described.
+    let previousMax = -Infinity;
+    thresholds.forEach( threshold => {
+      assert && assert( threshold.max >= 0 && threshold.max <= 1,
+        'Each threshold must have a max between 0 and 1.'
+      );
+      assert && assert( threshold.max >= previousMax,
+        'Thresholds must be sorted in ascending order.'
+      );
+      previousMax = threshold.max;
+    } );
+    assert && assert( thresholds[ thresholds.length - 1 ].max === 1,
+      'Last threshold must be exactly 1.'
+    );
+
+    return new DerivedProperty( [ numberProperty ], value => {
+      const normalized = ( value - fullRange.min ) / ( fullRange.max - fullRange.min );
+      const relativeValue = Math.max( 0, Math.min( 1, normalized ) );
+
+      for ( const threshold of thresholds ) {
+        if ( relativeValue <= threshold.max ) {
+          return threshold.label;
+        }
+      }
+
+      // This shouldn't occur, but fallback to last label just in case.
+      return thresholds[ thresholds.length - 1 ].label;
+    } );
   }
 
   /**
