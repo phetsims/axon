@@ -30,4 +30,4 @@ export default class GatedEnabledProperty extends GatedBooleanProperty {
   }
 }
 
-axon.register( 'GatedBooleanProperty', GatedBooleanProperty );
+axon.register( 'GatedEnabledProperty', GatedEnabledProperty );
