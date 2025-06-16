@@ -36,7 +36,7 @@ type SelfOptions = {
 type ParentOptions = DerivedPropertyOptions<boolean>;
 export type GatedBooleanPropertyOptions = SelfOptions & StrictOmit<ParentOptions, 'tandem'>;
 
-class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
+export default class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
   public readonly selfBooleanProperty: TProperty<boolean>;
 
   public constructor( providedBooleanProperty: TReadOnlyProperty<boolean>, parentTandem: Tandem, providedOptions?: GatedBooleanPropertyOptions ) {
@@ -81,7 +81,5 @@ class GatedBooleanProperty extends DerivedProperty2<boolean, boolean, boolean> {
     super.dispose();
   }
 }
-
-export default GatedBooleanProperty;
 
 axon.register( 'GatedBooleanProperty', GatedBooleanProperty );
