@@ -1,4 +1,4 @@
-// Copyright 2024-2025, University of Colorado Boulder
+// Copyright 2025, University of Colorado Boulder
 
 /**
  * Subclass of GatedBooleanProperty that provides a boolean Property that can be used to control the visibility.
