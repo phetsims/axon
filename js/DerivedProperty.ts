@@ -113,11 +113,12 @@ export default class DerivedProperty<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
 
       dependency.lazyLink( this.derivedPropertyListener );
 
-      if ( dependency instanceof PhetioObject && dependency.isFluentConstant() ) {
+      // If the dependency delegates PhET-iO responsibility to a target property, use it. For instance, FluentConstant
+      // is backed by an instrumented PhET-iO LocalizedStringProperty.
+      if ( dependency instanceof PhetioObject && dependency.hasTargetProperty() ) {
 
-        // If the dependency is a FluentConstant, we want to handle phet-io responsibilities via its instrumented targetProperty
         // @ts-expect-error
-        dependency = dependency.targetProperty!;
+        dependency = dependency.targetProperty;
       }
 
       if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && dependency instanceof PhetioObject && dependency.isPhetioInstrumented() ) {
