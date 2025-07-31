@@ -81,7 +81,7 @@ type SelfOptions = {
   // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
   // from b->c, that reentrant value change will queue its listeners for after all listeners have fired for a->b. For
   // specifics see documentation in TinyEmitter.
-} & Pick<TinyEmitterOptions, 'reentrantNotificationStrategy'>;
+} & Pick<TinyEmitterOptions, 'reentrantNotificationStrategy' | 'disableListenerLimit'>;
 
 type ParentOptions<T> = Validator<T> & PhetioObjectOptions;
 
@@ -146,6 +146,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
       reentrant: false,
       hasListenerOrderDependencies: false,
       reentrantNotificationStrategy: 'queue',
+      disableListenerLimit: false,
 
       // See Validation.ts for ValueComparisonStrategy for available values. Please note that this will be used for
       // equality comparison both with validation (i.e. for validValue comparison), as well as determining if the
@@ -201,7 +202,8 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     this.validValues = options.validValues;
 
-    this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies, options.reentrantNotificationStrategy );
+    this.tinyProperty = new TinyProperty( value, null, options.hasListenerOrderDependencies,
+      options.reentrantNotificationStrategy, options.disableListenerLimit );
 
     // Since we are already in the heavyweight Property, we always assign TinyProperty.valueComparisonStrategy for clarity.
     this.tinyProperty.valueComparisonStrategy = options.valueComparisonStrategy;

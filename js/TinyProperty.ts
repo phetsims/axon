@@ -13,8 +13,7 @@
 import axon from './axon.js';
 import TinyEmitter, { type TinyEmitterOptions } from './TinyEmitter.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
-import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener } from './TReadOnlyProperty.js';
+import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener, TReadOnlyProperty } from './TReadOnlyProperty.js';
 import Validation, { type ValueComparisonStrategy } from './Validation.js';
 
 export type TinyPropertyEmitterParameters<T> = [ T, T | null, TReadOnlyProperty<T> ];
@@ -32,15 +31,17 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
   // memory usage, only using if we notice this flag set. This is not readonly so that we can update this after construction. Defaults to "reference".
   public _valueComparisonStrategy?: ValueComparisonStrategy<T>;
 
-  public constructor( value: T, onBeforeNotify?: OptionsAlias<T>['onBeforeNotify'] | null,
+  public constructor( value: T,
+                      onBeforeNotify?: OptionsAlias<T>['onBeforeNotify'] | null,
                       hasListenerOrderDependencies?: OptionsAlias<T>['hasListenerOrderDependencies'] | null,
-                      reentrantNotificationStrategy?: OptionsAlias<T>['reentrantNotificationStrategy'] | null ) {
+                      reentrantNotificationStrategy?: OptionsAlias<T>['reentrantNotificationStrategy'] | null,
+                      disableListenerLimit?: OptionsAlias<T>['disableListenerLimit'] | null ) {
 
     // Defaults to "queue" for Properties so that we notify all listeners for a value change
     // before notifying for the next value change. For example, if we change from a->b, and one listener changes the value
     // from b->c, that reentrant value change will queue its listeners for after all listeners have fired for a->b. For
     // specifics see documentation in TinyEmitter.
-    super( onBeforeNotify, hasListenerOrderDependencies, reentrantNotificationStrategy || 'queue' );
+    super( onBeforeNotify, hasListenerOrderDependencies, reentrantNotificationStrategy || 'queue', disableListenerLimit );
 
     this._value = value;
   }

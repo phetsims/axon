@@ -54,9 +54,12 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
    * @param value
    * @param [targetPropertyInstrumented] - For phet-io support only, set to false if the target Property is not instrumented
    * @param [onBeforeNotify]
+   * @param [disableListenerLimit]
    */
-  public constructor( value: ValueType, targetPropertyInstrumented = false, onBeforeNotify?: TinyPropertyOnBeforeNotify<ValueType> ) {
-    super( value, onBeforeNotify );
+  public constructor( value: ValueType, targetPropertyInstrumented = false,
+                      onBeforeNotify?: TinyPropertyOnBeforeNotify<ValueType>,
+                      disableListenerLimit?: ConstructorParameters<typeof TinyProperty<ValueType>>[4] ) {
+    super( value, onBeforeNotify, null, null, disableListenerLimit );
 
     if ( targetPropertyInstrumented ) {
       this.targetPropertyInstrumented = targetPropertyInstrumented;

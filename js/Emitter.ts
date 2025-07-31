@@ -30,7 +30,7 @@ import TinyEmitter, { type TinyEmitterOptions } from './TinyEmitter.js';
 // By default, Emitters are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
-type SelfOptions = Pick<TinyEmitterOptions, 'reentrantNotificationStrategy'>;
+type SelfOptions = Pick<TinyEmitterOptions, 'reentrantNotificationStrategy' | 'disableListenerLimit'>;
 export type EmitterOptions = SelfOptions & StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioDataHandler<T> implements TEmitter<T> {
@@ -42,6 +42,7 @@ export default class Emitter<T extends TEmitterParameter[] = []> extends PhetioD
 
     const options = optionize<EmitterOptions, SelfOptions, PhetioDataHandlerOptions>()( {
       reentrantNotificationStrategy: 'stack',
+      disableListenerLimit: false,
 
       phetioOuterType: Emitter.EmitterIO,
       phetioState: PHET_IO_STATE_DEFAULT

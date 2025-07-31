@@ -20,7 +20,7 @@ export type PropertyLazyLinkListener<T> = ( value: T, oldValue: T, tinyProperty:
 export type PropertyListener<T> = PropertyLinkListener<T> | PropertyLazyLinkListener<T>;
 
 // See comments in Property.ts / TinyProperty.ts
-type TReadOnlyProperty<T> = {
+export type TReadOnlyProperty<T> = {
   get: () => T;
   get value(): T;
   areValuesEqual( a: T, b: T ): boolean;

@@ -74,6 +74,7 @@ export type TinyEmitterOptions<T extends TEmitterParameter[] = []> = {
   onBeforeNotify?: TEmitterListener<T>;
   hasListenerOrderDependencies?: boolean;
   reentrantNotificationStrategy?: ReentrantNotificationStrategy;
+  disableListenerLimit?: boolean;
 };
 
 type ParameterList = IntentionalAny[];
@@ -107,10 +108,14 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
   // During emit() keep track of iteration progress and guard listeners if mutated during emit()
   private emitContexts: EmitContext<T>[] = [];
 
+  // Enable assertion-based checks on the allowed number of listeners this TinyEmitter can have.
+  private readonly disableListenerLimit?: boolean;
+
   // Null on parameters is a no-op
   public constructor( onBeforeNotify?: TinyEmitterOptions<T>['onBeforeNotify'] | null,
                       hasListenerOrderDependencies?: TinyEmitterOptions<T>['hasListenerOrderDependencies'] | null,
-                      reentrantNotificationStrategy?: TinyEmitterOptions<T>['reentrantNotificationStrategy'] | null ) {
+                      reentrantNotificationStrategy?: TinyEmitterOptions<T>['reentrantNotificationStrategy'] | null,
+                      disableListenerLimit?: TinyEmitterOptions<T>['disableListenerLimit'] | null ) {
 
     if ( onBeforeNotify ) {
       this.onBeforeNotify = onBeforeNotify;
@@ -122,6 +127,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     if ( reentrantNotificationStrategy ) {
       this.reentrantNotificationStrategy = reentrantNotificationStrategy;
+    }
+
+    if ( disableListenerLimit ) {
+      this.disableListenerLimit = disableListenerLimit;
     }
 
     // Listener order is preserved in Set
@@ -246,7 +255,7 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
 
     this.changeCount && this.changeCount( 1 );
 
-    if ( assert && listenerLimit && isFinite( listenerLimit ) && maxListenerCount < this.listeners.size ) {
+    if ( assert && !this.disableListenerLimit && listenerLimit && isFinite( listenerLimit ) && maxListenerCount < this.listeners.size ) {
       maxListenerCount = this.listeners.size;
       console.log( `Max TinyEmitter listeners: ${maxListenerCount}` );
       assert( maxListenerCount <= listenerLimit, `listener count of ${maxListenerCount} above ?listenerLimit=${listenerLimit}` );
