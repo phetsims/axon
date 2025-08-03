@@ -19,7 +19,7 @@ import Property from './Property.js';
 class EnumerationDeprecatedProperty extends Property {
 
   /**
-   * @param {EnumerationDeprecated} enumeration
+   * @param {EnumerationDeprecated | any} enumeration
    * @param {*} initialValue - one of the values from enumeration
    * @param {Object} [options]
    */
