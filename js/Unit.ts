@@ -1,4 +1,4 @@
-// Copyright 2018-2025, University of Colorado Boulder
+// Copyright 2025, University of Colorado Boulder
 
 /**
  * Representation of a Unit (e.g., meters, seconds, etc.) that can be used with Properties.
