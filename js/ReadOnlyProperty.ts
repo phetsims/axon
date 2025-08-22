@@ -29,6 +29,7 @@ import { type TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';
 import type TReadOnlyProperty from './TReadOnlyProperty.js';
 import { type PropertyLazyLinkListener, type PropertyLinkListener, type PropertyListener } from './TReadOnlyProperty.js';
+import { Unit, unitToString, unitToStringOrNull } from './Unit.js';
 import units, { type Units } from './units.js';
 import validate from './validate.js';
 import Validation, { type Validator, type ValueComparisonStrategy } from './Validation.js';
@@ -50,14 +51,14 @@ export type ReadOnlyPropertyState<StateType> = {
   // Only include validValues if specified, so they only show up in PhET-iO Studio when supplied.
   validValues: StateType[] | null;
 
-  units: string | null;
+  units: Unit | string | null;
 };
 
 // Options defined by Property
 type SelfOptions = {
 
   // units for the value, see units.js. Should prefer abbreviated units, see https://github.com/phetsims/phet-io/issues/530
-  units?: Units | null;
+  units?: Unit | Units | null;
 
   // Whether reentrant calls to 'set' are allowed.
   // Use this to detect or prevent update cycles. Update cycles may be due to floating point error,
@@ -105,7 +106,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
   private readonly id: number;
 
   // (phet-io) Units, if any.  See units.js for valid values
-  public readonly units: Units | null;
+  public readonly units: Unit | Units | null;
 
   public readonly validValues?: readonly T[];
 
@@ -160,11 +161,11 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     }, providedOptions );
 
 
-    assert && options.units && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
+    assert && typeof options.units === 'string' && assert( units.isValidUnits( options.units ), `invalid units: ${options.units}` );
     if ( options.units ) {
       options.phetioEventMetadata = options.phetioEventMetadata || {};
       assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'units' ), 'units should be supplied by Property, not elsewhere' );
-      options.phetioEventMetadata.units = options.units;
+      options.phetioEventMetadata.units = unitToString( options.units );
     }
 
     if ( assert && providedOptions ) {
@@ -593,7 +594,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     return {
       value: this.phetioValueType.toStateObject( this.value ),
       validValues: NullableIO( ArrayIO( this.phetioValueType ) ).toStateObject( this.validValues === undefined ? null : this.validValues as T[] ),
-      units: NullableIO( StringIO ).toStateObject( this.units )
+      units: NullableIO( StringIO ).toStateObject( unitToStringOrNull( this.units ) )
     };
   }
 
@@ -602,7 +603,9 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
    * behaves (but be careful!).
    */
   protected applyState<StateType>( stateObject: ReadOnlyPropertyState<StateType> ): void {
-    const units = NullableIO( StringIO ).fromStateObject( stateObject.units );
+    const unitsName = unitToStringOrNull( stateObject.units );
+
+    const units = NullableIO( StringIO ).fromStateObject( unitsName );
     assert && assert( this.units === units, 'Property units do not match' );
     assert && assert( this.isSettable(), 'Property should be settable' );
     this.unguardedSet( this.phetioValueType.fromStateObject( stateObject.value ) );

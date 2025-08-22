@@ -11,11 +11,32 @@
 import FluentPattern, { FluentVariable } from '../../chipper/js/browser/FluentPattern.js';
 import TReadOnlyProperty from './TReadOnlyProperty.js';
 import { DerivedPropertyOptions } from './DerivedProperty.js';
+import ReadOnlyProperty from './ReadOnlyProperty.js';
 
 // Combined visual and accessible string, usable by controls that handle units, or for other purposes.
 export type DualString = {
   visualString: string;
   accessibleString: string;
+};
+
+// Similar to DualString, but allows numbers (for when it is ideal to pass a number to a FluentPattern, so it can adjust
+// pluralization).
+export type DualStringNumber = {
+  visualString: string | number;
+  accessibleString: string | number;
+};
+
+export type AccessibleValuePattern = FluentPattern<{ value: FluentVariable }>;
+
+export type DualValuePattern = {
+  visualPattern: string | TReadOnlyProperty<string>;
+  accessiblePattern: AccessibleValuePattern;
+};
+
+// Similar to above, but for when a Property is required for the pattern (for internal use in components)
+export type DualValuePropertyPattern = {
+  visualPatternProperty: ReadOnlyProperty<string>;
+  accessiblePattern: AccessibleValuePattern | null;
 };
 
 export type NumberFormatOptions = {
@@ -46,6 +67,11 @@ export type NumberFormatOptions = {
 
   // Whether to replace the minus sign with the word "negative" (e.g., -5 becomes "negative 5")
   replaceMinusWithNegative?: boolean;
+
+  // If true, it will wrap with Unicode embedding marks to ensure the number displays correctly visually when embedded
+  // in RTL strings.
+  // NOTE: Since this turns it into a string, it won't work for FluentPattern input where correct pluralization is needed.
+  wrapLTR?: boolean;
 };
 
 export type FormattedNumberPropertyOptions<T> = {
@@ -58,7 +84,8 @@ export const DEFAULT_FORMATTED_NUMBER_VISUAL_OPTIONS: Required<NumberFormatOptio
   showIntegersAsIntegers: false, // We usually want fixed decimal places in visual strings
   useScientificNotation: false,
   scientificBase: 10,
-  replaceMinusWithNegative: false
+  replaceMinusWithNegative: false,
+  wrapLTR: true
 };
 
 export const DEFAULT_FORMATTED_NUMBER_SPOKEN_OPTIONS: Required<NumberFormatOptions> = {
@@ -67,7 +94,8 @@ export const DEFAULT_FORMATTED_NUMBER_SPOKEN_OPTIONS: Required<NumberFormatOptio
   showIntegersAsIntegers: true,
   useScientificNotation: false,
   scientificBase: 10,
-  replaceMinusWithNegative: false
+  replaceMinusWithNegative: false,
+  wrapLTR: false
 };
 
 export type Unit = {
@@ -81,7 +109,7 @@ export type Unit = {
   visualPatternStringProperty?: TReadOnlyProperty<string>;
 
   // Pattern for the accessible "value + units" combination
-  accessiblePattern?: FluentPattern<{ value: FluentVariable }>;
+  accessiblePattern?: AccessibleValuePattern;
 
   // Whether there is support for different types of string output.
   hasVisualStandaloneString: boolean;
@@ -107,17 +135,33 @@ export type Unit = {
   getVisualStringProperty(
     valueProperty: TReadOnlyProperty<number>,
     providedOptions?: FormattedNumberPropertyOptions<string>
-  ): TReadOnlyProperty<string>;
+  ): ReadOnlyProperty<string>;
 
   // Get a string Property for a accessible string (value + units) based on a value Property. e.g. "15.0 centimeters"
   getAccessibleStringProperty(
     valueProperty: TReadOnlyProperty<number>,
     providedOptions?: FormattedNumberPropertyOptions<string>
-  ): TReadOnlyProperty<string>;
+  ): ReadOnlyProperty<string>;
 
   // Get an DualString Property for a visual + accessible string (value + units) based on a value Property.
   getDualStringProperty(
     valueProperty: TReadOnlyProperty<number>,
     providedOptions?: FormattedNumberPropertyOptions<string>
-  ): TReadOnlyProperty<DualString>;
+  ): ReadOnlyProperty<DualString>;
+
+  // Get a list of the dependent properties that this unit relies on.
+  getDependentProperties(): TReadOnlyProperty<unknown>[];
+};
+
+export const unitToString = ( unit: Unit | string ): string => {
+  if ( typeof unit === 'string' ) {
+    return unit;
+  }
+  else {
+    return unit.name;
+  }
+};
+
+export const unitToStringOrNull = ( unit: Unit | string | null ): string | null => {
+  return unit === null ? null : unitToString( unit );
 };
