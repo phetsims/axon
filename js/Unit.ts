@@ -8,9 +8,9 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import { TReadOnlyProperty } from './TReadOnlyProperty.js';
-import ReadOnlyProperty from './ReadOnlyProperty.js';
-import { AccessibleValuePattern, DualString, FormattedNumberPropertyOptions, NumberFormatOptions } from './AccessibleStrings.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
+import type ReadOnlyProperty from './ReadOnlyProperty.js';
+import type { AccessibleValuePattern, DualString, FormattedNumberPropertyOptions, NumberFormatOptions } from './AccessibleStrings.js';
 
 export type Unit = {
   // Basic "backwards-compatible" name, e.g. "m" or "m/s^2"
