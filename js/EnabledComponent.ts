@@ -17,7 +17,7 @@ import axon from './axon.js';
 import Disposable, { type DisposableOptions } from './Disposable.js';
 import EnabledProperty, { type EnabledPropertyOptions } from './EnabledProperty.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // constants
 const DEFAULT_OPTIONS = {

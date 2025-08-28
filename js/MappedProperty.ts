@@ -22,7 +22,7 @@ import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import axon from './axon.js';
 import DynamicProperty, { type DynamicPropertyOptions } from './DynamicProperty.js';
 import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 type SelfOptions<ThisValueType, InputValueType> = {
   // If set to true then changes to this Property (if valuePropertyProperty.value is non-null at the time) will also be

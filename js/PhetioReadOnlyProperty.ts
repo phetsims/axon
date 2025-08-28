@@ -12,7 +12,7 @@
  */
 
 import type PhetioObject from '../../tandem/js/PhetioObject.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 type PhetioReadOnlyProperty<T> = TReadOnlyProperty<T> & PhetioObject;
 

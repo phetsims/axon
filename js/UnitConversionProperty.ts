@@ -31,7 +31,7 @@ import Property from './Property.js';
 import type TProperty from './TProperty.js';
 import type TRangedProperty from './TRangedProperty.js';
 import { isTRangedProperty } from './TRangedProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   // The multiplicative factor to convert from INPUT => OUTPUT, e.g.

@@ -8,7 +8,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import { TReadOnlyProperty } from './TReadOnlyProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import { AccessibleValuePattern, DualString, FormattedNumberPropertyOptions, NumberFormatOptions } from './AccessibleStrings.js';
 

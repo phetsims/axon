@@ -62,7 +62,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import DerivedStringProperty, { type DerivedStringPropertyOptions } from './DerivedStringProperty.js';
 import type TCollapsePropertyValue from './TCollapsePropertyValue.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 import { isTReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // The type of allowed values for a PatternStringProperty

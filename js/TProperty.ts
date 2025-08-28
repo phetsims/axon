@@ -10,7 +10,7 @@ import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // See comments in Property.ts / TinyProperty.ts
 type TProperty<T> = StrictOmit<TReadOnlyProperty<T>, 'value'> & {

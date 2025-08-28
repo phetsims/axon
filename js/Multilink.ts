@@ -17,7 +17,7 @@
  */
 
 import axon from './axon.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // Shorthand to make the type definitions more legible
 type ROP<T> = TReadOnlyProperty<T>;

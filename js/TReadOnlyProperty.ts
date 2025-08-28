@@ -40,5 +40,3 @@ export type TReadOnlyProperty<T> = {
 export function isTReadOnlyProperty<T = unknown>( something: IntentionalAny ): something is TReadOnlyProperty<T> {
   return something instanceof ReadOnlyProperty || something instanceof TinyProperty;
 }
-
-export default TReadOnlyProperty;

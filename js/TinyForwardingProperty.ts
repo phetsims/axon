@@ -21,7 +21,7 @@ import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { type TinyPropertyOnBeforeNotify } from './TinyProperty.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 import { isTReadOnlyProperty, type PropertyLazyLinkListener } from './TReadOnlyProperty.js';
 
 type NodeLike = {

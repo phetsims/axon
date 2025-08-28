@@ -12,7 +12,7 @@ import DynamicProperty, { DynamicPropertyOptions, TNullableProperty } from './Dy
 import Property, { type PropertyOptions } from './Property.js';
 import Range from '../../dot/js/Range.js';
 import TRangedProperty from './TRangedProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 import { DEFAULT_RANGE, RANGE_PROPERTY_TANDEM_NAME } from './NumberProperty.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem from '../../tandem/js/Tandem.js';

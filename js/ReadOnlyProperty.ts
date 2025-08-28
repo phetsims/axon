@@ -27,7 +27,7 @@ import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import { type TinyEmitterOptions } from './TinyEmitter.js';
 import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 import { type PropertyLazyLinkListener, type PropertyLinkListener, type PropertyListener } from './TReadOnlyProperty.js';
 import { Unit, unitToString, unitToStringOrNull } from './Unit.js';
 import units, { type Units } from './units.js';

@@ -9,7 +9,7 @@
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import { DerivedPropertyOptions } from './DerivedProperty.js';
 import FluentPattern, { FluentVariable } from '../../chipper/js/browser/FluentPattern.js';
-import TReadOnlyProperty from './TReadOnlyProperty.js';
+import { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // Combined visual and accessible string, usable by controls that handle units, or for other purposes.
 // This is needed by types like NumberDisplay/PhetUnit, where we have both a visual string (for display) and

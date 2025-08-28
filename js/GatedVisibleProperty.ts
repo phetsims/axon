@@ -12,7 +12,7 @@ import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.j
 import type Tandem from '../../tandem/js/Tandem.js';
 import axon from './axon.js';
 import GatedBooleanProperty, { GatedBooleanPropertyOptions } from './GatedBooleanProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 /**
  * Provides PhET-iO clients with a way to permanently hide this Node via 'selfVisibleProperty'

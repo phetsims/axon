@@ -6,7 +6,7 @@ import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type PhetioProperty from './PhetioProperty.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty from './TinyProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // Minimal types for Properties that support a rangeProperty.
 export type TRangedProperty = PhetioProperty<number> & { range: Range; readonly rangeProperty: TReadOnlyProperty<Range> };

@@ -104,7 +104,7 @@ import type Property from './Property.js';
 import { type PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 export type TNullableProperty<T> = TReadOnlyProperty<T | null> | TReadOnlyProperty<T>;
 

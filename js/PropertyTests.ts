@@ -14,7 +14,7 @@ import Tandem from '../../tandem/js/Tandem.js';
 import Multilink from './Multilink.js';
 import NumberProperty from './NumberProperty.js';
 import Property from './Property.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 QUnit.module( 'Property' );
 

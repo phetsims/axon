@@ -25,7 +25,7 @@ import axon from './axon.js';
 import BooleanProperty, { type BooleanPropertyOptions } from './BooleanProperty.js';
 import { DerivedProperty2, type DerivedPropertyOptions } from './DerivedProperty.js';
 import type TProperty from './TProperty.js';
-import type TReadOnlyProperty from './TReadOnlyProperty.js';
+import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 type SelfOptions = {
   tandemName?: string;
