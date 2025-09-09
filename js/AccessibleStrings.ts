@@ -49,7 +49,7 @@ export type NumberFormatOptions = {
   // e.g. for 15.14052, decimalPlaces = 2 would result in "15.14"
   // If decimalPlaces is null, it will use the full precision of the number.
   // If decimalPlaces is set to 0, it will show the number as an integer
-  // (e.g., 15.14052 would become "15" if decimalPlaces
+  // (e.g., 15.14052 would become "15" with decimalPlaces: 0)
   decimalPlaces?: number | null;
 
   // Whether to show trailing zeros in the decimal part of the value (a zero with no non-zero value after it)
