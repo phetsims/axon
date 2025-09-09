@@ -13,7 +13,7 @@ import type ReadOnlyProperty from './ReadOnlyProperty.js';
 import type { AccessibleValuePattern, DualString, FormattedNumberPropertyOptions, NumberFormatOptions } from './AccessibleStrings.js';
 
 export type Unit = {
-  // Basic "backwards-compatible" name, e.g. "m" or "m/s^2"
+  // Basic "backwards-compatible" name, e.g. "m" or "m/s^2" (strings in axon/units.ts)
   name: string;
 
   // String Property for the "standalone" string (e.g. units with no value)
@@ -67,7 +67,7 @@ export type Unit = {
   getDependentProperties(): TReadOnlyProperty<unknown>[];
 };
 
-// Convert a unit to a string (e.g. for phet-io)
+// Convert a unit to a string - useful for phet-io
 export const unitToString = ( unit: Unit | string ): string => {
   if ( typeof unit === 'string' ) {
     return unit;
