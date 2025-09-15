@@ -350,10 +350,10 @@ export default class TinyEmitter<T extends TEmitterParameter[] = []> implements 
  */
 class EmitContext<T extends ParameterList = ParameterList> implements TPoolable {
   // Gets incremented with notifications
-  public index!: number;
+  declare public index: number;
 
   // Arguments that the emit was called with
-  public args!: T;
+  declare public args: T;
 
   // Whether we should act like there is a listenerArray (has it been copied?)
   public hasListenerArray = false;
