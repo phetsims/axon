@@ -10,6 +10,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
@@ -288,7 +289,7 @@ const createObservableArray = <T>( providedOptions?: ObservableArrayOptions<T> )
    * PhET-iO support
    *******************************************/
   if ( options.tandem?.supplied ) {
-    assert && assert( options.phetioType );
+    affirm( options.phetioType, 'ObservableArray with a tandem must have a phetioType' );
 
     observableArray.phetioElementType = options.phetioType.parameterTypes![ 0 ];
 
