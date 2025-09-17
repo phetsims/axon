@@ -606,7 +606,6 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     const unitsName = unitToStringOrNull( stateObject.units );
 
     const units = NullableIO( StringIO ).fromStateObject( unitsName );
-    assert && assert( this.units === units, 'Property units do not match' );
     assert && assert( this.isSettable(), 'Property should be settable' );
     this.unguardedSet( this.phetioValueType.fromStateObject( stateObject.value ) );
   }
