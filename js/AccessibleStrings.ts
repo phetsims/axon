@@ -96,8 +96,8 @@ export const DEFAULT_FORMATTED_NUMBER_VISUAL_OPTIONS: Required<NumberFormatOptio
 // Defaults for "accessible" form of number formatting (e.g. for screen readers)
 export const DEFAULT_FORMATTED_NUMBER_ACCESSIBLE_OPTIONS: Required<NumberFormatOptions> = {
   decimalPlaces: null,
-  showTrailingZeros: false,
-  showIntegersAsIntegers: true,
+  showTrailingZeros: true,
+  showIntegersAsIntegers: false,
   useScientificNotation: false,
   scientificBase: 10,
   replaceMinusWithNegative: false,
