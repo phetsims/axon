@@ -17,10 +17,10 @@ export type Unit = {
   name: string;
 
   // String Property for the "standalone" string (e.g. units with no value)
-  visualStandaloneStringProperty?: TReadOnlyProperty<string>;
+  visualSymbolStringProperty?: TReadOnlyProperty<string>;
 
   // Pattern for the visual "value + units" combination
-  visualPatternStringProperty?: TReadOnlyProperty<string>;
+  visualSymbolPatternStringProperty?: TReadOnlyProperty<string>;
 
   // Pattern for the accessible "value + units" combination
   accessiblePattern?: AccessibleValuePattern;
