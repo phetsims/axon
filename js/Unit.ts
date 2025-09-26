@@ -25,16 +25,11 @@ export type Unit = {
   // Pattern for the accessible "value + units" combination
   accessiblePattern?: AccessibleValuePattern;
 
-  // Whether there is support for different types of string output.
-  hasVisualStandaloneString: boolean;
-  hasVisualString: boolean;
-  hasAccessibleString: boolean;
-
   // Get the current value/translation of the standalone string (units with no value).
-  getVisualStandaloneString(): string;
+  getVisualSymbolString(): string;
 
   // Get the current value/translation of the visual string (value + units).
-  getVisualString( value: number, providedOptions?: NumberFormatOptions ): string;
+  getVisualSymbolPatternString( value: number, providedOptions?: NumberFormatOptions ): string;
 
   // Get the current value/translation of the accessible string (value + units).
   getAccessibleString( value: number, providedOptions?: NumberFormatOptions ): string;
@@ -43,10 +38,10 @@ export type Unit = {
   getDualString( value: number, providedOptions?: NumberFormatOptions ): DualString;
 
   // Get the string Property for the standalone visual string (units with no value). e.g. "cm"
-  getVisualStandaloneStringProperty(): TReadOnlyProperty<string>;
+  getVisualSymbolStringProperty(): TReadOnlyProperty<string>;
 
   // Get a string Property for a visual string (value + units) based on a value Property. e.g. "15.0 cm"
-  getVisualStringProperty(
+  getVisualSymbolPatternStringProperty(
     valueProperty: TReadOnlyProperty<number>,
     providedOptions?: FormattedNumberPropertyOptions<string>
   ): ReadOnlyProperty<string>;
