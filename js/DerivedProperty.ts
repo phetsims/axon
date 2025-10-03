@@ -23,7 +23,7 @@ import Property, { type PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import ReadOnlyProperty, { ReadOnlyPropertyState } from './ReadOnlyProperty.js';
-import { TReadOnlyProperty, isTReadOnlyProperty } from './TReadOnlyProperty.js';
+import { isTReadOnlyProperty, TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 const DERIVED_PROPERTY_IO_PREFIX = 'DerivedPropertyIO';
 
