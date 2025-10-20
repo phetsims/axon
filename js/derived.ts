@@ -20,25 +20,25 @@ import DerivedProperty, { type DerivedPropertyOptions, type UnknownDerivedProper
 import { type DependenciesType } from './Multilink.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
-export function derived<T, T1>(
+function derived<T, T1>(
   dependency1: TReadOnlyProperty<T1>,
   derivation: ( param1: T1 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2>(
+function derived<T, T1, T2>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   derivation: ( param1: T1, param2: T2 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3>(
+function derived<T, T1, T2, T3>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
   derivation: ( param1: T1, param2: T2, param3: T3 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4>(
+function derived<T, T1, T2, T3, T4>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -46,7 +46,7 @@ export function derived<T, T1, T2, T3, T4>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5>(
+function derived<T, T1, T2, T3, T4, T5>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -55,7 +55,7 @@ export function derived<T, T1, T2, T3, T4, T5>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6>(
+function derived<T, T1, T2, T3, T4, T5, T6>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -65,7 +65,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -76,7 +76,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -88,7 +88,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -101,7 +101,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -115,7 +115,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9, param10: T10 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -130,7 +130,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9, param10: T10, param11: T11 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -146,7 +146,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9, param10: T10, param11: T11, param12: T12 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -163,7 +163,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T1
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9, param10: T10, param11: T11, param12: T12, param13: T13 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -181,7 +181,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T1
   derivation: ( param1: T1, param2: T2, param3: T3, param4: T4, param5: T5, param6: T6, param7: T7, param8: T8, param9: T9, param10: T10, param11: T11, param12: T12, param13: T13, param14: T14 ) => T,
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
-export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(
+function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(
   dependency1: TReadOnlyProperty<T1>,
   dependency2: TReadOnlyProperty<T2>,
   dependency3: TReadOnlyProperty<T3>,
@@ -201,7 +201,7 @@ export function derived<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T1
   options?: DerivedPropertyOptions<T>
 ): UnknownDerivedProperty<T>;
 
-export function derived<T>( ...args: unknown[] ): UnknownDerivedProperty<T> {
+function derived<T>( ...args: unknown[] ): UnknownDerivedProperty<T> {
   affirm( args.length >= 2, 'derived requires at least one dependency and a derivation function' );
 
   const lastArgument = args[ args.length - 1 ];
