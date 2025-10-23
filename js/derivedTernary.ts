@@ -11,7 +11,7 @@ import derived from './derived.js';
 import { type UnknownDerivedProperty } from './DerivedProperty.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
-function derivedTernary<T>( predicateProperty: TReadOnlyProperty<boolean>, map: { true: TReadOnlyProperty<T>; false: TReadOnlyProperty<T> } ): UnknownDerivedProperty<T> {
+function derivedTernary<T, V>( predicateProperty: TReadOnlyProperty<boolean>, map: { true: TReadOnlyProperty<T>; false: TReadOnlyProperty<V> } ): UnknownDerivedProperty<T | V> {
   return derived( predicateProperty, map.true, map.false, ( predicate, trueValue, falseValue ) => {
     return predicate ? trueValue : falseValue;
   } );
