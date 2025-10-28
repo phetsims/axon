@@ -28,7 +28,10 @@ function derivedMap<K, V>(
   // All the dependencies that are Properties
   const m: TReadOnlyProperty<V>[] = Array.from( map.values() ).filter( value => isTReadOnlyProperty<V>( value ) );
 
-  return DerivedProperty.deriveAny( [ key, ...m ], () => {
+  // Allow multiple keys to point to the same value
+  const uniqueDependencies = _.uniq( m );
+
+  return DerivedProperty.deriveAny( [ key, ...uniqueDependencies ], () => {
 
     affirm( map.has( key.value ), `derivedMap: key not found in map: ${key.value}` );
     const value = map.get( key.value );
