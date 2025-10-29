@@ -729,6 +729,15 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
     return super.getPhetioMouseHitTarget( fromLinking );
   }
 
+  /**
+   * A lightweight derived property that updates when this property updates. NOTE: this does not support phet-io,
+   * disposal, or other features provided by the options, so only use this when features like those are not needed.
+   */
+  public derived<U>( derivation: ( value: T ) => U ): ReadOnlyProperty<U> {
+    const readOnlyProperty = new ReadOnlyProperty( derivation( this.value ) );
+    this.lazyLink( value => readOnlyProperty.set( derivation( value ) ) );
+    return readOnlyProperty;
+  }
 
   public static readonly CHANGED_EVENT_NAME = 'changed';
 }

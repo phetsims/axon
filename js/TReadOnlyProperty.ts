@@ -35,6 +35,12 @@ export type TReadOnlyProperty<T> = {
   valueComparisonStrategy: ValueComparisonStrategy<T>;
   isDisposed?: boolean;
   toString(): string;
+
+  /**
+   * A lightweight derived property that updates when this property updates. NOTE: this does not support phet-io,
+   * disposal, or other features provided by the options, so only use this when features like those are not needed.
+   */
+  derived<U>( derivation: ( value: T ) => U ): TReadOnlyProperty<U>;
 };
 
 export function isTReadOnlyProperty<T = unknown>( something: IntentionalAny ): something is TReadOnlyProperty<T> {

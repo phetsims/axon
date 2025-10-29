@@ -197,6 +197,16 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
 
     super.dispose();
   }
+
+  /**
+   * A lightweight derived property that updates when this property updates. NOTE: this does not support phet-io,
+   * disposal, or other features provided by the options, so only use this when features like those are not needed.
+   */
+  public derived<U>( derivation: ( value: T ) => U ): TReadOnlyProperty<U> {
+    const tinyProperty = new TinyProperty( derivation( this.value ) );
+    this.lazyLink( value => tinyProperty.set( derivation( value ) ) );
+    return tinyProperty;
+  }
 }
 
 axon.register( 'TinyProperty', TinyProperty );
