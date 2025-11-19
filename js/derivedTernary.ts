@@ -2,7 +2,8 @@
 
 /**
  * Convenience method to that allows you to call derived with a map for true/false values.
- * See also DerivedProperty.fromRecord (which does not support boolean keys)
+ * See also DerivedProperty.fromRecord (which does not support boolean keys).
+ * This is named derivedTernary because it is analogous to the ? ternary operator: predicate ? trueValue : falseValue
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
