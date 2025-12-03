@@ -5,7 +5,7 @@
  * enabled. It also factors out PhET-iO instrumentation. Likely you should use it in cases like so:
  *
  * const enabledProperty = new BooleanProperty( true, {
- *   tandem: options.tandem.createTandem( 'enabledProperty' ),
+ *   tandem: options.tandem.createTandem( EnabledProperty.TANDEM_NAME ),
  *   phetioFeatured: true
  * } );
  *
