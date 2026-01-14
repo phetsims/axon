@@ -9,10 +9,12 @@
 import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
 import axon from './axon.js';
-import Property from './Property.js';
+import Property, { PropertyOptions } from './Property.js';
+
+type EnumerationDeprecatedPropertyOptions = StrictOmit<PropertyOptions<object>, 'isValidValue' | 'valueType' >;
 
 /**
  * @deprecated
@@ -24,7 +26,7 @@ class EnumerationDeprecatedProperty extends Property<object> {
    * @param initialValue - one of the values from enumeration
    * @param [options]
    */
-  public constructor( public readonly enumeration: EnumerationDeprecated, initialValue: object, options?: IntentionalAny ) {
+  public constructor( public readonly enumeration: EnumerationDeprecated, initialValue: object, options?: EnumerationDeprecatedPropertyOptions ) {
     deprecationWarning( 'Use EnumerationProperty. EnumerationDeprecated should be exchanged for classes that extend EnumerationValue, see WilderEnumerationPatterns for examples.' );
 
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
