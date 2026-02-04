@@ -52,6 +52,7 @@ const UnitsValues = [
   'mol',
   'mol/L',
   'mol/s',
+  'm<sub>e</sub>', // electron mass
   'M', // molar
   'N', // Newtons
   'N/m', // Newtons/meter
