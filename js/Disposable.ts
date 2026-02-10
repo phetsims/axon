@@ -30,7 +30,7 @@ export type DisposerOptions = {
   disposer?: Disposer; // if provided, an "unregistration" will occur for this Disposable when the disposer is disposed.
 };
 
-type HasDispose = {
+export type HasDispose = {
   dispose: VoidFunction;
 };
 
