@@ -94,7 +94,7 @@
  *   } );
  * so that changes to the dynamic Property will result in a change in the numberPropertyProperty's value.
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import optionize from '../../phet-core/js/optionize.js';

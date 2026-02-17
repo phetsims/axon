@@ -5,7 +5,7 @@
  *
  * This file is more of a type definition, PhetUnit (in scenery-phet) will be the main implementation of this.
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';

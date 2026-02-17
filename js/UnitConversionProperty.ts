@@ -19,7 +19,7 @@
  * centimetersProperty.value = 100;
  * metersProperty.value; // 1
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import Range from '../../dot/js/Range.js';

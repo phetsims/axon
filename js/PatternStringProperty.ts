@@ -50,7 +50,7 @@
  * | } );
  * | property.value; // '2.14 kg'
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import optionize from '../../phet-core/js/optionize.js';

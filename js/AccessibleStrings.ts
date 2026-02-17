@@ -3,7 +3,7 @@
 /**
  * Types and utilities for accessible strings (including number formatting).
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import ReadOnlyProperty from './ReadOnlyProperty.js';

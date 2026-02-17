@@ -4,7 +4,7 @@
  * A TinyProperty that will take the value of a target Property until it is set to a value. When that happens, it will
  * be its own standalone Property.
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import axon from './axon.js';

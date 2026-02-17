@@ -14,7 +14,7 @@
  * stringProperty.value = 'hi';
  * lengthProperty.value; // 2
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';

@@ -6,7 +6,7 @@
  * e.g. CollapsePropertyValue<number> is number
  * e.g. CollapsePropertyValue<Property<number>> is number
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';

@@ -3,7 +3,7 @@
 /**
  * PatternStringProperty tests
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import stripEmbeddingMarks from '../../phet-core/js/stripEmbeddingMarks.js';

@@ -3,7 +3,7 @@
 /**
  * QUnit tests for TinyOverrideProperty
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import TinyOverrideProperty from './TinyOverrideProperty.js';

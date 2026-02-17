@@ -4,7 +4,7 @@
  * A simple read-only Property/TinyProperty-like interface
  *
  * @author Sam Reid (PhET Interactive Simulations)
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';

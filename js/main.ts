@@ -4,7 +4,7 @@
  * Module that includes all axon dependencies, so that requiring this module will return an object
  * that consists of the entire exported 'axon' namespace API.
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import './animationFrameTimer.js';
