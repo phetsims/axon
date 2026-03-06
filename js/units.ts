@@ -77,6 +77,7 @@ const UnitsValues = [
   'rpm', // revolutions per minute
   's', // seconds
   'V', // volts
+  'V/nm', // volts per nanometer
   'view-coordinates/s',
   'W', // watts
   'Wb', // weber
