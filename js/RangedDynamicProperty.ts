@@ -7,7 +7,6 @@
  */
 
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
-import axon from './axon.js';
 import DynamicProperty, { DynamicPropertyOptions, TNullableProperty } from './DynamicProperty.js';
 import Property, { type PropertyOptions } from './Property.js';
 import Range from '../../dot/js/Range.js';
@@ -119,5 +118,3 @@ export default class RangedDynamicProperty<InnerValueType, OuterValueType> exten
     super.dispose();
   }
 }
-
-axon.register( 'RangedDynamicProperty', RangedDynamicProperty );

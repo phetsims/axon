@@ -6,7 +6,6 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
 import ReadOnlyProperty, { type PropertyOptions } from './ReadOnlyProperty.js';
 import type TProperty from './TProperty.js';
 
@@ -72,5 +71,3 @@ export default class Property<T> extends ReadOnlyProperty<T> implements TPropert
 }
 
 export type { PropertyOptions };
-
-axon.register( 'Property', Property );

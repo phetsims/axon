@@ -14,10 +14,8 @@
  * to the running screen, it is global across all screens.
  */
 
-import axon from './axon.js';
 import Timer from './Timer.js';
 
 const stepTimer = new Timer();
 
-axon.register( 'stepTimer', stepTimer );
 export default stepTimer;

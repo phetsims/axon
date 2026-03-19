@@ -24,7 +24,6 @@
 
 import Range from '../../dot/js/Range.js';
 import optionize from '../../phet-core/js/optionize.js';
-import axon from './axon.js';
 import MappedProperty, { type MappedPropertyOptions } from './MappedProperty.js';
 import { DEFAULT_RANGE } from './NumberProperty.js';
 import Property from './Property.js';
@@ -98,5 +97,3 @@ export default class UnitConversionProperty extends MappedProperty<number, numbe
     this.rangeProperty.dispose();
   }
 }
-
-axon.register( 'UnitConversionProperty', UnitConversionProperty );

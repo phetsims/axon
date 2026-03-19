@@ -10,8 +10,6 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
-
 const UnitsValues = [
   '1/(cm*M)', // molar absorptivity
   '%', // percent
@@ -92,7 +90,5 @@ const units = {
     return _.includes( units.values, unit );
   }
 };
-
-axon.register( 'units', units );
 
 export default units;

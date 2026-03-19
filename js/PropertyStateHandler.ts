@@ -13,7 +13,6 @@ import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import { type PhetioID } from '../../tandem/js/phet-io-types.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import type { TPhetioStateEngine } from '../../tandem/js/TPhetioStateEngine.js';
-import axon from './axon.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
 import type ReadOnlyProperty from './ReadOnlyProperty.js';
 
@@ -449,7 +448,6 @@ class PhaseCallbackSets {
   }
 }
 
-axon.register( 'PropertyStateHandler', PropertyStateHandler );
 export default PropertyStateHandler;
 
 /**
@@ -458,4 +456,3 @@ export default PropertyStateHandler;
  * have between each other when setting their state and applying their values/notifying.
  */
 export const propertyStateHandlerSingleton = new PropertyStateHandler();
-axon.register( 'propertyStateHandlerSingleton', propertyStateHandlerSingleton );

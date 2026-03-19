@@ -23,7 +23,6 @@ import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioOb
 import Tandem from '../../tandem/js/Tandem.js';
 import ArrayIO from '../../tandem/js/types/ArrayIO.js';
 import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
-import axon from './axon.js';
 import Emitter, { type EmitterOptions } from './Emitter.js';
 import NumberProperty, { type NumberPropertyOptions } from './NumberProperty.js';
 import type TEmitter from './TEmitter.js';
@@ -567,7 +566,6 @@ const ObservableArrayIO = ( parameterType: AnyIOType ): IOType<ObservableArrayPh
 
 createObservableArray.ObservableArrayIO = ObservableArrayIO;
 
-axon.register( 'createObservableArray', createObservableArray );
 export default createObservableArray;
 export { ObservableArrayIO };
 export type { ObservableArray };

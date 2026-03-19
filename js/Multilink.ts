@@ -16,7 +16,6 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
 // Shorthand to make the type definitions more legible
@@ -233,5 +232,3 @@ export default class Multilink<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
     multilink.dispose();
   }
 }
-
-axon.register( 'Multilink', Multilink );

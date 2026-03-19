@@ -8,7 +8,6 @@
  */
 
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import axon from './axon.js';
 import Validation, { type IsValidValueOptions, type Validator } from './Validation.js';
 
 /**
@@ -35,5 +34,4 @@ const validate = <T>( value: IntentionalAny, validator: Validator<T>, providedOp
 };
 
 
-axon.register( 'validate', validate );
 export default validate;

@@ -21,7 +21,6 @@ import optionize from '../../phet-core/js/optionize.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import type Tandem from '../../tandem/js/Tandem.js';
 import BooleanIO from '../../tandem/js/types/BooleanIO.js';
-import axon from './axon.js';
 import BooleanProperty, { type BooleanPropertyOptions } from './BooleanProperty.js';
 import { DerivedProperty2, type DerivedPropertyOptions } from './DerivedProperty.js';
 import type TProperty from './TProperty.js';
@@ -81,5 +80,3 @@ export default class GatedBooleanProperty extends DerivedProperty2<boolean, bool
     super.dispose();
   }
 }
-
-axon.register( 'GatedBooleanProperty', GatedBooleanProperty );

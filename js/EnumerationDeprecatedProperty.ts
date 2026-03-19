@@ -11,7 +11,6 @@ import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../phet-core/js/merge.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import EnumerationIO from '../../tandem/js/types/EnumerationIO.js';
-import axon from './axon.js';
 import Property, { PropertyOptions } from './Property.js';
 
 type EnumerationDeprecatedPropertyOptions = StrictOmit<PropertyOptions<object>, 'isValidValue' | 'valueType' >;
@@ -55,5 +54,4 @@ class EnumerationDeprecatedProperty extends Property<object> {
   }
 }
 
-axon.register( 'EnumerationDeprecatedProperty', EnumerationDeprecatedProperty );
 export default EnumerationDeprecatedProperty;

@@ -7,7 +7,6 @@
  * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
@@ -128,5 +127,3 @@ export default class TinyOverrideProperty<T> extends TinyProperty<T> {
     super.dispose();
   }
 }
-
-axon.register( 'TinyOverrideProperty', TinyOverrideProperty );

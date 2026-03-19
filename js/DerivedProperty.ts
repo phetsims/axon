@@ -16,7 +16,6 @@ import PhetioObject from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
 import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
-import axon from './axon.js';
 import { type DependenciesType, type RP1, type RP10, type RP11, type RP12, type RP13, type RP14, type RP15, type RP2, type RP3, type RP4, type RP5, type RP6, type RP7, type RP8, type RP9 } from './Multilink.js';
 import Property, { type PropertyOptions } from './Property.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
@@ -404,5 +403,3 @@ export class DerivedProperty3<T, T1, T2, T3> extends DerivedProperty<T, T1, T2, 
 export class DerivedProperty4<T, T1, T2, T3, T4> extends DerivedProperty<T, T1, T2, T3, T4, never, never, never, never, never, never, never, never, never, never, never> {}
 
 export class DerivedProperty5<T, T1, T2, T3, T4, T5> extends DerivedProperty<T, T1, T2, T3, T4, T5, never, never, never, never, never, never, never, never, never, never> {}
-
-axon.register( 'DerivedProperty', DerivedProperty );

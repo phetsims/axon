@@ -16,7 +16,6 @@
  */
 
 import Tandem from '../../tandem/js/Tandem.js';
-import axon from './axon.js';
 import Property from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
 import TinyProperty, { type TinyPropertyOnBeforeNotify } from './TinyProperty.js';
@@ -266,5 +265,3 @@ export default class TinyForwardingProperty<ValueType> extends TinyProperty<Valu
     super.dispose();
   }
 }
-
-axon.register( 'TinyForwardingProperty', TinyForwardingProperty );

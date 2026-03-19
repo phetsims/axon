@@ -17,7 +17,6 @@ import IOType from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../tandem/js/types/NumberIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
-import axon from './axon.js';
 import Property, { type PropertyOptions } from './Property.js';
 import ReadOnlyProperty, { type ReadOnlyPropertyState } from './ReadOnlyProperty.js';
 import type TRangedProperty from './TRangedProperty.js';
@@ -250,5 +249,3 @@ export default class NumberProperty extends Property<number> implements TRangedP
     apiStateKeys: [ 'numberType', 'range', 'rangePhetioID' ]
   } );
 }
-
-axon.register( 'NumberProperty', NumberProperty );

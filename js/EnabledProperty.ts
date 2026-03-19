@@ -13,7 +13,6 @@
  */
 
 import optionize from '../../phet-core/js/optionize.js';
-import axon from './axon.js';
 import BooleanProperty, { type BooleanPropertyOptions } from './BooleanProperty.js';
 
 const TANDEM_NAME = 'enabledProperty';
@@ -47,5 +46,3 @@ export default class EnabledProperty extends BooleanProperty {
 
   public static get TANDEM_NAME(): string { return TANDEM_NAME; }
 }
-
-axon.register( 'EnabledProperty', EnabledProperty );

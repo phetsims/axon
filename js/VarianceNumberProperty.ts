@@ -7,7 +7,6 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import axon from './axon.js';
 import NumberProperty, { type NumberPropertyOptions } from './NumberProperty.js';
 
 type VarianceComputer = ( value: number ) => number;
@@ -28,5 +27,3 @@ export default class VarianceNumberProperty extends NumberProperty {
     return this.computeVariance ? this.computeVariance( super.get() ) : this.get();
   }
 }
-
-axon.register( 'VarianceNumberProperty', VarianceNumberProperty );
