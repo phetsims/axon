@@ -11,6 +11,7 @@ import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.j
 import type PickRequired from '../../phet-core/js/types/PickRequired.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringUnionIO from '../../tandem/js/types/StringUnionIO.js';
+import axon from './axon.js';
 import Property, { type PropertyOptions } from './Property.js';
 
 type StringEnumerationPropertyOptions<T> = StrictOmit<PropertyOptions<T>, 'phetioValueType'> &
@@ -26,3 +27,5 @@ export default class StringUnionProperty<T extends string> extends Property<T> {
     super( value, options );
   }
 }
+
+axon.register( 'StringUnionProperty', StringUnionProperty );

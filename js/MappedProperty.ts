@@ -19,6 +19,7 @@
 
 import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import axon from './axon.js';
 import DynamicProperty, { type DynamicPropertyOptions } from './DynamicProperty.js';
 import TinyProperty from './TinyProperty.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
@@ -43,3 +44,5 @@ export default class MappedProperty<ThisValueType, InputValueType> extends Dynam
     super( new TinyProperty( property ), providedOptions );
   }
 }
+
+axon.register( 'MappedProperty', MappedProperty );

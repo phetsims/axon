@@ -15,6 +15,7 @@
 
 import affirm, { isAffirmEnabled } from '../../perennial-alias/js/browser-and-node/affirm.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import axon from './axon.js';
 import type TEmitter from './TEmitter.js';
 import { type TReadOnlyEmitter } from './TEmitter.js';
 import TinyEmitter from './TinyEmitter.js';
@@ -200,4 +201,5 @@ class Disposable implements Disposer, HasDispose {
   }
 }
 
+axon.register( 'Disposable', Disposable );
 export default Disposable;

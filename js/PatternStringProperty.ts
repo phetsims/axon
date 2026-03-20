@@ -59,6 +59,7 @@ import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
 import type KeysNotMatching from '../../phet-core/js/types/KeysNotMatching.js';
 import StringUtils from '../../phetcommon/js/util/StringUtils.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import axon from './axon.js';
 import DerivedStringProperty, { type DerivedStringPropertyOptions } from './DerivedStringProperty.js';
 import type TCollapsePropertyValue from './TCollapsePropertyValue.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
@@ -254,3 +255,5 @@ export default class PatternStringProperty<Values extends ValuesType> extends De
     }, options );
   }
 }
+
+axon.register( 'PatternStringProperty', PatternStringProperty );

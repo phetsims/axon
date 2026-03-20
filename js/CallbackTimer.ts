@@ -7,6 +7,7 @@
  * @author Chris Malley (PixelZoom, Inc.)
  */
 
+import axon from './axon.js';
 import stepTimer from './stepTimer.js';
 import { type TimerListener } from './Timer.js';
 
@@ -144,3 +145,5 @@ export default class CallbackTimer {
     this.callbacks.length = 0;
   }
 }
+
+axon.register( 'CallbackTimer', CallbackTimer );

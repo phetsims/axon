@@ -35,6 +35,7 @@ import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import optionize from '../../phet-core/js/optionize.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import type { AnyIOType } from '../../tandem/js/types/IOType.js';
+import axon from './axon.js';
 
 const TYPEOF_STRINGS = [ 'string', 'number', 'boolean', 'function' ];
 
@@ -467,3 +468,5 @@ export default class Validation {
     isValidValue: v => !/\{\{\w*\}\}/.test( v )
   };
 }
+
+axon.register( 'Validation', Validation );

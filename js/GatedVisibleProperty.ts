@@ -10,6 +10,7 @@
 
 import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import type Tandem from '../../tandem/js/Tandem.js';
+import axon from './axon.js';
 import GatedBooleanProperty, { GatedBooleanPropertyOptions } from './GatedBooleanProperty.js';
 import type { TReadOnlyProperty } from './TReadOnlyProperty.js';
 
@@ -31,3 +32,5 @@ export default class GatedVisibleProperty extends GatedBooleanProperty {
     super( providedBooleanProperty, parentTandem, options );
   }
 }
+
+axon.register( 'GatedVisibleProperty', GatedVisibleProperty );

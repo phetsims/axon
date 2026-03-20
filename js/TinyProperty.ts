@@ -10,6 +10,7 @@
  * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
+import axon from './axon.js';
 import TinyEmitter, { type TinyEmitterOptions } from './TinyEmitter.js';
 import type TProperty from './TProperty.js';
 import type { PropertyLazyLinkListener, PropertyLinkListener, PropertyListener, TReadOnlyProperty } from './TReadOnlyProperty.js';
@@ -207,3 +208,5 @@ export default class TinyProperty<T> extends TinyEmitter<TinyPropertyEmitterPara
     return tinyProperty;
   }
 }
+
+axon.register( 'TinyProperty', TinyProperty );

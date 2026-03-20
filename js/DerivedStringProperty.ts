@@ -24,6 +24,7 @@
 import optionize, { type EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import type StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
+import axon from './axon.js';
 import DerivedProperty, { type DerivedPropertyOptions } from './DerivedProperty.js';
 import { type DependenciesType } from './Multilink.js';
 
@@ -51,3 +52,5 @@ export default class DerivedStringProperty<T extends string, T1, T2, T3, T4, T5,
     super( dependencies, derivation, options );
   }
 }
+
+axon.register( 'DerivedStringProperty', DerivedStringProperty );

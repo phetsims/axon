@@ -13,6 +13,7 @@ import merge from '../../phet-core/js/merge.js';
 import { optionize3 } from '../../phet-core/js/optionize.js';
 import PhetioObject, { type PhetioObjectOptions } from '../../tandem/js/PhetioObject.js';
 import Tandem from '../../tandem/js/Tandem.js';
+import axon from './axon.js';
 import Disposable, { type DisposableOptions } from './Disposable.js';
 import EnabledProperty, { type EnabledPropertyOptions } from './EnabledProperty.js';
 import type TProperty from './TProperty.js';
@@ -89,3 +90,5 @@ export default class EnabledComponent extends Disposable {
     super.dispose();
   }
 }
+
+axon.register( 'EnabledComponent', EnabledComponent );

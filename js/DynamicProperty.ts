@@ -99,6 +99,7 @@
 
 import optionize from '../../phet-core/js/optionize.js';
 import type KeysMatching from '../../phet-core/js/types/KeysMatching.js';
+import axon from './axon.js';
 import type Property from './Property.js';
 import { type PropertyOptions } from './Property.js';
 import ReadOnlyProperty from './ReadOnlyProperty.js';
@@ -357,3 +358,5 @@ export default class DynamicProperty<ThisValueType, InnerValueType, OuterValueTy
     return super.isSettable() || this.bidirectional;
   }
 }
+
+axon.register( 'DynamicProperty', DynamicProperty );

@@ -21,6 +21,7 @@ import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
+import axon from './axon.js';
 import { type DisposerOptions } from './Disposable.js';
 import { propertyStateHandlerSingleton } from './PropertyStateHandler.js';
 import PropertyStatePhase from './PropertyStatePhase.js';
@@ -740,3 +741,5 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
   public static readonly CHANGED_EVENT_NAME = 'changed';
 }
+
+axon.register( 'ReadOnlyProperty', ReadOnlyProperty );

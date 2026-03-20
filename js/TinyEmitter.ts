@@ -11,6 +11,7 @@ import dotRandom from '../../dot/js/dotRandom.js';
 import Random from '../../dot/js/Random.js';
 import Pool, { type TPoolable } from '../../phet-core/js/Pool.js';
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import axon from './axon.js';
 import type TEmitter from './TEmitter.js';
 import { type TEmitterListener, type TEmitterParameter } from './TEmitter.js';
 
@@ -398,3 +399,5 @@ class EmitContext<T extends ParameterList = ParameterList> implements TPoolable 
     return EmitContext.pool.create( index, args ) as unknown as EmitContext<T>;
   }
 }
+
+axon.register( 'TinyEmitter', TinyEmitter );

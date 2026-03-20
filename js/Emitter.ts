@@ -21,6 +21,7 @@ import IOType, { AnyIOType } from '../../tandem/js/types/IOType.js';
 import NullableIO from '../../tandem/js/types/NullableIO.js';
 import StringIO from '../../tandem/js/types/StringIO.js';
 import VoidIO from '../../tandem/js/types/VoidIO.js';
+import axon from './axon.js';
 import { type DisposerOptions } from './Disposable.js';
 import type TEmitter from './TEmitter.js';
 import { type TEmitterListener, type TEmitterParameter } from './TEmitter.js';
@@ -213,3 +214,5 @@ const getTypeName = ( ioType: AnyIOType ) => ioType.typeName;
 // {Map.<string, IOType>} - Cache each parameterized IOType so that
 // it is only created once.
 const cache = new IOTypeCache<AnyIOType, string>();
+
+axon.register( 'Emitter', Emitter );

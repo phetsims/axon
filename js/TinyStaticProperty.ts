@@ -9,6 +9,7 @@
  * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
+import axon from './axon.js';
 import TinyProperty from './TinyProperty.js';
 import { type PropertyLinkListener } from './TReadOnlyProperty.js';
 
@@ -75,3 +76,5 @@ export default class TinyStaticProperty<T> extends TinyProperty<T> {
     return this.areValuesEqual( value, this.get() );
   }
 }
+
+axon.register( 'TinyStaticProperty', TinyStaticProperty );

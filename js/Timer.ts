@@ -7,6 +7,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import axon from './axon.js';
 import TinyEmitter from './TinyEmitter.js';
 
 export type TimerListener = ( dt: number ) => void;
@@ -88,3 +89,5 @@ export default class Timer extends TinyEmitter<[ number ]> {
     this.setTimeout( listener, 0 );
   }
 }
+
+axon.register( 'Timer', Timer );

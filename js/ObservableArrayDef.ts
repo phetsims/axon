@@ -7,6 +7,7 @@
  */
 
 import type IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import axon from './axon.js';
 import { type ObservableArray } from './createObservableArray.js';
 
 /**
@@ -26,4 +27,5 @@ const ObservableArrayDef = {
   }
 };
 
+axon.register( 'ObservableArrayDef', ObservableArrayDef );
 export default ObservableArrayDef;
