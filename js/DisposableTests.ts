@@ -62,6 +62,34 @@ QUnit.test( 'Disposable.isDisposable', assert => {
   }
 } );
 
+QUnit.test( 'Disposable self-disposal with { disposer: this }', assert => {
+
+  // This test proves whether { disposer: this } correctly cleans up when the object disposes itself.
+  // The concern: in Disposable.dispose(), removeAllDisposerActions() runs BEFORE _disposeEmitter.emit(),
+  // so the cleanup callback registered on this.disposeEmitter would be removed before it fires.
+
+  class SelfDisposingModel extends Disposable {
+    public readonly myProperty = new BooleanProperty( false );
+    private readonly myListener: () => void;
+
+    public constructor() {
+      super();
+      this.myListener = () => { /* no-op */ };
+
+      // Register with disposer: this (self-disposal pattern)
+      this.myProperty.link( this.myListener, { disposer: this } );
+    }
+  }
+
+  const model = new SelfDisposingModel();
+  assert.ok( model.myProperty.hasListeners(), 'listener should be attached before dispose' );
+
+  model.dispose();
+
+  // If the bug exists, the listener will NOT have been removed (leak!)
+  assert.ok( !model.myProperty.hasListeners(), 'listener should be removed after self-dispose via { disposer: this }' );
+} );
+
 QUnit.test( 'Disposable.addDisposer', assert => {
   assert.ok( true, 'when assertions are not enabled' );
 
