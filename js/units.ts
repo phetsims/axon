@@ -26,6 +26,7 @@ const UnitsValues = [
   '\u00B0', // °, degrees (angle)
   '\u00B0C', // °C, degrees Celsius
   'eV', // electron volt
+  'eV/nm^2', // electron volts per nanometer squared
   'F', // farad
   'fs', // femtoseconds
   '\u00B0F', // °F, degrees Fahrenheit
