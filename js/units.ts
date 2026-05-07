@@ -59,6 +59,8 @@ const UnitsValues = [
   'N', // Newtons
   'N/m', // Newtons/meter
   'nm', // nanometers
+  'nm^-1', // inverse nanometers
+  'nm^-1/2', // inverse square root nanometers
   'nm/ps', // nanometers/picosecond
   'ns', // nanoseconds
   'N\u00b7s/m', // N·s/m, Newton-seconds/meter
