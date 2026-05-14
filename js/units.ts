@@ -50,6 +50,7 @@ const UnitsValues = [
   'm/s^2', // meters/seconds squared
   'mA', // milliampere
   'mm', //millimeters
+  'ms', // milliseconds
   'mV', // millivolts
   'mol',
   'mol/L',
@@ -84,6 +85,8 @@ const UnitsValues = [
   'view-coordinates/s',
   'W', // watts
   'Wb', // weber
+  'μm', // micrometers
+  'μs', // microseconds
   'years' // years
 ] as const;
 export type Units = typeof UnitsValues[ number ];
