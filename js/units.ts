@@ -29,6 +29,7 @@ const UnitsValues = [
   'eV/nm^2', // electron volts per nanometer squared
   'F', // farad
   'fs', // femtoseconds
+  'fs^-1', // inverse femtoseconds
   '\u00B0F', // °F, degrees Fahrenheit
   'g', // grams
   'G', // gauss
