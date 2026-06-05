@@ -86,6 +86,7 @@ const UnitsValues = [
   'view-coordinates/s',
   'W', // watts
   'Wb', // weber
+  'μA', // microamperes
   'μm', // micrometers
   'μs', // microseconds
   'years' // years
