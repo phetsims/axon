@@ -70,6 +70,7 @@ const UnitsValues = [
   '\u03A9\u00b7cm', // Ω·cm, ohm-centimeters
   'Pa\u00b7s', // Pascal-seconds
   'particles/ps', // particles/picosecond
+  'photons/s', // photons per second
   'pm', // picometers
   'pm/ps', // picometers/picosecond
   'pm/s', // picometers/second
