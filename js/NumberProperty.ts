@@ -113,14 +113,16 @@ export default class NumberProperty extends Property<number> implements TRangedP
     if ( options.numberType === 'Integer' ) {
       options.validators.push( VALID_INTEGER );
     }
-    let calledSuper = false; // We cannot use this.value until after the super() call
+    let proposedValue = value;
     options.validators.push( {
-      isValidValue: v => rangeProperty.value.contains( v ),
-      validationMessage: () => `Number value ${calledSuper ? this.value : value} must be within rangeProperty value: ${rangeProperty.value}`
+      isValidValue: v => {
+        proposedValue = v;
+        return rangeProperty.value.contains( v );
+      },
+      validationMessage: () => `Number value ${proposedValue} must be within rangeProperty value: ${rangeProperty.value}`
     } );
 
     super( value, options );
-    calledSuper = true;
 
     this.numberType = options.numberType;
     this.rangeProperty = rangeProperty;
