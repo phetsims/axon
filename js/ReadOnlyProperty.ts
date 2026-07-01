@@ -348,7 +348,7 @@ export default class ReadOnlyProperty<T> extends PhetioObject implements TReadOn
 
     // notify listeners, optionally detect loops where this Property is set again before this completes.
     assert && assert( !this.notifying || this.reentrant,
-      `reentry detected, value=${newValue}, oldValue=${oldValue}` );
+      `reentry detected, value=${newValue}, oldValue=${oldValue}, phetioID=${this.phetioID}` );
     this.notifying = true;
 
     this.tinyProperty.emit( newValue, oldValue, this ); // cannot use tinyProperty.notifyListeners because it uses the wrong this
